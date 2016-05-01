@@ -1,0 +1,28 @@
+{
+  "name": "Latex2MathProg",
+  "version": "0.1.0",
+  "description": "Convert a Latex Linear Program Model to a MathProg code",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "~4.9.x"
+  },
+  "engines": {
+    "node": "6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express", 
+    "Latex", 
+    "MathProg", 
+    "Linear Programming"
+  ],
+  "license": "MIT"
+}
