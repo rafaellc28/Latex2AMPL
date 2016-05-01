@@ -7,7 +7,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "~4.9.x"
+    "express": "~4.9.x",
+    "body-parser": "1.15.0",
+    "jsesc": "1.0.0",
+    "python-shell": "0.4.0"
   },
   "engines": {
     "node": "6.0.0"
