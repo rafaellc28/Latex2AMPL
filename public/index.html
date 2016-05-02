@@ -46,13 +46,13 @@
 	</head>
 	<body>
 		<h1>Latex2MathProg</h1>
-		<p>Convert a Linear Programming Model Latex Code to a <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial">MathProg</a> Code</p>
+		<p>Convert a Linear Programming Model Latex Code to a <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial">MathProg</a> Code (without the <b>data section</b>)</p>
 		<p>A MathProg Code can be solved using the <a href="https://www.gnu.org/software/glpk/" target="_glpk">GLPK (GNU Linear Programming Kit)</a> tool</p>
         <p><h2>Latex Code</h2></p>
         <form action="/" method="post">
         	<p class="text-muted">
         		<ul>
-        			<li>Put the <b>Linear Programming Model</b> inside the <i>equation>split environment</i>, as shown in the example below</li>
+        			<li>Put the <b>Linear Programming Model</b> inside the <i>equation>split environments</i>, as shown in the example below</li>
         			<li>Use <b>\text{maximize}/\text{minimize}</b> to the <b>Objective Function</b> and <b>\text{subject to}</b> to start the <b>Constraints</b>.</li>
         			<li>The last constraint can not end with BACKSLASHES "<b>\\</b>"</li>
         			<li>A constraint can not end with COMMA "<b>,</b>", therefore "<b>,\\</b>" means that the constraint continues in the next line</li>
