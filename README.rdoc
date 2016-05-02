@@ -1,22 +1,22 @@
 == README
 
 * NodeJS Version
-	- 6.0.0
+  - 6.0.0
 
 * Python Version
-	- 2.7.6
+  - 2.7.6
 
 * NodeJS dependencies
-	- express (http://expressjs.com/)
-	- body-parser (https://github.com/expressjs/body-parser)
-	- jsesc (https://github.com/mathiasbynens/jsesc)
-	- python-shell (https://github.com/extrabacon/python-shell)
+  - express (http://expressjs.com/)
+  - body-parser (https://github.com/expressjs/body-parser)
+  - jsesc (https://github.com/mathiasbynens/jsesc)
+  - python-shell (https://github.com/extrabacon/python-shell)
 
 * Python dependency
-	ply (https://github.com/dabeaz/ply)
+  - ply (https://github.com/dabeaz/ply)
 
 * JavaScript Libraries
-	- jQuery (https://jquery.com/)
-	- MathJax (https://www.mathjax.org/)
-	- writemaths (https://github.com/christianp/writemaths)
+  - jQuery (https://jquery.com/)
+  - MathJax (https://www.mathjax.org/)
+  - writemaths (https://github.com/christianp/writemaths)
 
