@@ -9,19 +9,19 @@ var init = function() {
 		handle: '.drag-handle',
 		cancel: '',
 		update: function(event, ui) {
-			
+
 			CONSTRAINTS_AUX = [];
 			$( "ol.list-constraints" ).children().each(function( index ) {
 				var idx = findIndexConstraint(this.id);
 				CONSTRAINTS_AUX.push({"key": CONSTRAINTS[idx]["key"], "tex": CONSTRAINTS[idx]["tex"]});
 			});
-			
+
 			CONSTRAINTS = CONSTRAINTS_AUX;
 			CONSTRAINTS_AUX = [];
 			UpdateSubjectiveMathOutput(mountConstraintsOutput());
 		}
 	});
-	
+
 	PreviewObjctiveFunction.Init();
 	PreviewSubjctiveFunction.Init();
 }
@@ -47,7 +47,7 @@ var initExample = function() {
 		$("#subjMathInput").val(constr);
 		$("#icon-add-constraint").click();
 
-	}, 1000);
+	}, 3000);
 }
 
 var loadUser = function() {
