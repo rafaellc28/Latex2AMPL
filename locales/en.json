@@ -1,0 +1,12 @@
+{
+	"LATEX2MATHPROG": "Latex2MathProg",
+	"LATEX_CODE": "Latex Code", 
+	"MATHJAX_PREVIEW": "MathJax Preview", 
+	"MATHPROG_CODE": "MathProg Code", 
+	"MAXIMIZE": "Maximize",
+	"MINIMIZE": "Minimize",
+	"SUBJECT_TO": "Subject to",
+	"GENERATE_MATHPROG": "Generate MathProg",
+	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Objective Function is empty.",
+	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Constraints is empty."
+}

@@ -1,0 +1,92 @@
+.mathInputBox {
+	width: 100%;
+	min-height: 34px;
+	color: #555;
+	border: 1px solid #ccc;
+	border-radius: 0 4px 4px 0;
+	font-size: 14px;
+	line-height: 1.42857143;
+	background-color: #fff;
+	background-image: none;
+}
+
+.mathOutputBox {
+	width: 100%;
+	min-height: 34px;
+	color: #555;
+	border: 1px solid #ccc;
+	border-radius: 0 4px 4px 0;
+	font-size: 14px;
+}
+
+ol.list-constraints div.container-fluid {
+	padding: 0 0;
+}
+
+ol.list-constraints div.alert {
+	padding: 0 0;
+	margin: 0 0;
+}
+
+ol.list-constraints div.alert a:hover {
+	opacity: 0.5;
+}
+
+ol.list-constraints div.row {
+	padding: 0 0;
+	margin: 0 0;
+}
+
+ol.list-constraints div.col-xs-2 {
+	padding: 5px 5px;
+	margin: 0 0;
+	float: right;
+}
+
+ol.list-constraints div.col-xs-2 a.close {
+	float: none;
+}
+
+ol.list-constraints div.col-xs-1 {
+	padding: 5px 5px;
+	margin: 0 0;
+}
+
+ol.list-constraints div.col-xs-9 {
+	padding: 5px 5px;
+	margin: 0 0;
+}
+
+ol.list-constraints li.list-group-item {
+	margin: 0 0;
+	padding: 0 0;
+}
+
+
+/* Drag and Drop*/
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+ol.list-constraints li.placeholder {
+  position: relative;
+  /** More li styles **/
+}
+ol.list-constraints li.placeholder:before {
+  position: absolute;
+  /** Define arrowhead **/
+}
+
+ol.list-constraints > div {
+	padding: 0 0;
+}
+
+.drag-handle {
+
+}

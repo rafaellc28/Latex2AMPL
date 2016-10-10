@@ -1,0 +1,6 @@
+https://docs.mathjax.org/en/v2.5-latest/typeset.html
+http://cdn.mathjax.org/mathjax/latest/test/sample-dynamic-2.html
+https://github.com/crcn/paperclip.js
+https://github.com/mashpie/i18n-node
+https://www.sitepoint.com/overview-javascript-templating-engines/
+

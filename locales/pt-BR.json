@@ -1,0 +1,12 @@
+{
+	"LATEX2MATHPROG": "Latex2MathProg",
+	"LATEX_CODE": "Código Latex", 
+	"MATHJAX_PREVIEW": "Pré-visualização do MathJax", 
+	"MATHPROG_CODE": "Código MathProg", 
+	"MAXIMIZE": "Maximize",
+	"MINIMIZE": "Minimize",
+	"SUBJECT_TO": "Sujeito a",
+	"GENERATE_MATHPROG": "Gera MathProg",
+	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Função Objetivo precisa ser definida.",
+	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Uma ou mais restrições precisam ser definidas."
+}

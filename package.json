@@ -7,10 +7,12 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "~4.9.x",
     "body-parser": "1.15.0",
+    "express": "~4.9.x",
+    "i18n": "^0.8.3",
     "jsesc": "1.0.0",
-    "python-shell": "0.4.0"
+    "python-shell": "0.4.0",
+    "underscore": "^1.8.3"
   },
   "engines": {
     "node": "6.0.0"
@@ -22,9 +24,9 @@
   "keywords": [
     "node",
     "heroku",
-    "express", 
-    "Latex", 
-    "MathProg", 
+    "express",
+    "Latex",
+    "MathProg",
     "Linear Programming"
   ],
   "license": "MIT"
