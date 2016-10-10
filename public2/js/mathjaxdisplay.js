@@ -246,6 +246,7 @@
 		subjFunc = subjFunc["originalText"].substring(14, subjFunc["originalText"].length-1);
 
 		var data = "\\text{" + obj + "} " + objFunc + "\\\\\n" + "\\text{subject to} " + subjFunc;
+		data = data.replace(/\\\\/g, "\\\\\n");
 
 		$("#mathProg").html("");
 		$.post("/", {latex: data}, function(result, status){
@@ -253,6 +254,4 @@
 		});
 	}
 
-
 })();
-

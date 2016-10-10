@@ -61,7 +61,8 @@ def p_Objective(t):
         t[0] = Objective(t[2], Objective.MINIMIZE)
 
 def p_Constraints(t):
-    '''Constraints : SUBJECTTO ConstraintList'''
+    '''Constraints : SUBJECTTO ConstraintList
+                   | SUBJECTTO ConstraintList BACKSLASHES'''
     t[0] = Constraints(t[2])
 
 def p_ConstraintList(t):
