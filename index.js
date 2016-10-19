@@ -59,7 +59,7 @@ app.post('/', function(req, res) {
 
 	//console.log(str);
 
-	var pyshell = new PythonShell('python/compiler.py');
+	var pyshell = new PythonShell('python/v2/compiler.py');
 	
 	// sends a message to the Python script via stdin 
 	pyshell.send(str);

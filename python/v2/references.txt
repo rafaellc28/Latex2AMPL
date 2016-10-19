@@ -1,0 +1,4 @@
+http://stackoverflow.com/questions/3849576/how-to-call-a-static-method-of-a-class-using-method-name-and-class-name
+https://docs.python.org/2/tutorial/classes.html
+https://github.com/faif/python-patterns/blob/master/visitor.py
+
