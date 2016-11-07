@@ -47,7 +47,6 @@
 	window.UpdateObjectiveMath = function (TeX) {
 		QUEUE.Push(
 		    hideObjectiveFunction,
-		    ["resetEquationNumbers",MathJax.InputJax.TeX],
 		    ["Text",objMath, (!TeX || !TeX.trim() ? "" : "\\displaystyle{"+TeX+"}")],
 		    showObjectiveFunction
 		);
@@ -103,7 +102,6 @@
 	window.UpdateSubjectiveMathOutput = function(subjTeX) {
 		QUEUE.Push(
 	    	hideSubjectiveFunction,
-	    	["resetEquationNumbers",MathJax.InputJax.TeX],
 	    	["Text",subjMath, (!subjTeX || !subjTeX.trim() ? "" : "\\displaystyle{"+subjTeX+"}")],
 	    	showSubjectiveFunction
 		);
