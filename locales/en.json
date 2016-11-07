@@ -8,5 +8,9 @@
 	"SUBJECT_TO": "Subject to",
 	"GENERATE_MATHPROG": "Generate MathProg",
 	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Objective Function is empty.",
-	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Constraints is empty."
+	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Constraints is empty.",
+	"SOLVE_MATHPROG": "Solve MathProg",
+	"MATHPROG_SOLUTION": "Solution",
+	"LATEX_EDITOR": "Latex Editor",
+	"SIMPLE_EDITOR": "Simple Editor"
 }

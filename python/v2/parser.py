@@ -42,8 +42,8 @@ precedence = (
     ('left', 'UPLUS', 'UMINUS'),
     ('left', 'IN', 'NOTIN'),
     ('left', 'UNDERLINE', 'CARET'),
-    ('left', 'INTEGERSET', 'REALSET', 'NATURALSET')
-    )
+    ('left', 'INTEGERSET', 'REALSET', 'REALSETPOSITIVE', 'NATURALSET', 'BINARYSET')
+)
 
 def p_LinearProgram(t):
     '''LP : Objective
@@ -528,7 +528,9 @@ def p_SetExpressionWithValue(t):
                      | Variable
                      | NATURALSET
                      | INTEGERSET
-                     | REALSET'''
+                     | REALSET
+                     | REALSETPOSITIVE
+                     | BINARYSET'''
 
     if len(t) > 2:
         t[0] = SetExpressionWithValue(t[2])

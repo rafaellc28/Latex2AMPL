@@ -62,7 +62,7 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
         Set the operator, the value and the set expression
 
         :param op : op
-        :param value : ValueList, Variable
+        :param value : ValueList| Variable | TupleList
         :param setExpression : setExpression
         """
 

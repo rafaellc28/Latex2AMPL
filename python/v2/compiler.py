@@ -36,8 +36,9 @@ doc = re.sub(',\s*\\\\\\\\', ', ', doc)
 
 result = parser.parse(doc, debug=log)
 
+
 if DEBUG:
-	print(result)
+	sys.stderr.write(str(result) + "\n")
 
 if result:
 	if not DEBUG:

@@ -24,6 +24,9 @@ var init = function() {
 
 	PreviewObjctiveFunction.Init();
 	PreviewSubjctiveFunction.Init();
+
+	initEditor();
+	initSolver();
 }
 
 var initExample = function() {
@@ -51,7 +54,10 @@ var initExample = function() {
 }
 
 var loadUser = function() {
-	$.getJSON("/json?lang=en", function(result, status, xhr) {
+	var lang = $.url().param('lang');
+	if (!lang) lang = "en";
+	
+	$.getJSON("/json?lang="+lang, function(result, status, xhr) {
 		if (status == "error" || status == "timeout" || status == "parsererror") {
 			alert("Error recovering labels.");
 			return;

@@ -18,7 +18,7 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         """
         Set the variable(s) and the set
 
-        :param variable      : Variable | [Value]
+        :param variable      : Variable | ValueList
         :param setExpression : SetExpression
         :param op            : (IN | NOTIN)
         """

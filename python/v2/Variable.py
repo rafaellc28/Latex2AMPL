@@ -18,8 +18,9 @@ class Variable(Expression):
         
         self.variable = variable
         self.sub_indices = sub_indices
-        self.inSets = []
+        self.dimenSet = 1
         self.isSet = False
+        self.isVar = False
         self.isParam = False
 
     def __str__(self):
@@ -27,13 +28,19 @@ class Variable(Expression):
         to string
         """
         
+        var = ""
+        if self.isSet and isinstance(self.dimenSet, int) and self.dimenSet > 1:
+            var += str(self.variable) + "{"+str(self.dimenSet)+"}"
+        else:
+            var += str(self.variable)
+
         if len(self.sub_indices) > 0:
             if isinstance(self.sub_indices, Variable) or isinstance(self.sub_indices, ID) or isinstance(self.sub_indices, Number):
-                res = str(self.variable) + "[" + str(self.sub_indices) + "]"
+                res = var + "[" + str(self.sub_indices) + "]"
             else:
-                res = str(self.variable) + "[" + ",".join(map(lambda i: str(i), self.sub_indices)) + "]"
+                res = var + "[" + ",".join(map(lambda i: str(i), self.sub_indices)) + "]"
         else:
-            res = str(self.variable)
+            res = var
         
         return "Var:" + res
 
@@ -60,6 +67,15 @@ class Variable(Expression):
     def setIsParam(self, isParam):
         self.isParam = isParam
 
+    def setDimenSet(self, dimen):
+        self.dimenSet = dimen
+
+    def setIsVar(self, isVar):
+        self.isVar = isVar
+
+    def setSubIndices(self, subIndices):
+        self.sub_indices = subIndices
+    
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the declaration of this variable

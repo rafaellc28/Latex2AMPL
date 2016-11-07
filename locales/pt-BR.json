@@ -8,5 +8,9 @@
 	"SUBJECT_TO": "Sujeito a",
 	"GENERATE_MATHPROG": "Gera MathProg",
 	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Função Objetivo precisa ser definida.",
-	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Uma ou mais restrições precisam ser definidas."
+	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Uma ou mais restrições precisam ser definidas.",
+	"SOLVE_MATHPROG": "Resolve MathProg",
+	"MATHPROG_SOLUTION": "Solução",
+	"LATEX_EDITOR": "Editor Latex",
+	"SIMPLE_EDITOR": "Editor Simples"
 }

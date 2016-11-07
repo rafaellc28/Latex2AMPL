@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="css/lib/bootstrap.min.css">
 		<!--<link rel="stylesheet" href="css/lib/jquery-ui.min.css">-->
 		<link rel="stylesheet" href="css/latex2mathprog.css">
+		<link rel="stylesheet" href="css/lib/codemirror.css">
 
 		<script type="text/javascript" src="js/lib/jquery-3.1.0.min.js"></script>
 		<!--<script type="text/javascript" src="js/lib/jquery-ui.min.js"></script>-->
@@ -14,7 +15,11 @@
 		<script src="js/lib/mustache.min.js"></script>
 		<!--<script src="js/lib/jquery-sortable.js"></script>-->
 		<script src="js/lib/jquery-ui.min.js"></script>
-		<script src="js/utils.js"></script>
+
+		<script src="js/lib/purl.js"></script>
+		<script src="js/lib/glpk.min.js"></script>
+		<script src="js/lib/codemirror.js"></script>
+		<script src="js/lib/CodeMirror/addon/mode/simple.js"></script>
 
 		<!-- MathJax -->
 		<script src="js/lib/MathJax/MathJax.js">
@@ -35,10 +40,13 @@
 		  });
 	  	</script>
 
+		<script src="js/utils.js"></script>
+	  	<script src="js/editor.js"></script>
+	  	<script src="js/solver.js"></script>
 	  	<script src="js/mathjaxpreview.js"></script>
 	  	<script src="js/mathjaxdisplay.js"></script>
 		<script src="js/latex2mathprog.js"></script>
-		
+
 	</head>
 	<body onload="loadUser();">
 		<div id="target">Loading...</div>
@@ -49,10 +57,15 @@
 
 	        	<p class="text-muted">
 	        		<ul>
-	        			<li>Put the <b>Linear Programming Model</b> in the Objective and Constraints sections, as shown in the example below</li>
-	        			<li>A constraint can not end with COMMA "<b>,</b>", thus "<b>,\\</b>" means that the constraint continues in the next line</li>
-	        			<li><b>Parameters</b> must start with an upper case letter</li>
+	        			<li>Put the <b>Linear Programming Model</b> in the Objective and Constraints sections, as shown in the example below.</li>
+	        			<li>A constraint can not end with COMMA "<b>,</b>", thus "<b>,\\</b>" means that the constraint continues in the next line.</li>
+	        			<li><b>Parameters</b> must start with an upper case letter.</li>
+	        			<li><b>Variables</b> must belong to one of the following sets: $\mathbb{B}$ or $\{0,1\}$, $\mathbb{R}$, $\mathbb{R}^{+}$, $\mathbb{Z}$ e $\mathbb{N}$.</li>
+	        			<li>The MathProg code can be solved by pressing the 'Solve MathProg' button. In this site, it is solved using the <a href="https://github.com/hgourvest/glpk.js" target="_glpk_js">glpk.js</a> library (you have to complete the data section to solve the problem). However, a MathProg code can be solved by any Linear Programming tool that support it. A good example is <a href="https://www.gnu.org/software/glpk/" target="_glpk_tool">GLPK (GNU Linear Programming Kit).</a></li>
 	        		</ul>
+	        	</p>
+	        	<p>
+	        		GitHub: <a href="https://github.com/rafaellc28/Latex2MathProg" target="_github">https://github.com/rafaellc28/Latex2MathProg</a>
 	        	</p>
 				<p class="text-muted">
 					The example below is from <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial"><i>Modeling Language GNU MathProg</i></a>, Appendix E
@@ -61,11 +74,13 @@
 				<div id="alertObj"></div>
 				<div id="alertSubj"></div>
 				
+				<h2>{{LATEX_EDITOR}}</h2>
+
 				<div class="row">
 					<div class="col-xs-12 col-md-6">
 						<div class="row">
 							<div class="col-xs-12">
-								<h2>{{LATEX_CODE}}</h2>
+								<h3>{{LATEX_CODE}}</h3>
 								<div class="input-group" style="width: 100%;">
 									<span class="input-group-addon" style="width:25%">
 										<select id="obj" onchange="changeObjective(this.value)">
@@ -120,7 +135,7 @@
 					<div class="col-xs-12 col-md-6">
 						<div class="row">
 							<div class="col-xs-12">
-								<h2>{{MATHJAX_PREVIEW}}</h2>
+								<h3>{{MATHJAX_PREVIEW}}</h3>
 								<div class="input-group" style="width: 100%;">
 									<span class="input-group-addon" style="width:25%">
 										<div id="objective">{{MINIMIZE}}</div>
@@ -139,26 +154,53 @@
 							</div>
 						</div>
 
+						<div class="row">&nbsp;</div>
+
+						<div class="row">
+							<div class="col-xs-12">
+								<button type="button" class="btn btn-default pull-left" onClick="generateMathProg()">{{GENERATE_MATHPROG}}</button>
+							</div>
+						</div>
+
 						<div id="subjectiveFunction"></div>
 					</div>
+				</div>
+
+				<!--<h2>{{SIMPLE_EDITOR}}</h2>
+
+				<div class="row">
+					<div class="col-xs-12 col-md-6">
+						<h3>{{LATEX_CODE}}</h3>
+						<textarea id="latex" name="latex" rows="10" cols="75"></textarea>
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<h3>{{MATHJAX_PREVIEW}}</h3>
+						<div id="mathOutput" style="width:75%;" class="mathOutputBox">$${}$$</div>
+					</div>
+				</div>-->
+
+				<h2>{{MATHPROG_CODE}}</h2>
+
+				<div class="row">
+					<div id="mathProg" class="col-xs-12">
+					    <textarea id="editor"></textarea>
+					</div>
+					
 				</div>
 
 				<div class="row">&nbsp;</div>
 
 				<div class="row">
 					<div class="col-xs-12">
-						<button type="button" class="btn btn-default" onClick="generateMathProg()">{{GENERATE_MATHPROG}}</button>
-					</div>
+						<button type="button" class="btn btn-default" onClick="solveMathProg()">{{SOLVE_MATHPROG}}</button>
+    				</div>
 				</div>
 
-				<h1>{{MATHPROG_CODE}}</h1>
+				<div class="row">&nbsp;</div>
+				
+				<h2>{{MATHPROG_SOLUTION}}</h2>
 
-				<div class="row">
-					<div id="mathProg" class="col-xs-12">
-						<pre>
-						</pre>
-					</div>
-				</div>
+				<pre id="log"/>
 			</div>
 
 			<script>

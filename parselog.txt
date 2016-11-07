@@ -23,7 +23,7 @@
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE ID . LexToken(IN,'\\in',1,44)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f6456585fc8> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0fd5ef0> (<Variable.Variable instance at 0x7fa6b0f ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE Variable . LexToken(IN,'\\in',1,44)
@@ -35,23 +35,23 @@
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE Variable IN ID . LexToken(COMMA,',',1,49)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f6456587878> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96050> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
+   yacc.py: 409:State  : 220
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE Variable IN Variable . LexToken(COMMA,',',1,49)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f6456587878>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f6456587830> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e96050>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e962d8> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
+   yacc.py: 409:State  : 234
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE Variable IN SetExpression . LexToken(COMMA,',',1,49)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f6456585fc8>,'\\in',<instance @ 0x7f6456587830>] and goto state 111
-   yacc.py: 503:Result : <instance @ 0x7f6456585ef0> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0fd5ef0>,'\\in',<instance @ 0x7fa6b0e962d8>] and goto state 111
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96128> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
    yacc.py: 409:State  : 111
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE EntryIndexingExpression . LexToken(COMMA,',',1,49)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7f6456585ef0>] and goto state 132
-   yacc.py: 503:Result : <instance @ 0x7f6456585b90> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7fa6b0e96128>] and goto state 132
+   yacc.py: 503:Result : <instance @ 0x7fa6b0fd5f38> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 132
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression . LexToken(COMMA,',',1,49)
@@ -64,7 +64,7 @@
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA ID . LexToken(IN,'\\in',1,52)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f6456587950> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e965f0> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA Variable . LexToken(IN,'\\in',1,52)
@@ -76,23 +76,23 @@
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA Variable IN ID . LexToken(RBRACE,'}',1,57)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f6456587ab8> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96440> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
+   yacc.py: 409:State  : 220
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA Variable IN Variable . LexToken(RBRACE,'}',1,57)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f6456587ab8>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f6456587a28> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e96440>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96518> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
+   yacc.py: 409:State  : 234
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA Variable IN SetExpression . LexToken(RBRACE,'}',1,57)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f6456587950>,'\\in',<instance @ 0x7f6456587a28>] and goto state 256
-   yacc.py: 503:Result : <instance @ 0x7f6456587518> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e965f0>,'\\in',<instance @ 0x7fa6b0e96518>] and goto state 258
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e963b0> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 256
+   yacc.py: 409:State  : 258
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression COMMA EntryIndexingExpression . LexToken(RBRACE,'}',1,57)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> IndexingExpression COMMA EntryIndexingExpression] with [<instance @ 0x7f6456585b90>,',',<instance @ 0x7f6456587518>] and goto state 132
-   yacc.py: 503:Result : <instance @ 0x7f6456585b90> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> IndexingExpression COMMA EntryIndexingExpression] with [<instance @ 0x7fa6b0fd5f38>,',',<instance @ 0x7fa6b0e963b0>] and goto state 132
+   yacc.py: 503:Result : <instance @ 0x7fa6b0fd5f38> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 132
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression . LexToken(RBRACE,'}',1,57)
@@ -117,7 +117,7 @@
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ID . LexToken(COMMA,',',1,62)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f6456587a70> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96710> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 189
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',1,62)
@@ -129,29 +129,29 @@
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',1,64)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 231
-   yacc.py: 503:Result : <instance @ 0x7f6456587bd8> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 233
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96a28> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 231
+   yacc.py: 409:State  : 233
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',1,64)
-   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7f6456587a70>,',',<instance @ 0x7f6456587bd8>] and goto state 187
-   yacc.py: 503:Result : <instance @ 0x7f6456587fc8> (<ValueList.ValueList instance at 0x7f645 ...)
+   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7fa6b0e96710>,',',<instance @ 0x7fa6b0e96a28>] and goto state 187
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96830> (<ValueList.ValueList instance at 0x7fa6b ...)
    yacc.py: 408:
    yacc.py: 409:State  : 187
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',1,64)
-   yacc.py: 443:Action : Shift and goto state 258
+   yacc.py: 443:Action : Shift and goto state 260
    yacc.py: 408:
-   yacc.py: 409:State  : 258
+   yacc.py: 409:State  : 260
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList RBRACE . LexToken(TIMES,'*',1,66)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['C','_','{',<instance @ 0x7f6456587fc8>,'}'] and goto state 10
-   yacc.py: 503:Result : <instance @ 0x7f6456587758> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['C','_','{',<instance @ 0x7fa6b0e96830>,'}'] and goto state 10
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96488> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 10
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable . LexToken(TIMES,'*',1,66)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7f6456587758>] and goto state 264
-   yacc.py: 503:Result : <instance @ 0x7f6456587c20> (<LinearExpression.ValuedLinearExpression ...)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7fa6b0e96488>] and goto state 266
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e967e8> (<LinearExpression.ValuedLinearExpression ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 264
+   yacc.py: 409:State  : 266
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(TIMES,'*',1,66)
    yacc.py: 443:Action : Shift and goto state 48
    yacc.py: 408:
@@ -174,7 +174,7 @@
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE ID . LexToken(COMMA,',',1,72)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f6456588098> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96950> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 189
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',1,72)
@@ -186,42 +186,42 @@
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',1,74)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 231
-   yacc.py: 503:Result : <instance @ 0x7f6456588878> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 233
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96dd0> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 231
+   yacc.py: 409:State  : 233
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',1,74)
-   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7f6456588098>,',',<instance @ 0x7f6456588878>] and goto state 187
-   yacc.py: 503:Result : <instance @ 0x7f64565887e8> (<ValueList.ValueList instance at 0x7f645 ...)
+   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7fa6b0e96950>,',',<instance @ 0x7fa6b0e96dd0>] and goto state 187
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96c20> (<ValueList.ValueList instance at 0x7fa6b ...)
    yacc.py: 408:
    yacc.py: 409:State  : 187
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',1,74)
-   yacc.py: 443:Action : Shift and goto state 258
+   yacc.py: 443:Action : Shift and goto state 260
    yacc.py: 408:
-   yacc.py: 409:State  : 258
+   yacc.py: 409:State  : 260
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES ID UNDERLINE LBRACE ValueList RBRACE . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7f64565887e8>,'}'] and goto state 36
-   yacc.py: 503:Result : <instance @ 0x7f6456588758> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7fa6b0e96c20>,'}'] and goto state 36
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96b48> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 36
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES Variable . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
-   yacc.py: 469:Action : Reduce rule [NumericExpression -> Variable] with [<instance @ 0x7f6456588758>] and goto state 103
-   yacc.py: 503:Result : <instance @ 0x7f6456588440> (<NumericExpression.ValuedNumericExpressi ...)
+   yacc.py: 469:Action : Reduce rule [NumericExpression -> Variable] with [<instance @ 0x7fa6b0e96b48>] and goto state 103
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96e60> (<NumericExpression.ValuedNumericExpressi ...)
    yacc.py: 408:
    yacc.py: 409:State  : 103
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression TIMES NumericExpression . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> LinearExpression TIMES NumericExpression] with [<instance @ 0x7f6456587c20>,'*',<instance @ 0x7f6456588440>] and goto state 264
-   yacc.py: 503:Result : <instance @ 0x7f6456588950> (<LinearExpression.LinearExpressionWithAr ...)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> LinearExpression TIMES NumericExpression] with [<instance @ 0x7fa6b0e967e8>,'*',<instance @ 0x7fa6b0e96e60>] and goto state 266
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96c68> (<LinearExpression.LinearExpressionWithAr ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 264
+   yacc.py: 409:State  : 266
    yacc.py: 433:Stack  : MINIMIZE SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7f6456585b90>,'}',<instance @ 0x7f6456588950>] and goto state 12
-   yacc.py: 503:Result : <instance @ 0x7f6456587e60> (<LinearExpression.IteratedLinearExpressi ...)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7fa6b0fd5f38>,'}',<instance @ 0x7fa6b0e96c68>] and goto state 12
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e968c0> (<LinearExpression.IteratedLinearExpressi ...)
    yacc.py: 408:
    yacc.py: 409:State  : 12
    yacc.py: 433:Stack  : MINIMIZE LinearExpression . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
-   yacc.py: 469:Action : Reduce rule [Objective -> MINIMIZE LinearExpression] with ['minimize',<instance @ 0x7f6456587e60>] and goto state 5
-   yacc.py: 503:Result : <instance @ 0x7f6456587f38> (<Objective.Objective instance at 0x7f645 ...)
+   yacc.py: 469:Action : Reduce rule [Objective -> MINIMIZE LinearExpression] with ['minimize',<instance @ 0x7fa6b0e968c0>] and goto state 5
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e967a0> (<Objective.Objective instance at 0x7fa6b ...)
    yacc.py: 408:
    yacc.py: 409:State  : 5
    yacc.py: 433:Stack  : Objective . LexToken(BACKSLASHES,'BACKSLASHES',1,75)
@@ -244,41 +244,41 @@
    yacc.py: 443:Action : Shift and goto state 70
    yacc.py: 408:
    yacc.py: 409:State  : 70
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE . LexToken(ID,'i',3,123)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE . LexToken(ID,'j',3,123)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE ID . LexToken(IN,'\\in',3,125)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f6456588cb0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 106
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96d88> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable . LexToken(IN,'\\in',3,125)
    yacc.py: 443:Action : Shift and goto state 167
    yacc.py: 408:
    yacc.py: 409:State  : 167
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable IN . LexToken(ID,'I',3,129)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable IN . LexToken(ID,'J',3,129)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable IN ID . LexToken(RBRACE,'}',3,130)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f6456588f38> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98320> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
+   yacc.py: 409:State  : 220
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable IN Variable . LexToken(RBRACE,'}',3,130)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f6456588f38>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f645658a098> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e98320>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98098> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
+   yacc.py: 409:State  : 234
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE Variable IN SetExpression . LexToken(RBRACE,'}',3,130)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f6456588cb0>,'\\in',<instance @ 0x7f645658a098>] and goto state 111
-   yacc.py: 503:Result : <instance @ 0x7f6456588cf8> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e96d88>,'\\in',<instance @ 0x7fa6b0e98098>] and goto state 111
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96f80> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
    yacc.py: 409:State  : 111
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE EntryIndexingExpression . LexToken(RBRACE,'}',3,130)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7f6456588cf8>] and goto state 132
-   yacc.py: 503:Result : <instance @ 0x7f64565887e8> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7fa6b0e96f80>] and goto state 132
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e96c20> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 132
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression . LexToken(RBRACE,'}',3,130)
@@ -303,7 +303,7 @@
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ID . LexToken(COMMA,',',3,135)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f645658a200> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98248> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 189
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',3,135)
@@ -315,425 +315,425 @@
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',3,137)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 231
-   yacc.py: 503:Result : <instance @ 0x7f645658a5a8> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 233
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98560> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 231
+   yacc.py: 409:State  : 233
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',3,137)
-   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7f645658a200>,',',<instance @ 0x7f645658a5a8>] and goto state 187
-   yacc.py: 503:Result : <instance @ 0x7f645658a6c8> (<ValueList.ValueList instance at 0x7f645 ...)
+   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7fa6b0e98248>,',',<instance @ 0x7fa6b0e98560>] and goto state 187
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98638> (<ValueList.ValueList instance at 0x7fa6b ...)
    yacc.py: 408:
    yacc.py: 409:State  : 187
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',3,137)
-   yacc.py: 443:Action : Shift and goto state 258
-   yacc.py: 408:
-   yacc.py: 409:State  : 258
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList RBRACE . LexToken(GE,'\\geq',3,139)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7f645658a6c8>,'}'] and goto state 10
-   yacc.py: 503:Result : <instance @ 0x7f645658a248> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 10
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable . LexToken(GE,'\\geq',3,139)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7f645658a248>] and goto state 264
-   yacc.py: 503:Result : <instance @ 0x7f645658a680> (<LinearExpression.ValuedLinearExpression ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 264
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(GE,'\\geq',3,139)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7f64565887e8>,'}',<instance @ 0x7f645658a680>] and goto state 64
-   yacc.py: 503:Result : <instance @ 0x7f645658ab00> (<LinearExpression.IteratedLinearExpressi ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 64
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression . LexToken(GE,'\\geq',3,139)
-   yacc.py: 443:Action : Shift and goto state 121
-   yacc.py: 408:
-   yacc.py: 409:State  : 121
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE . LexToken(ID,'B',3,144)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID . LexToken(UNDERLINE,'_',3,145)
-   yacc.py: 443:Action : Shift and goto state 55
-   yacc.py: 408:
-   yacc.py: 409:State  : 55
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID UNDERLINE . LexToken(LBRACE,'{',3,146)
-   yacc.py: 443:Action : Shift and goto state 117
-   yacc.py: 408:
-   yacc.py: 409:State  : 117
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID UNDERLINE LBRACE . LexToken(ID,'j',3,147)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID UNDERLINE LBRACE ID . LexToken(RBRACE,'}',3,148)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f645658a638> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 189
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID UNDERLINE LBRACE Variable . LexToken(RBRACE,'}',3,148)
    yacc.py: 443:Action : Shift and goto state 260
    yacc.py: 408:
    yacc.py: 409:State  : 260
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE ID UNDERLINE LBRACE Variable RBRACE . LexToken(COMMA,',',3,149)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE Variable RBRACE] with ['B','_','{',<instance @ 0x7f645658a638>,'}'] and goto state 10
-   yacc.py: 503:Result : <instance @ 0x7f645658b050> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList RBRACE . LexToken(LE,'\\leq',3,139)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7fa6b0e98638>,'}'] and goto state 10
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e982d8> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 10
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE Variable . LexToken(COMMA,',',3,149)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7f645658b050>] and goto state 192
-   yacc.py: 503:Result : <instance @ 0x7f645658abd8> (<LinearExpression.ValuedLinearExpression ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable . LexToken(LE,'\\leq',3,139)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7fa6b0e982d8>] and goto state 266
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e985f0> (<LinearExpression.ValuedLinearExpression ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 192
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression GE LinearExpression . LexToken(COMMA,',',3,149)
-   yacc.py: 469:Action : Reduce rule [ConstraintExpression -> LinearExpression GE LinearExpression] with [<instance @ 0x7f645658ab00>,'\\geq',<instance @ 0x7f645658abd8>] and goto state 68
-   yacc.py: 503:Result : <instance @ 0x7f645658ac20> (<ConstraintExpression.ConstraintExpressi ...)
+   yacc.py: 409:State  : 266
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(LE,'\\leq',3,139)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7fa6b0e96c20>,'}',<instance @ 0x7fa6b0e985f0>] and goto state 64
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98878> (<LinearExpression.IteratedLinearExpressi ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 64
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression . LexToken(LE,'\\leq',3,139)
+   yacc.py: 443:Action : Shift and goto state 120
+   yacc.py: 408:
+   yacc.py: 409:State  : 120
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE . LexToken(ID,'A',3,144)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID . LexToken(UNDERLINE,'_',3,145)
+   yacc.py: 443:Action : Shift and goto state 55
+   yacc.py: 408:
+   yacc.py: 409:State  : 55
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID UNDERLINE . LexToken(LBRACE,'{',3,146)
+   yacc.py: 443:Action : Shift and goto state 117
+   yacc.py: 408:
+   yacc.py: 409:State  : 117
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID UNDERLINE LBRACE . LexToken(ID,'i',3,147)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID UNDERLINE LBRACE ID . LexToken(RBRACE,'}',3,148)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e985a8> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 189
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID UNDERLINE LBRACE Variable . LexToken(RBRACE,'}',3,148)
+   yacc.py: 443:Action : Shift and goto state 262
+   yacc.py: 408:
+   yacc.py: 409:State  : 262
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE ID UNDERLINE LBRACE Variable RBRACE . LexToken(COMMA,',',3,149)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE Variable RBRACE] with ['A','_','{',<instance @ 0x7fa6b0e985a8>,'}'] and goto state 10
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98998> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 10
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE Variable . LexToken(COMMA,',',3,149)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7fa6b0e98998>] and goto state 191
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98b48> (<LinearExpression.ValuedLinearExpression ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 191
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO LinearExpression LE LinearExpression . LexToken(COMMA,',',3,149)
+   yacc.py: 469:Action : Reduce rule [ConstraintExpression -> LinearExpression LE LinearExpression] with [<instance @ 0x7fa6b0e98878>,'\\leq',<instance @ 0x7fa6b0e98b48>] and goto state 68
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98908> (<ConstraintExpression.ConstraintExpressi ...)
    yacc.py: 408:
    yacc.py: 409:State  : 68
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression . LexToken(COMMA,',',3,149)
    yacc.py: 443:Action : Shift and goto state 130
    yacc.py: 408:
    yacc.py: 409:State  : 130
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA . LexToken(ID,'j',3,151)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA . LexToken(ID,'i',3,151)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA ID . LexToken(IN,'\\in',3,153)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f645658b128> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 106
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98b90> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable . LexToken(IN,'\\in',3,153)
    yacc.py: 443:Action : Shift and goto state 167
    yacc.py: 408:
    yacc.py: 409:State  : 167
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN . LexToken(ID,'J',3,157)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN . LexToken(ID,'I',3,157)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN ID . LexToken(COMMA,',',3,158)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f645658b5f0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN ID . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99200> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN Variable . LexToken(COMMA,',',3,158)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f645658b5f0>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f645658b560> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 409:State  : 220
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN Variable . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e99200>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99950> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN SetExpression . LexToken(COMMA,',',3,158)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f645658b128>,'\\in',<instance @ 0x7f645658b560>] and goto state 111
-   yacc.py: 503:Result : <instance @ 0x7f645658b0e0> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 409:State  : 234
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA Variable IN SetExpression . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e98b90>,'\\in',<instance @ 0x7fa6b0e99950>] and goto state 111
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99170> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
    yacc.py: 409:State  : 111
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA EntryIndexingExpression . LexToken(COMMA,',',3,158)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7f645658b0e0>] and goto state 196
-   yacc.py: 503:Result : <instance @ 0x7f645658b4d0> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA EntryIndexingExpression . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7fa6b0e99170>] and goto state 196
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98e18> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 196
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression . LexToken(COMMA,',',3,158)
-   yacc.py: 443:Action : Shift and goto state 175
-   yacc.py: 408:
-   yacc.py: 409:State  : 175
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA . LexToken(ID,'x',5,162)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID . LexToken(UNDERLINE,'_',5,163)
-   yacc.py: 443:Action : Shift and goto state 55
-   yacc.py: 408:
-   yacc.py: 409:State  : 55
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE . LexToken(LBRACE,'{',5,164)
-   yacc.py: 443:Action : Shift and goto state 117
-   yacc.py: 408:
-   yacc.py: 409:State  : 117
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE . LexToken(ID,'i',5,165)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ID . LexToken(COMMA,',',5,166)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f645658bcb0> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 189
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',5,166)
-   yacc.py: 443:Action : Shift and goto state 166
-   yacc.py: 408:
-   yacc.py: 409:State  : 166
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA . LexToken(ID,'j',5,167)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',5,168)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 231
-   yacc.py: 503:Result : <instance @ 0x7f645658bdd0> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 231
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',5,168)
-   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7f645658bcb0>,',',<instance @ 0x7f645658bdd0>] and goto state 187
-   yacc.py: 503:Result : <instance @ 0x7f645658d0e0> (<ValueList.ValueList instance at 0x7f645 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 187
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',5,168)
-   yacc.py: 443:Action : Shift and goto state 258
-   yacc.py: 408:
-   yacc.py: 409:State  : 258
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ValueList RBRACE . LexToken(IN,'\\in',5,170)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7f645658d0e0>,'}'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f645658ba70> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 106
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA Variable . LexToken(IN,'\\in',5,170)
-   yacc.py: 443:Action : Shift and goto state 167
-   yacc.py: 408:
-   yacc.py: 409:State  : 167
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA Variable IN . LexToken(NATURALSET,'natural',5,174)
-   yacc.py: 443:Action : Shift and goto state 225
-   yacc.py: 408:
-   yacc.py: 409:State  : 225
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA Variable IN NATURALSET . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> NATURALSET] with ['natural'] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f645658bd40> (<SetExpression.SetExpressionWithValue in ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 232
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA Variable IN SetExpression . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f645658ba70>,'\\in',<instance @ 0x7f645658bd40>] and goto state 256
-   yacc.py: 503:Result : <instance @ 0x7f645658d3b0> (<EntryIndexingExpression.EntryIndexingEx ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 256
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression COMMA EntryIndexingExpression . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> IndexingExpression COMMA EntryIndexingExpression] with [<instance @ 0x7f645658b4d0>,',',<instance @ 0x7f645658d3b0>] and goto state 196
-   yacc.py: 503:Result : <instance @ 0x7f645658b4d0> (<IndexingExpression.IndexingExpression i ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 196
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
-   yacc.py: 469:Action : Reduce rule [Constraint -> ConstraintExpression COMMA IndexingExpression] with [<instance @ 0x7f645658ac20>,',',<instance @ 0x7f645658b4d0>] and goto state 65
-   yacc.py: 503:Result : <instance @ 0x7f645658bb00> (<Constraints.Constraint instance at 0x7f ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintExpression COMMA IndexingExpression . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [Constraint -> ConstraintExpression COMMA IndexingExpression] with [<instance @ 0x7fa6b0e98908>,',',<instance @ 0x7fa6b0e98e18>] and goto state 65
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e993b0> (<Constraints.Constraint instance at 0x7f ...)
    yacc.py: 408:
    yacc.py: 409:State  : 65
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO Constraint . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
-   yacc.py: 469:Action : Reduce rule [ConstraintList -> Constraint] with [<instance @ 0x7f645658bb00>] and goto state 67
-   yacc.py: 503:Result : <list @ 0x7f64565957a0> ([<Constraints.Constraint instance at 0x7 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO Constraint . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
+   yacc.py: 469:Action : Reduce rule [ConstraintList -> Constraint] with [<instance @ 0x7fa6b0e993b0>] and goto state 67
+   yacc.py: 503:Result : <list @ 0x7fa6b0fcb098> ([<Constraints.Constraint instance at 0x7 ...)
    yacc.py: 408:
    yacc.py: 409:State  : 67
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList . LexToken(BACKSLASHES,'BACKSLASHES',5,184)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList . LexToken(BACKSLASHES,'BACKSLASHES',3,158)
    yacc.py: 443:Action : Shift and goto state 129
    yacc.py: 408:
    yacc.py: 409:State  : 129
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES . LexToken(SUM,'\\sum',7,201)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES . LexToken(SUM,'\\sum',5,175)
    yacc.py: 443:Action : Shift and goto state 6
    yacc.py: 408:
    yacc.py: 409:State  : 6
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM . LexToken(UNDERLINE,'_',7,212)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM . LexToken(UNDERLINE,'_',5,186)
    yacc.py: 443:Action : Shift and goto state 22
    yacc.py: 408:
    yacc.py: 409:State  : 22
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE . LexToken(LBRACE,'{',7,213)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE . LexToken(LBRACE,'{',5,187)
    yacc.py: 443:Action : Shift and goto state 70
    yacc.py: 408:
    yacc.py: 409:State  : 70
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE . LexToken(ID,'j',7,214)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE . LexToken(ID,'i',5,188)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE ID . LexToken(IN,'\\in',7,216)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f645658d170> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE ID . LexToken(IN,'\\in',5,190)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 106
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99098> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable . LexToken(IN,'\\in',7,216)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable . LexToken(IN,'\\in',5,190)
    yacc.py: 443:Action : Shift and goto state 167
    yacc.py: 408:
    yacc.py: 409:State  : 167
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN . LexToken(ID,'J',7,220)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN . LexToken(ID,'I',5,194)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN ID . LexToken(RBRACE,'}',7,221)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f645658d4d0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN ID . LexToken(RBRACE,'}',5,195)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99b48> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN Variable . LexToken(RBRACE,'}',7,221)
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f645658d4d0>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f645658d440> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 409:State  : 220
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN Variable . LexToken(RBRACE,'}',5,195)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e99b48>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99cf8> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN SetExpression . LexToken(RBRACE,'}',7,221)
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f645658d170>,'\\in',<instance @ 0x7f645658d440>] and goto state 111
-   yacc.py: 503:Result : <instance @ 0x7f645658d200> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 409:State  : 234
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE Variable IN SetExpression . LexToken(RBRACE,'}',5,195)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e99098>,'\\in',<instance @ 0x7fa6b0e99cf8>] and goto state 111
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99638> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
    yacc.py: 409:State  : 111
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE EntryIndexingExpression . LexToken(RBRACE,'}',7,221)
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7f645658d200>] and goto state 132
-   yacc.py: 503:Result : <instance @ 0x7f645658b170> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE EntryIndexingExpression . LexToken(RBRACE,'}',5,195)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7fa6b0e99638>] and goto state 132
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e98dd0> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 132
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression . LexToken(RBRACE,'}',7,221)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression . LexToken(RBRACE,'}',5,195)
    yacc.py: 443:Action : Shift and goto state 198
    yacc.py: 408:
    yacc.py: 409:State  : 198
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE . LexToken(ID,'x',7,222)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE . LexToken(ID,'x',5,196)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID . LexToken(UNDERLINE,'_',7,223)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID . LexToken(UNDERLINE,'_',5,197)
    yacc.py: 443:Action : Shift and goto state 55
    yacc.py: 408:
    yacc.py: 409:State  : 55
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE . LexToken(LBRACE,'{',7,224)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE . LexToken(LBRACE,'{',5,198)
    yacc.py: 443:Action : Shift and goto state 117
    yacc.py: 408:
    yacc.py: 409:State  : 117
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE . LexToken(ID,'i',7,225)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE . LexToken(ID,'i',5,199)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ID . LexToken(COMMA,',',7,226)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ID . LexToken(COMMA,',',5,200)
    yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f645658d7a0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99998> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 189
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',7,226)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',5,200)
    yacc.py: 443:Action : Shift and goto state 166
    yacc.py: 408:
    yacc.py: 409:State  : 166
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA . LexToken(ID,'j',7,227)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA . LexToken(ID,'j',5,201)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',7,228)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 231
-   yacc.py: 503:Result : <instance @ 0x7f645658d8c0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',5,202)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 233
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b2d8> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 231
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',7,228)
-   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7f645658d7a0>,',',<instance @ 0x7f645658d8c0>] and goto state 187
-   yacc.py: 503:Result : <instance @ 0x7f645658d9e0> (<ValueList.ValueList instance at 0x7f645 ...)
+   yacc.py: 409:State  : 233
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',5,202)
+   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7fa6b0e99998>,',',<instance @ 0x7fa6b0e9b2d8>] and goto state 187
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b488> (<ValueList.ValueList instance at 0x7fa6b ...)
    yacc.py: 408:
    yacc.py: 409:State  : 187
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',7,228)
-   yacc.py: 443:Action : Shift and goto state 258
-   yacc.py: 408:
-   yacc.py: 409:State  : 258
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList RBRACE . LexToken(LE,'\\leq',7,230)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7f645658d9e0>,'}'] and goto state 10
-   yacc.py: 503:Result : <instance @ 0x7f645658d638> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 10
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable . LexToken(LE,'\\leq',7,230)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7f645658d638>] and goto state 264
-   yacc.py: 503:Result : <instance @ 0x7f645658da28> (<LinearExpression.ValuedLinearExpression ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 264
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(LE,'\\leq',7,230)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7f645658b170>,'}',<instance @ 0x7f645658da28>] and goto state 64
-   yacc.py: 503:Result : <instance @ 0x7f645658da70> (<LinearExpression.IteratedLinearExpressi ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 64
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression . LexToken(LE,'\\leq',7,230)
-   yacc.py: 443:Action : Shift and goto state 120
-   yacc.py: 408:
-   yacc.py: 409:State  : 120
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE . LexToken(ID,'A',7,235)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID . LexToken(UNDERLINE,'_',7,236)
-   yacc.py: 443:Action : Shift and goto state 55
-   yacc.py: 408:
-   yacc.py: 409:State  : 55
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID UNDERLINE . LexToken(LBRACE,'{',7,237)
-   yacc.py: 443:Action : Shift and goto state 117
-   yacc.py: 408:
-   yacc.py: 409:State  : 117
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID UNDERLINE LBRACE . LexToken(ID,'i',7,238)
-   yacc.py: 443:Action : Shift and goto state 14
-   yacc.py: 408:
-   yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID UNDERLINE LBRACE ID . LexToken(RBRACE,'}',7,239)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
-   yacc.py: 503:Result : <instance @ 0x7f645658d830> (<Variable.Variable instance at 0x7f64565 ...)
-   yacc.py: 408:
-   yacc.py: 409:State  : 189
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID UNDERLINE LBRACE Variable . LexToken(RBRACE,'}',7,239)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',5,202)
    yacc.py: 443:Action : Shift and goto state 260
    yacc.py: 408:
    yacc.py: 409:State  : 260
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE ID UNDERLINE LBRACE Variable RBRACE . LexToken(COMMA,',',7,240)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE Variable RBRACE] with ['A','_','{',<instance @ 0x7f645658d830>,'}'] and goto state 10
-   yacc.py: 503:Result : <instance @ 0x7f645658db00> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE ID UNDERLINE LBRACE ValueList RBRACE . LexToken(GE,'\\geq',5,204)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7fa6b0e9b488>,'}'] and goto state 10
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b368> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 10
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE Variable . LexToken(COMMA,',',7,240)
-   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7f645658db00>] and goto state 191
-   yacc.py: 503:Result : <instance @ 0x7f645658db48> (<LinearExpression.ValuedLinearExpression ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable . LexToken(GE,'\\geq',5,204)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7fa6b0e9b368>] and goto state 266
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b3f8> (<LinearExpression.ValuedLinearExpression ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 191
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression LE LinearExpression . LexToken(COMMA,',',7,240)
-   yacc.py: 469:Action : Reduce rule [ConstraintExpression -> LinearExpression LE LinearExpression] with [<instance @ 0x7f645658da70>,'\\leq',<instance @ 0x7f645658db48>] and goto state 68
-   yacc.py: 503:Result : <instance @ 0x7f645658db90> (<ConstraintExpression.ConstraintExpressi ...)
+   yacc.py: 409:State  : 266
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression . LexToken(GE,'\\geq',5,204)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression] with ['\\sum','_','{',<instance @ 0x7fa6b0e98dd0>,'}',<instance @ 0x7fa6b0e9b3f8>] and goto state 64
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b560> (<LinearExpression.IteratedLinearExpressi ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 64
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression . LexToken(GE,'\\geq',5,204)
+   yacc.py: 443:Action : Shift and goto state 121
+   yacc.py: 408:
+   yacc.py: 409:State  : 121
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE . LexToken(ID,'B',5,209)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID . LexToken(UNDERLINE,'_',5,210)
+   yacc.py: 443:Action : Shift and goto state 55
+   yacc.py: 408:
+   yacc.py: 409:State  : 55
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID UNDERLINE . LexToken(LBRACE,'{',5,211)
+   yacc.py: 443:Action : Shift and goto state 117
+   yacc.py: 408:
+   yacc.py: 409:State  : 117
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID UNDERLINE LBRACE . LexToken(ID,'j',5,212)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID UNDERLINE LBRACE ID . LexToken(RBRACE,'}',5,213)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 189
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b200> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 189
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID UNDERLINE LBRACE Variable . LexToken(RBRACE,'}',5,213)
+   yacc.py: 443:Action : Shift and goto state 262
+   yacc.py: 408:
+   yacc.py: 409:State  : 262
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE ID UNDERLINE LBRACE Variable RBRACE . LexToken(COMMA,',',5,214)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE Variable RBRACE] with ['B','_','{',<instance @ 0x7fa6b0e9b200>,'}'] and goto state 10
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b5a8> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 10
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE Variable . LexToken(COMMA,',',5,214)
+   yacc.py: 469:Action : Reduce rule [LinearExpression -> Variable] with [<instance @ 0x7fa6b0e9b5a8>] and goto state 192
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b4d0> (<LinearExpression.ValuedLinearExpression ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 192
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES LinearExpression GE LinearExpression . LexToken(COMMA,',',5,214)
+   yacc.py: 469:Action : Reduce rule [ConstraintExpression -> LinearExpression GE LinearExpression] with [<instance @ 0x7fa6b0e9b560>,'\\geq',<instance @ 0x7fa6b0e9b4d0>] and goto state 68
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b518> (<ConstraintExpression.ConstraintExpressi ...)
    yacc.py: 408:
    yacc.py: 409:State  : 68
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression . LexToken(COMMA,',',7,240)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression . LexToken(COMMA,',',5,214)
    yacc.py: 443:Action : Shift and goto state 130
    yacc.py: 408:
    yacc.py: 409:State  : 130
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA . LexToken(ID,'i',7,242)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA . LexToken(ID,'j',5,216)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA ID . LexToken(IN,'\\in',7,244)
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 106
-   yacc.py: 503:Result : <instance @ 0x7f645658def0> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA ID . LexToken(IN,'\\in',5,218)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 106
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b680> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
    yacc.py: 409:State  : 106
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable . LexToken(IN,'\\in',7,244)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable . LexToken(IN,'\\in',5,218)
    yacc.py: 443:Action : Shift and goto state 167
    yacc.py: 408:
    yacc.py: 409:State  : 167
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN . LexToken(ID,'I',7,248)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN . LexToken(ID,'J',5,222)
    yacc.py: 443:Action : Shift and goto state 14
    yacc.py: 408:
    yacc.py: 409:State  : 14
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN ID . $end
-   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['I'] and goto state 218
-   yacc.py: 503:Result : <instance @ 0x7f645658f290> (<Variable.Variable instance at 0x7f64565 ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN ID . LexToken(COMMA,',',5,223)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['J'] and goto state 220
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9bc20> (<Variable.Variable instance at 0x7fa6b0e ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 218
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN Variable . $end
-   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7f645658f290>] and goto state 232
-   yacc.py: 503:Result : <instance @ 0x7f645658f680> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 409:State  : 220
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN Variable . LexToken(COMMA,',',5,223)
+   yacc.py: 469:Action : Reduce rule [SetExpression -> Variable] with [<instance @ 0x7fa6b0e9bc20>] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9bea8> (<SetExpression.SetExpressionWithValue in ...)
    yacc.py: 408:
-   yacc.py: 409:State  : 232
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN SetExpression . $end
-   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7f645658def0>,'\\in',<instance @ 0x7f645658f680>] and goto state 111
-   yacc.py: 503:Result : <instance @ 0x7f645658f4d0> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 409:State  : 234
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA Variable IN SetExpression . LexToken(COMMA,',',5,223)
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e9b680>,'\\in',<instance @ 0x7fa6b0e9bea8>] and goto state 111
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9ba70> (<EntryIndexingExpression.EntryIndexingEx ...)
    yacc.py: 408:
    yacc.py: 409:State  : 111
-   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA EntryIndexingExpression . $end
-   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7f645658f4d0>] and goto state 196
-   yacc.py: 503:Result : <instance @ 0x7f645658df80> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA EntryIndexingExpression . LexToken(COMMA,',',5,223)
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> EntryIndexingExpression] with [<instance @ 0x7fa6b0e9ba70>] and goto state 196
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b6c8> (<IndexingExpression.IndexingExpression i ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 196
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression . LexToken(COMMA,',',5,223)
+   yacc.py: 443:Action : Shift and goto state 175
+   yacc.py: 408:
+   yacc.py: 409:State  : 175
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA . LexToken(ID,'x',7,227)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID . LexToken(UNDERLINE,'_',7,228)
+   yacc.py: 443:Action : Shift and goto state 55
+   yacc.py: 408:
+   yacc.py: 409:State  : 55
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE . LexToken(LBRACE,'{',7,229)
+   yacc.py: 443:Action : Shift and goto state 117
+   yacc.py: 408:
+   yacc.py: 409:State  : 117
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE . LexToken(ID,'i',7,230)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ID . LexToken(COMMA,',',7,231)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['i'] and goto state 189
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9c200> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 189
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable . LexToken(COMMA,',',7,231)
+   yacc.py: 443:Action : Shift and goto state 166
+   yacc.py: 408:
+   yacc.py: 409:State  : 166
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA . LexToken(ID,'j',7,232)
+   yacc.py: 443:Action : Shift and goto state 14
+   yacc.py: 408:
+   yacc.py: 409:State  : 14
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA ID . LexToken(RBRACE,'}',7,233)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID] with ['j'] and goto state 233
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9c3f8> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 233
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE Variable COMMA Variable . LexToken(RBRACE,'}',7,233)
+   yacc.py: 469:Action : Reduce rule [ValueList -> Variable COMMA Variable] with [<instance @ 0x7fa6b0e9c200>,',',<instance @ 0x7fa6b0e9c3f8>] and goto state 187
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9cab8> (<ValueList.ValueList instance at 0x7fa6b ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 187
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ValueList . LexToken(RBRACE,'}',7,233)
+   yacc.py: 443:Action : Shift and goto state 260
+   yacc.py: 408:
+   yacc.py: 409:State  : 260
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA ID UNDERLINE LBRACE ValueList RBRACE . LexToken(IN,'\\in',7,235)
+   yacc.py: 469:Action : Reduce rule [Variable -> ID UNDERLINE LBRACE ValueList RBRACE] with ['x','_','{',<instance @ 0x7fa6b0e9cab8>,'}'] and goto state 106
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9c320> (<Variable.Variable instance at 0x7fa6b0e ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 106
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA Variable . LexToken(IN,'\\in',7,235)
+   yacc.py: 443:Action : Shift and goto state 167
+   yacc.py: 408:
+   yacc.py: 409:State  : 167
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA Variable IN . LexToken(NATURALSET,'natural',7,239)
+   yacc.py: 443:Action : Shift and goto state 227
+   yacc.py: 408:
+   yacc.py: 409:State  : 227
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA Variable IN NATURALSET . $end
+   yacc.py: 469:Action : Reduce rule [SetExpression -> NATURALSET] with ['natural'] and goto state 234
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9c128> (<SetExpression.SetExpressionWithValue in ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 234
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA Variable IN SetExpression . $end
+   yacc.py: 469:Action : Reduce rule [EntryIndexingExpression -> Variable IN SetExpression] with [<instance @ 0x7fa6b0e9c320>,'\\in',<instance @ 0x7fa6b0e9c128>] and goto state 258
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9c7a0> (<EntryIndexingExpression.EntryIndexingEx ...)
+   yacc.py: 408:
+   yacc.py: 409:State  : 258
+   yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression COMMA EntryIndexingExpression . $end
+   yacc.py: 469:Action : Reduce rule [IndexingExpression -> IndexingExpression COMMA EntryIndexingExpression] with [<instance @ 0x7fa6b0e9b6c8>,',',<instance @ 0x7fa6b0e9c7a0>] and goto state 196
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9b6c8> (<IndexingExpression.IndexingExpression i ...)
    yacc.py: 408:
    yacc.py: 409:State  : 196
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES ConstraintExpression COMMA IndexingExpression . $end
-   yacc.py: 469:Action : Reduce rule [Constraint -> ConstraintExpression COMMA IndexingExpression] with [<instance @ 0x7f645658db90>,',',<instance @ 0x7f645658df80>] and goto state 194
-   yacc.py: 503:Result : <instance @ 0x7f645658f710> (<Constraints.Constraint instance at 0x7f ...)
+   yacc.py: 469:Action : Reduce rule [Constraint -> ConstraintExpression COMMA IndexingExpression] with [<instance @ 0x7fa6b0e9b518>,',',<instance @ 0x7fa6b0e9b6c8>] and goto state 194
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9cb00> (<Constraints.Constraint instance at 0x7f ...)
    yacc.py: 408:
    yacc.py: 409:State  : 194
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList BACKSLASHES Constraint . $end
-   yacc.py: 469:Action : Reduce rule [ConstraintList -> ConstraintList BACKSLASHES Constraint] with [<list @ 0x7f64565957a0>,'BACKSLASHES',<instance @ 0x7f645658f710>] and goto state 67
-   yacc.py: 503:Result : <list @ 0x7f6456594248> ([<Constraints.Constraint instance at 0x7 ...)
+   yacc.py: 469:Action : Reduce rule [ConstraintList -> ConstraintList BACKSLASHES Constraint] with [<list @ 0x7fa6b0fcb098>,'BACKSLASHES',<instance @ 0x7fa6b0e9cb00>] and goto state 67
+   yacc.py: 503:Result : <list @ 0x7fa6b0fcb3b0> ([<Constraints.Constraint instance at 0x7 ...)
    yacc.py: 408:
    yacc.py: 409:State  : 67
    yacc.py: 433:Stack  : Objective BACKSLASHES SUBJECTTO ConstraintList . $end
-   yacc.py: 469:Action : Reduce rule [Constraints -> SUBJECTTO ConstraintList] with ['subjectto',<list @ 0x7f6456594248>] and goto state 69
-   yacc.py: 503:Result : <instance @ 0x7f645658d0e0> (<Constraints.Constraints instance at 0x7 ...)
+   yacc.py: 469:Action : Reduce rule [Constraints -> SUBJECTTO ConstraintList] with ['subjectto',<list @ 0x7fa6b0fcb3b0>] and goto state 69
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e99a70> (<Constraints.Constraints instance at 0x7 ...)
    yacc.py: 408:
    yacc.py: 409:State  : 69
    yacc.py: 428:Defaulted state 69: Reduce using 3
    yacc.py: 433:Stack  : Objective BACKSLASHES Constraints . $end
-   yacc.py: 469:Action : Reduce rule [LP -> Objective BACKSLASHES Constraints] with [<instance @ 0x7f6456587f38>,'BACKSLASHES',<instance @ 0x7f645658d0e0>] and goto state 1
-   yacc.py: 503:Result : <instance @ 0x7f645658f8c0> (<LinearProgram.LinearProgram instance at ...)
+   yacc.py: 469:Action : Reduce rule [LP -> Objective BACKSLASHES Constraints] with [<instance @ 0x7fa6b0e967a0>,'BACKSLASHES',<instance @ 0x7fa6b0e99a70>] and goto state 1
+   yacc.py: 503:Result : <instance @ 0x7fa6b0e9cab8> (<LinearProgram.LinearProgram instance at ...)
    yacc.py: 408:
    yacc.py: 409:State  : 1
    yacc.py: 433:Stack  : LP . $end
-   yacc.py: 564:Done   : Returning <instance @ 0x7f645658f8c0> (<LinearProgram.LinearProgram instance at ...)
+   yacc.py: 564:Done   : Returning <instance @ 0x7fa6b0e9cab8> (<LinearProgram.LinearProgram instance at ...)
    yacc.py: 565:PLY: PARSE DEBUG END

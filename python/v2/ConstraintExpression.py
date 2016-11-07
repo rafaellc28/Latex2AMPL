@@ -31,7 +31,7 @@ class ConstraintExpression2(ConstraintExpression):
         to string
         """
         
-        return "CntExpr:" + str(self.linearExpression1) + " " + self.op + " " + str(self.linearExpression2)
+        return "CntExprWith2:" + str(self.linearExpression1) + " " + self.op + " " + str(self.linearExpression2)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -70,7 +70,7 @@ class ConstraintExpression3(ConstraintExpression):
         to string
         """
         
-        return "CntExpr:" + str(self.numericExpression1) + " " + self.op + " " + str(self.linearExpression) + " " + self.op + " " + str(self.numericExpression2)
+        return "CntExprWith3:" + str(self.numericExpression1) + " " + self.op + " " + str(self.linearExpression) + " " + self.op + " " + str(self.numericExpression2)
     
     def setupEnvironment(self, codeSetup):
         """

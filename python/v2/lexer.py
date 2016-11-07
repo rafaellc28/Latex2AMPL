@@ -21,7 +21,9 @@ tokens = [
    'FORALL',
    'EXISTS',
    'INTEGERSET',
+   'BINARYSET',
    'REALSET',
+   'REALSETPOSITIVE',
    'NATURALSET',
    'SUBSET',
    'NOTSUBSET',
@@ -136,6 +138,16 @@ def t_EXISTS(t):
 def t_INTEGERSET(t):
    r'\\mathbb{Z}'
    t.value = "integer"
+   return t
+
+def t_BINARYSET(t):
+   r'\\mathbb{B}'
+   t.value = "binary"
+   return t
+
+def t_REALSETPOSITIVE(t):
+   r'\\mathbb{R}\^{\+}'
+   t.value = "realpositive"
    return t
 
 def t_REALSET(t):

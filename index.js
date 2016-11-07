@@ -84,7 +84,8 @@ app.post('/', function(req, res) {
 	  	//res.send("Ocorreu erro na geração do MathProg, verifique se o Problema de Programação Linear está correto!");
 	  	res.send(jsesc(err));
 	  } else{
-		res.send("<pre>"+response.replace(/(?:\r\n|\r|\n)/g, '<br />')+"</pre>");
+		//res.send(response.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+		res.send(response);
 	  }
 
 	  //console.log('finished');

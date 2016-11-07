@@ -2,6 +2,14 @@ from Utils import *
 from TupleList import *
 from ValueList import *
 from Variable import *
+from GenSubIndices import *
+from GenSet import *
+from GenSubIndice import *
+from GenVariable import *
+from GenParameter import *
+from GenDomain import *
+from GenType import *
+from GenTuple import *
 
 class CodeSetup:
     """ Visitor in the Visitor Pattern """
@@ -9,7 +17,7 @@ class CodeSetup:
     def __init__(self, codeGenerator = None):
         self.codeGenerator = codeGenerator
         self.varKey = None
-        self.Stm = None
+        self.curList = None
 
     def setupEnvironment(self, node):
         cls = node.__class__
@@ -22,7 +30,9 @@ class CodeSetup:
     # Auxiliary Methods
 
     def _addDomainAux(self, variable, domain):
-        self.codeGenerator.Types[variable.generateCodeWithoutIndices(self.codeGenerator)] = domain
+        name = variable.generateCodeWithoutIndices(self.codeGenerator)
+        self.codeGenerator.genTypes.add(GenType(name, domain))
+        variable.setIsVar(True)
 
     def _addDomain(self, variable, domain):
         if isinstance(variable, ValueList):
@@ -33,8 +43,9 @@ class CodeSetup:
 
     def _addIndiceAux(self, variable, setExpression):
         ind = variable.generateCode(self.codeGenerator)
-        if ind in self.codeGenerator.Indices:
-            self.codeGenerator.Indices[ind] = setExpression
+        _domain = self.codeGenerator.genDomains.get(ind)
+        if _domain != None:
+            _domain.setDomain(setExpression)
 
     def _addIndice(self, variable, setExpression):
             if isinstance(variable, ValueList):
@@ -82,10 +93,18 @@ class CodeSetup:
 
     def _setupEnvironment_SubIndice(self, node):
         ind = node.generateCode(self.codeGenerator)
-        self.Stm[self.varKey]["sub-indices"][node.getIndice()]["var"] = ind
+        if not self.codeGenerator.genDomains.has(ind):
+            self.codeGenerator.genDomains.add(GenDomain(ind))
+
+        if self.curList == None:
+            return
         
-        if not ind in self.codeGenerator.Indices:
-            self.codeGenerator.Indices[ind] = ""
+        _genObj = self.curList.get(self.varKey)
+        if _genObj != None:
+            _subIndices = _genObj.getSubIndices()
+
+            if _subIndices.getByIndice(node.getIndice()) == None:
+                _subIndices.add(GenSubIndice(node.getIndice(), ind, None, None, _subIndices)) # set the name of the variable as the index
 
     # Linear Program
     def setupEnvironment_LinearProgram(self, node):
@@ -248,7 +267,7 @@ class CodeSetup:
         setCode = node.setExpression.generateCode(self.codeGenerator)
         setCode = setCode.replace(" ", "")
 
-        if setCode == "0,1":
+        if setCode == "0,1" or setCode == "binary":
             node.isBinary = True
             self._addDomain(variable, "binary")
 
@@ -259,6 +278,10 @@ class CodeSetup:
         elif setCode == "natural":
             node.isNatural = True
             self._addDomain(variable, "integer, >= 0")
+
+        elif setCode == "realpositive":
+            node.isReal = True
+            self._addDomain(variable, ">= 0")
 
         elif setCode == "real":
             node.isReal = True
@@ -276,14 +299,24 @@ class CodeSetup:
             return
 
         if isinstance(node.variable, TupleList):
-            self.codeGenerator.Tuples[node.setExpression.generateCode(self.codeGenerator)] = {}
-            self.codeGenerator.Tuples[node.setExpression.generateCode(self.codeGenerator)]["tuple"] = map(lambda val: val.generateCode(self.codeGenerator), node.variable.getValues())
-            self.codeGenerator.Tuples[node.setExpression.generateCode(self.codeGenerator)]["op"] = node.op
+            tupleVal = node.variable.getValues()
+            dimen = len(tupleVal)
+
+            if dimen > 1:
+                node.setExpression.setDimension(dimen)
+
+            node.setExpression.setupEnvironment(self)
+            self.codeGenerator.genTuples.add(GenTuple(
+                node.setExpression.generateCode(self.codeGenerator), 
+                map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
+                node.op))
 
         else:
+            node.setExpression.setupEnvironment(self)
             self.setupEnvironment_EntryExpressionWithSet(node, node.variable)
 
-        node.setExpression.setupEnvironment(self)
+        node.variable.setupEnvironment(self)
+        
 
     def setupEnvironment_EntryIndexingExpressionCmp(self, node):
         """
@@ -296,8 +329,9 @@ class CodeSetup:
         Generate the MathProg code for declaration of variables and sets used in this entry for indexing expressions
         """
         ind = node.variable.generateCode(self.codeGenerator)
-        if ind in self.codeGenerator.Indices:
-            self.codeGenerator.Indices[ind] = node.value.generateCode(self.codeGenerator)
+        _domain = self.codeGenerator.genDomains.get(ind)
+        if _domain != None:
+            _domain.setDomain(node.value.generateCode(self.codeGenerator))
 
         node.value.setupEnvironment(self)
 
@@ -323,9 +357,27 @@ class CodeSetup:
         if Utils._isInstanceOfStr(node.value):
             return
 
-        self.setupEnvironment_EntryExpressionWithSet(node, node.value)
         
-        node.setExpression.setupEnvironment(self)
+
+        if isinstance(node.value, TupleList):
+            tupleVal = node.value.getValues()
+            dimen = len(tupleVal)
+
+            if dimen > 1:
+                node.setExpression.setDimension(dimen)
+
+            node.setExpression.setupEnvironment(self)
+            self.codeGenerator.genTuples.add(GenTuple(
+                node.setExpression.generateCode(self.codeGenerator), 
+                map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
+                node.op))
+
+        else:
+            node.setExpression.setupEnvironment(self)
+            self.setupEnvironment_EntryExpressionWithSet(node, node.value)
+        
+        node.value.setupEnvironment(self)
+        
 
     def setupEnvironment_EntryLogicalExpressionWithSetOperation(self, node):
         """
@@ -362,8 +414,17 @@ class CodeSetup:
         """
         Generate the MathProg code for declaration of variables and sets used in this set expression
         """
+        if len(node.indices) > 0:
+            node.indices.setupEnvironment(self)
+
         if not Utils._isInstanceOfStr(node.variable):
             node.variable.setIsSet(True)
+            if len(node.indices) > 0:
+                if isinstance(node.indices, Variable):
+                    node.variable.setSubIndices([node.indices])
+                else:
+                    node.variable.setSubIndices(node.indices.getValues())
+
             node.variable.setupEnvironment(self)
 
     def setupEnvironment_SetExpressionWithOperation(self, node):
@@ -378,14 +439,6 @@ class CodeSetup:
         """
         Generate the MathProg code for the declaration of variables used in this range expression
         """
-        if not Utils._isInstanceOfStr(node.rangeInit):
-            if isinstance(node.rangeInit, Variable):
-                node.rangeInit.setIsParam(True)
-
-        if not Utils._isInstanceOfStr(node.rangeEnd):
-            if isinstance(node.rangeEnd, Variable):
-                node.rangeEnd.setIsParam(True)
-
         if not Utils._isInstanceOfStr(node.rangeInit):
             node.rangeInit.setupEnvironment(self)
         
@@ -422,60 +475,80 @@ class CodeSetup:
         if node.getIndice() > -1:
             self._setupEnvironment_SubIndice(node)
             return
-
+        
         self.varKey = node.variable.generateCode(self.codeGenerator)
 
         if self.varKey[0].isupper():
             node.setIsParam(True)
 
         if node.isSet:
-            if not self.varKey in self.codeGenerator.Sets: # check if this set was not seen yet
-                self.codeGenerator.Sets[self.varKey] = {}
-                self.codeGenerator.Sets[self.varKey]["sub-indices"] = []
-
+            if not self.codeGenerator.genSets.has(self.varKey): # check if this set was not seen yet
+                _genSet = GenSet(self.varKey, node.dimenSet)
                 if len(node.sub_indices) > 0:
-                    for i in range(len(node.sub_indices)):
-                        self.codeGenerator.Sets[self.varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1})
+                    _subIndices = GenSubIndices(_genSet)
+                    _genSet.setSubIndices(_subIndices)
+                    #for i in range(len(self.sub_indices)):
+                    #    Sets[varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1})
 
-            self.Stm = self.codeGenerator.Sets
+                self.codeGenerator.genSets.add(_genSet)
+
+            self.curList = self.codeGenerator.genSets
             self._checkSubIndices(node)
 
         elif node.isParam:
-            if not self.varKey in self.codeGenerator.Params and not self.varKey in self.codeGenerator.Sets: # check if this param was not seen yet
-                self.codeGenerator.Params[self.varKey] = {}
-                self.codeGenerator.Params[self.varKey]["type"] = ""
-                self.codeGenerator.Params[self.varKey]["sub-indices"] = []
+            if not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
+                _genParam = GenParameter(self.varKey)
 
                 if len(node.sub_indices) > 0:
-                    for i in range(len(node.sub_indices)):
-                        self.codeGenerator.Params[self.varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1, "set": ""})
+                    _subIndices = GenSubIndices(_genParam)
+                    _genParam.setSubIndices(_subIndices)
+                    #for i in range(len(node.sub_indices)):
+                    #    self.codeGenerator.genParameters[self.varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1, "set": ""})
 
-            self.Stm = self.codeGenerator.Params
+                self.codeGenerator.genParameters.add(_genParam)
+
+            self.curList = self.codeGenerator.genParameters
             self._checkSubIndices(node)
 
+        elif node.isVar:
+            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
+                _genVar = GenVariable(self.varKey)
+
+                if len(node.sub_indices) > 0:
+                    _subIndices = GenSubIndices(_genVar)
+                    _genVar.setSubIndices(_subIndices)
+                    #for i in range(len(node.sub_indices)):
+                    #    self.codeGenerator.genVariables[self.varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1, "set": ""})
+
+                self.codeGenerator.genVariables.add(_genVar)
+
+            self.curList = self.codeGenerator.genVariables
+            self._checkSubIndices(node)
         else:
-            if not self.varKey in self.codeGenerator.Vars and not self.varKey in self.codeGenerator.Params and not self.varKey in self.codeGenerator.Sets: # check if this variable was not seen yet
-                self.codeGenerator.Vars[self.varKey] = {}
-                self.codeGenerator.Vars[self.varKey]["type"] = ""
-                self.codeGenerator.Vars[self.varKey]["sub-indices"] = []
-
-                if len(node.sub_indices) > 0:
-                    for i in range(len(node.sub_indices)):
-                        self.codeGenerator.Vars[self.varKey]["sub-indices"].append({"var": "", "min": float('inf'), "max": 1, "set": ""})
-
-            self.Stm = self.codeGenerator.Vars
+            self.curList = self.codeGenerator.genVariables
             self._checkSubIndices(node)
+
+        self.varKey = None
+        self.curList = None
 
     def setupEnvironment_Number(self, node):
-        if node.getIndice() == -1:
+        if node.getIndice() == -1 or self.curList == None:
             return
 
         num = int(self._getCodeID(node))
+        _genObj = self.curList.get(self.varKey)
 
-        if num < self.Stm[self.varKey]["sub-indices"][node.getIndice()]["min"]:
-            self.Stm[self.varKey]["sub-indices"][node.getIndice()]["min"] = num
-        elif num > self.Stm[self.varKey]["sub-indices"][node.getIndice()]["max"]:
-            self.Stm[self.varKey]["sub-indices"][node.getIndice()]["max"] = num
+        if _genObj != None:
+            _subIndice = _genObj.getSubIndices().getByIndice(node.getIndice())
+
+            if _subIndice == None:
+                _subIndice = GenSubIndice(node.getIndice(), num, None, None, _genObj.getSubIndices())
+                _genObj.getSubIndices().add(_subIndice)
+
+            if num < _subIndice.getMinVal():
+                _subIndice.setMinVal(num)
+            elif num > _subIndice.getMaxVal():
+                _subIndice.setMaxVal(num)
 
     def setupEnvironment_ID(self, node):
         self._setupEnvironment_SubIndice(node)

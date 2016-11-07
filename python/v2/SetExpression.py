@@ -11,14 +11,15 @@ class SetExpressionWithValue(SetExpression):
     Class representing a set with value in the AST of the MLP
     """
 
-    def __init__(self, value):
+    def __init__(self, value, dimension = 1):
         """
         Set the value that correspond to the Set expression
-
+        
         :param value : Variable | ValueList | Range
         """
 
         self.value = value
+        self.dimension = dimension
 
     def __str__(self):
         """
@@ -26,6 +27,12 @@ class SetExpressionWithValue(SetExpression):
         """
 
         return "SEV: "+str(self.value)
+
+    def setDimension(self, dimension):
+        self.dimension = dimension
+
+        if isinstance(self.value, Variable):
+            self.value.setDimenSet(dimension)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -45,26 +52,32 @@ class SetExpressionWithIndices(SetExpression):
     Class representing a set with indices in the AST of the MLP
     """
 
-    def __init__(self, variable, indices):
+    def __init__(self, variable, indices, dimension = 0):
         """
         Set the value that correspond to the Set expression
-
+        
         :param variable : Variable
         :param indices: ValueList | Variable
         """
 
         self.variable = variable
         self.indices = indices
+        self.dimension = dimension
 
     def __str__(self):
         """
         to string
         """
 
-        if isinstance(self.indices, Variable):
-            return "SEI: " + str(self.variable) + "[" + str(self.indices) + "]"
-        else:
-            return "SEI: " + str(self.variable) + "[" + ",".join(map(lambda ind: str(ind), self.indices)) + "]"
+        #if isinstance(self.indices, Variable):
+        #    return "SEI: " + str(self.variable) + "[" + str(self.indices) + "]"
+        #else:
+        #    return "SEI: " + str(self.variable) + "[" + ",".join(map(lambda ind: str(ind), self.indices)) + "]"
+        return "SEI: " + str(self.variable)
+
+    def setDimension(self, dimension):
+        self.dimension = dimension
+        self.variable.setDimenSet(dimension)
 
     def setupEnvironment(self, codeSetup):
         """
