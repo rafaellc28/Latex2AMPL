@@ -29,32 +29,8 @@ var init = function() {
 	initMathProgEditor();
 	initSimpleEditor();
 	initSolver();
-
+	
 	$("#collapse2").collapse("hide");
-}
-
-var initExample = function() {
-	setTimeout(function() {
-
-		// initialize objective function
-		var obj = "\\displaystyle\\sum\\limits_{i \\in I,j \\in J}C_{i,j} * x_{i,j}";
-		$("#objMathInput").val(obj);
-		$("#objMathInput").blur();
-		
-		// initialize constraints
-		var constr = "\\displaystyle\\sum\\limits_{j \\in J}x_{i,j} \\leq A_{i}, i \\in I";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-		
-		constr = "\\displaystyle\\sum\\limits_{i \\in I}x_{i,j} \\geq B_{j}, j \\in J,";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-		
-		constr = "x_{i,j} \\in \\mathbb{N}";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-		
-	}, 5000);
 }
 
 var loadUser = function() {
