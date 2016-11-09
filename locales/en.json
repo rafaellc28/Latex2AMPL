@@ -9,8 +9,19 @@
 	"GENERATE_MATHPROG": "Generate MathProg",
 	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Objective Function is empty.",
 	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Constraints is empty.",
+	"ERROR_LP_EMPTY": "<strong>Error!</strong> There is no Linear Program defined.",
 	"SOLVE_MATHPROG": "Solve MathProg",
 	"MATHPROG_SOLUTION": "Solution",
 	"LATEX_EDITOR": "Latex Editor",
-	"SIMPLE_EDITOR": "Simple Editor"
+	"SIMPLE_EDITOR": "Simple Editor",
+	"COPY_TO_SIMPLE_EDITOR": "Copy to Simple Editor",
+	"SIMPLE_EXAMPLE": "The example below and the <b>data</b> section that can be used to test its resolution are from <a href='https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf' target='_mathProgTutorial'><i>Modeling Language GNU MathProg</i></a>, Appendix E.",
+	"DATA_SECTION": "Data section of the example below: ",
+	"DATA_SECTION_DATA": "set I := Seattle &nbsp;&nbsp; San-Diego;</br>set J := New-York &nbsp;&nbsp; Chicago Topeka;</br></br>param A := Seattle &nbsp;&nbsp; 350</br>&nbsp;&nbsp; &nbsp;&nbsp; San-Diego &nbsp;&nbsp; 600;</br></br>param B := New-York &nbsp;&nbsp;325</br>&nbsp;&nbsp; &nbsp;&nbsp; Chicago &nbsp;&nbsp; 300</br>&nbsp;&nbsp; &nbsp;&nbsp; Topeka &nbsp;&nbsp; 275;</br></br>param C : &nbsp;&nbsp; &nbsp;&nbsp; New-York &nbsp;&nbsp; Chicago &nbsp;&nbsp; Topeka := </br> &nbsp;&nbsp; &nbsp;&nbsp; Seattle &nbsp;&nbsp; 0.225 &nbsp;&nbsp; 0.153 &nbsp;&nbsp; 0.162</br> &nbsp;&nbsp; &nbsp;&nbsp; San-Diego &nbsp;&nbsp; 0.225 &nbsp;&nbsp; 0.162 &nbsp;&nbsp; 0.126;</br>",
+	"TIP1": "Define the <b>Linear Programming Model</b> in the Objective and Constraints sections, as shown in the example below.",
+	"TIP2": "A constraint can not end with COMMA '<b>,</b>', thus '<b>,\\</b>' means that the constraint continues in the next line.",
+	"TIP3": "<b>Parameters</b> must start with an upper case letter.",
+	"TIP4": "<b>Variables</b> must belong to one of the following sets: $\\mathbb{B}$ or $\\{0,1\\}$, $\\mathbb{R}$, $\\mathbb{R}^{+}$, $\\mathbb{Z}$ and $\\mathbb{N}$.",
+	"TIP5": "The MathProg code can be solved by pressing the 'Solve MathProg' button. In this site, it is solved using the <a href='https://github.com/hgourvest/glpk.js' target='_glpk_js'>glpk.js</a> library (you have to complete the data section to solve the problem). However, a MathProg code can be solved by any Linear Programming Solver that supports this language. For instance, the <a href='https://www.gnu.org/software/glpk/' target='_glpk_tool'>GLPK (GNU Linear Programming Kit)</a>.",
+	"GITHUB_SOURCE": "GitHub: <a href='https://github.com/rafaellc28/Latex2MathProg' target='_github'>https://github.com/rafaellc28/Latex2MathProg</a>"
 }

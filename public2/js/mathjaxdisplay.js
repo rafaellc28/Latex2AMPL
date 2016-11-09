@@ -226,17 +226,17 @@
 		}
 	}
 
-	window.generateMathProg = function () {
+	var processMathOutputLatexEditor = function() {
 		var obj = $("#obj").val();
 		var objFunc = MathJax.Hub.getAllJax("objectiveMathOutput")[0];
 		if (!objFunc["originalText"] || !objFunc["originalText"].trim() || objFunc["originalText"].trim() == "{}") {
-			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#'' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_OBJ_FUNCTION_EMPTY"]+"</div>");
+			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_OBJ_FUNCTION_EMPTY"]+"</div>");
 			return;
 		}
 		
 		var subjFunc = MathJax.Hub.getAllJax("subjectiveMathOutput")[0];
 		if (!objFunc["originalText"] || !subjFunc["originalText"].trim() || subjFunc["originalText"].trim() == "{}") {
-			$("#alertSubj").html("<div class='alert alert-danger fade in'><a href='#'' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_SUBJ_FUNCTION_EMPTY"]+"</div>");
+			$("#alertSubj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_SUBJ_FUNCTION_EMPTY"]+"</div>");
 			return;
 		}
 
@@ -246,9 +246,42 @@
 		var data = "\\text{" + obj + "} " + objFunc + "\\\\\n" + "\\text{subject to} " + subjFunc;
 		data = data.replace(/\\\\/g, "\\\\\n");
 
+		return data;
+	}
+
+	window.generateMathProg = function() {
+		var data = processMathOutputLatexEditor();
 		$.post("/", {latex: data}, function(result, status) {
-			updateEditor(result);
+			updateMathProgEditor(result);
 		});
+	}
+
+	window.generateMathProgFromSimpleEditor = function() {
+		var idPreview = "mathOutput";
+		var preview = document.getElementById(idPreview);
+		if (preview.style.visibility == "hidden") {
+			idPreview = "mathOutputBuffer";
+		}
+
+		var data = MathJax.Hub.getAllJax(idPreview)[0];
+		if (!data["originalText"] || !data["originalText"].trim() || data["originalText"].trim() == "{}") {
+			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_LP_EMPTY"]+"</div>");
+			return;
+		}
+
+		data = data["originalText"].substring(14, data["originalText"].length-1);
+		data = data.replace(/\\\\/g, "\\\\\n");
+		$.post("/", {latex: data}, function(result, status) {
+			updateMathProgEditor(result);
+		});
+	}
+
+	window.copyToSimpleEditor = function() {
+		var data = processMathOutputLatexEditor();
+		//$("#mathInput").val(data);
+		updateSimpleEditor(data);
+		//PreviewSimpleEditor.Update();
+		$('#collapse2').collapse("show");
 	}
 
 })();

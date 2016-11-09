@@ -24,9 +24,13 @@ var init = function() {
 
 	PreviewObjctiveFunction.Init();
 	PreviewSubjctiveFunction.Init();
+	PreviewSimpleEditor.Init();
 
-	initEditor();
+	initMathProgEditor();
+	initSimpleEditor();
 	initSolver();
+
+	$("#collapse2").collapse("hide");
 }
 
 var initExample = function() {

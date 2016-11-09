@@ -73,10 +73,10 @@ class CodeGenerator:
     # Auxiliary Methods
     def _generateGraph(self):
         graph = {}
-
-        self._generateGraphAux(graph, self.genParameters, self.genSets)
+        
         self._generateGraphAux(graph, self.genSets, self.genParameters)
-
+        self._generateGraphAux(graph, self.genParameters, self.genSets)
+        
         return graph
 
     # Get the MathProg code for a given relational expression

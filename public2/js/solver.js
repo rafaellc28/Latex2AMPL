@@ -40,7 +40,7 @@ window.solveMathProg = function () {
     var lp = glp_create_prob();
     var tran = glp_mpl_alloc_wksp();
     try {
-        glp_mpl_read_model_from_string(tran, 'MathProg Model', editor.getValue());
+        glp_mpl_read_model_from_string(tran, 'MathProg Model', getValueMathProgEditor());
     } catch (err) {
         log(err.message);
         editor.setCursor(err.line,0);
