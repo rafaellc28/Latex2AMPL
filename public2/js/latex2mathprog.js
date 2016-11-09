@@ -54,7 +54,7 @@ var initExample = function() {
 		$("#subjMathInput").val(constr);
 		$("#icon-add-constraint").click();
 		
-	}, 3000);
+	}, 5000);
 }
 
 var loadUser = function() {
