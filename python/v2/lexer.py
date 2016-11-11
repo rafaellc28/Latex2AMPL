@@ -5,7 +5,9 @@
 # List of token names.   This is always required
 
 from Number import *
+from String import *
 import sys
+import re
 
 reserved = {
    'card' : 'CARD',
@@ -21,9 +23,16 @@ tokens = [
    'FORALL',
    'EXISTS',
    'INTEGERSET',
+   'INTEGERSETPOSITIVE',
+   'INTEGERSETNEGATIVE',
+   'INTEGERSETWITHONELIMIT',
+   'INTEGERSETWITHTWOLIMITS',
    'BINARYSET',
    'REALSET',
    'REALSETPOSITIVE',
+   'REALSETNEGATIVE',
+   'REALSETWITHONELIMIT',
+   'REALSETWITHTWOLIMITS',
    'NATURALSET',
    'SUBSET',
    'NOTSUBSET',
@@ -90,8 +99,14 @@ tokens = [
    'SYMDIFF', 
    'UNION', 
    'INTER', 
-   'CROSS'
+   'CROSS',
+   'STRING'
 ] + list(reserved.values())
+
+def t_STRING(t):
+   r'"(?:[^\\]|\\.)*?(?:"|$)'
+   t.value = String(t.value)
+   return t
 
 def t_DOTS(t):
    r'\\cdots|\\ldots|\\dots|\.\.\.'
@@ -135,29 +150,160 @@ def t_EXISTS(t):
    r'\\exists'
    return t
 
-def t_INTEGERSET(t):
-   r'\\mathbb{Z}'
-   t.value = "integer"
-   return t
-
 def t_BINARYSET(t):
    r'\\mathbb{B}'
    t.value = "binary"
    return t
 
+def t_INTEGERSETWITHTWOLIMITS(t):
+   r'\\mathbb{Z}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      if groups[0] == "\\geq":
+         domain += " , >="
+      elif groups[0] == "\\leq":
+         domain += " , <="
+      else:
+         domain += " , " + groups[0]
+
+      domain += " " + groups[1]
+
+      if groups[2] != None and groups[2] != 0:
+         domain += groups[2]
+
+      if groups[3] == "\\geq":
+         domain += ", >="
+      elif groups[3] == "\\leq":
+         domain += ", <="
+      else:
+         domain += ", " + groups[3]
+      
+      domain += " " + groups[4]
+
+      if groups[5] != None and groups[5] != 0:
+         domain += groups[5]
+
+   t.value = "integer" + domain
+
+   return t
+
+def t_INTEGERSETWITHONELIMIT(t):
+   r'\\mathbb{Z}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      if groups[0] == "\\geq":
+         domain += " >="
+      elif groups[0] == "\\leq":
+         domain += " <="
+      else:
+         domain += " " + groups[0]
+
+      domain += " " + groups[1]
+
+      if groups[2] != None and groups[2] != 0:
+         domain += groups[2]
+
+   t.value = "integer" + domain
+
+   return t
+
+def t_INTEGERSETPOSITIVE(t):
+   r'\\mathbb{Z}[_\^]{\+}'
+   t.value = "integer > 0"
+   return t
+
+def t_INTEGERSETNEGATIVE(t):
+   r'\\mathbb{Z}[_\^]{-}'
+   t.value = "integer < 0"
+   return t
+
+def t_INTEGERSET(t):
+   r'\\mathbb{Z}'
+   t.value = "integer"
+   return t
+
+def t_REALSETWITHTWOLIMITS(t):
+   r'\\mathbb{R}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+   print(m)
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      print(groups)
+      if groups[0] == "\\geq":
+         domain += " , >="
+      elif groups[0] == "\\leq":
+         domain += " , <="
+      else:
+         domain += " , " + groups[0]
+
+      domain += " " + groups[1]
+
+      if groups[2] != None and groups[2] != 0:
+         domain += groups[2]
+
+      if groups[3] == "\\geq":
+         domain += ", >="
+      elif groups[3] == "\\leq":
+         domain += ", <="
+      else:
+         domain += ", " + groups[3]
+      
+      domain += " " + groups[4]
+
+      if groups[5] != None and groups[5] != 0:
+         domain += groups[5]
+
+   t.value = "realset" + domain
+
+   return t
+
+def t_REALSETWITHONELIMIT(t):
+   r'\\mathbb{R}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      if groups[0] == "\\geq":
+         domain += " >="
+      elif groups[0] == "\\leq":
+         domain += " <="
+      else:
+         domain += " " + groups[0]
+
+      domain += " " + groups[1]
+
+      if groups[2] != None and groups[2] != 0:
+         domain += groups[2]
+
+   t.value = "realset" + domain
+   return t
+
 def t_REALSETPOSITIVE(t):
-   r'\\mathbb{R}\^{\+}'
-   t.value = "realpositive"
+   r'\\mathbb{R}[_\^]{\+}'
+   t.value = "realset > 0"
+   return t
+
+def t_REALSETNEGATIVE(t):
+   r'\\mathbb{R}[_\^]{-}'
+   t.value = "realset < 0"
    return t
 
 def t_REALSET(t):
    r'\\mathbb{R}'
-   t.value = "real"
+   t.value = "realset"
    return t
 
 def t_NATURALSET(t):
    r'\\mathbb{N}'
-   t.value = "natural"
+   t.value = "integer >= 0"
    return t
 
 def t_SUBSET(t):
@@ -175,17 +321,17 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
 def t_MAXIMIZE(t):
-   r'\\text\{maximize\}|\\text\{max\}|\\max|maximize|max|\\text\{maximize:\}|\\text\{max:\}|\\max:|maximize:|max:'
+   r'\\text\{maximize\s*\}|\\text\{max\s*\}|\\max\s*|maximize\s*|max\s*|\\text\{maximize:\s*\}|\\text\{max:\s*\}|\\max:\s*|maximize:\s*|max:\s*'
    t.value = "maximize"
    return t
 
 def t_MINIMIZE(t):
-   r'\\text\{minimize\}|\\text\{min\}|\\min|minimize|min|\\text\{minimize:\}|\\text\{min:\}|\\min:|minimize:|min:'
+   r'\\text\{minimize\s*\}|\\text\{min\s*\}|\\min\s*|minimize\s*|min\s*|\\text\{minimize:\s*\}|\\text\{min:\s*\}|\\min:\s*|minimize:\s*|min:\s*'
    t.value = "minimize"
    return t
 
 def t_SUBJECTTO(t):
-   r'\\text\{subject\sto\}|\\text\{subj\.to\}|\\text\{s\.t\.\}|subject\sto|subj\.to| s\.t\.|\\text\{subject\sto:\}|\\text\{subj\.to:\}|\\text\{s\.t\.:\}|subject\sto:|subj\.to:| s\.t\.:'
+   r'\\text\{subject\sto\s*\}|\\text\{subj\.to\s*\}|\\text\{s\.t\.\s*\}|subject\sto\s*|subj\.to\s*| s\.t\.\s*|\\text\{subject\sto:\s*\}|\\text\{subj\.to:\s*\}|\\text\{s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*| s\.t\.:\s*'
    t.value = "subjectto"
    return t
 
@@ -337,7 +483,7 @@ def t_ID(t):
 
 # A regular expression rule with some action code
 def t_NUMBER(t):
-   r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
+   r'[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
    t.value = Number(float(t.value))
    return t
 

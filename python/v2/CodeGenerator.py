@@ -1,5 +1,6 @@
 from Utils import *
 from ValueList import *
+from SetExpression import *
 from EntryIndexingExpression import *
 from TopologicalSort import *
 from GenSets import *
@@ -131,8 +132,9 @@ class CodeGenerator:
         """
         Generate the MathProg code for the declaration of variables
         """
+        varStr = ""
         if len(self.genVariables) > 0:
-            varStr = ""
+            
             for var in self.genVariables.getAll():
                 if not self.genParameters.has(var) and not self.genSets.has(var):
 
@@ -146,22 +148,20 @@ class CodeGenerator:
                             varStr += "var " + var.getName()
 
                     _type = self.genTypes.get(var)
-                    if _type != None and _type.getVarType().strip() != "":
-                        varStr += " " + _type.getVarType()
+                    if _type != None and _type.getType().strip() != "":
+                        varStr += " " + _type.getType()
 
                     varStr += ";\n\n"
 
-            return varStr
-        else:
-            return ""
+        return varStr
 
     def _declareSets(self):
         """
         Generate the MathProg code for the declaration of sets
         """
-
+        setStr = ""
         if len(self.genSets) > 0:
-            setStr = ""
+            
             for setIn in self.genSets.getAll():
                 if not self.genParameters.has(setIn):
                     if len(setIn.getSubIndices()) == 0:
@@ -180,9 +180,7 @@ class CodeGenerator:
 
                     setStr += dimen + ";\n\n"
 
-            return setStr
-        else:
-            return ""
+        return setStr
 
     def _getTuple(self, sub_indices):
         """
@@ -203,8 +201,8 @@ class CodeGenerator:
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
 
+        paramStr = ""
         if len(self.genParameters) > 0:
-            paramStr = ""
 
             for paramIn in self.topological_order:
                 _genParameter = self.genParameters.get(paramIn)
@@ -227,13 +225,11 @@ class CodeGenerator:
 
                 _type = self.genTypes.get(paramIn)
                 if _type != None:
-                    paramStr += " " + _type.getVarType()
+                    paramStr += " " + _type.getType()
 
                 paramStr += ";\n\n"
 
-            return paramStr
-        else:
-            return ""
+        return paramStr
 
     def _declareParam(self, _genParameter):
         paramStr = ""
@@ -258,7 +254,7 @@ class CodeGenerator:
 
         _type = self.genTypes.get(paramIn)
         if _type != None:
-            paramStr += " " + _type.getVarType()
+            paramStr += " " + _type.getType()
 
         paramStr += ";\n\n"
 
@@ -288,8 +284,8 @@ class CodeGenerator:
     def _declareSetsAndParams(self):
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
-        paramSetStr = ""
 
+        paramSetStr = ""
         if len(self.topological_order) > 0:
             for paramSetIn in self.topological_order:
                 _genObj = self.genParameters.get(paramSetIn)
@@ -305,7 +301,7 @@ class CodeGenerator:
         return paramSetStr
 
     def _declareData(self):
-        res = "data;\n\n"
+        res = ""
         
         if len(self.genSets) > 0:
             for setIn in self.genSets.getAll():
@@ -317,7 +313,8 @@ class CodeGenerator:
 
                     res += "set " + setIn.getName() + dimenIdx + " :=;\n\n"
 
-        res += "\n"
+        if res != "":
+            res += "\n"
 
         if len(self.genParameters) > 0:
             for paramIn in self.topological_order:
@@ -329,7 +326,8 @@ class CodeGenerator:
 
                 res += "param " + paramIn + " :=" + value + ";\n\n"
 
-        res += "\n"
+        if res != "":
+            res = "data;\n\n" + res + "\n"
 
         return res
 
@@ -357,7 +355,7 @@ class CodeGenerator:
         return res
 
     def _declareDataSetsAndParams(self):
-        res = "data;\n\n"
+        res = ""
 
         if len(self.topological_order) > 0:
             for paramSetIn in self.topological_order:
@@ -371,28 +369,54 @@ class CodeGenerator:
                     if _genObj != None:
                         res += self._declareDataSet(_genObj)
 
-        res += "\n"
+        if res != "":
+            res = "data;\n\n" + res + "\n"
 
         return res
 
-    # Linear Program
     def _preModel(self):
-        #return self._declareSets() + "\n" + self._declareParams() + "\n" + self._declareVars() + "\n"
-        return self._declareSetsAndParams() + "\n" + self._declareVars() + "\n"
+        res = ""
 
+        setsAndParams = self._declareSetsAndParams()
+        if setsAndParams != "":
+            res += setsAndParams
+
+        variables = self._declareVars()
+        if variables != "":
+            if res != "":
+                res += "\n"
+
+            res += variables
+
+        return res
+    
     def _posModel(self):
         res = "\nsolve;\n\n\n"
         #res += self._declareData()
         res += self._declareDataSetsAndParams()
-        res += "\nend;\n"
+        res += "end;"
 
         return res
 
+    def generateCode_Main(self, node):
+        return node.problem.generateCode(self)
+
+    def generateCode_LinearEquations(self, node):
+        preModel = self._preModel()
+        if preModel != "":
+            preModel += "\n"
+
+        return preModel + node.constraints.generateCode(self) + "\n\n" + self._posModel()
+
     def generateCode_LinearProgram(self, node):
+        preModel = self._preModel()
+        if preModel != "":
+            preModel += "\n"
+
         if node.constraints:
-            return self._preModel() + "\n" + node.objective.generateCode(self) + "\n\n" + node.constraints.generateCode(self) + "\n\n" + self._posModel() + "\n"
+            return preModel + node.objective.generateCode(self) + "\n\n" + node.constraints.generateCode(self) + "\n\n" + self._posModel()
         else:
-            return self._preModel() + "\n" + node.objective.generateCode(self) + "\n" + self._posModel() + "\n"
+            return preModel + node.objective.generateCode(self) + "\n\n" + self._posModel()
 
     # Objective Function
     def generateCode_Objective(self, node):
@@ -415,8 +439,12 @@ class CodeGenerator:
         res = ""
 
         if node.indexingExpression:
-            # Get the MathProg code for each constraint expression in for clause and concatenates with \n
-            res += "{" + node.indexingExpression.generateCode(self) + "} :\n\t"
+            idxExpression = node.indexingExpression.generateCode(self)
+
+            if idxExpression.strip() != "":
+                res += "{" + idxExpression + "} :\n\t"
+            else:
+                res += " : "    
         else:
             res += " : "
 
@@ -572,7 +600,10 @@ class CodeGenerator:
     # Set Expression
     def generateCode_SetExpressionWithValue(self, node):
         if not Utils._isInstanceOfStr(node.value):
-            return node.value.generateCode(self)
+            if isinstance(node.value, ValueList) or isinstance(node.value, SetExpression):
+                return "{" + node.value.generateCode(self) + "}"
+            else:
+                return node.value.generateCode(self)
         else:
             return node.value
 
@@ -583,7 +614,6 @@ class CodeGenerator:
         else:
             var_gen = node.variable
 
-        #return  var_gen + "[" + node.indices.generateCode(self) + "]"
         return  var_gen
 
     def generateCode_SetExpressionWithOperation(self, node):
@@ -634,3 +664,7 @@ class CodeGenerator:
     # ID
     def generateCode_ID(self, node):
         return node.variable
+
+    # String
+    def generateCode_String(self, node):
+        return node.string

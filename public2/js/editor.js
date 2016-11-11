@@ -15,6 +15,7 @@ CodeMirror.defineSimpleMode("mathprog", {
     {regex: /printf/, token: "builtin"},
     {regex: /abs|atan|card|ceil|cos|exp|floor|gmtime|length|log|log10|max|min|round|sin|sqrt|str2time|trunc|Irand224|Uniform01|Uniform|Normal01|Normal/, token: "def"},
     // A next property will cause the mode to move to a different state
+    {regex: /#.*/, token: "comment"},
 	  {regex: /\/\*/, token: "comment", next: "comment"},
     {regex: /[-+\/*=<>!]+/, token: "operator"},
     // indent and dedent properties guide autoindentation
@@ -95,6 +96,11 @@ window.getValueMathProgEditor = function() {
   return mathProgEditor.getValue();
 }
 
+window.setCursorMathProgEditor = function(err_line) {
+  mathProgEditor.setCursor(err_line,0);
+  mathProgEditor.scrollIntoView(null);
+}
+
 window.initSimpleEditor = function() {
   simpleEditor = CodeMirror.fromTextArea(document.getElementById("simpleEditor"), {
       lineNumbers: true,
@@ -115,4 +121,9 @@ window.updateSimpleEditor = function(data) {
 
 window.getValueSimpleEditor = function() {
   return simpleEditor.getValue();
+}
+
+window.setCursorSimpleEditor = function(err_line) {
+  simpleEditor.setCursor(err_line,0);
+  simpleEditor.scrollIntoView(null);
 }

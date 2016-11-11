@@ -90,3 +90,7 @@ ol.list-constraints > div {
 .drag-handle {
 
 }
+
+.popover {
+    max-width: none;
+}

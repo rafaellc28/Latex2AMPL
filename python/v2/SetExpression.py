@@ -1,5 +1,6 @@
 from Expression import *
 from Variable import *
+from ValueList import *
 
 class SetExpression(Expression):
     """
@@ -20,13 +21,15 @@ class SetExpressionWithValue(SetExpression):
 
         self.value = value
         self.dimension = dimension
-
+    
     def __str__(self):
         """
         to string
         """
-
-        return "SEV: "+str(self.value)
+        if isinstance(self.value, ValueList):
+            return "SEV: {" + str(self.value) + "}"
+        else:
+            return "SEV: "+str(self.value)
 
     def setDimension(self, dimension):
         self.dimension = dimension

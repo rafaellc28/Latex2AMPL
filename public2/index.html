@@ -35,7 +35,8 @@
                 		padding: "5px 5px",
                 		margin: "0 0"
             		},
-        		}
+        		},
+        		linebreaks: { automatic: true, width: "container" }
     		}
 		  });
 	  	</script>
@@ -127,10 +128,10 @@
 															<div id="subjPreviewMathBuffer" style="width:100%; visibility:hidden; position:absolute;" class="mathOutputBox"></div>
 														</div>
 														<div class="col-xs-2" style="min-height: 34px;">
-															<a id="icon-add-constraint" href="#" onclick="UpdateSubjectiveMath()">
+															<a id="icon-add-constraint" href="#" onclick="UpdateSubjectiveMath(event)">
 																<i class="glyphicon glyphicon-plus" style="line-height: 34px;"></i>
 															</a>
-															<a id="icon-update-constraint" href="#" onclick="updateConstraintMath()" style="display: none;">
+															<a id="icon-update-constraint" href="#" onclick="updateConstraintMath(event)" style="display: none;">
 																<i class="glyphicon glyphicon-floppy-disk" style="line-height: 34px;"></i>
 															</a>
 														</div>

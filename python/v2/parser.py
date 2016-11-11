@@ -5,7 +5,9 @@ import sys
 from lexer import tokens
 import ply.yacc as yacc
 
+from Main import *
 from LinearProgram import *
+from LinearEquations import *
 from Objective import *
 from Constraints import *
 from ConstraintExpression import *
@@ -21,10 +23,10 @@ from TupleList import *
 from Range import *
 from Value import *
 from Variable import *
-from Number import *
 from ID import *
 
 # Parsing rules
+#parser2 = yacc.yacc()
 
 precedence = (
     ('left', 'COMMA', 'DOTS', 'FOR', 'BACKSLASHES'),
@@ -35,18 +37,28 @@ precedence = (
     ('left', 'FORALL', 'EXISTS'),
     ('left', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS'),
+    ('left', 'UNDERLINE', 'CARET'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'COS', 'ARCTAN', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'MOD'),
     ('left', 'UPLUS', 'UMINUS'),
     ('left', 'IN', 'NOTIN'),
-    ('left', 'UNDERLINE', 'CARET'),
-    ('left', 'INTEGERSET', 'REALSET', 'REALSETPOSITIVE', 'NATURALSET', 'BINARYSET')
+    ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
+      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET')
 )
 
+def p_Main(t):
+  '''MAIN : LinearProgram 
+          | LinearEquations'''
+  t[0] = Main(t[1])
+
+def p_LinearEquations(t):
+    '''LinearEquations : ConstraintList'''
+    t[0] = LinearEquations(Constraints(t[1]))
+
 def p_LinearProgram(t):
-    '''LP : Objective
+    '''LinearProgram : Objective
           | Objective Constraints
           | Objective BACKSLASHES Constraints'''
 
@@ -58,7 +70,7 @@ def p_LinearProgram(t):
         t[0] = LinearProgram(t[1], None)
 
 def p_LinearProgram_error(t):
-    'LP : error BACKSLASHES'
+    'LinearProgram : error BACKSLASHES'
     sys.stderr.write("Linear Program bad formatted at line %d\n" % t.lineno(2))
 
 def p_Objective(t):
@@ -121,14 +133,17 @@ def p_ConstraintExpression(t):
     '''ConstraintExpression : LinearExpression EQ LinearExpression
                            |  LinearExpression LE LinearExpression
                            |  LinearExpression GE LinearExpression
-                           |  LBRACKET NumericExpression RBRACKET LE LinearExpression LE NumericExpression
-                           |  LBRACKET NumericExpression RBRACKET GE LinearExpression GE NumericExpression'''
+                           |  LinearExpression EQ NUMBER
+                           |  LinearExpression LE NUMBER
+                           |  LinearExpression GE NUMBER
+                           |  NumericExpression LE LinearExpression LE NumericExpression
+                           |  NumericExpression GE LinearExpression GE NumericExpression'''
     
     if len(t) > 4:
         if t[4] == "\\leq":
-            t[0] = ConstraintExpression3(t[5], t[2], t[7], ConstraintExpression.LE)
+            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.LE)
         elif t[4] == "\\geq":
-            t[0] = ConstraintExpression3(t[5], t[2], t[7], ConstraintExpression.GE)
+            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.GE)
     elif t[2] == "=":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.EQ)
     elif t[2] == "\\leq":
@@ -144,7 +159,6 @@ def p_ConstraintExpression_error(t):
 
 def p_LinearExpression(t):
     '''LinearExpression : Variable
-                        | NUMBER
                         | PLUS LinearExpression %prec UPLUS
                         | MINUS LinearExpression %prec UMINUS
                         | LPAREN LinearExpression RPAREN'''
@@ -166,7 +180,7 @@ def p_LinearExpression_error(t):
 def p_LinearExpression_binop(t):
     '''LinearExpression : LinearExpression PLUS LinearExpression
                         | LinearExpression MINUS LinearExpression
-                        | LBRACKET NumericExpression RBRACKET TIMES LinearExpression
+                        | NumericExpression TIMES LinearExpression
                         | LinearExpression TIMES NumericExpression
                         | LinearExpression DIVIDE NumericExpression'''
 
@@ -234,8 +248,14 @@ def p_NumericExpression_binop_error(t):
     sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_IteratedNumericExpression(t):
-    '''NumericExpression : NumericOperator UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | NumericOperator UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression'''
+    '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression'''
 
     if t[1] == "\\sum":
         op = IteratedNumericExpression.SUM
@@ -252,7 +272,10 @@ def p_IteratedNumericExpression(t):
         t[0] = IteratedNumericExpression(op, t[6], t[4])
 
 def p_IteratedNumericExpression_error(t):
-    'NumericExpression : NumericOperator UNDERLINE LBRACE error RBRACE'
+    '''NumericExpression : SUM UNDERLINE LBRACE error RBRACE
+                         | PROD UNDERLINE LBRACE error RBRACE
+                         | MAX UNDERLINE LBRACE error RBRACE
+                         | MIN UNDERLINE LBRACE error RBRACE'''
     sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
 
 
@@ -277,13 +300,6 @@ def p_NumericExpression_error(t):
     sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(1))
 
 
-def p_NumericOperator(t):
-    '''NumericOperator : SUM
-                       | PROD
-                       | MAX
-                       | MIN'''
-    t[0] = t[1]
-
 def p_FunctionNumericExpression(t):
     '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
                          | LFLOOR NumericExpression RFLOOR
@@ -296,9 +312,21 @@ def p_FunctionNumericExpression(t):
                          | LOG LPAREN NumericExpression RPAREN
                          | LN LPAREN NumericExpression RPAREN
                          | EXP LPAREN NumericExpression RPAREN
-                         | ARCTAN LPAREN NumericExpression RPAREN'''
+                         | ARCTAN LPAREN NumericExpression RPAREN
+                         | CARD LPAREN SetExpression RPAREN
+                         | LENGTH LPAREN STRING RPAREN
+                         | ROUND LPAREN NumericExpression RPAREN
+                         | TRUNC LPAREN NumericExpression RPAREN'''
 
-    if t[1] == "\\sqrt":
+    if t[1] == "card":
+        op = NumericExpressionWithFunction.CARD
+    elif t[1] == "length":
+        op = NumericExpressionWithFunction.LENGTH
+    elif t[1] == "round":
+        op = NumericExpressionWithFunction.ROUND
+    elif t[1] == "trung":
+        op = NumericExpressionWithFunction.TRUNC
+    elif t[1] == "\\sqrt":
         op = NumericExpressionWithFunction.SQRT
     elif t[1] == "\\lfloor":
         op = NumericExpressionWithFunction.FLOOR
@@ -524,12 +552,20 @@ def p_SetExpressionWithOperation_error(t):
 def p_SetExpressionWithValue(t):
     '''SetExpression : LBRACE ValueList RBRACE
                      | LBRACE Range RBRACE
+                     | LBRACE SetExpression RBRACE
                      | Range
                      | Variable
                      | NATURALSET
                      | INTEGERSET
+                     | INTEGERSETPOSITIVE
+                     | INTEGERSETNEGATIVE
+                     | INTEGERSETWITHONELIMIT
+                     | INTEGERSETWITHTWOLIMITS
                      | REALSET
                      | REALSETPOSITIVE
+                     | REALSETNEGATIVE
+                     | REALSETWITHONELIMIT
+                     | REALSETWITHTWOLIMITS
                      | BINARYSET'''
 
     if len(t) > 2:
@@ -586,10 +622,16 @@ def p_Variable_error(t):
 def p_ValueList(t):
     '''ValueList : NUMBER COMMA NUMBER
                  | Variable COMMA Variable
+                 | STRING COMMA STRING
                  | NUMBER COMMA Variable
+                 | NUMBER COMMA STRING
                  | Variable COMMA NUMBER
+                 | Variable COMMA STRING
+                 | STRING COMMA NUMBER
+                 | STRING COMMA Variable
                  | ValueList COMMA NUMBER
-                 | ValueList COMMA Variable'''
+                 | ValueList COMMA Variable
+                 | ValueList COMMA STRING'''
 
     if not isinstance(t[1], ValueList):
         t[0] = ValueList([t[1], t[3]])
@@ -608,8 +650,8 @@ def p_TupleList_error(t):
     'ValueList : error RPAREN'
     sys.stderr.write( "Bad tuple declaration at line %d\n" % t.lineno(2))
 
-def p_error(p):
-  if p:
-    print("Syntax error at line %d, position %d: '%s'" % (p.lineno, p.lexpos, p.value))
+def p_error(t):
+  if t:
+    print("Syntax error at line %d, position %d: '%s'" % (t.lineno, t.lexpos, t.value))
   else:
     print("Syntax error at EOF")

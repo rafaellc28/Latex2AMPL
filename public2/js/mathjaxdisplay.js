@@ -100,7 +100,9 @@
 	//  by the user.  Hide the subjectiveFunction, then typeset, then show it again
 	//  so we don't see a flash as the subjMath is cleared and replaced.
 	//
-	window.UpdateSubjectiveMath = function () {
+	window.UpdateSubjectiveMath = function (event) {
+		event.preventDefault();
+
 		var TeX = prepareTex();
 
 		if (!TeX || !TeX.trim()) { return; }
@@ -193,7 +195,7 @@
 			var subjTeXInput = "<li class='list-group-item' id='"+CONSTRAINTS[i]["key"]+"'><div class='alert alert-info fade in'><div class='container-fluid'><div class='row'>"+
 				"<div class='col-xs-1'><span class='drag-handle glyphicon glyphicon-move'></span></div>"+
 				"<div class='col-xs-9' id='tex'>"+CONSTRAINTS[i]["tex"]+"</div>"+
-				"<div class='col-xs-2'><span style='width:35px; float: right;'><a href='#' id='edit' class='alert-link' onclick='javascript: editConstraint(this, \""+CONSTRAINTS[i]["key"]+"\");'><i class='glyphicon glyphicon-pencil' aria-hidden='true'></i></a>&nbsp;"+
+				"<div class='col-xs-2'><span style='width:35px; float: right;'><a href='#' id='edit' class='alert-link' onclick='javascript: editConstraint(event, this, \""+CONSTRAINTS[i]["key"]+"\");'><i class='glyphicon glyphicon-pencil' aria-hidden='true'></i></a>&nbsp;"+
 				"<a href='#' onclick='javascript:removeConstraint(\""+CONSTRAINTS[i]["key"]+"\");removeItemInput(this);UpdateSubjectiveMathOutput(mountConstraintsOutput());' class='close' data-dismiss='alert' aria-label='close'>&times;</a></span></div>"+
 				"</div></div></div></li>";
 			res += subjTeXInput;
@@ -202,7 +204,8 @@
 		return res;
 	}
 
-	window.editConstraint = function(elem, key) {
+	window.editConstraint = function(event, elem, key) {
+		event.preventDefault();
 
 		var idx = findIndexConstraint(key);
 		$("#subjMathInput").val(CONSTRAINTS[idx]["tex"]);
@@ -223,7 +226,9 @@
 	    EDITING = key;
 	}
 
-	window.updateConstraintMath = function() {
+	window.updateConstraintMath = function(event) {
+		event.preventDefault();
+		
 		var TeX = prepareTex();
 
 		if (!TeX || !TeX.trim()) { return; }
@@ -267,7 +272,6 @@
 		subjFunc = subjFunc["originalText"].substring(14, subjFunc["originalText"].length-1);
 
 		var data = "\\text{" + obj + "} " + objFunc + "\\\\\n" + "\\text{subject to} " + subjFunc;
-		data = data.replace(/\\\\/g, "\\\\\n");
 
 		return data;
 	}
@@ -293,7 +297,6 @@
 		}
 
 		data = data["originalText"].substring(14, data["originalText"].length-1);
-		data = data.replace(/\\\\/g, "\\\\\n");
 		$.post("/", {latex: data}, function(result, status) {
 			updateMathProgEditor(result);
 		});

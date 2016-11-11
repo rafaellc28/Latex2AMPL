@@ -1,4 +1,6 @@
 deploy_heroku.txt
+references.txt
+parselog.txt
 TODO.txt
 *.pyc
 *.log

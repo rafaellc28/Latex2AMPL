@@ -29,17 +29,19 @@ class CodeSetup:
 
     # Auxiliary Methods
 
-    def _addDomainAux(self, variable, domain):
+    def _addTypeAux(self, variable, _type, minVal = None, maxVal = None):
         name = variable.generateCodeWithoutIndices(self.codeGenerator)
-        self.codeGenerator.genTypes.add(GenType(name, domain))
+        self.codeGenerator.genTypes.add(GenType(name, _type, minVal, maxVal))
+        self.codeGenerator.genParameters.remove(name)
         variable.setIsVar(True)
+        variable.setIsParam(False)
 
-    def _addDomain(self, variable, domain):
+    def _addType(self, variable, _type, minVal = None, maxVal = None):
         if isinstance(variable, ValueList):
             for var in variable.getValues():
-                self._addDomainAux(var, domain)
+                self._addTypeAux(var, _type, minVal, maxVal)
         else:
-            self._addDomainAux(variable, domain)
+            self._addTypeAux(variable, _type, minVal, maxVal)
 
     def _addIndiceAux(self, variable, setExpression):
         ind = variable.generateCode(self.codeGenerator)
@@ -53,6 +55,9 @@ class CodeSetup:
                     self._addIndiceAux(var, setExpression)
             else:
                 self._addIndiceAux(variable, setExpression)
+
+    def _checkIsParam(self, strValue):
+        return strValue[0].isupper()
 
     # Get the MathProg code for a given sub-indice
     def _getCodeID(self, id_):
@@ -105,6 +110,16 @@ class CodeSetup:
 
             if _subIndices.getByIndice(node.getIndice()) == None:
                 _subIndices.add(GenSubIndice(node.getIndice(), ind, None, None, _subIndices)) # set the name of the variable as the index
+
+    def setupEnvironment_Main(self, node):
+        node.problem.setupEnvironment(self)
+
+    # Linear Equations
+    def setupEnvironment_LinearEquations(self, node):
+        """
+        Generate the MathProg code for the Set, Parameter and Variable statements
+        """
+        node.constraints.setupEnvironment(self)
 
     # Linear Program
     def setupEnvironment_LinearProgram(self, node):
@@ -264,30 +279,23 @@ class CodeSetup:
                 if len(var.sub_indices) > 0:
                     var.setupEnvironment(self)
 
-        setCode = node.setExpression.generateCode(self.codeGenerator)
-        setCode = setCode.replace(" ", "")
+        setExpression = node.setExpression.generateCode(self.codeGenerator)
+        setCode = setExpression.replace(" ", "")
 
-        if setCode == "0,1" or setCode == "binary":
+        if setCode == "{0,1}" or setCode == "binary":
             node.isBinary = True
-            self._addDomain(variable, "binary")
+            self._addType(variable, "binary")
+            setExpression = "{0,1}"
 
-        elif setCode == "integer":
+        elif setCode.startswith("integer"):
             node.isInteger = True
-            self._addDomain(variable, "integer")
+            self._addType(variable, setExpression)
 
-        elif setCode == "natural":
-            node.isNatural = True
-            self._addDomain(variable, "integer, >= 0")
-
-        elif setCode == "realpositive":
+        elif setCode.startswith("realset"):
             node.isReal = True
-            self._addDomain(variable, ">= 0")
+            self._addType(variable, setExpression[8:], 0)
 
-        elif setCode == "real":
-            node.isReal = True
-            self._addDomain(variable, "")
-
-        self._addIndice(variable, setCode)
+        self._addIndice(variable, setExpression)
 
     # Entry Indexing Expression
     def setupEnvironment_EntryIndexingExpressionWithSet(self, node):
@@ -478,7 +486,7 @@ class CodeSetup:
         
         self.varKey = node.variable.generateCode(self.codeGenerator)
 
-        if self.varKey[0].isupper():
+        if not node.isVar and self._checkIsParam(self.varKey):
             node.setIsParam(True)
 
         if node.isSet:
@@ -496,7 +504,7 @@ class CodeSetup:
             self._checkSubIndices(node)
 
         elif node.isParam:
-            if not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
+            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
                 _genParam = GenParameter(self.varKey)
 
                 if len(node.sub_indices) > 0:
@@ -552,3 +560,6 @@ class CodeSetup:
 
     def setupEnvironment_ID(self, node):
         self._setupEnvironment_SubIndice(node)
+
+    def setupEnvironment_String(self, node):
+        pass
