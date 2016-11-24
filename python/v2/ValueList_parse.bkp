@@ -1,9 +1,0 @@
-def p_ValueList(t):
-    '''ValueList : NumericExpression COMMA NumericExpression
-                 | STRING COMMA STRING
-                 | NumericExpression COMMA STRING
-                 | NumericExpression COMMA Range
-                 | STRING COMMA NumericExpression
-                 | ValueList COMMA NumericExpression
-                 | ValueList COMMA STRING'''
-
