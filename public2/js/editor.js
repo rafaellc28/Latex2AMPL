@@ -5,7 +5,7 @@ CodeMirror.defineSimpleMode("mathprog", {
   // The start state contains the rules that are intially used
   start: [
     // The regex matches the token, the token property contains the type
-    {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+    {regex: /"(?:[^\\]|\\.)*?(?:"|$)|'(?:[^\\]|\\.)*?(?:'|$)/, token: "string"},
     // Rules are matched in the order in which they appear, so there is
     // no ambiguity between this one and the one above
     {regex: /(?:param|var|maximize|minimize|s.t.|data|end|set|table|subject|to|subj|solve|check|display|forall|for|exists)\b/,
@@ -42,7 +42,7 @@ CodeMirror.defineSimpleMode("latex", {
   // The start state contains the rules that are intially used
   start: [
     // The regex matches the token, the token property contains the type
-    {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+    {regex: /"(?:[^\\]|\\.)*?(?:"|$)|'(?:[^\\]|\\.)*?(?:'|$)/, token: "string"},
     // Rules are matched in the order in which they appear, so there is
     // no ambiguity between this one and the one above
     {regex: /\\cdots|\\ldots|\\dots|\.\.\./, token: "atom"},
@@ -53,7 +53,8 @@ CodeMirror.defineSimpleMode("latex", {
     {regex: /\\text\{maximize\}|\\text\{max\}|\\max|maximize|max|\\text\{maximize:\}|\\text\{max:\}|\\max:|maximize:|max:/, token: "keyword"},
     {regex: /\\text\{minimize\}|\\text\{min\}|\\min|minimize|min|\\text\{minimize:\}|\\text\{min:\}|\\min:|minimize:|min:/, token: "keyword"},
     {regex: /\\text\{subject\sto\}|\\text\{subj\.to\}|\\text\{s\.t\.\}|subject\sto|subj\.to| s\.t\.|\\text\{subject\sto:\}|\\text\{subj\.to:\}|\\text\{s\.t\.:\}|subject\sto:|subj\.to:| s\.t\.:/, token: "keyword"},
-    {regex: /=|\\neq|\\leq|<|\\geq|>|%/, token: "operator"},
+    {regex: /%.*/, token: "comment"},
+    {regex: /=|\\neq|\\leq|<|\\geq|>|\\text\{\%\}|\\mod|\\bmod/, token: "operator"},
     {regex: /\\in|\\notin/, token: "atom"},
     {regex: /\\sum|\\prod|\\max|\\min|\\lfloor|\\rfloor|\\lceil|\\rceil|\\sin|\\cos|\\arctan|\\sqrt|\\log|\\ln|\\exp|\\vert|\|/, token: "def"},
     {regex: /\\limits|\\begin\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}[\{\[][a-zA-Z0-9][a-zA-Z0-9]*[\*]?[\}\]]|\\begin\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}/, token: "def"},
@@ -62,19 +63,7 @@ CodeMirror.defineSimpleMode("latex", {
     {regex: /\\setminus|\\triangle|\\ominus|\\cup|\\cap|\\times|\\wedge/, token: "atom"},
     {regex: /[a-zA-Z][a-zA-Z0-9]*/, token: "variable"},
     {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i, token: "number"}
-  ],
-  // The multi-line comment state.
-  comment: [
-    {regex: /.*?\*\//, token: "comment", next: "start"},
-    {regex: /.*/, token: "comment"}
-  ],
-  // The meta property contains global information about the mode. It
-  // can contain properties like lineComment, which are supported by
-  // all modes, and also directives like dontIndentStates, which are
-  // specific to simple modes.
-  meta: {
-    dontIndentStates: ["comment"]
-  }
+  ]
 });
 
 window.initMathProgEditor = function() {
@@ -90,6 +79,7 @@ window.updateMathProgEditor = function(data) {
 	mathProgEditor.markClean();
 	mathProgEditor.setValue(data);
 	mathProgEditor.markClean();
+  mathProgEditor.focus();
 }
 
 window.getValueMathProgEditor = function() {
@@ -117,6 +107,7 @@ window.updateSimpleEditor = function(data) {
   simpleEditor.markClean();
   simpleEditor.setValue(data);
   simpleEditor.markClean();
+  simpleEditor.focus();
 }
 
 window.getValueSimpleEditor = function() {

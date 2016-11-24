@@ -1,6 +1,7 @@
 from Expression import *
 from ID import *
 from Number import *
+from NumericExpression import *
 
 class Variable(Expression):
     """
@@ -35,7 +36,7 @@ class Variable(Expression):
             var += str(self.variable)
 
         if len(self.sub_indices) > 0:
-            if isinstance(self.sub_indices, Variable) or isinstance(self.sub_indices, ID) or isinstance(self.sub_indices, Number):
+            if isinstance(self.sub_indices, Variable) or isinstance(self.sub_indices, ID) or isinstance(self.sub_indices, Number) or isinstance(self.sub_indices, NumericExpression):
                 res = var + "[" + str(self.sub_indices) + "]"
             else:
                 res = var + "[" + ",".join(map(lambda i: str(i), self.sub_indices)) + "]"

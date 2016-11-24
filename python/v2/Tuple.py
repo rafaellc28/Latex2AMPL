@@ -1,16 +1,15 @@
 from Expression import *
 
-class TupleList(Expression):
+class Tuple(Expression):
     """
-    Class representing a list of values in the AST of the MLP
+    Class representing a tuple of values in the AST of the MLP
     """
-
+    
     def __init__(self, values):
         """
         Set the values
         
         :param values : [Variable|Number]
-        :param setExpression : SetExpression
         """
         
         self.values = values
@@ -21,7 +20,7 @@ class TupleList(Expression):
         to string
         """
         
-        return "TupleList: [" + ",".join(map(lambda i: str(i), self.values)) + "]"
+        return "Tuple: (" + ",".join(map(lambda i: str(i), self.values)) + ")"
 
     def __len__(self):
         """
@@ -43,14 +42,14 @@ class TupleList(Expression):
     
     def getValues(self):
         """
-        Get the values in this TupleList
+        get the values in this Tuple
         """
 
         return self.values
 
     def add(self, value):
         """
-        Add a value to the list
+        Add a value to the tuple
         """
 
         self.values += [value]
@@ -58,12 +57,12 @@ class TupleList(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this tuple list expression
+        Generate the MathProg code for the declaration of variables used in this range expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this TupleList
+        Generate the MathProg code for this Tuple
         """
         return codeGenerator.generateCode(self)

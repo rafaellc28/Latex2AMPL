@@ -271,7 +271,7 @@
 		objFunc = objFunc["originalText"].substring(14, objFunc["originalText"].length-1);
 		subjFunc = subjFunc["originalText"].substring(14, subjFunc["originalText"].length-1);
 
-		var data = "\\text{" + obj + "} " + objFunc + "\\\\\n" + "\\text{subject to} " + subjFunc;
+		var data = "\\text{" + obj + " } " + objFunc + "\\\\\n" + "\\text{subject to } " + subjFunc;
 
 		return data;
 	}
@@ -305,9 +305,9 @@
 	window.copyToSimpleEditor = function() {
 		var data = processMathOutputLatexEditor();
 		//$("#mathInput").val(data);
+		$('#collapse2').collapse("show");
 		updateSimpleEditor(data);
 		//PreviewSimpleEditor.Update();
-		$('#collapse2').collapse("show");
 	}
 
 })();

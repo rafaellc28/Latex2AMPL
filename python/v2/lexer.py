@@ -13,7 +13,9 @@ reserved = {
    'card' : 'CARD',
    'length' : 'LENGTH',
    'round' : 'ROUND',
-   'trunc' : 'TRUNC'
+   'trunc' : 'TRUNC',
+   'substr' : 'SUBSTR',
+   'time2str': 'TIME2STR'
 }
 
 tokens = [
@@ -41,6 +43,8 @@ tokens = [
    'MINUS',
    'TIMES',
    'DIVIDE',
+   'QUOTIENT',
+   'LESS',
    'MAXIMIZE',
    'MINIMIZE',
    'SUBJECTTO',
@@ -88,6 +92,7 @@ tokens = [
    'COMMA',
    'COLON',
    'DOTS',
+   'AMPERSAND',
    'AMP',
    'BACKSLASHES',
    'FOR',
@@ -104,7 +109,7 @@ tokens = [
 ] + list(reserved.values())
 
 def t_STRING(t):
-   r'"(?:[^\\]|\\.)*?(?:"|$)'
+   r'"(?:[^\\]|\\.)*?(?:"|$)|\'(?:[^\\]|\\.)*?(?:\'|$)'
    t.value = String(t.value)
    return t
 
@@ -113,9 +118,23 @@ def t_DOTS(t):
    t.value = "DOTS"
    return t
 
+def t_COMMENT(t):
+    r'\%[^\n]*'
+    pass
+
 # Regular expression rules for simple tokens
 t_PLUS = r'\+'
 t_MINUS = r'-'
+
+def t_MOD(t):
+   r'\\text\{\%\}|\\mod|\\bmod'
+   t.value = "\%"
+   return t
+
+def t_QUOTIENT(t):
+   r'\\big/|\\text\{\s*div\s*\}|div'
+   t.value = "quot"
+   return t
 
 def t_TIMES(t):
    r'\*|\\cdot|\\ast'
@@ -127,13 +146,18 @@ def t_DIVIDE(t):
    t.value = "/"
    return t
 
+def t_LESS(t):
+   r'\\text\{\s*less\s*\}|less'
+   t.value = "less"
+   return t
+
 def t_OR(t):
-   r'\|\||or'
+   r'\\vee|\\text\{or\}'
    t.value = "or"
    return t
 
 def t_AND(t):
-   r'&&|and'
+   r'\\wedge|\\text\{and\}'
    t.value = "and"
    return t
 
@@ -167,7 +191,7 @@ def t_INTEGERSETWITHTWOLIMITS(t):
       elif groups[0] == "\\leq":
          domain += " , <="
       else:
-         domain += " , " + groups[0]
+         domain += " , " + groups[0]+"="
 
       domain += " " + groups[1]
 
@@ -179,7 +203,7 @@ def t_INTEGERSETWITHTWOLIMITS(t):
       elif groups[3] == "\\leq":
          domain += ", <="
       else:
-         domain += ", " + groups[3]
+         domain += ", " + groups[3]+"="
       
       domain += " " + groups[4]
 
@@ -202,7 +226,7 @@ def t_INTEGERSETWITHONELIMIT(t):
       elif groups[0] == "\\leq":
          domain += " <="
       else:
-         domain += " " + groups[0]
+         domain += " " + groups[0]+"="
 
       domain += " " + groups[1]
 
@@ -215,12 +239,12 @@ def t_INTEGERSETWITHONELIMIT(t):
 
 def t_INTEGERSETPOSITIVE(t):
    r'\\mathbb{Z}[_\^]{\+}'
-   t.value = "integer > 0"
+   t.value = "integer >= 0"
    return t
 
 def t_INTEGERSETNEGATIVE(t):
    r'\\mathbb{Z}[_\^]{-}'
-   t.value = "integer < 0"
+   t.value = "integer <= 0"
    return t
 
 def t_INTEGERSET(t):
@@ -231,17 +255,16 @@ def t_INTEGERSET(t):
 def t_REALSETWITHTWOLIMITS(t):
    r'\\mathbb{R}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
    m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
-   print(m)
+
    domain = ""
    if m:
       groups = m.groups(0)
-      print(groups)
       if groups[0] == "\\geq":
          domain += " , >="
       elif groups[0] == "\\leq":
          domain += " , <="
       else:
-         domain += " , " + groups[0]
+         domain += " , " + groups[0]+"="
 
       domain += " " + groups[1]
 
@@ -253,7 +276,7 @@ def t_REALSETWITHTWOLIMITS(t):
       elif groups[3] == "\\leq":
          domain += ", <="
       else:
-         domain += ", " + groups[3]
+         domain += ", " + groups[3]+"="
       
       domain += " " + groups[4]
 
@@ -276,7 +299,7 @@ def t_REALSETWITHONELIMIT(t):
       elif groups[0] == "\\leq":
          domain += " <="
       else:
-         domain += " " + groups[0]
+         domain += " " + groups[0]+"="
 
       domain += " " + groups[1]
 
@@ -288,17 +311,89 @@ def t_REALSETWITHONELIMIT(t):
 
 def t_REALSETPOSITIVE(t):
    r'\\mathbb{R}[_\^]{\+}'
-   t.value = "realset > 0"
+   t.value = "realset >= 0"
    return t
 
 def t_REALSETNEGATIVE(t):
    r'\\mathbb{R}[_\^]{-}'
-   t.value = "realset < 0"
+   t.value = "realset <= 0"
    return t
 
 def t_REALSET(t):
    r'\\mathbb{R}'
    t.value = "realset"
+   return t
+
+def t_NATURALSETWITHTWOLIMITS(t):
+   r'\\mathbb{N}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?\s*,\s*([><]|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+   
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      if groups[0] == "\\geq":
+         domain += " , >="
+      elif groups[0] == "\\leq":
+         domain += " , <="
+      else:
+         domain += " , " + groups[0]+"="
+
+      limit = float(groups[1])
+      if limit < 0:
+         limit = 0
+
+      domain += " " + str(limit)
+
+      if limit > 0:
+         if groups[2] != None and groups[2] != 0:
+            domain += groups[2]
+
+      if groups[3] == "\\geq":
+         domain += ", >="
+      elif groups[3] == "\\leq":
+         domain += ", <="
+      else:
+         domain += ", " + groups[3]+"="
+      
+      limit = float(groups[4])
+      if limit < 0:
+         limit = 0
+
+      domain += " " + str(limit)
+
+      if limit > 0:
+         if groups[5] != None and groups[5] != 0:
+            domain += groups[5]
+
+   t.value = "realset" + domain
+
+   return t
+
+def t_NATURALSETWITHONELIMIT(t):
+   r'\\mathbb{N}[_\^]{([><]|\\geq|\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}'
+   m = re.search('[_\^]{(>|<|\\\\geq|\\\\leq)\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?}', t.value)
+
+   domain = ""
+   if m:
+      groups = m.groups(0)
+      if groups[0] == "\\geq":
+         domain += " >="
+      elif groups[0] == "\\leq":
+         domain += " <="
+      else:
+         domain += " " + groups[0]+"="
+
+      limit = float(groups[1])
+      if limit < 0:
+         limit = 0
+
+      domain += " " + str(limit)
+
+      if limit > 0:
+         if groups[2] != None and groups[2] != 0:
+            domain += groups[2]
+
+   t.value = "realset" + domain
    return t
 
 def t_NATURALSET(t):
@@ -321,17 +416,17 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
 def t_MAXIMIZE(t):
-   r'\\text\{maximize\s*\}|\\text\{max\s*\}|\\max\s*|maximize\s*|max\s*|\\text\{maximize:\s*\}|\\text\{max:\s*\}|\\max:\s*|maximize:\s*|max:\s*'
+   r'\\text\{\s*maximize\s*\}|maximize|\\text\{\s*maximize:\s*\}|maximize:'
    t.value = "maximize"
    return t
 
 def t_MINIMIZE(t):
-   r'\\text\{minimize\s*\}|\\text\{min\s*\}|\\min\s*|minimize\s*|min\s*|\\text\{minimize:\s*\}|\\text\{min:\s*\}|\\min:\s*|minimize:\s*|min:\s*'
+   r'\\text\{\s*minimize\s*\}|minimize|\\text\{\s*minimize:\s*\}|minimize:'
    t.value = "minimize"
    return t
 
 def t_SUBJECTTO(t):
-   r'\\text\{subject\sto\s*\}|\\text\{subj\.to\s*\}|\\text\{s\.t\.\s*\}|subject\sto\s*|subj\.to\s*| s\.t\.\s*|\\text\{subject\sto:\s*\}|\\text\{subj\.to:\s*\}|\\text\{s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*| s\.t\.:\s*'
+   r'\\text\{\s*subject\sto\s*\}|\\text\{\s*subj\.to\s*\}|\\text\{\s*s\.t\.\s*\}|subject\sto\s*|subj\.to\s*|s\.t\.\s*|\\text\{\s*subject\sto:\s*\}|\\text\{\s*subj\.to:\s*\}|\\text\{\s*s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*|s\.t\.:\s*'
    t.value = "subjectto"
    return t
 
@@ -380,10 +475,9 @@ t_SQRT = r'\\sqrt'
 t_LOG = r'\\log'
 t_LN = r'\\ln'
 t_EXP = r'\\exp'
-t_MOD = r'%'
 
 def t_PIPE(t):
-   r'\\vert|\|'
+   r'\\mid|\\vert|\|'
    t.value = "\\vert"
    return t
 
@@ -428,13 +522,18 @@ def t_ignore_MATHCLAP(t):
    pass
 
 def t_ignore_TEXT(t):
-    r'\\text'
+    r'\\text\{\s*\}|\\text'
     pass
 
 t_COMMA = r','
 
 def t_COLON(t):
    r':'
+   return t
+
+def t_AMPERSAND(t):
+   r'\\&'
+   t.value = "AMP"
    return t
 
 def t_ignore_AMP(t):
@@ -468,7 +567,7 @@ def t_INTER(t):
    return t
 
 def t_CROSS(t):
-   r'\\times|\\wedge'
+   r'\\times'
    t.value = "CROSS"
    return t
 

@@ -24,6 +24,8 @@ class NumericExpressionWithFunction(NumericExpression):
     SIN    = "sin"
     SQRT   = "sqrt"
     TRUNC  = "trunc"
+    MIN    = "min"
+    MAX    = "max"
 
     def __init__(self, function, numericExpression):
         """
@@ -75,8 +77,22 @@ class ValuedNumericExpression(NumericExpression):
         to string
         """
         
-        return "ValuedExpr:" + str(self.value)
-    
+        return "ValuedNumExpr:" + str(self.value)
+
+    def __len__(self):
+        """
+        length method
+        """
+
+        return 1
+
+    def __iter__(self):
+        """
+        Get the iterator of the class
+        """
+
+        return [self]
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
@@ -133,8 +149,10 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
     MINUS = "-"
     TIMES = "*"
     DIV   = "/"
-    MOD   = "%"
+    MOD   = "mod"
     POW   = "^"
+    QUOT  = "div"
+    LESS  = "less"
 
     def __init__(self, op, numericExpression1, numericExpression2):
         """

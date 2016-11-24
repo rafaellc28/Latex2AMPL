@@ -9,8 +9,8 @@ class Range(Expression):
         """
         Set the range init and end
         
-        :param rangeInit : Variable | Number
-        :param rangeEnd  : Variable | Number
+        :param rangeInit : NumericExpression
+        :param rangeEnd  : NumericExpression
         """
         
         self.rangeInit = rangeInit

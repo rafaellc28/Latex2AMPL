@@ -30,6 +30,9 @@ class GenList(object):
 	def getAll(self):
 		return self.vector
 
+	def getAllSortedByKey(self, keyFunction):
+		return sorted(self.vector, key = keyFunction)
+
 	def add(self, obj):
 		_obj = self.get(obj)
 		if _obj == None:

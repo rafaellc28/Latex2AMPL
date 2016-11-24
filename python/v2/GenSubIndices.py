@@ -18,3 +18,6 @@ class GenSubIndices(GenList):
 			return _subIndices[0]
 
 		return None
+
+	def getAllSortedByIndice(self):
+		return self.getAllSortedByKey(lambda el: el.getIndice())
