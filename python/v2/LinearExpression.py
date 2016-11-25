@@ -193,3 +193,47 @@ class IteratedLinearExpression(LinearExpression):
         Generate the MathProg code for this iterated linear expression
         """
         return codeGenerator.generateCode(self)
+
+class ConditionalLinearExpression(LinearExpression):
+    """
+    Class representing a conditional linear expression node in the AST of a MLP
+    """
+    
+    def __init__(self, logicalExpression, linearExpression1, linearExpression2 = None):
+        """
+        Set the conditional linear expression
+        
+        :param logicalExpression : LogicalExpression
+        :param linearExpression1 : LinearExpression
+        :param linearExpression2 : LinearExpression
+        """
+        
+        self.logicalExpression = logicalExpression
+        self.linearExpression1 = linearExpression1
+        self.linearExpression2 = linearExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        res = "CondLinearExpr: " + "("+str(self.logicalExpression)+")?" + str(self.linearExpression1)
+
+        if self.linearExpression2 != None:
+            res += ": " + str(self.linearExpression2)
+
+        return res
+    
+    def addElseExpression(self, elseExpression):
+        self.linearExpression2 = elseExpression
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this conditional linear expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this contitional linear expression
+        """
+        return codeGenerator.generateCode(self)

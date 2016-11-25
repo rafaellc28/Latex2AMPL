@@ -10,6 +10,13 @@ glpStatus[GLP_NOFEAS] = "Problem has no feasible solution.";
 glpStatus[GLP_UNBND]  = "Problem has unbounded solution.";
 glpStatus[GLP_UNDEF]  = "Solution is undefined.";
 
+var glpRowStatus = new Array();
+glpRowStatus[GLP_BS] = 'Basic';
+glpRowStatus[GLP_NL] = 'LoBnd';
+glpRowStatus[GLP_NU] = 'UpBnd';
+glpRowStatus[GLP_NF] = 'Free';
+glpRowStatus[GLP_NS] = 'Fixed';
+
 window.initSolver = function() {
     logNode = document.getElementById("log");
 
@@ -72,6 +79,14 @@ window.solveMathProg = function () {
             glp_mpl_postsolve(tran,lp,isMIP(lp)?GLP_MIP:GLP_SOL);
 
             log((glp_get_obj_dir(lp)==GLP_MIN?'Minimum ':'Maximum ') + glp_get_obj_name(lp) + ": " + (isMIP(lp)?glp_mip_obj_val(lp):glp_get_obj_val(lp)));
+
+            for (var i = 1; i <= glp_get_num_rows(lp); i++) {
+                if (glp_get_row_stat(lp,i) == GLP_BS) {
+                    soln = isMIP(lp)? glp_mip_row_val(lp,i):glp_get_row_prim(lp,i);
+                    log(glp_get_row_name(lp,i) + ": " + soln);
+                }
+            }
+
             for(var i = 1; i <= glp_get_num_cols(lp); i++){
                 log(glp_get_col_name(lp, i)  + " = " + (isMIP(lp)?glp_mip_col_val(lp, i): glp_get_col_prim(lp, i)));
             }

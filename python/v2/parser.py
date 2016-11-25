@@ -8,7 +8,7 @@ import ply.yacc as yacc
 from Main import *
 from LinearProgram import *
 from LinearEquations import *
-from Objective import *
+from Objectives import *
 from Constraints import *
 from ConstraintExpression import *
 from LinearExpression import *
@@ -60,9 +60,9 @@ def p_LinearEquations(t):
     t[0] = LinearEquations(Constraints(t[1]))
 
 def p_LinearProgram(t):
-    '''LinearProgram : Objective
-          | Objective Constraints
-          | Objective BACKSLASHES Constraints'''
+    '''LinearProgram : Objectives
+                     | Objectives Constraints
+                     | Objectives BACKSLASHES Constraints'''
 
     if len(t) > 3:
         t[0] = LinearProgram(t[1], t[3])
@@ -75,6 +75,18 @@ def p_LinearProgram_error(t):
     'LinearProgram : error BACKSLASHES'
     sys.stderr.write("Linear Program bad formatted at line %d\n" % t.lineno(2))
 
+def p_Objectives(t):
+    '''Objectives : Objectives BACKSLASHES Objective
+                  | Objectives BACKSLASHES
+                  | Objective'''
+
+    if not isinstance(t[1], Objectives):
+        t[0] = Objectives([t[1]])
+    elif len(t) > 3:
+        t[0] = t[1].addObjective(t[3])
+    else:
+        t[0] = t[1]
+
 def p_Objective(t):
     '''Objective : MAXIMIZE LinearExpression
                  | MINIMIZE LinearExpression
@@ -82,15 +94,18 @@ def p_Objective(t):
                  | MINIMIZE LinearExpression COMMA IndexingExpression'''
 
     if len(t) > 3:
-      if t[1] == "maximize":
-        t[0] = Objective(t[2], Objective.MAXIMIZE, t[4])
-      else:
-        t[0] = Objective(t[2], Objective.MINIMIZE, t[4])
+        t[4].setStmtIndexing(True)
+
+        obj = Objective.MINIMIZE
+        if t[1] == "maximize":
+            obj = Objective.MAXIMIZE
+
+        t[0] = Objective(t[2], obj, t[4])
     else:
-      if t[1] == "maximize":
-        t[0] = Objective(t[2])
-      else:
-        t[0] = Objective(t[2], Objective.MINIMIZE)
+        if t[1] == "minimize":
+            t[0] = Objective(t[2])
+        else:
+            t[0] = Objective(t[2], Objective.MAXIMIZE)
 
 def p_Objective_error(t):
     '''Objective : MAXIMIZE error COMMA
@@ -109,7 +124,7 @@ def p_ConstraintList(t):
     if len(t) > 3:
         t[0] = t[1] + [t[3]]
     elif len(t) > 2:
-        t[0] = t[1] + [t[2]]
+        t[0] = t[1]
     else:
         t[0] = [t[1]]
 
@@ -122,6 +137,7 @@ def p_Constraint(t):
                   | ConstraintExpression COMMA IndexingExpression
                   | ConstraintExpression'''
     if len(t) > 3:
+        t[3].setStmtIndexing(True)
         t[0] = Constraint(t[1], t[3])
     else:
         t[0] = Constraint(t[1])
@@ -156,16 +172,12 @@ def p_ConstraintExpression_error(t):
                             | error GE'''
     sys.stderr.write("Constraint Expression bad formatted at line %d\n" % t.lineno(2))
 
-def p_NumericOrLinearExpression(t):
-    '''NumericOrLinearExpression : NumericExpression
-                                 | LinearExpression'''
-    t[0] = t[1]
-
 def p_LinearExpression(t):
     '''LinearExpression : Variable
                         | PLUS LinearExpression %prec UPLUS
                         | MINUS LinearExpression %prec UMINUS
-                        | LPAREN LinearExpression RPAREN'''
+                        | LPAREN LinearExpression RPAREN
+                        | ConditionalLinearExpression'''
 
     if len(t) > 3:
         t[0] = LinearExpressionBetweenParenthesis(t[2])
@@ -174,6 +186,8 @@ def p_LinearExpression(t):
             t[0] = PlusLinearExpression(t[2])
         else:
             t[0] = MinusLinearExpression(t[2])
+    elif isinstance(t[1], ConditionalLinearExpression):
+        t[0] = t[1]
     else:
         t[0] = ValuedLinearExpression(t[1])
 
@@ -220,271 +234,14 @@ def p_IteratedLinearExpression_error(t):
     'LinearExpression : SUM UNDERLINE LBRACE error RBRACE'
     sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
 
-
-def p_NumericExpression_binop(t):
-    '''NumericExpression : NumericExpression PLUS NumericExpression
-                         | NumericExpression MINUS NumericExpression
-                         | NumericExpression TIMES NumericExpression
-                         | NumericExpression DIVIDE NumericExpression
-                         | NumericExpression MOD NumericExpression
-                         | NumericExpression QUOTIENT NumericExpression
-                         | NumericExpression LESS NumericExpression
-                         | NumericExpression CARET NumericExpression'''
-
-    if t[2] == "+":
-        op = NumericExpressionWithArithmeticOperation.PLUS
-    elif t[2] == "-":
-        op = NumericExpressionWithArithmeticOperation.MINUS
-    elif t[2] == "*":
-        op = NumericExpressionWithArithmeticOperation.TIMES
-    elif t[2] == "/":
-        op = NumericExpressionWithArithmeticOperation.DIV
-    elif t[2] == "\%":
-        op = NumericExpressionWithArithmeticOperation.MOD
-    elif t[2] == "^":
-        op = NumericExpressionWithArithmeticOperation.POW
-    elif t[2] == "quot":
-        op = NumericExpressionWithArithmeticOperation.QUOT
-    elif t[2] == "less":
-        op = NumericExpressionWithArithmeticOperation.LESS
-
-    t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
-
-def p_NumericExpression_binop_error(t):
-    '''NumericExpression : error PLUS
-                         | error MINUS
-                         | error TIMES
-                         | error DIVIDE
-                         | error MOD
-                         | error CARET'''
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
-
-def p_IteratedNumericExpression(t):
-    '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression'''
-
-    if t[1] == "\\sum":
-        op = IteratedNumericExpression.SUM
-    elif t[1] == "\\prod":
-        op = IteratedNumericExpression.PROD
-    elif t[1] == "\\max":
-        op = IteratedNumericExpression.MAX
-    elif t[1] == "\\min":
-        op = IteratedNumericExpression.MIN
-
-    if len(t) > 7:
-        t[0] = IteratedNumericExpression(op, t[10], t[4], t[8])
-    else:
-        t[0] = IteratedNumericExpression(op, t[6], t[4])
-
-def p_IteratedNumericExpression_error(t):
-    '''NumericExpression : SUM UNDERLINE LBRACE error RBRACE
-                         | PROD UNDERLINE LBRACE error RBRACE
-                         | MAX UNDERLINE LBRACE error RBRACE
-                         | MIN UNDERLINE LBRACE error RBRACE'''
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
-
-
-def p_NumericExpression(t):
-    '''NumericExpression : MINUS NumericExpression %prec UMINUS
-                         | PLUS NumericExpression %prec UPLUS
-                         | LPAREN NumericExpression RPAREN
-                         | Variable
-                         | NUMBER'''
-
-    if len(t) > 3:
-        t[0] = NumericExpressionBetweenParenthesis(t[2])
-    elif t[1] == "+":
-        t[0] = t[2]
-    elif t[1] == "-":
-        t[0] = MinusNumericExpression(t[2])
-    else:
-        t[0] = ValuedNumericExpression(t[1])
-
-def p_NumericExpression_error(t):
-    'NumericExpression : LPAREN error RPAREN'
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(1))
-
-
-def p_FunctionNumericExpression(t):
-    '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
-                         | LFLOOR NumericExpression RFLOOR
-                         | LCEIL NumericExpression RCEIL
-                         | PIPE NumericExpression PIPE
-                         | MAX LPAREN ValueList RPAREN
-                         | MIN LPAREN ValueList RPAREN
-                         | SIN LPAREN NumericExpression RPAREN
-                         | COS LPAREN NumericExpression RPAREN
-                         | LOG LPAREN NumericExpression RPAREN
-                         | LN LPAREN NumericExpression RPAREN
-                         | EXP LPAREN NumericExpression RPAREN
-                         | ARCTAN LPAREN NumericExpression RPAREN
-                         | CARD LPAREN SetExpression RPAREN
-                         | LENGTH LPAREN STRING RPAREN
-                         | ROUND LPAREN NumericExpression RPAREN
-                         | TRUNC LPAREN NumericExpression RPAREN'''
-
-    if t[1] == "card":
-        op = NumericExpressionWithFunction.CARD
-    elif t[1] == "length":
-        op = NumericExpressionWithFunction.LENGTH
-    elif t[1] == "round":
-        op = NumericExpressionWithFunction.ROUND
-    elif t[1] == "trung":
-        op = NumericExpressionWithFunction.TRUNC
-    elif t[1] == "\\sqrt":
-        op = NumericExpressionWithFunction.SQRT
-    elif t[1] == "\\lfloor":
-        op = NumericExpressionWithFunction.FLOOR
-    elif t[1] == "\\lceil":
-        op = NumericExpressionWithFunction.CEIL
-    elif t[1] == "\\vert":
-        op = NumericExpressionWithFunction.ABS
-    elif t[1] == "\\max":
-        op = NumericExpressionWithFunction.MAX
-    elif t[1] == "\\min":
-        op = NumericExpressionWithFunction.MIN
-    elif t[1] == "\\sin":
-        op = NumericExpressionWithFunction.SIN
-    elif t[1] == "\\cos":
-        op = NumericExpressionWithFunction.COS
-    elif t[1] == "\\log":
-        op = NumericExpressionWithFunction.LOG10
-    elif t[1] == "\\ln":
-        op = NumericExpressionWithFunction.LOG
-    elif t[1] == "\\exp":
-        op = NumericExpressionWithFunction.EXP
-    elif t[1] == "\\arctan":
-        op = NumericExpressionWithFunction.ARCTAN
-
+def p_ConditionalLinearExpression(t):
+    '''ConditionalLinearExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression
+                                   | ConditionalLinearExpression COLON LinearExpression'''
     if len(t) > 4:
-        t[0] = NumericExpressionWithFunction(op, t[3])
+        t[0] = ConditionalLinearExpression(t[2], t[5])
     else:
-        t[0] = NumericExpressionWithFunction(op, t[2])
-
-def p_FunctionNumericExpression_error(t):
-    '''NumericExpression : SQRT LBRACE error RBRACE
-                         | LFLOOR error RFLOOR
-                         | LCEIL error RCEIL'''
-    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
-
-def p_StringSymbolicExpression(t):
-    '''SymbolicExpression : LPAREN SymbolicExpression RPAREN
-                          | STRING'''
-
-    if len(t) > 2:
-        t[0] = SymbolicExpressionBetweenParenthesis(t[2])
-    else:
-        t[0] = StringSymbolicExpression(t[1])
-
-def p_SymbolicExpression_binop(t):
-    '''SymbolicExpression : SymbolicExpression AMPERSAND SymbolicExpression'''
-    if t[2] == "AMP":
-        op = SymbolicExpressionWithOperation.CONCAT
-
-    t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
-
-def p_SymbolicExpression_binop_error(t):
-    '''SymbolicExpression : error AMPERSAND'''
-    sys.stderr.write("Symbolic Expression bad formatted at line %d\n" % t.lineno(2))
-
-
-def p_FunctionSymbolicExpression(t):
-    '''SymbolicExpression : SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA SymbolicExpression RPAREN'''
-
-    if t[1] == "substr":
-        op = SymbolicExpressionWithFunction.SUBSTR
-    elif t[1] == "time2str":
-        op = SymbolicExpressionWithFunction.TIME2STR
-
-    if len(t) > 7:
-        t[0] = SymbolicExpressionWithFunction(op, t[3], t[5], t[7])
-    else:
-        if t[1] == "substr":
-            t[0] = SymbolicExpressionWithFunction(op, t[3], t[5])
-        else:
-            t[0] = SymbolicExpressionWithFunction(op, t[5], t[3])
-
-def p_FunctionSymbolicExpression_error(t):
-    '''NumericExpression : error COMMA'''
-    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
-
-
-def p_NumericOrSymbolicExpression(t):
-    '''NumericOrSymbolicExpression : NumericExpression
-                                   | SymbolicExpression'''
-    t[0] = t[1]
-
-
-def p_IndexingExpression(t):
-    '''IndexingExpression : EntryIndexingExpression
-                          | IndexingExpression COLON LogicalExpression
-                          | IndexingExpression COMMA EntryIndexingExpression
-                          | IndexingExpression COMMA BACKSLASHES EntryIndexingExpression'''
-
-    if len(t) > 4:
-        t[0] = t[1].add(t[4])
-    elif len(t) > 3:
-        if t[2] == ":":
-            t[0] = t[1].setLogicalExpression(t[3])
-        else:
-            t[0] = t[1].add(t[3])
-    else:
-        t[0] = IndexingExpression([t[1]])
-
-def p_IndexingExpression_error(t):
-    'IndexingExpression : error COMMA'
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
-
-def p_EntryIndexingExpressionWithSet(t):
-    '''EntryIndexingExpression : ValueList IN SetExpression
-                               | Tuple IN SetExpression
-                               | Variable IN SetExpression'''
-    t[0] = EntryIndexingExpressionWithSet(t[1], t[3])
-
-def p_EntryIndexingExpressionWithSet_error(t):
-    '''EntryIndexingExpression : error IN
-                               | error COLON'''
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
-
-def p_EntryIndexingExpressionEq(t):
-    '''EntryIndexingExpression : Variable EQ NUMBER
-                               | Variable EQ Variable
-                               | Variable EQ Range
-                               | Variable NEQ NumericExpression
-                               | Variable LE NumericExpression
-                               | Variable GE NumericExpression
-                               | Variable LT NumericExpression
-                               | Variable GT NumericExpression'''
-    if t[2] == "=":
-        t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.EQ, t[1], t[3])
-    elif t[2] == "\\neq":
-        t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.NEQ, t[1], t[3])
-    elif t[2] == "\\leq":
-        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LE, t[1], t[3])
-    elif t[2] == "\\geq":
-        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GE, t[1], t[3])
-    elif t[2] == "<":
-        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LT, t[1], t[3])
-    elif t[2] == ">":
-        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
-
-def p_EntryIndexingExpressionEq_error(t):
-    '''EntryIndexingExpression : error EQ
-                               | error NEQ
-                               | error LE
-                               | error GE
-                               | error LT
-                               | error GT'''
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+        t[1].addElseExpression(t[3])
+        t[0] = t[1]
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
@@ -521,6 +278,7 @@ def p_EntryRelationalLogicalExpression(t):
     '''EntryLogicalExpression : NumericOrSymbolicExpression LT NumericOrSymbolicExpression
                               | NumericOrSymbolicExpression LE NumericOrSymbolicExpression
                               | NumericOrSymbolicExpression EQ NumericOrSymbolicExpression
+                              | NumericOrSymbolicExpression GT NumericOrSymbolicExpression
                               | NumericOrSymbolicExpression GE NumericOrSymbolicExpression
                               | NumericOrSymbolicExpression NEQ NumericOrSymbolicExpression'''
 
@@ -530,6 +288,8 @@ def p_EntryRelationalLogicalExpression(t):
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
     elif t[2] == "=":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
+    elif t[2] == ">":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
     elif t[2] == "\\geq":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
     elif t[2] == "\\neq":
@@ -653,6 +413,296 @@ def p_SetExpressionWithIndices_error(t):
     '''SetExpression : error LBRACE
                      | error LPAREN'''
     sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_ConditionalSetExpression(t):
+    '''SetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression COLON SetExpression'''
+    t[0] = ConditionalSetExpression(t[2], t[5], t[7])
+
+def p_IndexingExpression(t):
+    '''IndexingExpression : EntryIndexingExpression
+                          | IndexingExpression COLON LogicalExpression
+                          | IndexingExpression COMMA EntryIndexingExpression
+                          | IndexingExpression COMMA BACKSLASHES EntryIndexingExpression'''
+
+    if len(t) > 4:
+        t[0] = t[1].add(t[4])
+    elif len(t) > 3:
+        if t[2] == ":":
+            t[0] = t[1].setLogicalExpression(t[3])
+        else:
+            t[0] = t[1].add(t[3])
+    else:
+        t[0] = IndexingExpression([t[1]])
+
+def p_IndexingExpression_error(t):
+    'IndexingExpression : error COMMA'
+    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_EntryIndexingExpressionWithSet(t):
+    '''EntryIndexingExpression : ValueList IN SetExpression
+                               | Tuple IN SetExpression
+                               | Variable IN SetExpression'''
+    t[0] = EntryIndexingExpressionWithSet(t[1], t[3])
+
+def p_EntryIndexingExpressionWithSet_error(t):
+    '''EntryIndexingExpression : error IN
+                               | error COLON'''
+    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_EntryIndexingExpressionEq(t):
+    '''EntryIndexingExpression : Variable EQ NUMBER
+                               | Variable EQ Variable
+                               | Variable EQ Range
+                               | Variable NEQ NumericExpression
+                               | Variable LE NumericExpression
+                               | Variable GE NumericExpression
+                               | Variable LT NumericExpression
+                               | Variable GT NumericExpression'''
+    if t[2] == "=":
+        t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.EQ, t[1], t[3])
+    elif t[2] == "\\neq":
+        t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.NEQ, t[1], t[3])
+    elif t[2] == "\\leq":
+        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LE, t[1], t[3])
+    elif t[2] == "\\geq":
+        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GE, t[1], t[3])
+    elif t[2] == "<":
+        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LT, t[1], t[3])
+    elif t[2] == ">":
+        t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
+
+def p_EntryIndexingExpressionEq_error(t):
+    '''EntryIndexingExpression : error EQ
+                               | error NEQ
+                               | error LE
+                               | error GE
+                               | error LT
+                               | error GT'''
+    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_StringSymbolicExpression(t):
+    '''SymbolicExpression : LPAREN SymbolicExpression RPAREN
+                          | STRING'''
+
+    if len(t) > 2:
+        t[0] = SymbolicExpressionBetweenParenthesis(t[2])
+    else:
+        t[0] = StringSymbolicExpression(t[1])
+
+def p_SymbolicExpression_binop(t):
+    '''SymbolicExpression : SymbolicExpression AMPERSAND SymbolicExpression'''
+    if t[2] == "AMP":
+        op = SymbolicExpressionWithOperation.CONCAT
+
+    t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
+
+def p_SymbolicExpression_binop_error(t):
+    '''SymbolicExpression : error AMPERSAND'''
+    sys.stderr.write("Symbolic Expression bad formatted at line %d\n" % t.lineno(2))
+
+
+def p_FunctionSymbolicExpression(t):
+    '''SymbolicExpression : SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression RPAREN
+                          | TIME2STR LPAREN NumericExpression COMMA SymbolicExpression RPAREN'''
+
+    if t[1] == "substr":
+        op = SymbolicExpressionWithFunction.SUBSTR
+    elif t[1] == "time2str":
+        op = SymbolicExpressionWithFunction.TIME2STR
+
+    if len(t) > 7:
+        t[0] = SymbolicExpressionWithFunction(op, t[3], t[5], t[7])
+    else:
+        if t[1] == "substr":
+            t[0] = SymbolicExpressionWithFunction(op, t[3], t[5])
+        else:
+            t[0] = SymbolicExpressionWithFunction(op, t[5], t[3])
+
+def p_FunctionSymbolicExpression_error(t):
+    '''SymbolicExpression : error COMMA'''
+    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
+
+
+def p_ConditionalSymbolicExpression(t):
+    '''SymbolicExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression COLON SymbolicExpression'''
+    t[0] = ConditionalSymbolicExpression(t[2], t[5], t[7])
+
+def p_NumericExpression_binop(t):
+    '''NumericExpression : NumericExpression PLUS NumericExpression
+                         | NumericExpression MINUS NumericExpression
+                         | NumericExpression TIMES NumericExpression
+                         | NumericExpression DIVIDE NumericExpression
+                         | NumericExpression MOD NumericExpression
+                         | NumericExpression QUOTIENT NumericExpression
+                         | NumericExpression LESS NumericExpression
+                         | NumericExpression CARET NumericExpression'''
+
+    if t[2] == "+":
+        op = NumericExpressionWithArithmeticOperation.PLUS
+    elif t[2] == "-":
+        op = NumericExpressionWithArithmeticOperation.MINUS
+    elif t[2] == "*":
+        op = NumericExpressionWithArithmeticOperation.TIMES
+    elif t[2] == "/":
+        op = NumericExpressionWithArithmeticOperation.DIV
+    elif t[2] == "\%":
+        op = NumericExpressionWithArithmeticOperation.MOD
+    elif t[2] == "^":
+        op = NumericExpressionWithArithmeticOperation.POW
+    elif t[2] == "quot":
+        op = NumericExpressionWithArithmeticOperation.QUOT
+    elif t[2] == "less":
+        op = NumericExpressionWithArithmeticOperation.LESS
+
+    t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
+
+def p_NumericExpression_binop_error(t):
+    '''NumericExpression : error PLUS
+                         | error MINUS
+                         | error TIMES
+                         | error DIVIDE
+                         | error MOD
+                         | error CARET'''
+    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_IteratedNumericExpression(t):
+    '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression'''
+
+    if t[1] == "\\sum":
+        op = IteratedNumericExpression.SUM
+    elif t[1] == "\\prod":
+        op = IteratedNumericExpression.PROD
+    elif t[1] == "\\max":
+        op = IteratedNumericExpression.MAX
+    elif t[1] == "\\min":
+        op = IteratedNumericExpression.MIN
+
+    if len(t) > 7:
+        t[0] = IteratedNumericExpression(op, t[10], t[4], t[8])
+    else:
+        t[0] = IteratedNumericExpression(op, t[6], t[4])
+
+def p_IteratedNumericExpression_error(t):
+    '''NumericExpression : SUM UNDERLINE LBRACE error RBRACE
+                         | PROD UNDERLINE LBRACE error RBRACE
+                         | MAX UNDERLINE LBRACE error RBRACE
+                         | MIN UNDERLINE LBRACE error RBRACE'''
+    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
+
+
+def p_NumericExpression(t):
+    '''NumericExpression : MINUS NumericExpression %prec UMINUS
+                         | PLUS NumericExpression %prec UPLUS
+                         | LPAREN NumericExpression RPAREN
+                         | ConditionalNumericExpression
+                         | Variable
+                         | NUMBER'''
+
+    if len(t) > 3:
+        t[0] = NumericExpressionBetweenParenthesis(t[2])
+    elif t[1] == "+":
+        t[0] = t[2]
+    elif t[1] == "-":
+        t[0] = MinusNumericExpression(t[2])
+    elif isinstance(t[1], ConditionalNumericExpression):
+        t[0] = t[1]
+    else:
+        t[0] = ValuedNumericExpression(t[1])
+
+def p_NumericExpression_error(t):
+    'NumericExpression : LPAREN error RPAREN'
+    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(1))
+
+
+def p_FunctionNumericExpression(t):
+    '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
+                         | LFLOOR NumericExpression RFLOOR
+                         | LCEIL NumericExpression RCEIL
+                         | PIPE NumericExpression PIPE
+                         | MAX LPAREN ValueList RPAREN
+                         | MIN LPAREN ValueList RPAREN
+                         | SIN LPAREN NumericExpression RPAREN
+                         | COS LPAREN NumericExpression RPAREN
+                         | LOG LPAREN NumericExpression RPAREN
+                         | LN LPAREN NumericExpression RPAREN
+                         | EXP LPAREN NumericExpression RPAREN
+                         | ARCTAN LPAREN NumericExpression RPAREN
+                         | CARD LPAREN SetExpression RPAREN
+                         | LENGTH LPAREN STRING RPAREN
+                         | ROUND LPAREN NumericExpression RPAREN
+                         | TRUNC LPAREN NumericExpression RPAREN'''
+
+    if t[1] == "card":
+        op = NumericExpressionWithFunction.CARD
+    elif t[1] == "length":
+        op = NumericExpressionWithFunction.LENGTH
+    elif t[1] == "round":
+        op = NumericExpressionWithFunction.ROUND
+    elif t[1] == "trung":
+        op = NumericExpressionWithFunction.TRUNC
+    elif t[1] == "\\sqrt":
+        op = NumericExpressionWithFunction.SQRT
+    elif t[1] == "\\lfloor":
+        op = NumericExpressionWithFunction.FLOOR
+    elif t[1] == "\\lceil":
+        op = NumericExpressionWithFunction.CEIL
+    elif t[1] == "\\vert":
+        op = NumericExpressionWithFunction.ABS
+    elif t[1] == "\\max":
+        op = NumericExpressionWithFunction.MAX
+    elif t[1] == "\\min":
+        op = NumericExpressionWithFunction.MIN
+    elif t[1] == "\\sin":
+        op = NumericExpressionWithFunction.SIN
+    elif t[1] == "\\cos":
+        op = NumericExpressionWithFunction.COS
+    elif t[1] == "\\log":
+        op = NumericExpressionWithFunction.LOG10
+    elif t[1] == "\\ln":
+        op = NumericExpressionWithFunction.LOG
+    elif t[1] == "\\exp":
+        op = NumericExpressionWithFunction.EXP
+    elif t[1] == "\\arctan":
+        op = NumericExpressionWithFunction.ARCTAN
+
+    if len(t) > 4:
+        t[0] = NumericExpressionWithFunction(op, t[3])
+    else:
+        t[0] = NumericExpressionWithFunction(op, t[2])
+
+def p_FunctionNumericExpression_error(t):
+    '''NumericExpression : SQRT LBRACE error RBRACE
+                         | LFLOOR error RFLOOR
+                         | LCEIL error RCEIL'''
+    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
+
+def p_ConditionalNumericExpression(t):
+    '''ConditionalNumericExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression
+                                    | ConditionalNumericExpression COLON NumericExpression'''
+    if len(t) > 4:
+        t[0] = ConditionalNumericExpression(t[2], t[5])
+    else:
+        t[1].addElseExpression(t[3])
+        t[0] = t[1]
+
+def p_NumericOrLinearExpression(t):
+    '''NumericOrLinearExpression : NumericExpression
+                                 | LinearExpression'''
+    t[0] = t[1]
+
+def p_NumericOrSymbolicExpression(t):
+    '''NumericOrSymbolicExpression : NumericExpression
+                                   | SymbolicExpression'''
+    t[0] = t[1]
+
 
 def p_Range(t):
     '''Range : NumericExpression DOTS NumericExpression'''

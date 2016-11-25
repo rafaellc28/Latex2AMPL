@@ -24,6 +24,7 @@ tokens = [
    'NOT',
    'FORALL',
    'EXISTS',
+   'QUESTION_MARK',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
    'INTEGERSETNEGATIVE',
@@ -450,6 +451,7 @@ def t_RBRACKET(t):
    t.value = "]"
    return t
 
+t_QUESTION_MARK = r'\?'
 t_EQ = r'='
 t_NEQ = r'\\neq'
 t_LE = r'\\leq'

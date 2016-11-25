@@ -13,6 +13,7 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
     LT = "<"
     LE = "<="
     EQ = "="
+    GT = ">"
     GE = ">="
     NEQ = "<>"
 
@@ -20,7 +21,7 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
         """
         Set the operator and the numeric expressions
 
-        :param op : (LT, LE, EQ, GE, NEQ)
+        :param op : (LT, LE, EQ, GT, GE, NEQ)
         :param numericExpression1 : NumericExpression
         :param numericExpression2 : NumericExpression
         """

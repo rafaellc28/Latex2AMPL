@@ -133,3 +133,39 @@ class SetExpressionWithOperation(SetExpression):
         Generate the MathProg code for this Set expression
         """
         return codeGenerator.generateCode(self)
+
+class ConditionalSetExpression(SetExpression):
+    """
+    Class representing a conditional set expression node in the AST of a MLP
+    """
+    
+    def __init__(self, logicalExpression, setExpression1, setExpression2):
+        """
+        Set the conditional set expression
+        
+        :param logicalExpression : LogicalExpression
+        :param setExpression1    : SetExpression
+        :param setExpression2    : SetExpression
+        """
+        
+        self.logicalExpression = logicalExpression
+        self.setExpression1    = setExpression1
+        self.setExpression2    = setExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        return "CondSetExpr: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1) + ": " + str(self.setExpression2)
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this conditional set expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this contitional set expression
+        """
+        return codeGenerator.generateCode(self)

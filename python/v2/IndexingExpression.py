@@ -10,7 +10,7 @@ class IndexingExpression(Expression):
     @staticmethod
     def _getCodePredicateEntry(entry): return entry.generatePredicateCode()
 
-    def __init__(self, entriesIndexingExpression, logicalExpression = None):
+    def __init__(self, entriesIndexingExpression, logicalExpression = None, stmtIndexing = False):
         """
         Set the entries for the indexing expression
         """
@@ -18,6 +18,7 @@ class IndexingExpression(Expression):
         self.entriesIndexingExpression = entriesIndexingExpression
         self.logicalExpression = logicalExpression
         self.hasSup = False
+        self.stmtIndexing = stmtIndexing
 
     def __str__(self):
         """
@@ -55,6 +56,9 @@ class IndexingExpression(Expression):
 
         self.logicalExpression = logicalExpression
         return self
+
+    def setStmtIndexing(self, stmtIndexing):
+        self.stmtIndexing = stmtIndexing
 
     def setHasSup(self, hasSup):
         self.hasSup = hasSup

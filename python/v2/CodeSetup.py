@@ -22,7 +22,7 @@ class CodeSetup:
         self.codeGenerator = codeGenerator
         self.varKey = None
         self.curList = None
-        self.constraintIndice = 0
+        self.stmtIndice = 0
 
     def setupEnvironment(self, node):
         cls = node.__class__
@@ -87,10 +87,15 @@ class CodeSetup:
 
         return val
 
+    # Get the MathProg code for a given objective
+    def _setupObjective(self, objective):
+        objective.setupEnvironment(self)
+        self.stmtIndice += 1
+
     # Get the MathProg code for a given constraint
     def _setupConstraint(self, constraint):
         constraint.setupEnvironment(self)
-        self.constraintIndice += 1
+        self.stmtIndice += 1
 
     # Get the MathProg code for a given constraint
     def _setupEntry(self, entry): return entry.setupEnvironment(self)
@@ -169,6 +174,13 @@ class CodeSetup:
         node.objective.setupEnvironment(self)
         if node.constraints:
             node.constraints.setupEnvironment(self)
+
+    # Objectives
+    def setupEnvironment_Objectives(self, node):
+        """
+        Generate the MathProg code for the variables and sets used in these objectives
+        """
+        map(self._setupObjective, node.objectives)
 
     # Objective
     def setupEnvironment_Objective(self, node):
@@ -249,6 +261,15 @@ class CodeSetup:
         node.linearExpression.setupEnvironment(self)
         node.indexingExpression.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalLinearExpression(self, node):
+        """
+        Generate the MathProg code for the variables and sets used in this linear expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+        node.linearExpression1.setupEnvironment(self)
+        if node.linearExpression2 != None:
+            node.linearExpression2.setupEnvironment(self)
+
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """
@@ -292,6 +313,15 @@ class CodeSetup:
         node.numericExpression.setupEnvironment(self)
         node.indexingExpression.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalNumericExpression(self, node):
+        """
+        Generate the MathProg code for the variables and sets used in this numeric expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+        node.numericExpression1.setupEnvironment(self)
+        if node.numericExpression2 != None:
+            node.numericExpression2.setupEnvironment(self)
+
 
     # Symbolic Expression
     def setupEnvironment_SymbolicExpressionWithFunction(self, node):
@@ -322,6 +352,13 @@ class CodeSetup:
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalSymbolicExpression(self, node):
+        """
+        Generate the MathProg code for the variables and sets used in this symbolic expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+        node.symbolicExpression1.setupEnvironment(self)
+        node.symbolicExpression2.setupEnvironment(self)
 
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
@@ -341,8 +378,8 @@ class CodeSetup:
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
 
-        constraintIndice = str(self.constraintIndice)
-        self.codeGenerator.genIndexingExpressionConstraints.add(GenIndexingExpression(constraintIndice, node.generateCode(self.codeGenerator)))
+        if node.stmtIndexing:
+            self.codeGenerator.genIndexingExpressionConstraints.add(GenIndexingExpression(str(self.stmtIndice), node.generateCode(self.codeGenerator)))
 
     def setupEnvironment_EntryExpressionWithSet(self, node, variable):
         if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
@@ -519,6 +556,14 @@ class CodeSetup:
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalSetExpression(self, node):
+        """
+        Generate the MathProg code for the variables and sets used in this set expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+        node.setExpression1.setupEnvironment(self)
+        node.setExpression2.setupEnvironment(self)
+
     # Range
     def setupEnvironment_Range(self, node):
         """
@@ -574,7 +619,7 @@ class CodeSetup:
 
         if node.isSet:
             if not self.codeGenerator.genSets.has(self.varKey): # check if this set was not seen yet
-                _genSet = GenSet(self.varKey, node.dimenSet, self.constraintIndice)
+                _genSet = GenSet(self.varKey, node.dimenSet, str(self.stmtIndice))
                 if len(node.sub_indices) > 0:
                     _subIndices = GenSubIndices(_genSet)
                     _genSet.setSubIndices(_subIndices)
@@ -586,7 +631,7 @@ class CodeSetup:
 
         elif node.isParam:
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
-                _genParam = GenParameter(self.varKey, self.constraintIndice)
+                _genParam = GenParameter(self.varKey, str(self.stmtIndice))
 
                 if len(node.sub_indices) > 0:
                     _subIndices = GenSubIndices(_genParam)
@@ -599,7 +644,7 @@ class CodeSetup:
 
         elif node.isVar:
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
-                _genVar = GenVariable(self.varKey, None, None, None, self.constraintIndice)
+                _genVar = GenVariable(self.varKey, None, None, None, str(self.stmtIndice))
 
                 if len(node.sub_indices) > 0:
                     _subIndices = GenSubIndices(_genVar)

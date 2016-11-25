@@ -271,3 +271,47 @@ class IteratedNumericExpression(NumericExpression):
         Generate the MathProg code for this iterated numeric expression
         """
         return codeGenerator.generateCode(self)
+
+class ConditionalNumericExpression(NumericExpression):
+    """
+    Class representing a conditional numeric expression node in the AST of a MLP
+    """
+    
+    def __init__(self, logicalExpression, numericExpression1, numericExpression2 = None):
+        """
+        Set the conditional numeric expression
+        
+        :param logicalExpression : LogicalExpression
+        :param numericExpression1: NumericExpression
+        :param numericExpression2: NumericExpression
+        """
+        
+        self.logicalExpression  = logicalExpression
+        self.numericExpression1 = numericExpression1
+        self.numericExpression2 = numericExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        res = "CondNumExpr: " + "("+str(self.logicalExpression)+")?" + str(self.numericExpression1)
+
+        if self.numericExpression2 != None:
+            res += ": " + str(self.numericExpression2)
+
+        return res
+
+    def addElseExpression(self, elseExpression):
+        self.numericExpression2 = elseExpression
+    
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this conditional numeric expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this conditional numeric expression
+        """
+        return codeGenerator.generateCode(self)

@@ -4,3 +4,4 @@ parselog.txt
 TODO.txt
 *.pyc
 *.log
+*.out

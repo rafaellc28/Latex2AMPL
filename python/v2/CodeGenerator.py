@@ -29,7 +29,9 @@ class CodeGenerator:
         self.genIndexingExpressionConstraints = GenList()
         self.topological_order = []
 
-        self.constraintNumber = 0;
+        self.totalObjectives = 0
+        self.objectiveNumber = 0
+        self.constraintNumber = 0
 
     def generateCode(self, node):
         cls = node.__class__
@@ -96,6 +98,11 @@ class CodeGenerator:
             val = str(int(float(val)))
 
         return val
+
+    # Get the MathProg code for a given objective
+    def _getCodeObjective(self, objective):
+        self.objectiveNumber += 1
+        return objective.generateCode(self)
 
     # Get the MathProg code for a given constraint
     def _getCodeConstraint(self, constraint):
@@ -491,6 +498,11 @@ class CodeGenerator:
         else:
             return preModel + node.objective.generateCode(self) + "\n\n" + self._posModel()
 
+    # Objectives
+    def generateCode_Objectives(self, node):
+        self.totalObjectives = len(node.objectives)
+        return "\n\n".join(map(self._getCodeObjective, node.objectives))
+
     # Objective Function
     def generateCode_Objective(self, node):
         """
@@ -503,7 +515,7 @@ class CodeGenerator:
             if idxExpression:
                 domain_str = " {" + idxExpression + "}"
 
-        return node.type + " obj" + domain_str + ": " + node.linearExpression.generateCode(self) + ";"
+        return node.type + " obj" + (str(self.objectiveNumber) if self.totalObjectives > 1 else "")  + domain_str + ": " + node.linearExpression.generateCode(self) + ";"
 
     # Constraints
     def generateCode_Constraints(self, node):
@@ -557,6 +569,14 @@ class CodeGenerator:
 
         return res
 
+    def generateCode_ConditionalLinearExpression(self, node):
+        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.linearExpression1.generateCode(self)
+
+        if node.linearExpression2:
+            res += " else " + node.linearExpression2.generateCode(self)
+
+        return res
+
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
         return str(node.function) + "(" + node.numericExpression.generateCode(self) + ")"
@@ -580,6 +600,14 @@ class CodeGenerator:
             res = str(node.op) + "{" + node.indexingExpression.generateCode(self) + "}"
 
         res += node.numericExpression.generateCode(self)
+
+        return res
+
+    def generateCode_ConditionalNumericExpression(self, node):
+        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.numericExpression1.generateCode(self)
+
+        if node.numericExpression2:
+            res += " else " + node.numericExpression2.generateCode(self)
 
         return res
 
@@ -607,6 +635,8 @@ class CodeGenerator:
     def generateCode_SymbolicExpressionWithOperation(self, node):
         return node.symbolicExpression1.generateCode(self) + " " + node.op + " " + node.symbolicExpression2.generateCode(self)
 
+    def generateCode_ConditionalSymbolicExpression(self, node):
+        return "if " + node.logicalExpression.generateCode(self) + " then " + node.symbolicExpression1.generateCode(self) + " else " + node.symbolicExpression2.generateCode(self)
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
@@ -718,6 +748,9 @@ class CodeGenerator:
 
     def generateCode_SetExpressionWithOperation(self, node):
         return node.setExpression1.generateCode(self) + " " + node.op + " " + node.setExpression2.generateCode(self)
+
+    def generateCode_ConditionalSetExpression(self, node):
+        return "if " + node.logicalExpression.generateCode(self) + " then " + node.setExpression1.generateCode(self) + " else " + node.setExpression2.generateCode(self)
 
     # Range
     def generateCode_Range(self, node):

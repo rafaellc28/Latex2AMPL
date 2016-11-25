@@ -179,3 +179,39 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
         Generate the MathProg code for this symbolic expression with operation
         """
         return codeGenerator.generateCode(self)
+
+class ConditionalSymbolicExpression(SymbolicExpression):
+    """
+    Class representing a conditional symbolic expression node in the AST of a MLP
+    """
+    
+    def __init__(self, logicalExpression, symbolicExpression1, symbolicExpression2):
+        """
+        Set the conditional symbolic expression
+        
+        :param logicalExpression  : LogicalExpression
+        :param symbolicExpression1: SymbolicExpression
+        :param symbolicExpression2: SymbolicExpression
+        """
+        
+        self.logicalExpression   = logicalExpression
+        self.symbolicExpression1 = symbolicExpression1
+        self.symbolicExpression2 = symbolicExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        return "CondSymbExpr: " + "("+str(self.logicalExpression)+")?" + str(self.symbolicExpression1) + ": " + str(self.symbolicExpression2)
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this conditional symbolic expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this contitional symbolic expression
+        """
+        return codeGenerator.generateCode(self)
