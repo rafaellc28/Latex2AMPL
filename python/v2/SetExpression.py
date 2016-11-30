@@ -134,6 +134,40 @@ class SetExpressionWithOperation(SetExpression):
         """
         return codeGenerator.generateCode(self)
 
+class SetExpressionBetweenParenthesis(SetExpression):
+    """
+    Class representing a set expression between parenthesis node in the AST of a MLP
+    """
+
+    def __init__(self, setExpression):
+        """
+        Set the set expression
+
+        :param setExpression : SetExpression
+        """
+
+        self.setExpression = setExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        
+        return "SE: (" + str(self.setExpression) + ")"
+    
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this set expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this set expression
+        """
+        return codeGenerator.generateCode(self)
+
+
 class ConditionalSetExpression(SetExpression):
     """
     Class representing a conditional set expression node in the AST of a MLP

@@ -47,7 +47,7 @@ precedence = (
     ('left', 'UPLUS', 'UMINUS'),
     ('left', 'IN', 'NOTIN'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
-      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET')
+      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET', 'SYMBOLIC')
 )
 
 def p_Main(t):
@@ -377,6 +377,7 @@ def p_SetExpressionWithValue(t):
                      | LBRACE SetExpression RBRACE
                      | LBRACE TupleList RBRACE
                      | LBRACE IndexingExpression RBRACE
+                     | LPAREN SetExpression RPAREN
                      | Range
                      | Variable
                      | NATURALSET
@@ -390,10 +391,14 @@ def p_SetExpressionWithValue(t):
                      | REALSETNEGATIVE
                      | REALSETWITHONELIMIT
                      | REALSETWITHTWOLIMITS
-                     | BINARYSET'''
+                     | BINARYSET
+                     | SYMBOLIC'''
 
     if len(t) > 2:
-        t[0] = SetExpressionWithValue(t[2])
+        if t[1] == "(":
+            t[0] = SetExpressionBetweenParenthesis(t[2])
+        else:
+            t[0] = SetExpressionWithValue(t[2])
     else:
         t[0] = SetExpressionWithValue(t[1])
 

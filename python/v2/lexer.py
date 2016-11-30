@@ -40,6 +40,7 @@ tokens = [
    'SUBSET',
    'NOTSUBSET',
    'NUMBER',
+   'SYMBOLIC',
    'PLUS',
    'MINUS',
    'TIMES',
@@ -410,6 +411,11 @@ def t_SUBSET(t):
 def t_NOTSUBSET(t):
    r'\\not\\subseteq|\\not\\subset'
    t.value = "notsubset"
+   return t
+
+def t_SYMBOLIC(t):
+   r'\\mathbb{S}'
+   t.value = "symbolic"
    return t
 
 #t_DOT = r'\\cdot'

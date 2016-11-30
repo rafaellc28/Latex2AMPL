@@ -23,6 +23,7 @@ class Variable(Expression):
         self.isSet = False
         self.isVar = False
         self.isParam = False
+        self.isSymbolic = False
 
     def __str__(self):
         """
@@ -67,6 +68,9 @@ class Variable(Expression):
 
     def setIsParam(self, isParam):
         self.isParam = isParam
+
+    def setIsSymbolic(self, isSymbolic):
+        self.isSymbolic = isSymbolic
 
     def setDimenSet(self, dimen):
         self.dimenSet = dimen

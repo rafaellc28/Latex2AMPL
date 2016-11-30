@@ -80,16 +80,19 @@ window.solveMathProg = function () {
 
             log((glp_get_obj_dir(lp)==GLP_MIN?'Minimum ':'Maximum ') + glp_get_obj_name(lp) + ": " + (isMIP(lp)?glp_mip_obj_val(lp):glp_get_obj_val(lp)));
 
+            log("\nVariables:");
+            for(var i = 1; i <= glp_get_num_cols(lp); i++){
+                log(glp_get_col_name(lp, i)  + " = " + (isMIP(lp)?glp_mip_col_val(lp, i): glp_get_col_prim(lp, i)));
+            }
+            
+            log("\nConstraints:");
             for (var i = 1; i <= glp_get_num_rows(lp); i++) {
                 if (glp_get_row_stat(lp,i) == GLP_BS) {
                     soln = isMIP(lp)? glp_mip_row_val(lp,i):glp_get_row_prim(lp,i);
                     log(glp_get_row_name(lp,i) + ": " + soln);
                 }
             }
-
-            for(var i = 1; i <= glp_get_num_cols(lp); i++){
-                log(glp_get_col_name(lp, i)  + " = " + (isMIP(lp)?glp_mip_col_val(lp, i): glp_get_col_prim(lp, i)));
-            }
+                        
         } else {
             throw new MathProgError((isMIP()?'MILP':'LP') + " failed.");
         }

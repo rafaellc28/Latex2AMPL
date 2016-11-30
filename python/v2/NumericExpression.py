@@ -135,7 +135,7 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this valued linear expression
+        Generate the MathProg code for this numeric expression
         """
         return codeGenerator.generateCode(self)
 
@@ -258,7 +258,7 @@ class IteratedNumericExpression(NumericExpression):
 
         res += str(self.numericExpression)
 
-        return "ItLE:" + res
+        return "ItNumExp:" + res
     
     def setupEnvironment(self, codeSetup):
         """
