@@ -120,47 +120,65 @@ class CodeSetup:
         if Utils._isInstanceOfStr(node.sub_indices):
             return 
 
+        #print(node.sub_indices)
         if len(node.sub_indices) > 0:
             if Utils._isInstanceOfList(node.sub_indices):
                 for i in range(len(node.sub_indices)):
                     var = node.sub_indices[i]
 
-                    if isinstance(var, String):
-                        continue
-
-                    if isinstance(var, ValuedNumericExpression):
+                    if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
                         var = var.value
 
                     var.setIndice(i)
                     var.setupEnvironment(self)
 
-            elif isinstance(node.sub_indices, ValuedNumericExpression):
+            elif isinstance(node.sub_indices, ValuedNumericExpression) or isinstance(node.sub_indices, StringSymbolicExpression):
                 node.sub_indices.value.setIndice(0)
                 node.sub_indices.value.setupEnvironment(self)
 
-            elif not isinstance(node.sub_indices, String):
+            else:
                 node.sub_indices.setIndice(0)
                 node.sub_indices.setupEnvironment(self)
 
     def _setupEnvironment_SubIndice(self, node):
         ind = node.generateCode(self.codeGenerator)
-
         self.codeGenerator.genDomains.add(GenDomain(ind, self.stmtIndex))
+
+        #if self.varKey == "V":
+        #    print("V: "+ind)
 
         if self.curList == None:
             return
 
+        #if self.varKey == "V":
+        #    print("V passou: "+str(self.stmtIndex))
+        #    print(self.curList)
+
         _genObj = self.curList.get(self.varKey)
 
         if _genObj != None:
+            order = 0
+
             _subIndices = _genObj.getSubIndices()
+            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
 
-            _subIndice = _subIndices.getByIndice(node.getIndice())
+            #if self.varKey == "V":
+            #    print("V before")
+            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices.getAll()))
+            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndice))
 
-            if _subIndice != None:
-                _subIndices.remove(_subIndice)
+            if _subIndice != None and len(_subIndice) > 0:
+                for idx in _subIndice:
+                    if idx.getOrder() > order:
+                        order = idx.getOrder()
 
-            _subIndices.add(GenSubIndice(node.getIndice(), ind, self.stmtIndex, None, None, _subIndices)) # set the name of the variable as the index
+                order += 1
+
+            _subIndices.add(GenSubIndice(node.getIndice(), ind, self.stmtIndex, order, None, None, _subIndices)) # set the name of the variable as the index
+
+            #if self.varKey == "V":
+            #    print("V after")
+            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices.getAll()))
 
 
     def setupEnvironment_Main(self, node):
@@ -660,7 +678,23 @@ class CodeSetup:
         self._setLastStmt(self.varKey, self.codeGenerator.genVariables)
         self._setLastStmt(self.varKey, self.codeGenerator.genParameters)
 
-        if node.isSet:
+        if node.isVar or self.codeGenerator.genVariables.has(self.varKey):
+            self.codeGenerator.genParameters.remove(self.varKey)
+            self.codeGenerator.genSets.remove(self.varKey)
+
+            if not self.codeGenerator.genVariables.has(self.varKey): # check if this variable was not seen yet
+                _genVar = GenVariable(self.varKey, None, None, None, str(self.stmtIndex), str(self.stmtIndex))
+
+                if len(node.sub_indices) > 0:
+                    _subIndices = GenSubIndices(_genVar)
+                    _genVar.setSubIndices(_subIndices)
+
+                self.codeGenerator.genVariables.add(_genVar)
+
+            self.curList = self.codeGenerator.genVariables
+            self._checkSubIndices(node)
+
+        elif node.isSet:
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
                 _genSet = GenSet(self.varKey, node.dimenSet, str(self.stmtIndex), str(self.stmtIndex))
 
@@ -673,19 +707,6 @@ class CodeSetup:
             self.curList = self.codeGenerator.genSets
             self._checkSubIndices(node)
 
-        elif node.isVar:
-            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
-                _genVar = GenVariable(self.varKey, None, None, None, str(self.stmtIndex), str(self.stmtIndex))
-
-                if len(node.sub_indices) > 0:
-                    _subIndices = GenSubIndices(_genVar)
-                    _genVar.setSubIndices(_subIndices)
-
-                self.codeGenerator.genVariables.add(_genVar)
-
-            self.curList = self.codeGenerator.genVariables
-            self._checkSubIndices(node)
-            
         elif node.isParam:
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
                 _genParam = GenParameter(self.varKey, node.isSymbolic, str(self.stmtIndex), str(self.stmtIndex))
@@ -714,11 +735,20 @@ class CodeSetup:
         _genObj = self.curList.get(self.varKey)
 
         if _genObj != None:
-            _subIndice = _genObj.getSubIndices().getByIndice(node.getIndice())
+            order = 0
 
-            if _subIndice == None:
-                _subIndice = GenSubIndice(node.getIndice(), num, self.stmtIndex, None, None, _genObj.getSubIndices())
-                _genObj.getSubIndices().add(_subIndice)
+            _subIndices = _genObj.getSubIndices()
+            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
+
+            if _subIndice != None and len(_subIndice) > 0:
+                for idx in _subIndice:
+                    if idx.getOrder() > order:
+                        order = idx.getOrder()
+
+                order += 1
+
+            _subIndice = GenSubIndice(node.getIndice(), num, self.stmtIndex, order, None, None, _subIndices)
+            _genObj.getSubIndices().add(_subIndice)
 
             if num < _subIndice.getMinVal():
                 _subIndice.setMinVal(num)
@@ -729,4 +759,27 @@ class CodeSetup:
         self._setupEnvironment_SubIndice(node)
 
     def setupEnvironment_String(self, node):
-        pass
+        #print("string")
+        #print(node.getIndice())
+        #print(node.string)
+        if node.getIndice() == -1 or self.curList == None:
+            return
+
+        string = node.string
+        _genObj = self.curList.get(self.varKey)
+
+        if _genObj != None:
+            order = 0
+
+            _subIndices = _genObj.getSubIndices()
+            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
+
+            if _subIndice != None and len(_subIndice) > 0:
+                for idx in _subIndice:
+                    if idx.getOrder() > order:
+                        order = idx.getOrder()
+
+                order += 1
+
+            _subIndice = GenSubIndice(node.getIndice(), string, self.stmtIndex, order, None, None, _subIndices)
+            _genObj.getSubIndices().add(_subIndice)

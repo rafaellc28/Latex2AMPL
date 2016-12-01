@@ -42,15 +42,107 @@ class CodeGenerator:
         if method:
             return method(node)
 
-    def _getSubIndices(self, paramIn, _subIndices):
-        self.stmtIndex = int(paramIn.getLastStmt())
-        subIdx = map(self._getDomain, _subIndices)
+    def _getSubIndicesDomains(self, paramIn):
 
-        while (len(subIdx) == 0 or not all(subIdx)) and self.stmtIndex >= 0:
-            self.stmtIndex -= 1
-            subIdx = map(self._getDomain, _subIndices)
-        
-        return subIdx      
+        #if paramIn.getName() == "STATES" or paramIn.getName() == "S":
+        #    print(paramIn.getName())
+        #    print(map(lambda el: el.getName(), _subIndices))
+
+        firstStmt = int(paramIn.getFirstStmt())
+        lastStmt =  int(paramIn.getLastStmt())
+        stmtIndex = lastStmt
+        domain = ""
+
+        #print("\nStmt: " + str(stmtIndex))
+        #print(paramIn.getName())
+        #print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)))
+        #print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), paramIn.getSubIndices().getAllSortedByOrder()))
+
+        #if paramIn.getName() == "x":
+        #    print("x from-to")
+        #    print(str(firstStmt)+":"+str(lastStmt))
+
+        while domain == "" and stmtIndex >= firstStmt:
+            _tupleRet = None
+            subIdxDomainsRet = None
+
+
+            _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
+
+            _subIndicesAll = {}
+            for _subIndicesOrder in _subIndicesAllOrders:
+                order = _subIndicesOrder.getOrder()
+                if not order in _subIndicesAll:
+                    _subIndicesAll[order] = []
+
+                _subIndicesAll[order].append(_subIndicesOrder)
+
+            #_subIndicesAll = {order:_subIndicesAll[order] for order in sorted(_subIndicesAll.iterkeys(), reverse=True)}
+
+            for order in sorted(_subIndicesAll.iterkeys(), reverse=True):
+
+                _subIndices = _subIndicesAll[order]
+                _subIndices = sorted(_subIndices, key = lambda el: el.getIndice())
+
+                #if paramIn.getName() == "V":
+                #    print("subIndices")
+                #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices))
+
+                _combIndices = _subIndices
+                _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
+
+                while _tuple == None and len(_combIndices) > 0:
+                    _combIndices = _combIndices[:-1];
+                    _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
+                
+                if _tuple != None:
+                    _tupleRet = _tuple
+
+                    domain += "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
+
+                    if len(_combIndices) < len(_subIndices):
+                        _subIndices = _subIndices[len(_combIndices):]
+                    else:
+                        _subIndices = []
+
+                #if paramIn.getName() == "x":
+                #    print("x TUPLES")
+                #    print("domain: "+str(domain))
+                #    print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _subIndices))
+
+                if domain == "" or len(_subIndices) > 0:
+
+
+                    subIdxDomains = [self._getDomain(idx, stmtIndex) for idx in _subIndices]
+                                                
+                    if len(subIdxDomains) > 0 and all(subIdxDomains):
+                        subIdxDomainsRet = subIdxDomains
+                        if domain != "":
+                            domain += ", "
+
+                        subIdxDomains = [self._getDomainStr(idx, stmtIndex) for idx in _subIndices]
+                        domain += ", ".join(subIdxDomains)
+                    else:
+                        domain = ""
+
+                    #if paramIn.getName() == "x":
+                    #    print("x DOMAINS")
+                    #    print("domain: "+str(domain))
+                    #    print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _subIndices))
+                    #    print(subIdxDomains)
+
+                if domain != "":
+                    break
+
+            stmtIndex -= 1
+
+        if domain == "":
+            _idxExpression = self.genIndexingExpressionConstraints.get(str(lastStmt))
+            if _idxExpression != None:
+                domain = _idxExpression.getValue()
+
+        return domain, stmtIndex, _tupleRet, subIdxDomainsRet
+
 
     def _generateGraphAux(self, graph, genObj, genObjOther):
         if len(genObj) > 0:
@@ -60,33 +152,28 @@ class CodeGenerator:
 
                 if len(paramIn.getSubIndices()) > 0:
                     
-                    _subIndices = paramIn.getSubIndices().getAllSortedByIndice()
-                    _tuple = self._getTuple(paramIn, _subIndices)
+                    _domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(paramIn)
 
                     if _tuple != None:
                         graph[paramIn.getName()].append(_tuple.getName())
-                        continue
 
-                    subIdx = self._getSubIndices(paramIn, _subIndices)
-                    if len(subIdx) > 0 and all(subIdx):
+                    if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
 
-                        for paramDomain in _subIndices:
-                            _var = self.genDomains.get(GenDomain(paramDomain.getName(), self.stmtIndex))
+                        for _domain in subIdxDomains:
+                            if ".." in _domain:
+                                param = _domain.split("..")
 
-                            if _var != None:
-                                _domain = _var.getDomain()
-                                if _domain != None:
-                                    if ".." in _domain:
-                                        param = _domain.split("..")
+                                if param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0])):
+                                    graph[paramIn.getName()].append(param[0])
 
-                                        if param and param[1] and (genObj.has(param[1]) or genObjOther.has(param[1])):
-                                            graph[paramIn.getName()].append(param[1])
+                                if param and param[1] and (genObj.has(param[1]) or genObjOther.has(param[1])):
+                                    graph[paramIn.getName()].append(param[1])
 
-                                    else:
-                                        param = _domain.split("[")
+                            else:
+                                param = _domain.split("[")
 
-                                        if param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0])):
-                                            graph[paramIn.getName()].append(param[0])
+                                if param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0])):
+                                    graph[paramIn.getName()].append(param[0])
 
     # Auxiliary Methods
     def _generateGraph(self):
@@ -131,28 +218,42 @@ class CodeGenerator:
         for key in entry:
             return key, entry[key].generateCode(self)
 
-    def _getDomain(self, var):
-        _domain = self.genDomains.get(GenDomain(var.getName(), self.stmtIndex))
+    def _getDomain(self, var, stmtIndex):
+        _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex))
 
         if _domain != None and _domain.getDomain() != None:
-            #if ".." in _domain.getDomain():
-            #    return _domain.getDomain()
-            #else:
-                #return var.getName() + " in " + _domain.getDomain()
             return _domain.getDomain()
 
         elif var.getMinVal() < float('inf'):
-            #res = ""
-            #if isinstance(var.getParent().getParent(), GenSet):
-            #    res += var.getName() + " in "
-            
-            #res += str(var.getMinVal()) + ".." + str(var.getMaxVal())
             return str(var.getMinVal()) + ".." + str(var.getMaxVal())
 
         else:
             return ""
 
-    def _getTuple(self, variable, sub_indices):
+
+    def _getDomainStr(self, var, stmtIndex):
+        _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex))
+
+        if _domain != None and _domain.getDomain() != None:
+            #if ".." in _domain.getDomain():
+            #    return _domain.getDomain()
+            #else:
+            return var.getName() + " in " + _domain.getDomain()
+            #return _domain.getDomain()
+
+        elif var.getMinVal() < float('inf'):
+            res = ""
+            #if isinstance(var.getParent().getParent(), GenSet):
+            res += var.getName() + " in "
+            
+            res += str(var.getMinVal()) + ".." + str(var.getMaxVal())
+            return res
+            #return str(var.getMinVal()) + ".." + str(var.getMaxVal())
+
+        else:
+            return ""
+
+    def _getTuple(self, variable, sub_indices, stmtIndex = None):
         """
         Get a tuple with sub-indices
         """
@@ -162,10 +263,16 @@ class CodeGenerator:
         for _tuple in self.genTuples.getAll():
             
             if subIndices == list(_tuple.getTupleVal()):
+                if stmtIndex != None and stmtIndex == int(_tuple.getStmtIndex()):
+                    return _tuple
+
                 if variable.getLastStmt() == str(_tuple.getStmtIndex()):
                     return _tuple
 
                 _tupleRes = _tuple
+
+        if stmtIndex != None:
+            return None
 
         return _tupleRes
 
@@ -178,42 +285,13 @@ class CodeGenerator:
             
             for var in self.genVariables.getAll():
                 if not self.genParameters.has(var) and not self.genSets.has(var):
+                    varStr += "var " + var.getName()
+
                     _subIndices = var.getSubIndices().getAllSortedByIndice()
-                    if len(_subIndices) == 0:
-                        varStr += "var " + var.getName()
-                    else:
-                        domain = ""
-                        _combIndices = _subIndices
-                        _tuple = self._getTuple(var, _combIndices)
-
-                        while _tuple == None and len(_combIndices) > 0:
-                            _combIndices = _combIndices[:-1];
-                            _tuple = self._getTuple(var, _combIndices)
-                        
-                        if _tuple != None:
-                            domain += "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
-
-                            if len(_combIndices) < len(_subIndices):
-                                _subIndices = _subIndices[len(_combIndices):]
-                            else:
-                                _subIndices = []
-
-                        if domain == "" or len(_subIndices) > 0:
-                            subIdx = self._getSubIndices(var, _subIndices)
-                            if len(subIdx) > 0 and all(subIdx):
-                                if domain != "":
-                                    domain += ", "
-
-                                domain += ", ".join(subIdx)
-                            else:
-                                _idxExpression = self.genIndexingExpressionConstraints.get(str(var.getLastStmt()))
-                                if _idxExpression != None:
-                                    domain = _idxExpression.getValue()
-
+                    if len(_subIndices) > 0:
+                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
                         if domain != "" and domain.strip() != "":
-                            varStr += "var " + var.getName() + "{" + domain + "}"
-                        else:
-                            varStr += "var " + var.getName()
+                            varStr += "{" + domain + "}"
 
                     _type = self.genTypes.get(var)
                     if _type != None and _type.getType().strip() != "":
@@ -232,30 +310,28 @@ class CodeGenerator:
             
             for setIn in self.genSets.getAll():
                 if not self.genParameters.has(setIn):
+                    setStr += "set " + setIn.getName()
 
                     _subIndices = setIn.getSubIndices().getAllSortedByIndice()
-
-                    if len(_subIndices) == 0:
-                        setStr += "set " + setIn.getName()
-                    else:
+                    if len(_subIndices) > 0:
+                        '''
                         domain = None
                         _tuple = self._getTuple(setIn, _subIndices)
 
                         if _tuple != None:
                             domain = "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
                         else:
-                            subIdx = self._getSubIndices(setIn, _subIndices)
-                            if len(subIdx) > 0 and all(subIdx):
-                                domain = ", ".join(subIdx)
+                            subIdxDomains = self._getSubIndicesDomains(setIn, _subIndices)
+                            if len(subIdxDomains) > 0 and all(subIdxDomains):
+                                domain = ", ".join(subIdxDomains)
                             else:
                                 _idxExpression = self.genIndexingExpressionConstraints.get(str(setIn.getLastStmt()))
                                 if _idxExpression != None:
                                     domain = _idxExpression.getValue()
-
+                        '''
+                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
                         if domain != None and domain.strip() != "":
-                            setStr += "set " + setIn.getName() + "{" + domain + "}"
-                        else:
-                            setStr += "set " + setIn.getName()
+                            setStr += "{" + domain + "}"
 
                     if setIn.getDimension() > 1:
                         dimen = " dimen " + str(setIn.getDimension())
@@ -277,11 +353,11 @@ class CodeGenerator:
         if len(self.genParameters) > 0:
 
             for paramIn in self.topological_order:
+                paramStr += "param " + paramIn
+
                 _genParameter = self.genParameters.get(paramIn)
-                
-                if len(_genParameter.getSubIndices()) == 0:
-                    paramStr += "param " + paramIn
-                else:
+                if len(_genParameter.getSubIndices()) > 0:
+                    '''
                     domain = None
                     _subIndices = _genParameter.getSubIndices().getAllSortedByIndice()
                     _tuple = self._getTuple(_genParameter, _subIndices)
@@ -289,18 +365,18 @@ class CodeGenerator:
                     if _tuple != None:
                         domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
                     else:
-                        subIdx = self._getSubIndices(_genParameter, _subIndices)
-                        if len(subIdx) > 0 and all(subIdx):
-                            domain = ", ".join(subIdx)
+                        subIdxDomains = self._getSubIndicesDomains(_genParameter, _subIndices)
+                        if len(subIdxDomains) > 0 and all(subIdxDomains):
+                            domain = ", ".join(subIdxDomains)
                         else:
                             _idxExpression = self.genIndexingExpressionConstraints.get(str(_genParameter.getLastStmt()))
                             if _idxExpression != None:
                                 domain = _idxExpression.getValue()
+                    '''
 
+                    domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
                     if domain != None and domain.strip() != "":
-                        paramStr += "param " + paramIn + "{" + domain + "}"
-                    else:
-                        paramStr += "param " + paramIn
+                        paramStr += "{" + domain + "}"
 
                 _type = self.genTypes.get(paramIn)
                 if _type != None:
@@ -313,11 +389,10 @@ class CodeGenerator:
     def _declareParam(self, _genParameter):
         paramStr = ""
         paramIn = _genParameter.getName()
+        paramStr += "param " + paramIn
 
-        if len(_genParameter.getSubIndices()) == 0:
-            paramStr += "param " + paramIn
-
-        else:
+        if len(_genParameter.getSubIndices()) > 0:
+            '''
             domain = None
             _subIndices = _genParameter.getSubIndices().getAllSortedByIndice()
             _tuple = self._getTuple(_genParameter, _subIndices)
@@ -325,18 +400,18 @@ class CodeGenerator:
             if _tuple != None:
                 domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
             else:
-                subIdx = self._getSubIndices(_genParameter, _subIndices)
-                if len(subIdx) > 0 and all(subIdx):
-                    domain = ", ".join(subIdx)
+                subIdxDomains = self._getSubIndicesDomains(_genParameter, _subIndices)
+                if len(subIdxDomains) > 0 and all(subIdxDomains):
+                    domain = ", ".join(subIdxDomains)
                 else:
                     _idxExpression = self.genIndexingExpressionConstraints.get(str(_genParameter.getLastStmt()))
                     if _idxExpression != None:
                         domain = _idxExpression.getValue()
+            '''
 
+            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
             if domain != None and domain.strip() != "":
-                paramStr += "param " + paramIn + "{" + domain + "}"
-            else:
-                paramStr += "param " + paramIn
+                paramStr += "{" + domain + "}"
 
         _type = self.genTypes.get(paramIn)
         if _type != None:
@@ -349,9 +424,9 @@ class CodeGenerator:
     def _declareSet(self, _genSet):
         setStr = ""
 
-        if len(_genSet.getSubIndices()) == 0:
-            setStr += "set " + _genSet.getName()
-        else:
+        setStr += "set " + _genSet.getName()
+        if len(_genSet.getSubIndices()) > 0:
+            '''
             domain = None
             _subIndices = _genSet.getSubIndices().getAllSortedByIndice()
             _tuple = self._getTuple(_genSet, _subIndices)
@@ -359,18 +434,18 @@ class CodeGenerator:
             if _tuple != None:
                 domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
             else:
-                subIdx = self._getSubIndices(_genSet, _subIndices)
-                if len(subIdx) > 0 and all(subIdx):
-                    domain = ", ".join(subIdx)
+                subIdxDomains = self._getSubIndicesDomains(_genSet, _subIndices)
+                if len(subIdxDomains) > 0 and all(subIdxDomains):
+                    domain = ", ".join(subIdxDomains)
                 else:
                     _idxExpression = self.genIndexingExpressionConstraints.get(str(_genSet.getLastStmt()))
                     if _idxExpression != None:
                         domain = _idxExpression.getValue()
+            '''
 
+            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet)
             if domain != None and domain.strip() != "":
-                setStr += "set " + _genSet.getName() + "{" + domain + "}"
-            else:
-                setStr += "set " + _genSet.getName()
+                setStr += "{" + domain + "}"
 
         if _genSet.getDimension() > 1:
             dimen = " dimen " + str(_genSet.getDimension())
@@ -384,6 +459,10 @@ class CodeGenerator:
     def _declareSetsAndParams(self):
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
+
+        #print(map(lambda el: str(el.getStmtIndex())+":"+el.getName()+":"+str(el.getDomain()), self.genDomains.getAll()))
+        #print(graph)
+        #print(self.topological_order)
 
         paramSetStr = ""
         if len(self.topological_order) > 0:
@@ -407,7 +486,8 @@ class CodeGenerator:
             for setIn in self.genSets.getAll():
                 if not self.genParameters.has(setIn):
                     if len(setIn.getSubIndices()) > 0:
-                        dimenIdx = "[" + ",".join(["0"] * len(setIn.getSubIndices())) + "]"
+                        #print(setIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == setIn.getLastStmt() and el.getOrder() == 0))
+                        dimenIdx = "[" + ",".join(["0"] * len(setIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == setIn.getLastStmt() and el.getOrder() == 0))) + "]"
                     else:
                         dimenIdx = ""
 
@@ -451,8 +531,11 @@ class CodeGenerator:
     def _declareDataSet(self, _genSet):
         res = ""
 
+        #print(_genSet.getName())
+        #print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _genSet.getSubIndices().getAllSortedByOrder()))
+        #print(_genSet.getLastStmt())
         if len(_genSet.getSubIndices()) > 0:
-            dimenIdx = "[" + ",".join(["0"] * len(_genSet.getSubIndices())) + "]"
+            dimenIdx = "[" + ",".join(["0"] * len(_genSet.getSubIndices().getAllSortedByOrder(lambda el: str(el.getStmtIndex()) == _genSet.getLastStmt() and el.getOrder() == 0))) + "]"
         else:
             dimenIdx = ""
 

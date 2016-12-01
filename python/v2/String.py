@@ -1,4 +1,6 @@
-class String:
+from Expression import *
+
+class String(Expression):
     """
     Class representing a number node in the AST of the MLP
     """
@@ -9,6 +11,8 @@ class String:
         
         :param string: str
         """
+        Expression.__init__(self)
+        
         self.string = string
     
     def __str__(self):
