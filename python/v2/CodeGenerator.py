@@ -2,6 +2,7 @@ from Utils import *
 from ValueList import *
 from SetExpression import *
 from EntryIndexingExpression import *
+from SymbolicExpression import *
 from TopologicalSort import *
 from GenSets import *
 from GenVariables import *
@@ -34,6 +35,8 @@ class CodeGenerator:
         self.constraintNumber = 0
         self.stmtIndex = 0
 
+        self.varNameSubIndices = []
+
     def generateCode(self, node):
         cls = node.__class__
         method_name = 'generateCode_' + cls.__name__
@@ -44,23 +47,10 @@ class CodeGenerator:
 
     def _getSubIndicesDomains(self, paramIn):
 
-        #if paramIn.getName() == "STATES" or paramIn.getName() == "S":
-        #    print(paramIn.getName())
-        #    print(map(lambda el: el.getName(), _subIndices))
-
         firstStmt = int(paramIn.getFirstStmt())
         lastStmt =  int(paramIn.getLastStmt())
         stmtIndex = lastStmt
         domain = ""
-
-        #print("\nStmt: " + str(stmtIndex))
-        #print(paramIn.getName())
-        #print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)))
-        #print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), paramIn.getSubIndices().getAllSortedByOrder()))
-
-        #if paramIn.getName() == "x":
-        #    print("x from-to")
-        #    print(str(firstStmt)+":"+str(lastStmt))
 
         while domain == "" and stmtIndex >= firstStmt:
             _tupleRet = None
@@ -77,16 +67,10 @@ class CodeGenerator:
 
                 _subIndicesAll[order].append(_subIndicesOrder)
 
-            #_subIndicesAll = {order:_subIndicesAll[order] for order in sorted(_subIndicesAll.iterkeys(), reverse=True)}
-
             for order in sorted(_subIndicesAll.iterkeys(), reverse=True):
 
                 _subIndices = _subIndicesAll[order]
                 _subIndices = sorted(_subIndices, key = lambda el: el.getIndice())
-
-                #if paramIn.getName() == "V":
-                #    print("subIndices")
-                #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices))
 
                 _combIndices = _subIndices
                 _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
@@ -105,11 +89,6 @@ class CodeGenerator:
                     else:
                         _subIndices = []
 
-                #if paramIn.getName() == "x":
-                #    print("x TUPLES")
-                #    print("domain: "+str(domain))
-                #    print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _subIndices))
-
                 if domain == "" or len(_subIndices) > 0:
 
 
@@ -120,16 +99,11 @@ class CodeGenerator:
                         if domain != "":
                             domain += ", "
 
+                        self.varNameSubIndices = []
                         subIdxDomains = [self._getDomainStr(idx, stmtIndex) for idx in _subIndices]
                         domain += ", ".join(subIdxDomains)
                     else:
                         domain = ""
-
-                    #if paramIn.getName() == "x":
-                    #    print("x DOMAINS")
-                    #    print("domain: "+str(domain))
-                    #    print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _subIndices))
-                    #    print(subIdxDomains)
 
                 if domain != "":
                     break
@@ -238,15 +212,25 @@ class CodeGenerator:
             #if ".." in _domain.getDomain():
             #    return _domain.getDomain()
             #else:
-            return var.getName() + " in " + _domain.getDomain()
+
+            res = ""
+            if not var.getName() in self.varNameSubIndices:
+                res += var.getName() + " in "
+                self.varNameSubIndices.append(var.getName())
+
+            res += _domain.getDomain()
+
+            return res
             #return _domain.getDomain()
 
         elif var.getMinVal() < float('inf'):
             res = ""
-            #if isinstance(var.getParent().getParent(), GenSet):
-            res += var.getName() + " in "
-            
+            if isinstance(var.getName(), str) and not var.getName() in self.varNameSubIndices:
+                res += var.getName() + " in "
+                self.varNameSubIndices.append(var.getName())
+
             res += str(var.getMinVal()) + ".." + str(var.getMaxVal())
+
             return res
             #return str(var.getMinVal()) + ".." + str(var.getMaxVal())
 
@@ -314,21 +298,6 @@ class CodeGenerator:
 
                     _subIndices = setIn.getSubIndices().getAllSortedByIndice()
                     if len(_subIndices) > 0:
-                        '''
-                        domain = None
-                        _tuple = self._getTuple(setIn, _subIndices)
-
-                        if _tuple != None:
-                            domain = "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
-                        else:
-                            subIdxDomains = self._getSubIndicesDomains(setIn, _subIndices)
-                            if len(subIdxDomains) > 0 and all(subIdxDomains):
-                                domain = ", ".join(subIdxDomains)
-                            else:
-                                _idxExpression = self.genIndexingExpressionConstraints.get(str(setIn.getLastStmt()))
-                                if _idxExpression != None:
-                                    domain = _idxExpression.getValue()
-                        '''
                         domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
                         if domain != None and domain.strip() != "":
                             setStr += "{" + domain + "}"
@@ -357,23 +326,6 @@ class CodeGenerator:
 
                 _genParameter = self.genParameters.get(paramIn)
                 if len(_genParameter.getSubIndices()) > 0:
-                    '''
-                    domain = None
-                    _subIndices = _genParameter.getSubIndices().getAllSortedByIndice()
-                    _tuple = self._getTuple(_genParameter, _subIndices)
-
-                    if _tuple != None:
-                        domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
-                    else:
-                        subIdxDomains = self._getSubIndicesDomains(_genParameter, _subIndices)
-                        if len(subIdxDomains) > 0 and all(subIdxDomains):
-                            domain = ", ".join(subIdxDomains)
-                        else:
-                            _idxExpression = self.genIndexingExpressionConstraints.get(str(_genParameter.getLastStmt()))
-                            if _idxExpression != None:
-                                domain = _idxExpression.getValue()
-                    '''
-
                     domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
                     if domain != None and domain.strip() != "":
                         paramStr += "{" + domain + "}"
@@ -392,23 +344,6 @@ class CodeGenerator:
         paramStr += "param " + paramIn
 
         if len(_genParameter.getSubIndices()) > 0:
-            '''
-            domain = None
-            _subIndices = _genParameter.getSubIndices().getAllSortedByIndice()
-            _tuple = self._getTuple(_genParameter, _subIndices)
-
-            if _tuple != None:
-                domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
-            else:
-                subIdxDomains = self._getSubIndicesDomains(_genParameter, _subIndices)
-                if len(subIdxDomains) > 0 and all(subIdxDomains):
-                    domain = ", ".join(subIdxDomains)
-                else:
-                    _idxExpression = self.genIndexingExpressionConstraints.get(str(_genParameter.getLastStmt()))
-                    if _idxExpression != None:
-                        domain = _idxExpression.getValue()
-            '''
-
             domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
             if domain != None and domain.strip() != "":
                 paramStr += "{" + domain + "}"
@@ -426,23 +361,6 @@ class CodeGenerator:
 
         setStr += "set " + _genSet.getName()
         if len(_genSet.getSubIndices()) > 0:
-            '''
-            domain = None
-            _subIndices = _genSet.getSubIndices().getAllSortedByIndice()
-            _tuple = self._getTuple(_genSet, _subIndices)
-
-            if _tuple != None:
-                domain = "("+",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
-            else:
-                subIdxDomains = self._getSubIndicesDomains(_genSet, _subIndices)
-                if len(subIdxDomains) > 0 and all(subIdxDomains):
-                    domain = ", ".join(subIdxDomains)
-                else:
-                    _idxExpression = self.genIndexingExpressionConstraints.get(str(_genSet.getLastStmt()))
-                    if _idxExpression != None:
-                        domain = _idxExpression.getValue()
-            '''
-
             domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet)
             if domain != None and domain.strip() != "":
                 setStr += "{" + domain + "}"
@@ -459,10 +377,6 @@ class CodeGenerator:
     def _declareSetsAndParams(self):
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
-
-        #print(map(lambda el: str(el.getStmtIndex())+":"+el.getName()+":"+str(el.getDomain()), self.genDomains.getAll()))
-        #print(graph)
-        #print(self.topological_order)
 
         paramSetStr = ""
         if len(self.topological_order) > 0:
@@ -486,7 +400,6 @@ class CodeGenerator:
             for setIn in self.genSets.getAll():
                 if not self.genParameters.has(setIn):
                     if len(setIn.getSubIndices()) > 0:
-                        #print(setIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == setIn.getLastStmt() and el.getOrder() == 0))
                         dimenIdx = "[" + ",".join(["0"] * len(setIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == setIn.getLastStmt() and el.getOrder() == 0))) + "]"
                     else:
                         dimenIdx = ""
@@ -530,10 +443,6 @@ class CodeGenerator:
 
     def _declareDataSet(self, _genSet):
         res = ""
-
-        #print(_genSet.getName())
-        #print(map(lambda el: str(el.getOrder())+":"+str(el.getIndice())+":"+str(el.getStmtIndex())+":"+el.getName(), _genSet.getSubIndices().getAllSortedByOrder()))
-        #print(_genSet.getLastStmt())
         if len(_genSet.getSubIndices()) > 0:
             dimenIdx = "[" + ",".join(["0"] * len(_genSet.getSubIndices().getAllSortedByOrder(lambda el: str(el.getStmtIndex()) == _genSet.getLastStmt() and el.getOrder() == 0))) + "]"
         else:
@@ -723,12 +632,12 @@ class CodeGenerator:
     # Symbolic Expression
     def generateCode_SymbolicExpressionWithFunction(self, node):
         res = str(node.function) + "("
-        if node.function == SUBSTR:
+        if node.function == SymbolicExpressionWithFunction.SUBSTR:
             res += node.symbolicExpression.generateCode(self) + "," + node.numericExpression1.generateCode(self)
             if node.numericExpression2 != None:
                 res += "," + node.numericExpression2.generateCode(self)
         
-        elif node.functiom == TIME2STR:
+        elif node.functiom == SymbolicExpressionWithFunction.TIME2STR:
             res += node.numericExpression1.generateCode(self) + "," + node.symbolicExpression.generateCode(self)
 
         res += ")"

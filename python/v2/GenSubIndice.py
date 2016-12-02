@@ -1,6 +1,6 @@
 class GenSubIndice:
 
-	def __init__(self, indice, name, stmtIndex, order, domain = None, varType = None, parent = None, minVal = float('inf'), maxVal = 1):
+	def __init__(self, indice, name, stmtIndex, order, domain = None, varType = None, parent = None, minVal = float('inf'), maxVal = -float('inf')):
 		self.indice = indice
 		self.name = name
 		self.stmtIndex = stmtIndex

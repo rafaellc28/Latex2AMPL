@@ -4,6 +4,8 @@ class SymbolicExpression(Expression):
     """
     Class representing a numeric expression node in the AST of a MLP
     """
+    def __init__(self):
+        Expression.__init__(self)
 
 class SymbolicExpressionWithFunction(SymbolicExpression):
     """
@@ -23,6 +25,8 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
         :param numericExpression2 : NumericExpression
         """
 
+        SymbolicExpression.__init__(self)
+
         self.function = function
         self.symbolicExpression = symbolicExpression
         self.numericExpression1 = numericExpression1
@@ -34,12 +38,12 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
         """
 
         res = str(self.function) + "("
-        if self.function == SUBSTR:
+        if self.function == SymbolicExpressionWithFunction.SUBSTR:
             res += str(self.symbolicExpression) + "," + str(self.numericExpression1)
             if self.numericExpression2 != None:
                 res += "," + str(self.numericExpression2)
         
-        elif self.functiom == TIME2STR:
+        elif self.functiom == SymbolicExpressionWithFunction.TIME2STR:
             res += str(self.numericExpression1) + "," + str(self.symbolicExpression)
 
         res += ")"
@@ -70,6 +74,8 @@ class StringSymbolicExpression(SymbolicExpression):
 
         :param value : String
         """
+
+        SymbolicExpression.__init__(self)
 
         self.value = value
 
@@ -119,6 +125,8 @@ class SymbolicExpressionBetweenParenthesis(SymbolicExpression):
         :param symbolicExpression : SymbolicExpression
         """
 
+        SymbolicExpression.__init__(self)
+
         self.symbolicExpression = symbolicExpression
 
     def __str__(self):
@@ -156,6 +164,8 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
         :param symbolicExpression1 : SymbolicExpression
         :param symbolicExpression2 : SymbolicExpression
         """
+
+        SymbolicExpression.__init__(self)
         
         self.op                  = op
         self.symbolicExpression1 = symbolicExpression1
@@ -193,6 +203,8 @@ class ConditionalSymbolicExpression(SymbolicExpression):
         :param symbolicExpression1: SymbolicExpression
         :param symbolicExpression2: SymbolicExpression
         """
+
+        SymbolicExpression.__init__(self)
         
         self.logicalExpression   = logicalExpression
         self.symbolicExpression1 = symbolicExpression1

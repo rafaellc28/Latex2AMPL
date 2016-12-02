@@ -15,6 +15,9 @@ from GenDomain import *
 from GenType import *
 from GenTuple import *
 from GenIndexingExpression import *
+from GenVariables import *
+from GenSets import *
+from GenParameters import *
 
 class CodeSetup:
     """ Visitor in the Visitor Pattern """
@@ -116,56 +119,76 @@ class CodeSetup:
     def _setupValue(self, value):
         value.setupEnvironment(self)
 
+    def _setIndices(self, var, i, varKey, curList):
+        var.setIndice(i)
+        var.setVarName(varKey)
+
+        if isinstance(curList, GenVariables):
+            var.setVarList("GenVariables")
+        elif isinstance(curList, GenSets):
+            var.setVarList("GenSets")
+        elif isinstance(curList, GenParameters):
+            var.setVarList("GenParameters")
+
+    def _getCurList(self, node):
+        curList = None
+        if node.getVarList() == "GenVariables":
+            curList = self.codeGenerator.genVariables
+        elif node.getVarList() == "GenParameters":
+            curList = self.codeGenerator.genParameters
+        elif node.getVarList() == "GenSets":
+            curList = self.codeGenerator.genSets
+
+        return curList
+
     def _checkSubIndices(self, node):
         if Utils._isInstanceOfStr(node.sub_indices):
             return 
 
-        #print(node.sub_indices)
         if len(node.sub_indices) > 0:
             if Utils._isInstanceOfList(node.sub_indices):
-                for i in range(len(node.sub_indices)):
+                indices = range(len(node.sub_indices))
+                for i in indices:
                     var = node.sub_indices[i]
 
                     if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
                         var = var.value
 
-                    var.setIndice(i)
+                    self._setIndices(var, i, self.varKey, self.curList)
+
+                for i in indices:
+                    var = node.sub_indices[i]
+
+                    if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
+                        var = var.value
+
                     var.setupEnvironment(self)
 
             elif isinstance(node.sub_indices, ValuedNumericExpression) or isinstance(node.sub_indices, StringSymbolicExpression):
-                node.sub_indices.value.setIndice(0)
+                self._setIndices(node.sub_indices.value, 0, self.varKey, self.curList)
                 node.sub_indices.value.setupEnvironment(self)
 
             else:
-                node.sub_indices.setIndice(0)
+                self._setIndices(node.sub_indices, 0, self.varKey, self.curList)
                 node.sub_indices.setupEnvironment(self)
 
     def _setupEnvironment_SubIndice(self, node):
         ind = node.generateCode(self.codeGenerator)
         self.codeGenerator.genDomains.add(GenDomain(ind, self.stmtIndex))
 
-        #if self.varKey == "V":
-        #    print("V: "+ind)
-
-        if self.curList == None:
+        if node.getVarList() == None:
             return
 
-        #if self.varKey == "V":
-        #    print("V passou: "+str(self.stmtIndex))
-        #    print(self.curList)
-
-        _genObj = self.curList.get(self.varKey)
+        curList = self._getCurList(node)
+        _genObj = None
+        if curList != None:
+            _genObj = curList.get(node.getVarName())
 
         if _genObj != None:
             order = 0
 
             _subIndices = _genObj.getSubIndices()
             _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
-
-            #if self.varKey == "V":
-            #    print("V before")
-            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices.getAll()))
-            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndice))
 
             if _subIndice != None and len(_subIndice) > 0:
                 for idx in _subIndice:
@@ -175,10 +198,6 @@ class CodeSetup:
                 order += 1
 
             _subIndices.add(GenSubIndice(node.getIndice(), ind, self.stmtIndex, order, None, None, _subIndices)) # set the name of the variable as the index
-
-            #if self.varKey == "V":
-            #    print("V after")
-            #    print(map(lambda el: str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice())+":"+el.getName(), _subIndices.getAll()))
 
 
     def setupEnvironment_Main(self, node):
@@ -301,24 +320,36 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_ValuedNumericExpression(self, node):
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.value.setupEnvironment(self)
 
     def setupEnvironment_NumericExpressionBetweenParenthesis(self, node):
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_NumericExpressionWithArithmeticOperation(self, node):
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.numericExpression1.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
@@ -326,12 +357,18 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedNumericExpression(self, node):
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         if node.supNumericExpression:
             node.supNumericExpression.setupEnvironment(self)
             node.indexingExpression.setHasSup(True)
@@ -343,6 +380,9 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets used in this numeric expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.logicalExpression.setupEnvironment(self)
         node.numericExpression1.setupEnvironment(self)
         if node.numericExpression2 != None:
@@ -354,27 +394,39 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets used in this symbolic expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.symbolicExpression.setupEnvironment(self)
         node.numericExpression1.setupEnvironment(self)
-        if self.node.numericExpression2 != None:
+        if node.numericExpression2 != None:
             node.numericExpression2.setupEnvironment(self)
 
     def setupEnvironment_StringSymbolicExpression(self, node):
         """
         Generate the MathProg code for the variables and sets used in this symbolic expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.value.setupEnvironment(self)
 
     def setupEnvironment_SymbolicExpressionBetweenParenthesis(self, node):
         """
         Generate the MathProg code for the variables and sets used in this symbolic expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.symbolicExpression.setupEnvironment(self)
 
     def setupEnvironment_SymbolicExpressionWithOperation(self, node):
         """
         Generate the MathProg code for the variables and sets used in this symbolic expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
 
@@ -382,6 +434,9 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets used in this symbolic expression
         """
+        if node.getIndice() > -1:
+            self._setupEnvironment_SubIndice(node)
+
         node.logicalExpression.setupEnvironment(self)
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
@@ -469,6 +524,7 @@ class CodeSetup:
                 self._setDimension(node.setExpression, dimen)
 
             node.setExpression.setupEnvironment(self)
+
             self.codeGenerator.genTuples.add(GenTuple(
                 node.setExpression.generateCode(self.codeGenerator), 
                 map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
@@ -520,8 +576,6 @@ class CodeSetup:
         if Utils._isInstanceOfStr(node.value):
             return
 
-        
-
         if isinstance(node.value, Tuple):
             tupleVal = node.value.getValues()
             dimen = len(tupleVal)
@@ -530,6 +584,7 @@ class CodeSetup:
                 node.setExpression.setDimension(dimen)
 
             node.setExpression.setupEnvironment(self)
+
             self.codeGenerator.genTuples.add(GenTuple(
                 node.setExpression.generateCode(self.codeGenerator), 
                 map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
@@ -568,10 +623,21 @@ class CodeSetup:
         Generate the MathProg code for declaration of variables and sets used in this set expression
         """
         if not Utils._isInstanceOfStr(node.value):
-            if isinstance(node.value, Variable):
-                node.value.setIsSet(True)
+            if isinstance(node.value, ValueList):
+                for var in node.value.getValues():
+                    if isinstance(var, ValuedNumericExpression):
+                        var = var.value
 
-            node.value.setupEnvironment(self)
+                    if isinstance(var, Variable) and not self.codeGenerator.genParameters.has(var.generateCode(self.codeGenerator)):
+                        var.setIsSet(True)
+
+                    var.setupEnvironment(self)
+
+            else:
+                if isinstance(node.value, Variable):
+                    node.value.setIsSet(True)
+
+                node.value.setupEnvironment(self)
 
     def setupEnvironment_SetExpressionWithIndices(self, node):
         """
@@ -671,7 +737,7 @@ class CodeSetup:
         
         self.varKey = node.variable.generateCode(self.codeGenerator)
         
-        if not node.isVar and self._checkIsParam(self.varKey):
+        if not node.isVar and not node.isSet and self._checkIsParam(self.varKey):
             node.setIsParam(True)
 
         self._setLastStmt(self.varKey, self.codeGenerator.genSets)
@@ -708,7 +774,8 @@ class CodeSetup:
             self._checkSubIndices(node)
 
         elif node.isParam:
-            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this param was not seen yet
+            self.codeGenerator.genSets.remove(self.varKey)
+            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey): # check if this param was not seen yet
                 _genParam = GenParameter(self.varKey, node.isSymbolic, str(self.stmtIndex), str(self.stmtIndex))
 
                 if len(node.sub_indices) > 0:
@@ -728,13 +795,17 @@ class CodeSetup:
         self.curList = None
 
     def setupEnvironment_Number(self, node):
-        if node.getIndice() == -1 or self.curList == None:
+        if node.getIndice() == -1 or node.getVarList() == None:
             return
 
-        num = int(self._getCodeID(node))
-        _genObj = self.curList.get(self.varKey)
+        curList = self._getCurList(node)
+
+        _genObj = None
+        if curList != None:
+            _genObj = curList.get(node.getVarName())
 
         if _genObj != None:
+            num = int(self._getCodeID(node))
             order = 0
 
             _subIndices = _genObj.getSubIndices()
@@ -759,14 +830,15 @@ class CodeSetup:
         self._setupEnvironment_SubIndice(node)
 
     def setupEnvironment_String(self, node):
-        #print("string")
-        #print(node.getIndice())
-        #print(node.string)
-        if node.getIndice() == -1 or self.curList == None:
+        if node.getIndice() == -1 or node.getVarList() == None:
             return
 
-        string = node.string
-        _genObj = self.curList.get(self.varKey)
+        curList = self._getCurList(node)
+
+        _genObj = None
+        if curList != None:
+            string = node.string
+            _genObj = curList.get(node.getVarName())
 
         if _genObj != None:
             order = 0

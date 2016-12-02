@@ -37,7 +37,7 @@ precedence = (
     ('left', 'LBRACE', 'RBRACE'),
     ('left', 'OR', 'AND', 'NOT'),
     ('left', 'FORALL', 'EXISTS'),
-    ('left', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'COMMA'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS'),
     ('left', 'UNDERLINE', 'CARET'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
@@ -71,9 +71,9 @@ def p_LinearProgram(t):
     else:
         t[0] = LinearProgram(t[1], None)
 
-def p_LinearProgram_error(t):
-    'LinearProgram : error BACKSLASHES'
-    sys.stderr.write("Linear Program bad formatted at line %d\n" % t.lineno(2))
+#def p_LinearProgram_error(t):
+#    'LinearProgram : error BACKSLASHES'
+#    sys.stderr.write("Linear Program bad formatted at line %d\n" % t.lineno(2))
 
 def p_Objectives(t):
     '''Objectives : Objectives BACKSLASHES Objective
@@ -107,10 +107,10 @@ def p_Objective(t):
         else:
             t[0] = Objective(t[2], Objective.MAXIMIZE)
 
-def p_Objective_error(t):
-    '''Objective : MAXIMIZE error COMMA
-                 | MINIMIZE error COMMA'''
-    sys.stderr.write("Objective Function bad formatted at line %d\n" % t.lineno(1))
+#def p_Objective_error(t):
+#    '''Objective : MAXIMIZE error COMMA
+#                 | MINIMIZE error COMMA'''
+#    sys.stderr.write("Objective Function bad formatted at line %d\n" % t.lineno(1))
 
 def p_Constraints(t):
     '''Constraints : SUBJECTTO ConstraintList
@@ -128,9 +128,9 @@ def p_ConstraintList(t):
     else:
         t[0] = [t[1]]
 
-def p_ConstraintList_error(t):
-    'ConstraintList : error BACKSLASHES'
-    sys.stderr.write("Constraints bad formatted at line %d\n" % t.lineno(2))
+#def p_ConstraintList_error(t):
+#    'ConstraintList : error BACKSLASHES'
+#    sys.stderr.write("Constraints bad formatted at line %d\n" % t.lineno(2))
 
 def p_Constraint(t):
     '''Constraint : ConstraintExpression FOR IndexingExpression
@@ -142,10 +142,10 @@ def p_Constraint(t):
     else:
         t[0] = Constraint(t[1])
 
-def p_Constraint_error(t):
-    '''Constraint : error FOR
-                  | error COMMA'''
-    sys.stderr.write("Constraint bad formatted at line %d\n" % t.lineno(2))
+#def p_Constraint_error(t):
+#    '''Constraint : error FOR
+#                  | error COMMA'''
+#    sys.stderr.write("Constraint bad formatted at line %d\n" % t.lineno(2))
 
 def p_ConstraintExpression(t):
     '''ConstraintExpression : NumericOrLinearExpression EQ NumericOrLinearExpression
@@ -166,14 +166,15 @@ def p_ConstraintExpression(t):
     elif t[2] == "\\geq":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
 
-def p_ConstraintExpression_error(t):
-    '''ConstraintExpression : error EQ
-                            | error LE
-                            | error GE'''
-    sys.stderr.write("Constraint Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_ConstraintExpression_error(t):
+#    '''ConstraintExpression : error EQ
+#                            | error LE
+#                            | error GE'''
+#    sys.stderr.write("Constraint Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_LinearExpression(t):
-    '''LinearExpression : Variable
+    '''LinearExpression : NUMBER
+                        | Variable
                         | PLUS LinearExpression %prec UPLUS
                         | MINUS LinearExpression %prec UMINUS
                         | LPAREN LinearExpression RPAREN
@@ -191,9 +192,9 @@ def p_LinearExpression(t):
     else:
         t[0] = ValuedLinearExpression(t[1])
 
-def p_LinearExpression_error(t):
-    'LinearExpression : LPAREN error RPAREN'
-    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
+#def p_LinearExpression_error(t):
+#    'LinearExpression : LPAREN error RPAREN'
+#    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_LinearExpression_binop(t):
     '''LinearExpression : LinearExpression PLUS LinearExpression
@@ -215,12 +216,12 @@ def p_LinearExpression_binop(t):
 
     t[0] = LinearExpressionWithArithmeticOperation(op, t[1], t[3])
 
-def p_LinearExpression_binop_error(t):
-    '''LinearExpression : error PLUS
-                        | error MINUS
-                        | error TIMES
-                        | error DIVIDE'''
-    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_LinearExpression_binop_error(t):
+#    '''LinearExpression : error PLUS
+#                        | error MINUS
+#                        | error TIMES
+#                        | error DIVIDE'''
+#    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_IteratedLinearExpression(t):
     '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
@@ -230,9 +231,9 @@ def p_IteratedLinearExpression(t):
     else:
         t[0] = IteratedLinearExpression(t[6], t[4])
 
-def p_IteratedLinearExpression_error(t):
-    'LinearExpression : SUM UNDERLINE LBRACE error RBRACE'
-    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
+#def p_IteratedLinearExpression_error(t):
+#    'LinearExpression : SUM UNDERLINE LBRACE error RBRACE'
+#    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_ConditionalLinearExpression(t):
     '''ConditionalLinearExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression
@@ -256,10 +257,10 @@ def p_LogicalExpression(t):
     else:
         t[0] = LogicalExpression([t[1]])
 
-def p_LogicalExpression_error(t):
-    '''LogicalExpression : error OR
-                         | error AND'''
-    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_LogicalExpression_error(t):
+#    '''LogicalExpression : error OR
+#                         | error AND'''
+#    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryLogicalExpression(t):
     '''EntryLogicalExpression : NOT EntryLogicalExpression
@@ -270,9 +271,9 @@ def p_EntryLogicalExpression(t):
     else:
         t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
 
-def p_EntryLogicalExpression_error(t):
-    '''EntryLogicalExpression : LPAREN error RPAREN'''
-    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(1))
+#def p_EntryLogicalExpression_error(t):
+#    '''EntryLogicalExpression : LPAREN error RPAREN'''
+#    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_EntryRelationalLogicalExpression(t):
     '''EntryLogicalExpression : NumericOrSymbolicExpression LT NumericOrSymbolicExpression
@@ -295,13 +296,13 @@ def p_EntryRelationalLogicalExpression(t):
     elif t[2] == "\\neq":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
-def p_EntryRelationalLogicalExpression_error(t):
-    '''EntryLogicalExpression : error LT
-                              | error LE
-                              | error EQ
-                              | error GE
-                              | error NEQ'''
-    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_EntryRelationalLogicalExpression_error(t):
+#    '''EntryLogicalExpression : error LT
+#                              | error LE
+#                              | error EQ
+#                              | error GE
+#                              | error NEQ'''
+#    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryLogicalExpressionWithSet(t):
     '''EntryLogicalExpression : ValueList IN SetExpression
@@ -322,12 +323,12 @@ def p_EntryLogicalExpressionWithSet(t):
     elif t[2] == "notsubset":
         t[0] = EntryLogicalExpressionWithSetOperation(EntryLogicalExpressionWithSetOperation.NOTSUBSET, t[1], t[3])
 
-def p_EntryLogicalExpressionWithSet_error(t):
-    '''EntryLogicalExpression : error IN
-                              | error NOTIN
-                              | error SUBSET
-                              | error NOTSUBSET'''
-    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_EntryLogicalExpressionWithSet_error(t):
+#    '''EntryLogicalExpression : error IN
+#                              | error NOTIN
+#                              | error SUBSET
+#                              | error NOTSUBSET'''
+#    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryIteratedLogicalExpression(t):
     '''EntryLogicalExpression : FORALL LBRACE IndexingExpression RBRACE LogicalExpression
@@ -338,10 +339,10 @@ def p_EntryIteratedLogicalExpression(t):
     elif t[1] == "\\exists":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
 
-def p_EntryIteratedLogicalExpression_error(t):
-    '''EntryLogicalExpression : FORALL LBRACE error RBRACE
-                              | EXISTS LBRACE error RBRACE'''
-    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_EntryIteratedLogicalExpression_error(t):
+#    '''EntryLogicalExpression : FORALL LBRACE error RBRACE
+#                              | EXISTS LBRACE error RBRACE'''
+#    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_SetExpressionWithOperation(t):
     '''SetExpression : SetExpression DIFF SetExpression
@@ -363,13 +364,13 @@ def p_SetExpressionWithOperation(t):
 
     t[0] = SetExpressionWithOperation(op, t[1], t[3])
 
-def p_SetExpressionWithOperation_error(t):
-    '''SetExpression : error DIFF
-                     | error SYMDIFF
-                     | error UNION
-                     | error INTER
-                     | error CROSS'''
-    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_SetExpressionWithOperation_error(t):
+#    '''SetExpression : error DIFF
+#                     | error SYMDIFF
+#                     | error UNION
+#                     | error INTER
+#                     | error CROSS'''
+#    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_SetExpressionWithValue(t):
     '''SetExpression : LBRACE ValueList RBRACE
@@ -402,9 +403,9 @@ def p_SetExpressionWithValue(t):
     else:
         t[0] = SetExpressionWithValue(t[1])
 
-def p_SetExpressionWithValue_error(t):
-    '''SetExpression : LBRACE error RBRACE'''
-    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(1))
+#def p_SetExpressionWithValue_error(t):
+#    '''SetExpression : LBRACE error RBRACE'''
+#    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Variable LPAREN ValueList RPAREN
@@ -414,10 +415,10 @@ def p_SetExpressionWithIndices(t):
     
     t[0] = SetExpressionWithIndices(t[1], t[3])
 
-def p_SetExpressionWithIndices_error(t):
-    '''SetExpression : error LBRACE
-                     | error LPAREN'''
-    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_SetExpressionWithIndices_error(t):
+#    '''SetExpression : error LBRACE
+#                     | error LPAREN'''
+#    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_ConditionalSetExpression(t):
     '''SetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression COLON SetExpression'''
@@ -439,9 +440,9 @@ def p_IndexingExpression(t):
     else:
         t[0] = IndexingExpression([t[1]])
 
-def p_IndexingExpression_error(t):
-    'IndexingExpression : error COMMA'
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_IndexingExpression_error(t):
+#    'IndexingExpression : error COMMA'
+#    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : ValueList IN SetExpression
@@ -449,10 +450,10 @@ def p_EntryIndexingExpressionWithSet(t):
                                | Variable IN SetExpression'''
     t[0] = EntryIndexingExpressionWithSet(t[1], t[3])
 
-def p_EntryIndexingExpressionWithSet_error(t):
-    '''EntryIndexingExpression : error IN
-                               | error COLON'''
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_EntryIndexingExpressionWithSet_error(t):
+#    '''EntryIndexingExpression : error IN
+#                               | error COLON'''
+#    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryIndexingExpressionEq(t):
     '''EntryIndexingExpression : Variable EQ NUMBER
@@ -476,14 +477,14 @@ def p_EntryIndexingExpressionEq(t):
     elif t[2] == ">":
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
 
-def p_EntryIndexingExpressionEq_error(t):
-    '''EntryIndexingExpression : error EQ
-                               | error NEQ
-                               | error LE
-                               | error GE
-                               | error LT
-                               | error GT'''
-    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_EntryIndexingExpressionEq_error(t):
+#    '''EntryIndexingExpression : error EQ
+#                               | error NEQ
+#                               | error LE
+#                               | error GE
+#                               | error LT
+#                               | error GT'''
+#    sys.stderr.write("Indexing Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_StringSymbolicExpression(t):
     '''SymbolicExpression : LPAREN SymbolicExpression RPAREN
@@ -501,15 +502,15 @@ def p_SymbolicExpression_binop(t):
 
     t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
 
-def p_SymbolicExpression_binop_error(t):
-    '''SymbolicExpression : error AMPERSAND'''
-    sys.stderr.write("Symbolic Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_SymbolicExpression_binop_error(t):
+#    '''SymbolicExpression : error AMPERSAND'''
+#    sys.stderr.write("Symbolic Expression bad formatted at line %d\n" % t.lineno(2))
 
 
 def p_FunctionSymbolicExpression(t):
-    '''SymbolicExpression : SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA SymbolicExpression RPAREN'''
+    '''SymbolicExpression : SUBSTR LPAREN NumericOrSymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN NumericOrSymbolicExpression COMMA NumericExpression RPAREN
+                          | TIME2STR LPAREN NumericExpression COMMA NumericOrSymbolicExpression RPAREN'''
 
     if t[1] == "substr":
         op = SymbolicExpressionWithFunction.SUBSTR
@@ -524,9 +525,9 @@ def p_FunctionSymbolicExpression(t):
         else:
             t[0] = SymbolicExpressionWithFunction(op, t[5], t[3])
 
-def p_FunctionSymbolicExpression_error(t):
-    '''SymbolicExpression : error COMMA'''
-    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
+#def p_FunctionSymbolicExpression_error(t):
+#    '''SymbolicExpression : error COMMA'''
+#    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
 
 
 def p_ConditionalSymbolicExpression(t):
@@ -562,14 +563,14 @@ def p_NumericExpression_binop(t):
 
     t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
 
-def p_NumericExpression_binop_error(t):
-    '''NumericExpression : error PLUS
-                         | error MINUS
-                         | error TIMES
-                         | error DIVIDE
-                         | error MOD
-                         | error CARET'''
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_NumericExpression_binop_error(t):
+#    '''NumericExpression : error PLUS
+#                         | error MINUS
+#                         | error TIMES
+#                         | error DIVIDE
+#                         | error MOD
+#                         | error CARET'''
+#    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_IteratedNumericExpression(t):
     '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
@@ -595,12 +596,12 @@ def p_IteratedNumericExpression(t):
     else:
         t[0] = IteratedNumericExpression(op, t[6], t[4])
 
-def p_IteratedNumericExpression_error(t):
-    '''NumericExpression : SUM UNDERLINE LBRACE error RBRACE
-                         | PROD UNDERLINE LBRACE error RBRACE
-                         | MAX UNDERLINE LBRACE error RBRACE
-                         | MIN UNDERLINE LBRACE error RBRACE'''
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
+#def p_IteratedNumericExpression_error(t):
+#    '''NumericExpression : SUM UNDERLINE LBRACE error RBRACE
+#                         | PROD UNDERLINE LBRACE error RBRACE
+#                         | MAX UNDERLINE LBRACE error RBRACE
+#                         | MIN UNDERLINE LBRACE error RBRACE'''
+#    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(2))
 
 
 def p_NumericExpression(t):
@@ -622,9 +623,9 @@ def p_NumericExpression(t):
     else:
         t[0] = ValuedNumericExpression(t[1])
 
-def p_NumericExpression_error(t):
-    'NumericExpression : LPAREN error RPAREN'
-    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(1))
+#def p_NumericExpression_error(t):
+#    'NumericExpression : LPAREN error RPAREN'
+#    sys.stderr.write("Numeric Expression bad formatted at line %d\n" % t.lineno(1))
 
 
 def p_FunctionNumericExpression(t):
@@ -641,7 +642,7 @@ def p_FunctionNumericExpression(t):
                          | EXP LPAREN NumericExpression RPAREN
                          | ARCTAN LPAREN NumericExpression RPAREN
                          | CARD LPAREN SetExpression RPAREN
-                         | LENGTH LPAREN STRING RPAREN
+                         | LENGTH LPAREN NumericOrSymbolicExpression RPAREN
                          | ROUND LPAREN NumericExpression RPAREN
                          | TRUNC LPAREN NumericExpression RPAREN'''
 
@@ -683,11 +684,11 @@ def p_FunctionNumericExpression(t):
     else:
         t[0] = NumericExpressionWithFunction(op, t[2])
 
-def p_FunctionNumericExpression_error(t):
-    '''NumericExpression : SQRT LBRACE error RBRACE
-                         | LFLOOR error RFLOOR
-                         | LCEIL error RCEIL'''
-    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
+#def p_FunctionNumericExpression_error(t):
+#    '''NumericExpression : SQRT LBRACE error RBRACE
+#                         | LFLOOR error RFLOOR
+#                         | LCEIL error RCEIL'''
+#    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
 
 def p_ConditionalNumericExpression(t):
     '''ConditionalNumericExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression
@@ -714,14 +715,14 @@ def p_Range(t):
 
     t[0] = Range(t[1], t[3])
 
-def p_Range_error(t):
-    '''Range : error DOTS
-             | error COMMA'''
-    sys.stderr.write("Bad range declaration at line %d\n" % t.lineno(2))
+#def p_Range_error(t):
+#    '''Range : error DOTS
+#             | error COMMA'''
+#    sys.stderr.write("Bad range declaration at line %d\n" % t.lineno(2))
 
 def p_Variable(t):
     '''Variable : ID UNDERLINE LBRACE ValueList RBRACE
-                | ID UNDERLINE LBRACE NumericExpression RBRACE
+                | ID UNDERLINE LBRACE NumericOrSymbolicExpression RBRACE
                 | ID'''
 
     if len(t) > 2:
@@ -732,9 +733,9 @@ def p_Variable(t):
     else:
         t[0] = Variable(ID(t[1]))
 
-def p_Variable_error(t):
-    '''Variable : ID UNDERLINE LBRACE error RBRACE'''
-    sys.stderr.write("Bad sub-indice declaration at line %d\n" % t.lineno(1))
+#def p_Variable_error(t):
+#    '''Variable : ID UNDERLINE LBRACE error RBRACE'''
+#    sys.stderr.write("Bad sub-indice declaration at line %d\n" % t.lineno(1))
 
 def p_ValueList(t):
     '''ValueList : ValueList COMMA NumericOrSymbolicExpression
@@ -745,17 +746,17 @@ def p_ValueList(t):
     else:
         t[0] = t[1].add(t[3])
 
-def p_ValueList_error(t):
-    'ValueList : error COMMA'
-    sys.stderr.write( "Bad value list declaration at line %d\n" % t.lineno(2))
+#def p_ValueList_error(t):
+#    'ValueList : error COMMA'
+#    sys.stderr.write( "Bad value list declaration at line %d\n" % t.lineno(2))
 
 def p_Tuple(t):
     '''Tuple : LPAREN ValueList RPAREN'''
     t[0] = Tuple(t[2].getValues())
 
-def p_Tuple_error(t):
-    'Tuple : error RPAREN'
-    sys.stderr.write( "Bad tuple declaration at line %d\n" % t.lineno(2))
+#def p_Tuple_error(t):
+#    'Tuple : error RPAREN'
+#    sys.stderr.write( "Bad tuple declaration at line %d\n" % t.lineno(2))
 
 def p_TupleList(t):
     '''TupleList : TupleList COMMA Tuple
@@ -766,9 +767,9 @@ def p_TupleList(t):
     else:
         t[0] = t[1].add(t[3])
 
-def p_TupleList_error(t):
-    'TupleList : error COMMA'
-    sys.stderr.write( "Bad tuple list declaration at line %d\n" % t.lineno(2))
+#def p_TupleList_error(t):
+#    'TupleList : error COMMA'
+#    sys.stderr.write( "Bad tuple list declaration at line %d\n" % t.lineno(2))
 
 def p_error(t):
   if t:

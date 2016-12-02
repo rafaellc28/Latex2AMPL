@@ -4,6 +4,8 @@ class NumericExpression(Expression):
     """
     Class representing a numeric expression node in the AST of a MLP
     """
+    def __init__(self):
+        Expression.__init__(self)
 
 class NumericExpressionWithFunction(NumericExpression):
     """
@@ -34,6 +36,8 @@ class NumericExpressionWithFunction(NumericExpression):
         :param function          : (abs | atan | card | ceil | cos | floor | exp | length | log | log10 | round | sin | sqrt | trunc)
         :param numericExpression : NumericExpression
         """
+
+        NumericExpression.__init__(self)
 
         self.function = function
         self.numericExpression = numericExpression
@@ -69,6 +73,8 @@ class ValuedNumericExpression(NumericExpression):
 
         :param value : Variable | Number
         """
+
+        NumericExpression.__init__(self)
 
         self.value = value
 
@@ -118,6 +124,8 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
         :param numericExpression : NumericExpression
         """
 
+        NumericExpression.__init__(self)
+
         self.numericExpression = numericExpression
 
     def __str__(self):
@@ -162,6 +170,8 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
         :param numericExpression1 : NumericExpression
         :param numericExpression2 : NumericExpression
         """
+
+        NumericExpression.__init__(self)
         
         self.op                 = op
         self.numericExpression1 = numericExpression1
@@ -198,6 +208,8 @@ class MinusNumericExpression(NumericExpression):
         
         :param numericExpression: NumericExpression
         """
+
+        NumericExpression.__init__(self)
         
         self.numericExpression = numericExpression
     
@@ -240,6 +252,8 @@ class IteratedNumericExpression(NumericExpression):
         :param indexingExpression   : IndexingExpression
         :param supNumericExpression : NumericExpression
         """
+
+        NumericExpression.__init__(self)
         
         self.op                   = op
         self.numericExpression    = numericExpression
@@ -285,6 +299,8 @@ class ConditionalNumericExpression(NumericExpression):
         :param numericExpression1: NumericExpression
         :param numericExpression2: NumericExpression
         """
+
+        NumericExpression.__init__(self)
         
         self.logicalExpression  = logicalExpression
         self.numericExpression1 = numericExpression1
