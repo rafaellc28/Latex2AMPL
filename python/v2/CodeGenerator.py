@@ -45,6 +45,14 @@ class CodeGenerator:
         if method:
             return method(node)
 
+    def _getBiggestOrderInStmtFrom(self, _subIndices):
+        orderInStmt = 0
+        for _s in _subIndices:
+            if _s.getOrderInStmt() > orderInStmt:
+                orderInStmt = _s.getOrderInStmt()
+
+        return orderInStmt
+
     def _getSubIndicesDomains(self, paramIn):
 
         firstStmt = int(paramIn.getFirstStmt())
@@ -56,19 +64,18 @@ class CodeGenerator:
             _tupleRet = None
             subIdxDomainsRet = None
 
-
             _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
 
             _subIndicesAll = {}
             for _subIndicesOrder in _subIndicesAllOrders:
                 order = _subIndicesOrder.getOrder()
+
                 if not order in _subIndicesAll:
                     _subIndicesAll[order] = []
 
                 _subIndicesAll[order].append(_subIndicesOrder)
 
             for order in sorted(_subIndicesAll.iterkeys(), reverse=True):
-
                 _subIndices = _subIndicesAll[order]
                 _subIndices = sorted(_subIndices, key = lambda el: el.getIndice())
 
@@ -90,17 +97,16 @@ class CodeGenerator:
                         _subIndices = []
 
                 if domain == "" or len(_subIndices) > 0:
-
-
-                    subIdxDomains = [self._getDomain(idx, stmtIndex) for idx in _subIndices]
-                                                
+                    orderInStmt = self._getBiggestOrderInStmtFrom(_subIndices)
+                    subIdxDomains = [self._getDomain(idx, stmtIndex, orderInStmt) for idx in _subIndices]
+                    
                     if len(subIdxDomains) > 0 and all(subIdxDomains):
                         subIdxDomainsRet = subIdxDomains
                         if domain != "":
                             domain += ", "
 
                         self.varNameSubIndices = []
-                        subIdxDomains = [self._getDomainStr(idx, stmtIndex) for idx in _subIndices]
+                        subIdxDomains = [self._getDomainStr(idx, stmtIndex, orderInStmt) for idx in _subIndices]
                         domain += ", ".join(subIdxDomains)
                     else:
                         domain = ""
@@ -192,8 +198,26 @@ class CodeGenerator:
         for key in entry:
             return key, entry[key].generateCode(self)
 
-    def _getDomain(self, var, stmtIndex):
-        _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex))
+    def _getDomainByOrder(self, var, stmtIndex, order):
+        _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex, order))
+        order_test = order
+
+        while (_domain == None or _domain.getDomain() == None) and order_test >= 1:
+            order_test -= 1
+            _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex, order_test))
+
+        if _domain == None or _domain.getDomain() == None:
+
+            order_test = order
+            lastOrder = self.genDomains.getBiggestOrderByNameAndStmt(var.getName(), stmtIndex)
+            while (_domain == None or _domain.getDomain() == None) and order_test <= lastOrder:
+                order_test += 1
+                _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex, order_test))
+        
+        return _domain
+
+    def _getDomain(self, var, stmtIndex, order):
+        _domain = self._getDomainByOrder(var, stmtIndex, order)
 
         if _domain != None and _domain.getDomain() != None:
             return _domain.getDomain()
@@ -205,14 +229,10 @@ class CodeGenerator:
             return ""
 
 
-    def _getDomainStr(self, var, stmtIndex):
-        _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex))
+    def _getDomainStr(self, var, stmtIndex, order):
+        _domain = self._getDomainByOrder(var, stmtIndex, order)
 
         if _domain != None and _domain.getDomain() != None:
-            #if ".." in _domain.getDomain():
-            #    return _domain.getDomain()
-            #else:
-
             res = ""
             if not var.getName() in self.varNameSubIndices:
                 res += var.getName() + " in "
@@ -221,7 +241,6 @@ class CodeGenerator:
             res += _domain.getDomain()
 
             return res
-            #return _domain.getDomain()
 
         elif var.getMinVal() < float('inf'):
             res = ""
@@ -232,7 +251,6 @@ class CodeGenerator:
             res += str(var.getMinVal()) + ".." + str(var.getMaxVal())
 
             return res
-            #return str(var.getMinVal()) + ".." + str(var.getMaxVal())
 
         else:
             return ""
@@ -597,7 +615,17 @@ class CodeGenerator:
 
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
-        return str(node.function) + "(" + node.numericExpression.generateCode(self) + ")"
+        res = str(node.function) + "("
+
+        if node.numericExpression1 != None:
+            res += node.numericExpression1.generateCode(self)
+
+        if node.numericExpression2 != None:
+            res += ", " + node.numericExpression2.generateCode(self)
+
+        res += ")"
+
+        return res
 
     def generateCode_ValuedNumericExpression(self, node):
         return node.value.generateCode(self)
@@ -781,7 +809,11 @@ class CodeGenerator:
         endValue = node.rangeEnd.generateCode(self)
         endValue = Utils._getInt(endValue)
 
-        return initValue + ".." + endValue
+        res = initValue + ".." + endValue
+        if node.by != None:
+            res += " by " + node.by.generateCode(self)
+
+        return res
 
     # Value List
     def generateCode_ValueList(self, node):

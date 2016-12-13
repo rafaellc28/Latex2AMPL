@@ -1,6 +1,6 @@
 class GenSubIndice:
 
-	def __init__(self, indice, name, stmtIndex, order, domain = None, varType = None, parent = None, minVal = float('inf'), maxVal = -float('inf')):
+	def __init__(self, indice, name, stmtIndex, order, orderInStmt, domain = None, varType = None, parent = None, minVal = float('inf'), maxVal = -float('inf')):
 		self.indice = indice
 		self.name = name
 		self.stmtIndex = stmtIndex
@@ -10,6 +10,7 @@ class GenSubIndice:
 		self.minVal = minVal
 		self.maxVal = maxVal
 		self.order = order
+		self.orderInStmt = orderInStmt
 
 	def getIndice(self):
 		return self.indice
@@ -20,8 +21,14 @@ class GenSubIndice:
 	def getOrder(self):
 		return self.order
 
-	def setOrder(self, indice):
+	def setOrder(self, order):
 		self.order = order
+
+	def getOrderInStmt(self):
+		return self.orderInStmt
+
+	def setOrderInStmt(self, orderInStmt):
+		self.orderInStmt = orderInStmt
 
 	def getName(self):
 		return self.name

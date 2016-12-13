@@ -28,26 +28,38 @@ class NumericExpressionWithFunction(NumericExpression):
     TRUNC  = "trunc"
     MIN    = "min"
     MAX    = "max"
+    GMTIME = "gmtime"
 
-    def __init__(self, function, numericExpression):
+    def __init__(self, function, numericExpression1 = None, numericExpression2 = None):
         """
         Set the numeric expression and the function
 
-        :param function          : (abs | atan | card | ceil | cos | floor | exp | length | log | log10 | round | sin | sqrt | trunc)
-        :param numericExpression : NumericExpression
+        :param function           : (abs | atan | card | ceil | cos | floor | exp | length | log | log10 | round | sin | sqrt | trunc | gmtime)
+        :param numericExpression  : NumericExpression | ValueList
+        :param numericExpression2 : NumericExpression
         """
 
         NumericExpression.__init__(self)
 
         self.function = function
-        self.numericExpression = numericExpression
+        self.numericExpression1 = numericExpression1
+        self.numericExpression2 = numericExpression2
 
     def __str__(self):
         """
         to string
         """
+        res = str(self.function) + "("
 
-        return str(self.function) + "(" + str(self.numericExpression) + ")"
+        if self.numericExpression1 != None:
+            res += str(self.numericExpression1)
+
+        if self.numericExpression2 != None:
+            res += ", " + str(self.numericExpression2)
+
+        res += ")"
+        
+        return res
 
     def setupEnvironment(self, codeSetup):
         """

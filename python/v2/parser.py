@@ -38,7 +38,7 @@ precedence = (
     ('left', 'OR', 'AND', 'NOT'),
     ('left', 'FORALL', 'EXISTS'),
     ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'COMMA'),
-    ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS'),
+    ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
     ('left', 'UNDERLINE', 'CARET'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'COS', 'ARCTAN', 'SQRT', 'LN', 'LOG', 'EXP'),
@@ -641,10 +641,19 @@ def p_FunctionNumericExpression(t):
                          | LN LPAREN NumericExpression RPAREN
                          | EXP LPAREN NumericExpression RPAREN
                          | ARCTAN LPAREN NumericExpression RPAREN
+                         | ARCTAN LPAREN NumericExpression COMMA NumericExpression RPAREN
                          | CARD LPAREN SetExpression RPAREN
                          | LENGTH LPAREN NumericOrSymbolicExpression RPAREN
                          | ROUND LPAREN NumericExpression RPAREN
-                         | TRUNC LPAREN NumericExpression RPAREN'''
+                         | ROUND LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | TRUNC LPAREN NumericExpression RPAREN
+                         | TRUNC LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | UNIFORM LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | NORMAL LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | GMTIME LPAREN RPAREN
+                         | IRAND224 LPAREN RPAREN
+                         | UNIFORM01 LPAREN RPAREN
+                         | NORMAL01 LPAREN RPAREN'''
 
     if t[1] == "card":
         op = NumericExpressionWithFunction.CARD
@@ -652,7 +661,7 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.LENGTH
     elif t[1] == "round":
         op = NumericExpressionWithFunction.ROUND
-    elif t[1] == "trung":
+    elif t[1] == "trunc":
         op = NumericExpressionWithFunction.TRUNC
     elif t[1] == "\\sqrt":
         op = NumericExpressionWithFunction.SQRT
@@ -677,12 +686,17 @@ def p_FunctionNumericExpression(t):
     elif t[1] == "\\exp":
         op = NumericExpressionWithFunction.EXP
     elif t[1] == "\\arctan":
-        op = NumericExpressionWithFunction.ARCTAN
+        op = NumericExpressionWithFunction.ATAN
 
-    if len(t) > 4:
+    if len(t) > 5:
+        t[0] = NumericExpressionWithFunction(op, t[3], t[5])
+    elif len(t) > 4:
         t[0] = NumericExpressionWithFunction(op, t[3])
     else:
-        t[0] = NumericExpressionWithFunction(op, t[2])
+        if t[2] == "(":
+          t[0] = NumericExpressionWithFunction(op)
+        else:
+          t[0] = NumericExpressionWithFunction(op, t[2])
 
 #def p_FunctionNumericExpression_error(t):
 #    '''NumericExpression : SQRT LBRACE error RBRACE
@@ -711,9 +725,13 @@ def p_NumericOrSymbolicExpression(t):
 
 
 def p_Range(t):
-    '''Range : NumericExpression DOTS NumericExpression'''
+    '''Range : NumericExpression DOTS NumericExpression BY NumericExpression
+             | NumericExpression DOTS NumericExpression'''
 
-    t[0] = Range(t[1], t[3])
+    if len(t) > 4:
+      t[0] = Range(t[1], t[3], t[5])
+    else:
+      t[0] = Range(t[1], t[3])
 
 #def p_Range_error(t):
 #    '''Range : error DOTS

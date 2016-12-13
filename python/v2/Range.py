@@ -5,7 +5,7 @@ class Range(Expression):
     Class representing a range in the AST of the MLP
     """
     
-    def __init__(self, rangeInit, rangeEnd):
+    def __init__(self, rangeInit, rangeEnd, by = None):
         """
         Set the range init and end
         
@@ -15,13 +15,18 @@ class Range(Expression):
         
         self.rangeInit = rangeInit
         self.rangeEnd  = rangeEnd
+        self.by = by
 
     def __str__(self):
         """
         to string
         """
+        res = "Range: [" + str(self.rangeInit) + ".." + str(self.rangeEnd)
+        if self.by != None:
+            res += " by " + str(self.by)
+        res += "]"
         
-        return "Range: [" + str(self.rangeInit) + ".." + str(self.rangeEnd) + "]"
+        return res
 
     def setupEnvironment(self, codeSetup):
         """

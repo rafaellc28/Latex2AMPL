@@ -15,7 +15,13 @@ reserved = {
    'round' : 'ROUND',
    'trunc' : 'TRUNC',
    'substr' : 'SUBSTR',
-   'time2str': 'TIME2STR'
+   'time2str': 'TIME2STR', 
+   'gmtime' : 'GMTIME',
+   'Irand224': 'IRAND224',
+   'Uniform01': 'UNIFORM01',
+   'Normal01': 'NORMAL01',
+   'Uniform': 'UNIFORM',
+   'Normal': 'NORMAL'
 }
 
 tokens = [
@@ -107,7 +113,8 @@ tokens = [
    'UNION', 
    'INTER', 
    'CROSS',
-   'STRING'
+   'STRING',
+   'BY'
 ] + list(reserved.values())
 
 def t_STRING(t):
@@ -131,6 +138,11 @@ t_MINUS = r'-'
 def t_MOD(t):
    r'\\text\{\%\}|\\mod|\\bmod'
    t.value = "\%"
+   return t
+
+def t_BY(t):
+   r'\\text\{\s*by\s*\}|by'
+   t.value = "BY"
    return t
 
 def t_QUOTIENT(t):
