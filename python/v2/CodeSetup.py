@@ -774,23 +774,17 @@ class CodeSetup:
         """
         Generate the MathProg code for the declaration of this variable
         """
-        #if node.variable.generateCode(self.codeGenerator) == "Sigma":
-        #    print("Sigma", node.getIndice(), node.sub_indices)
-
         if node.getIndice() > -1:
             self._setupEnvironment_SubIndice(node)
 
             if len(node.sub_indices) == 0:
                 return
         
-        #if node.variable.generateCode(self.codeGenerator) == "Sigma":
-        #    print("Sigma", node.isVar, node.isSet, node.isParam)
-
         self.varKey = node.variable.generateCode(self.codeGenerator)
         
         if not node.isVar and not node.isSet and self._checkIsParam(self.varKey):
             node.setIsParam(True)
-        
+
         self._setLastStmt(self.varKey, self.codeGenerator.genSets)
         self._setLastStmt(self.varKey, self.codeGenerator.genVariables)
         self._setLastStmt(self.varKey, self.codeGenerator.genParameters)

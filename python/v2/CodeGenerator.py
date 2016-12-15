@@ -184,14 +184,6 @@ class CodeGenerator:
     def _generateGraph(self):
         graph = {}
 
-        #print("Sets")
-        #print(map(lambda el: el.getFirstStmt()+":"+el.getLastStmt()+":"+el.getName(), self.genSets.getAll()))
-        #print("")
-
-        #print("Parameters")
-        #print(map(lambda el: el.getFirstStmt()+":"+el.getLastStmt()+":"+el.getName(), self.genParameters.getAll()))
-        #print("")
-        
         self._generateGraphAux(graph, self.genSets, self.genParameters)
         self._generateGraphAux(graph, self.genParameters, self.genSets)
         
@@ -428,14 +420,6 @@ class CodeGenerator:
     def _declareSetsAndParams(self):
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
-
-        #print("Graph")
-        #print(graph)
-        #print("")
-
-        #print("Topological Sorting")
-        #print(self.topological_order)
-        #print("")
 
         paramSetStr = ""
         if len(self.topological_order) > 0:
