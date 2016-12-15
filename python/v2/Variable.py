@@ -20,6 +20,7 @@ class Variable(Expression):
         self.variable = variable
         self.sub_indices = sub_indices
         self.dimenSet = 1
+        self.isInSet = False
         self.isSet = False
         self.isVar = False
         self.isParam = False
@@ -63,6 +64,9 @@ class Variable(Expression):
     def addSet(self, inSet):
         self.inSets += [inSet]
 
+    def setIsInSet(self, isInSet):
+        self.isInSet = isInSet
+    
     def setIsSet(self, isSet):
         self.isSet = isSet
 

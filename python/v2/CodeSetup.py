@@ -18,6 +18,8 @@ from GenIndexingExpression import *
 from GenVariables import *
 from GenSets import *
 from GenParameters import *
+from GenBelongsTo import *
+from GenBelongsToList import *
 
 class CodeSetup:
     """ Visitor in the Visitor Pattern """
@@ -27,6 +29,7 @@ class CodeSetup:
         self.varKey = None
         self.curList = None
         self.stmtIndex = 0
+        self.genBelongsToList = GenBelongsToList()
 
     def setupEnvironment(self, node):
         cls = node.__class__
@@ -537,6 +540,12 @@ class CodeSetup:
             self._setDimension(setExpression.setExpression2, dimen)
 
 
+    def _addBelongsTo(self, var):
+        var.setIsInSet(True)
+        name = var.generateCode(self.codeGenerator)
+        self.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
+        self.codeGenerator.genParameters.remove(name)
+
     # Entry Indexing Expression
     def setupEnvironment_EntryIndexingExpressionWithSet(self, node):
         """
@@ -545,6 +554,25 @@ class CodeSetup:
 
         if Utils._isInstanceOfStr(node.variable):
             return
+
+        setExpression = node.setExpression.generateCode(self.codeGenerator)
+        setCode = setExpression.replace(" ", "")
+
+        if isinstance(node.variable, ValueList) or isinstance(node.variable, Tuple):
+            for var in node.variable.getValues():
+                if isinstance(var, ValuedNumericExpression):
+                    var = var.value
+
+                if not setCode.startswith("symbolic") and len(var.sub_indices) == 0:
+                    self._addBelongsTo(var)
+
+        elif isinstance(node.variable, ValuedNumericExpression):
+            if not setCode.startswith("symbolic") and len(node.variable.value.sub_indices) == 0:
+                self._addBelongsTo(node.variable.value)
+
+        else:
+            if not setCode.startswith("symbolic") and len(node.variable.sub_indices) == 0:
+                self._addBelongsTo(node.variable)
 
         if isinstance(node.variable, Tuple):
             tupleVal = node.variable.getValues()
@@ -563,9 +591,9 @@ class CodeSetup:
         else:
             node.setExpression.setupEnvironment(self)
             self.setupEnvironment_EntryExpressionWithSet(node, node.variable)
+        
 
         node.variable.setupEnvironment(self)
-        
 
     def setupEnvironment_EntryIndexingExpressionCmp(self, node):
         """
@@ -592,7 +620,12 @@ class CodeSetup:
         _domain = GenDomain(ind, self.stmtIndex, order, setExpression)
         self.codeGenerator.genDomains.add(_domain)
 
+        if len(node.variable.sub_indices) == 0:
+            self._addBelongsTo(node.variable)
+
         node.value.setupEnvironment(self)
+
+        node.variable.setupEnvironment(self)
 
     def setupEnvironment_LogicalExpression(self, node):
         """
@@ -616,7 +649,24 @@ class CodeSetup:
         if Utils._isInstanceOfStr(node.value):
             return
 
-        node.value.setupEnvironment(self)
+        setExpression = node.setExpression.generateCode(self.codeGenerator)
+        setCode = setExpression.replace(" ", "")
+
+        if isinstance(node.value, ValueList) or isinstance(node.value, Tuple):
+            for var in node.value.getValues():
+                if isinstance(var, ValuedNumericExpression):
+                     var = var.value
+
+                if not setCode.startswith("symbolic") and len(var.sub_indices) == 0:
+                    self._addBelongsTo(var)
+
+        elif isinstance(node.value, ValuedNumericExpression):
+            if not setCode.startswith("symbolic") and len(node.value.value.sub_indices) == 0:
+                self._addBelongsTo(node.value.value)
+
+        else:
+            if not setCode.startswith("symbolic") and len(node.value.sub_indices) == 0:
+                self._addBelongsTo(node.value)
 
         if isinstance(node.value, Tuple):
             tupleVal = node.value.getValues()
@@ -635,6 +685,8 @@ class CodeSetup:
         else:
             node.setExpression.setupEnvironment(self)
             self.setupEnvironment_EntryExpressionWithSet(node, node.value)
+
+        node.value.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionWithSetOperation(self, node):
         """
@@ -789,6 +841,9 @@ class CodeSetup:
         self._setLastStmt(self.varKey, self.codeGenerator.genVariables)
         self._setLastStmt(self.varKey, self.codeGenerator.genParameters)
 
+        #if self.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)):
+        #    self.codeGenerator.genParameters.remove(self.varKey)
+
         if node.isVar or self.codeGenerator.genVariables.has(self.varKey):
             self.codeGenerator.genParameters.remove(self.varKey)
             self.codeGenerator.genSets.remove(self.varKey)
@@ -818,7 +873,7 @@ class CodeSetup:
             self.curList = self.codeGenerator.genSets
             self._checkSubIndices(node)
 
-        elif node.isParam:
+        elif not node.isInSet and not self.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)):#node.isParam:
             self.codeGenerator.genSets.remove(self.varKey)
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey): # check if this param was not seen yet
                 _genParam = GenParameter(self.varKey, node.isSymbolic, str(self.stmtIndex), str(self.stmtIndex))
