@@ -61,7 +61,8 @@ class CodeGenerator:
         domain = ""
 
         while domain == "" and stmtIndex >= firstStmt:
-            _tupleRet = None
+            domains = {}
+            _tuplesRet = []
             subIdxDomainsRet = None
 
             _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
@@ -79,37 +80,60 @@ class CodeGenerator:
                 _subIndices = _subIndicesAll[order]
                 _subIndices = sorted(_subIndices, key = lambda el: el.getIndice())
 
-                _combIndices = _subIndices
-                _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
+                idx = 0
+                totalSubIndices = len(_subIndices)
+                indexes = range(totalSubIndices)
+                _subIndicesRemaining = list(_subIndices)
 
-                while _tuple == None and len(_combIndices) > 0:
-                    _combIndices = _combIndices[:-1];
+                while idx < totalSubIndices:
+                    _combIndices = _subIndices[idx:]
                     _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
-                
-                if _tuple != None:
-                    _tupleRet = _tuple
 
-                    domain += "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
+                    while _tuple == None and len(_combIndices) > 0:
+                        _combIndices = _combIndices[:-1];
+                        _tuple = self._getTuple(paramIn, _combIndices, stmtIndex)
+                    
+                    if _tuple != None:
+                        domains[idx] = "(" + ",".join(_tuple.getTupleVal()) + ") " + _tuple.getOp() + " " + _tuple.getName()
+                                            
+                        for i in range(idx, idx+len(_combIndices)):
+                            indexes.remove(i)
 
-                    if len(_combIndices) < len(_subIndices):
-                        _subIndices = _subIndices[len(_combIndices):]
+                        idx += len(_combIndices)
+
+                        _tuplesRet.append(_tuple)
+
+                        for _comb in _combIndices:
+                            _subIndicesRemaining.remove(_comb)
+
                     else:
-                        _subIndices = []
+                        idx += 1
 
-                if domain == "" or len(_subIndices) > 0:
+                if len(indexes) > 0:
+                    _subIndices = _subIndicesRemaining
                     orderInStmt = self._getBiggestOrderInStmtFrom(_subIndices)
-                    subIdxDomains = [self._getDomain(idx, stmtIndex, orderInStmt) for idx in _subIndices]
+                    subIdxDomains = [self._getDomain(_subIndice, stmtIndex, orderInStmt) for _subIndice in _subIndices]
                     
                     if len(subIdxDomains) > 0 and all(subIdxDomains):
                         subIdxDomainsRet = subIdxDomains
-                        if domain != "":
-                            domain += ", "
 
                         self.varNameSubIndices = []
-                        subIdxDomains = [self._getDomainStr(idx, stmtIndex, orderInStmt) for idx in _subIndices]
-                        domain += ", ".join(subIdxDomains)
+                        subIdxDomains = [self._getDomainStr(_subIndice, stmtIndex, orderInStmt) for _subIndice in _subIndices]
+
+                        indexes = sorted(indexes)
+                        for subIdxDomain in subIdxDomains:
+                            domains[indexes.pop(0)] = subIdxDomain
+
                     else:
-                        domain = ""
+                        domains = {}
+
+                domains_str = []
+                if len(domains) > 0:
+                    for key in sorted(domains.iterkeys()):
+                        if domains[key] != None:
+                            domains_str.append(domains[key])
+
+                domain += ", ".join(domains_str)
 
                 if domain != "":
                     break
@@ -121,7 +145,7 @@ class CodeGenerator:
             if _idxExpression != None:
                 domain = _idxExpression.getValue()
 
-        return domain, stmtIndex, _tupleRet, subIdxDomainsRet
+        return domain, stmtIndex, _tuplesRet, subIdxDomainsRet
 
 
     def _generateGraphAux(self, graph, genObj, genObjOther):
@@ -132,10 +156,11 @@ class CodeGenerator:
 
                 if len(paramIn.getSubIndices()) > 0:
                     
-                    _domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(paramIn)
+                    _domain, stmtIndex, _tuples, subIdxDomains = self._getSubIndicesDomains(paramIn)
 
-                    if _tuple != None:
-                        graph[paramIn.getName()].append(_tuple.getName())
+                    if _tuples != None and len(_tuples):
+                        for _tuple in _tuples:
+                            graph[paramIn.getName()].append(_tuple.getName())
 
                     if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
 
@@ -158,6 +183,14 @@ class CodeGenerator:
     # Auxiliary Methods
     def _generateGraph(self):
         graph = {}
+
+        #print("Sets")
+        #print(map(lambda el: el.getFirstStmt()+":"+el.getLastStmt()+":"+el.getName(), self.genSets.getAll()))
+        #print("")
+
+        #print("Parameters")
+        #print(map(lambda el: el.getFirstStmt()+":"+el.getLastStmt()+":"+el.getName(), self.genParameters.getAll()))
+        #print("")
         
         self._generateGraphAux(graph, self.genSets, self.genParameters)
         self._generateGraphAux(graph, self.genParameters, self.genSets)
@@ -395,6 +428,14 @@ class CodeGenerator:
     def _declareSetsAndParams(self):
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
+
+        #print("Graph")
+        #print(graph)
+        #print("")
+
+        #print("Topological Sorting")
+        #print(self.topological_order)
+        #print("")
 
         paramSetStr = ""
         if len(self.topological_order) > 0:

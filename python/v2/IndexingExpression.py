@@ -19,6 +19,7 @@ class IndexingExpression(Expression):
         self.logicalExpression = logicalExpression
         self.hasSup = False
         self.stmtIndexing = stmtIndexing
+        self.supExpression = None
 
     def __str__(self):
         """
@@ -62,6 +63,9 @@ class IndexingExpression(Expression):
 
     def setHasSup(self, hasSup):
         self.hasSup = hasSup
+
+    def setSupExpression(self, supExpression):
+        self.supExpression = supExpression
 
     def setupEnvironment(self, codeSetup):
         """

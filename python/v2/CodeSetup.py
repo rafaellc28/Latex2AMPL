@@ -316,6 +316,7 @@ class CodeSetup:
         """
         if node.numericExpression:
             node.indexingExpression.setHasSup(True)
+            node.indexingExpression.setSupExpression(node.numericExpression.generateCode(self.codeGenerator))
         
         node.indexingExpression.setupEnvironment(self)
 
@@ -394,6 +395,7 @@ class CodeSetup:
 
         if node.supNumericExpression:
             node.indexingExpression.setHasSup(True)
+            node.indexingExpression.setSupExpression(node.supNumericExpression.generateCode(self.codeGenerator))
 
         node.indexingExpression.setupEnvironment(self)
         
@@ -479,6 +481,7 @@ class CodeSetup:
             #    raise Exception('If iterated expression has a superior expression, then its single entry must be of type EntryIndexingExpressionEq!')
             else:
                 node.entriesIndexingExpression[0].setHasSup(True)
+                node.entriesIndexingExpression[0].setSupExpression(node.supExpression)
 
         map(self._setupEntry, node.entriesIndexingExpression)
 
@@ -582,11 +585,12 @@ class CodeSetup:
             order = self._getOrderFromDomains(_domains)
             order += 1
 
-        #_domain = self.codeGenerator.genDomains.get(GenDomain(ind, self.stmtIndex, order))
-        #if _domain == None:
-        _domain = GenDomain(ind, self.stmtIndex, order, node.value.generateCode(self.codeGenerator))
+        setExpression = node.value.generateCode(self.codeGenerator)
+        if node.hasSup:
+            setExpression += ".." + node.supExpression
+
+        _domain = GenDomain(ind, self.stmtIndex, order, setExpression)
         self.codeGenerator.genDomains.add(_domain)
-        #_domain.setDomain(node.value.generateCode(self.codeGenerator))
 
         node.value.setupEnvironment(self)
 
@@ -770,16 +774,23 @@ class CodeSetup:
         """
         Generate the MathProg code for the declaration of this variable
         """
-        
+        #if node.variable.generateCode(self.codeGenerator) == "Sigma":
+        #    print("Sigma", node.getIndice(), node.sub_indices)
+
         if node.getIndice() > -1:
             self._setupEnvironment_SubIndice(node)
-            return
+
+            if len(node.sub_indices) == 0:
+                return
         
+        #if node.variable.generateCode(self.codeGenerator) == "Sigma":
+        #    print("Sigma", node.isVar, node.isSet, node.isParam)
+
         self.varKey = node.variable.generateCode(self.codeGenerator)
         
         if not node.isVar and not node.isSet and self._checkIsParam(self.varKey):
             node.setIsParam(True)
-
+        
         self._setLastStmt(self.varKey, self.codeGenerator.genSets)
         self._setLastStmt(self.varKey, self.codeGenerator.genVariables)
         self._setLastStmt(self.varKey, self.codeGenerator.genParameters)

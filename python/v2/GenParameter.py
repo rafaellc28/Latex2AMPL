@@ -5,12 +5,6 @@ class GenParameter(GenObjWithSubIndices):
 		super(GenParameter, self).__init__(name, firstStmt, lastStmt)
 		self.isSymbolic = isSymbolic
 	
-	def getConstraintIndice(self):
-		return self.constraintIndice
-
-	def setConstraintIndice(self, constraintIndice):
-		self.constraintIndice = constraintIndice
-
 	def getIsSymbolic(self):
 		return self.isSymbolic
 

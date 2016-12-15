@@ -108,7 +108,7 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
     EQ = "="
     NEQ = "!=" # delete this constant, make no sense a indexing expression with inequality instead of equality
     
-    def __init__(self, op, variable, value):
+    def __init__(self, op, variable, value, supExpression = None):
         """
         Set the variable and the numeric expression being compared, and the comparison operator
 
@@ -122,6 +122,7 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
         self.value    = value
         self.internalSet = 0
         self.hasSup = False
+        self.supExpression = supExpression
 
     def __str__(self):
         """
@@ -136,6 +137,9 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
         """
         self.hasSup = value
 
+    def setSupExpression(self, supExpression):
+        self.supExpression = supExpression
+    
     def setInternalSet(internalSet):
         self.internalSet = internalSet
     
