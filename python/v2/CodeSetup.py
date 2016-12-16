@@ -20,6 +20,7 @@ from GenSets import *
 from GenParameters import *
 from GenBelongsTo import *
 from GenBelongsToList import *
+from CodeGenerationException import *
 
 class CodeSetup:
     """ Visitor in the Visitor Pattern """
@@ -479,7 +480,7 @@ class CodeSetup:
         """
         if node.hasSup:
             if len(node.entriesIndexingExpression) != 1:
-                raise Exception('If iterated expression has a superior expression, then it must have a single entry!')
+                raise CodeGenerationException('Statement '+str(self.stmtIndex+1)+': If iterated expression has a superior expression, then it must have a single entry in the inferior expression!')
             #elif Utils._isInstanceOfStr(node.entriesIndexingExpression[0]) or not node.entriesIndexingExpression[0].isInstanceOfEntryIndexingExpressionEq():
             #    raise Exception('If iterated expression has a superior expression, then its single entry must be of type EntryIndexingExpressionEq!')
             else:

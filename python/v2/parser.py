@@ -26,6 +26,7 @@ from Range import *
 from Value import *
 from Variable import *
 from ID import *
+from SyntaxException import *
 
 # Parsing rules
 #parser2 = yacc.yacc()
@@ -791,6 +792,6 @@ def p_TupleList(t):
 
 def p_error(t):
   if t:
-    print("Syntax error at line %d, position %d: '%s'" % (t.lineno, t.lexpos, t.value))
+    raise SyntaxException(t.lineno, t.lexpos, t.value)
   else:
-    print("Syntax error at EOF")
+    raise SyntaxException("EOF")
