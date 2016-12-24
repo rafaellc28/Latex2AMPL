@@ -1,4 +1,5 @@
 var dictionary = {};
+var samples = {};
 var CONSTRAINT_KEY = 0;
 var CONSTRAINTS = [];
 var EDITING = null;
@@ -28,8 +29,10 @@ var init = function() {
 
 	initMathProgEditor();
 	initSimpleEditor();
+	initDataEditor();
 	initSolver();
-	
+	initExamples();
+
 	$("#collapse2").collapse("hide");
 }
 

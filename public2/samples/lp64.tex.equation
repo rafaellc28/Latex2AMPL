@@ -1,0 +1,17 @@
+% GLPK/prod.mod: ../glpk-4.47/examples/prod.mod
+\text{minimize } \sum_{t \in time} Rtr * Sl * Dpp_{t} * Cs * Crews_{t} + \sum_{t \in time} Hc_{t} * Hire_{t} + \sum_{t \in time} Lc_{t} * Layoff_{t} + \sum_{t \in time, p \in prd} Otr * Cs * Pt_{p} * Oprd_{p,t} + \sum_{t \in time, p \in prd, a \in 1 \ldots Life} Cri_{p} * Pc_{p} * Inv_{p,t,a} + \sum_{t \in time, p \in prd} Crs_{p} * Pc_{p} * Short_{p,t}, Crews_{t} \in \mathbb{R}^{+}, Hire_{t} \in \mathbb{R}^{+}, Layoff_{t} \in \mathbb{R}^{+}, Oprd_{p,t} \in \mathbb{R}^{+}, Inv_{p,t,a} \in \mathbb{R}^{+}, Short_{p,t} \in \mathbb{R}^{+}\\
+\text{subject to } \sum_{p \in prd} Pt_{p} * Rprd_{p,t} \leq Sl * Dpp_{t} * Crews_{t}, t \in time\\
+\sum_{p \in prd} Pt_{p} * Oprd_{p,t} \leq Ol_{t}, t \in time, Rprd_{p,t} \in \mathbb{R}^{+}\\
+Crews_{First-1} = Iw\\
+Crews_{t} = Crews_{t-1} + Hire_{t} - Layoff_{t}, t \in time\\
+Cmin_{t} \leq Crews_{t} \leq Cmax_{t}, t \in time\\
+Rprd_{p,First} + Oprd_{p,First} + Short_{p,First} - Inv_{p,First,1} = Dem_{p,First} \text{ less } Iinv_{p}, p \in prd\\
+Rprd_{p,t} + Oprd_{p,t} + Short_{p,t} - Short_{p,t-1} + \sum_{a \in 1 \ldots Life} (Inv_{p,t-1,a} - Inv_{p,t,a}) = Dem_{p,t} \text{ less } Iil_{p,t-1}, p \in prd, t \in First+1 \ldots Last\\
+\sum_{a \in 1 \ldots Life} Inv_{p,t,a} + Iil_{p,t} \geq Minv_{p,t}, p \in prd, t \in time\\
+Inv_{p,First+v-1,a} = 0, p \in prd, v \in 1 \ldots Life-1, a \in v+1 \ldots Life\\
+Inv_{p,t,1} \leq Rprd_{p,t} + Oprd_{p,t}, p \in prd, t \in time\\
+Inv_{p,t,a} \leq Inv_{p,t-1,a-1}, p \in prd, t \in First+1 \ldots Last, a \in 2 \ldots Life\\
+Inv_{p,t,a} \geq 0, p \in prd, t \in time, a \in 1 \ldots Life\\
+Short_{p,t} \geq 0, p \in prd, t \in time\\
+Crews_{t} \geq 0, t \in First - 1 \ldots Last\\
+Dem_{p,t} \geq 0, p \in prd, t \in First \ldots Last+1

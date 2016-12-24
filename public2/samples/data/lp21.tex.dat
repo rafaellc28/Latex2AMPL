@@ -1,0 +1,15 @@
+set I := Seattle San-Diego;
+
+set J := New-York Chicago Topeka;
+
+param A := Seattle     350
+           San-Diego   600;
+
+param B := New-York    325
+           Chicago     300
+           Topeka      275;
+
+param C :              New-York   Chicago   Topeka :=
+           Seattle     0.225        0.153       0.162
+           San-Diego   0.225        0.162       0.126  ;
+

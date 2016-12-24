@@ -1,0 +1,24 @@
+param : oils : Oilhardness :=
+    VEG1    8.8
+    VEG2    6.1
+    OIL1    2.0
+    OIL2    4.2
+    OIL3    5.0 ;
+
+set month := 1 2 3 4 5 6;
+
+param Buyingprices
+
+:           VEG1    VEG2    OIL1    OIL2    OIL3    :=
+
+1           110     120     130     110     115
+2           130     130     110     90      115
+3           110     140     130     100     95
+4           120     110     120     120     125
+5           100     120     150     110     105
+6           90      100     140     80      135 ;
+
+param Productprice := 150;
+param Storagecost := 5;
+param M := 1000;
+

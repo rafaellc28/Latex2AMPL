@@ -1,0 +1,26 @@
+param :  WORDS :   Total :=
+         BALLET       45
+         CELLO        43
+         CONCERT      74
+         FLUTE        30
+         FUGUE        50
+         GLEE         66
+         JAZZ         58
+         LYRE         47
+         OBOE         53
+         OPERA        65
+         POLKA        59
+         QUARTET      50
+         SAXOPHONE   134
+         SCALE        51
+         SOLO         37
+         SONG         61
+         SOPRANO      82
+         THEME        72
+         VIOLIN      100
+         WALTZ        34 ;
+
+set LETTERS := 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z';
+
+set VALUES := 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26;
+

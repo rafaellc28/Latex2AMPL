@@ -1,0 +1,12 @@
+set HOUSE := 1 2 3 4 5;
+
+set COLOR := "blue", "green", "ivory", "red", "yellow";
+
+set NATIONALITY := "Englishman", "Japanese", "Norwegian", "Spaniard", "Ukranian";
+
+set DRINK := "coffee", "milk", "orange_juice", "tea", "water";
+
+set SMOKE := "Chesterfield", "Kools", "Lucky_Strike", "Old_Gold", "Parliament";
+
+set PET := "dog", "fox", "horse", "snails", "zebra";
+

@@ -44,6 +44,7 @@
 		<script src="js/utils.js"></script>
 	  	<script src="js/editor.js"></script>
 	  	<script src="js/solver.js"></script>
+	  	<script src="js/examples.js"></script>
 	  	<script src="js/mathjaxpreview.js"></script>
 	  	<script src="js/mathjaxdisplay.js"></script>
 		<script src="js/latex2mathprog.js"></script>
@@ -70,13 +71,22 @@
 	        		{{{GITHUB_SOURCE}}}
 	        	</p>
 
-				<p class="text-muted">
+	        	<p>
+	        		<div class="dropdown">
+  						<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{EXAMPLES}}
+  						<span class="caret"></span></button>
+	        			<ul id="examples" class="dropdown-menu scrollable-menu" role="menu">
+	        			</ul>
+	        		</div>
+	        	</p>
+
+				<!--<p class="text-muted">
 					{{{SIMPLE_EXAMPLE}}}
 				</p>
 				
 				<p class="text-muted">
 					{{{DATA_SECTION}}}<a href="#" data-html="true" data-toggle="popover" data-content="{{DATA_SECTION_DATA}}">data</a>.
-				</p>
+				</p>-->
 				
 				<div id="alertObj"></div>
 				<div id="alertSubj"></div>
@@ -88,6 +98,7 @@
 					        <a data-toggle="collapse" href="#collapse1">{{LATEX_EDITOR}}</a>
 					      </h2>
 					    </div>
+
 					    <div id="collapse1" class="panel-collapse collapse in">
 							<div class="row">
 								<div class="col-xs-12 col-md-6">
@@ -199,6 +210,14 @@
 											<textarea id="simpleEditor" onkeyup="PreviewSimpleEditor.Update()" onchange="PreviewSimpleEditor.Update()"></textarea>
 										</div>
 									</div>
+
+									<div class="row">&nbsp;</div>
+
+									<div class="row">
+										<div class="col-xs-12">
+											<button type="button" class="btn btn-default" onClick="formatLatexCode()">{{FORMAT}}</button>
+					    				</div>
+									</div>
 								</div>
 								<div class="col-xs-12 col-md-6">
 									<div class="row">
@@ -232,6 +251,24 @@
 
 				<div class="row">&nbsp;</div>
 
+				<h2>{{DATA_EDITOR}}</h2>
+
+				<div class="row">
+					<div id="dataEditorDiv" class="col-xs-12">
+					    <textarea id="dataEditor"></textarea>
+					</div>
+				</div>
+
+				<div class="row">&nbsp;</div>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<button type="button" class="btn btn-default" onClick="copyToDataSection()">{{COPY_DATA_SECTION}}</button>
+    				</div>
+				</div>
+
+				<div class="row">&nbsp;</div>
+
 				<div class="row">
 					<div class="col-xs-12">
 						<button type="button" class="btn btn-default" onClick="solveMathProg()">{{SOLVE_MATHPROG}}</button>
@@ -239,7 +276,7 @@
 				</div>
 
 				<div class="row">&nbsp;</div>
-				
+								
 				<h2>{{MATHPROG_SOLUTION}}</h2>
 
 				<pre id="log"/>

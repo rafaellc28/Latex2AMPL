@@ -5,7 +5,12 @@ var PythonShell = require('python-shell');
 var bodyParser = require('body-parser');
 var jsesc = require('jsesc');
 var _ = require('underscore');
+var fs = require('fs');
+//var jquery = require("jquery");
+var Deferred = require('JQDeferred');
+var q = require('q');
 
+var baseSamples = "public2/samples";
 
 i18n.configure({
     directory: __dirname + '/locales'
@@ -53,11 +58,40 @@ app.get('/json', function(req, res) {
 	}
 });
 
+app.get('/samples', function(req, res) {
+	if (req.query.number) {
+		var number = req.query.number;
+		result = {}
+		var sample = baseSamples+"/lp"+number+".tex.equation";
+		var dataSample = baseSamples+"/data/lp"+number+".tex.dat";
+
+		var d = Deferred();
+
+		fs.readFile(sample, "utf8", function(err, data){
+		    if (err) data = "";
+		    result["sample"] = data;
+
+			fs.readFile(dataSample, "utf8", function(err, data){
+			    if (err) data = "";
+			    result["data"] = data;
+
+			    d.resolve(result);
+			});
+		});
+
+		q.when(d).done(function(result) {
+			res.send(result);
+		});
+
+	} else {
+		res.send({});
+	}
+});
+
+
 app.post('/', function(req, res) {
 
     var str = req.body.latex;
-
-	//console.log(str);
 
 	var pyshell = new PythonShell('python/v2/compiler.py');
 	
@@ -68,29 +102,16 @@ app.post('/', function(req, res) {
 	
 	pyshell.on('message', function (message) {
 	  // received a message sent from the Python script (a simple "print" statement) 
-	  //console.log("Message:\n");
-	  //console.log(message);
 	  response += message + "\n";
 	});
 	
 	// end the input stream and allow the process to exit 
 	pyshell.end(function (err) {
-	  if (err)  {
-	  	//console.log(err);
-	  }
-
 	  if (!response || response.trim() == "") {
-	  	//console.log("Ocorreu erro");
-	  	//res.send("Ocorreu erro na geração do MathProg, verifique se o Problema de Programação Linear está correto!");
 	  	res.send(jsesc(err));
 	  } else{
-		//res.send(response.replace(/(?:\r\n|\r|\n)/g, '<br />'));
 		res.send(response);
 	  }
-
-	  //console.log('finished');
-	  //console.log(response);
-
 	});
 	
 });

@@ -41,26 +41,7 @@
 		showSubjectiveFunction(); // subjectiveFunction is initially hidden so the braces don't show
 	});
 
-	var initExample = function() {
-		var obj = "\\displaystyle\\sum\\limits_{i \\in I,j \\in J}C_{i,j} * x_{i,j}";
-		$("#objMathInput").val(obj);
-		$("#objMathInput").blur();
-		
-		// initialize constraints
-		var constr = "\\displaystyle\\sum\\limits_{j \\in J}x_{i,j} \\leq A_{i}, i \\in I";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-		
-		constr = "\\displaystyle\\sum\\limits_{i \\in I}x_{i,j} \\geq B_{j}, j \\in J,";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-		
-		constr = "x_{i,j} \\in \\mathbb{N}";
-		$("#subjMathInput").val(constr);
-		$("#icon-add-constraint").click();
-	}
-
-	QUEUE.Push(initExample);
+	//QUEUE.Push(initExample);
 
 	//
 	//  The onchange event handler that typesets the objMath entered
@@ -308,6 +289,68 @@
 		$('#collapse2').collapse("show");
 		updateSimpleEditor(data);
 		//PreviewSimpleEditor.Update();
+	}
+
+	window.copyToDataSection = function() {
+		var data;
+		var mathProgCode = getValueMathProgEditor();
+		var dataCode = getValueDataEditor();
+
+		var idx = mathProgCode.indexOf("data;\n");
+		if (idx == -1) {
+			idx = mathProgCode.indexOf("end;\n");
+		}
+
+		if (idx == -1) {
+			data = dataCode;
+		} else {
+			data = mathProgCode.substring(0, idx);
+			data += "data;\n\n" + dataCode + "\n\nend;\n";
+		}
+		
+		$('#collapse2').collapse("show");
+		updateMathProgEditor(data);
+		//PreviewSimpleEditor.Update();
+	}
+
+	window.formatLatexCode = function() {
+		var latexCode = getValueSimpleEditor();
+		var latexLines = latexCode.split("\n");
+
+		var formattedLatexCode = "";
+		var c = 0;
+		while (latexLines[c][0] == "%") {
+			formattedLatexCode += latexLines[c] + "\n";
+			c++;
+		}
+
+		formattedLatexCode += "\\begin{equation}\n\\begin{split}\n";
+
+		for (i = c; i < latexLines.length; i++) {
+			//console.log(latexLines[i]);
+			var line = latexLines[i];
+
+			if (line && line.trim() != "") {
+				var match = /\\text\{\s*[a-zA-Z\s]+\s*\}/.exec(line);
+
+				if (match) {
+					formattedLatexCode += match + " & " + line.substring(match.index + match[0].length) + "\n";
+
+				} else {
+
+					if (line[0] == "%") {
+						formattedLatexCode += line + "\n";
+					} else {
+						formattedLatexCode += " & " + line + "\n";
+					}
+					
+				}
+			}
+		}
+
+		formattedLatexCode += "\\end{split}\n\\end{equation}\n";
+
+		updateSimpleEditor(formattedLatexCode);
 	}
 
 })();

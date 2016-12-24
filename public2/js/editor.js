@@ -1,5 +1,6 @@
 var mathProgEditor = null;
 var simpleEditor = null;
+var dataEditor = null;
 
 CodeMirror.defineSimpleMode("mathprog", {
   // The start state contains the rules that are intially used
@@ -117,4 +118,29 @@ window.getValueSimpleEditor = function() {
 window.setCursorSimpleEditor = function(err_line) {
   simpleEditor.setCursor(err_line,0);
   simpleEditor.scrollIntoView(null);
+}
+
+window.initDataEditor = function() {
+  dataEditor = CodeMirror.fromTextArea(document.getElementById("dataEditor"), {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: 'mathprog'
+  });
+  dataEditor.markClean();
+}
+
+window.updateDataEditor = function(data) {
+  dataEditor.markClean();
+  dataEditor.setValue(data);
+  dataEditor.markClean();
+  dataEditor.focus();
+}
+
+window.getValueDataEditor = function() {
+  return dataEditor.getValue();
+}
+
+window.setCursorDataEditor = function(err_line) {
+  dataEditor.setCursor(err_line,0);
+  dataEditor.scrollIntoView(null);
 }

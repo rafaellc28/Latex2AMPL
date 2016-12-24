@@ -7,11 +7,14 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "JQDeferred": "^2.1.0",
     "body-parser": "1.15.0",
     "express": "~4.9.x",
     "i18n": "^0.8.3",
+    "jquery": "^3.1.1",
     "jsesc": "1.0.0",
     "python-shell": "0.4.0",
+    "q": "^1.4.1",
     "underscore": "^1.8.3"
   },
   "engines": {
