@@ -23,7 +23,7 @@
 	"TIP2": "A constraint can not end with COMMA '<b>,</b>', thus '<b>,\\</b>' means that the constraint continues in the next line.",
 	"TIP3": "<b>Symbolic Parameters</b> must belong to $\\mathbb{S}$.",
 	"TIP4": "<b>Variables</b> must belong to one of the following sets: $\\mathbb{B}$ or $\\{0,1\\}$, $\\mathbb{R}$, $\\mathbb{R}^{+}$, $\\mathbb{Z}$, $\\mathbb{Z}^{+}$ and $\\mathbb{N}$.",
-	"TIP5": "The MathProg code can be solved by pressing the 'Solve MathProg' button. In this site, it is solved using the <a href='https://github.com/hgourvest/glpk.js' target='_glpk_js'>glpk.js</a> library (you have to fill the data section to solve the problem). However, a MathProg code can be solved by any Linear Programming Solver that supports this language. For instance, the <a href='https://www.gnu.org/software/glpk/' target='_glpk_tool'>GLPK (GNU Linear Programming Kit)</a>.",
+	"TIP5": "The MathProg code can be solved by pressing the 'Solve MathProg' button. In this tool, it is solved using the <a href='https://github.com/hgourvest/glpk.js' target='_glpk_js'>glpk.js</a> library, which is an implementation in javascript of the <a href='https://www.gnu.org/software/glpk/' target='_glpk_tool'>GLPK (GNU Linear Programming Kit)</a>, that can also be used to solve the problem (you have to fill the data section to solve it). Besides, the GLPK package offers commands/methods to convert a code in MathProg format to the following formats: <b>CPLEX LP</b>, <b>MPS fixed</b>, <b>MPS free</b> and <b>GLPK</b>.",
 	"GITHUB_SOURCE": "GitHub: <a href='https://github.com/rafaellc28/Latex2MathProg' target='_github'>https://github.com/rafaellc28/Latex2MathProg</a>",
 	"EXAMPLES": "Examples",
 	"COPY_DATA_SECTION": "Copy to Data Section in MathProg Code",
