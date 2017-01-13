@@ -38,6 +38,13 @@ class GenList(object):
 		if _obj == None:
 			self.vector.append(obj)
 
+	def addAll(self, objList):
+		if objList != None:
+			for obj in objList:
+				_obj = self.get(obj)
+				if _obj == None:
+					self.vector.append(obj)
+
 	def remove(self, obj):
 		_obj = self.get(obj)
 

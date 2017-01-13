@@ -43,6 +43,9 @@ tokens = [
    'REALSETWITHONELIMIT',
    'REALSETWITHTWOLIMITS',
    'NATURALSET',
+   'DEFAULT',
+   'SETOF',
+   'DIMEN',
    'SUBSET',
    'NOTSUBSET',
    'NUMBER',
@@ -60,6 +63,8 @@ tokens = [
    'RPAREN',
    'LBRACE',
    'RBRACE',
+   'LLBRACE',
+   'RRBRACE',
    'LBRACKET',
    'RBRACKET',
    'LFLOOR',
@@ -186,6 +191,21 @@ def t_FORALL(t):
 
 def t_EXISTS(t):
    r'\\exists'
+   return t
+
+def t_DEFAULT(t):
+   r'\\text\{\s*default\s*\}|default'
+   t.value = "default"
+   return t
+
+def t_DIMEN(t):
+   r'\\text\{\s*dimen\s*\}|dimen'
+   t.value = "dimen"
+   return t
+
+def t_SETOF(t):
+   r'\\text\{\s*setof\s*\}|setof'
+   t.value = "setof"
    return t
 
 def t_BINARYSET(t):
@@ -449,13 +469,23 @@ def t_SUBJECTTO(t):
    t.value = "subjectto"
    return t
 
+def t_LLBRACE(t):
+   r'\\\{'
+   t.value = "{"
+   return t
+
+def t_RRBRACE(t):
+   r'\\\}'
+   t.value = "}"
+   return t
+
 def t_LBRACE(t):
-   r'\{|\\\{'
+   r'\{'
    t.value = "{"
    return t
 
 def t_RBRACE(t):
-   r'\}|\\\}'
+   r'\}'
    t.value = "}"
    return t
 

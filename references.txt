@@ -10,3 +10,6 @@ https://github.com/hgourvest/glpk.js
 https://www3.nd.edu/~jeff/mathprog/#
 https://github.com/jckantor/MathProg-Solver
 
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+

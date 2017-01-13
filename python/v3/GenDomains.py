@@ -22,7 +22,7 @@ class GenDomains(GenList):
 
 	def getBiggestOrderByNameAndStmt(self, name, stmtIndex):
 		_domains = self.getByNameAndStmt(name, stmtIndex)
-
+		
 		if len(_domains) == 0:
 			return -1
 

@@ -1,5 +1,6 @@
 from Utils import *
 from ValueList import *
+from Constraints import *
 from SetExpression import *
 from EntryIndexingExpression import *
 from SymbolicExpression import *
@@ -16,6 +17,11 @@ from GenParameter import *
 from GenDomain import *
 from GenType import *
 from GenTuple import *
+from GenDeclarations import *
+from GenDeclaration import *
+from GenBelongsToList import *
+from GenBelongsTo import *
+from Constants import *
 
 class CodeGenerator:
     """ Visitor in the Visitor Pattern """
@@ -27,7 +33,11 @@ class CodeGenerator:
         self.genDomains = GenDomains()
         self.genTypes = GenTypes()
         self.genTuples = GenTuples()
+        self.genDeclarations = GenDeclarations()
+        self.genBelongsToList = GenBelongsToList()
         self.genIndexingExpressionConstraints = GenList()
+        self.genValueAssigned = GenList()
+        self.genNames = GenList()
         self.topological_order = []
 
         self.totalObjectives = 0
@@ -53,14 +63,41 @@ class CodeGenerator:
 
         return orderInStmt
 
+    def _addDependences(self, value, decl, dependences):
+        value.attribute.generateCode(self)
+
+        names = self.genNames.getAll()
+        if names != None and len(names) > 0:
+            for name in names:
+                if not self.genBelongsToList.has(GenBelongsTo(name.getName(), decl.getStmtIndex())):
+                    dependences.append(name.getName())
+
+    def _getDependences(self, paramIn):
+        dependences = []
+        self.genNames = GenList()
+
+        decl = self.genDeclarations.get(paramIn.getName())
+        if decl != None:
+            value = decl.getValue()
+            if value != None:
+                self._addDependences(value, decl, dependences)
+
+            ins = decl.getIn()
+            if ins != None and len(ins) > 0:
+                for pSet in ins:
+                    self._addDependences(pSet, decl, dependences)
+
+        return dependences
+
     def _getSubIndicesDomains(self, paramIn):
 
         firstStmt = int(paramIn.getFirstStmt())
         lastStmt =  int(paramIn.getLastStmt())
         stmtIndex = lastStmt
         domain = ""
-
+        
         while domain == "" and stmtIndex >= firstStmt:
+            
             domains = {}
             _tuplesRet = []
             subIdxDomainsRet = None
@@ -139,45 +176,54 @@ class CodeGenerator:
                     break
 
             stmtIndex -= 1
-
-        if domain == "":
-            _idxExpression = self.genIndexingExpressionConstraints.get(str(lastStmt))
-            if _idxExpression != None:
-                domain = _idxExpression.getValue()
-
+            
         return domain, stmtIndex, _tuplesRet, subIdxDomainsRet
 
 
     def _generateGraphAux(self, graph, genObj, genObjOther):
         if len(genObj) > 0:
             for paramIn in genObj.getAll():
-                if not paramIn.getName() in graph:
-                    graph[paramIn.getName()] = []
+                name = paramIn.getName()
+                if not name in graph:
+                    graph[name] = []
+
+                #print(paramIn.getName())
+
+                dependences = self._getDependences(paramIn)
+
+                if len(dependences) > 0:
+                    for dep in dependences:
+                        if (genObj.has(dep) or genObjOther.has(dep)) and not dep in graph[name]:
+                            graph[name].append(dep)
 
                 if len(paramIn.getSubIndices()) > 0:
                     
                     _domain, stmtIndex, _tuples, subIdxDomains = self._getSubIndicesDomains(paramIn)
+                    #print(map(lambda el: str(el), subIdxDomains))
+                    #print(_domain)
 
                     if _tuples != None and len(_tuples):
                         for _tuple in _tuples:
-                            graph[paramIn.getName()].append(_tuple.getName())
+                            tupleName = _tuple.getName()
+                            if (genObj.has(tupleName) or genObjOther.has(tupleName)) and not tupleName in graph[name]:
+                                graph[name].append(tupleName)
 
                     if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
 
                         for _domain in subIdxDomains:
+                            #print(paramIn.getName(), _domain)
                             if ".." in _domain:
                                 param = _domain.split("..")
 
-                                if param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0])):
+                                if (param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0]))) and not param[0] in graph[name]:
                                     graph[paramIn.getName()].append(param[0])
 
-                                if param and param[1] and (genObj.has(param[1]) or genObjOther.has(param[1])):
+                                if (param and param[1] and (genObj.has(param[1]) or genObjOther.has(param[1]))) and not param[1] in graph[name]:
                                     graph[paramIn.getName()].append(param[1])
 
                             else:
                                 param = _domain.split("[")
-
-                                if param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0])):
+                                if (param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0]))) and not param[0] in graph[name]:
                                     graph[paramIn.getName()].append(param[0])
 
     # Auxiliary Methods
@@ -186,7 +232,9 @@ class CodeGenerator:
 
         self._generateGraphAux(graph, self.genSets, self.genParameters)
         self._generateGraphAux(graph, self.genParameters, self.genSets)
-        
+
+        #print(graph)
+
         return graph
 
     # Get the MathProg code for a given relational expression
@@ -199,6 +247,13 @@ class CodeGenerator:
 
     # Get the MathProg code for a given sub-indice
     def _getCodeID(self, id_):
+        if isinstance(id_, ValuedNumericExpression):
+            if isinstance(id_.value, Variable):
+                id_.value.setIsSubIndice(True)
+
+        elif isinstance(id_, Variable):
+            id_.setIsSubIndice(True)
+
         val = id_.generateCode(self)
         if val.replace('.','',1).isdigit():
             val = str(int(float(val)))
@@ -212,8 +267,11 @@ class CodeGenerator:
 
     # Get the MathProg code for a given constraint
     def _getCodeConstraint(self, constraint):
-        self.constraintNumber += 1
-        return "s.t. C" + str(self.constraintNumber) + " " + constraint.generateCode(self)
+        if isinstance(constraint, Constraint):
+            self.constraintNumber += 1
+            return "s.t. C" + str(self.constraintNumber) + " " + constraint.generateCode(self)
+
+        return ""
 
     # Get the MathProg code for a given entry
     def _getCodeEntry(self, entry): return entry.generateCode(self)
@@ -235,6 +293,7 @@ class CodeGenerator:
 
             order_test = order
             lastOrder = self.genDomains.getBiggestOrderByNameAndStmt(var.getName(), stmtIndex)
+            
             while (_domain == None or _domain.getDomain() == None) and order_test <= lastOrder:
                 order_test += 1
                 _domain = self.genDomains.get(GenDomain(var.getName(), stmtIndex, order_test))
@@ -313,16 +372,57 @@ class CodeGenerator:
             for var in self.genVariables.getAll():
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     varStr += "var " + var.getName()
+                    domain = None
+                    _type = None
 
-                    _subIndices = var.getSubIndices().getAllSortedByIndice()
-                    if len(_subIndices) > 0:
-                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
-                        if domain != "" and domain.strip() != "":
+                    varDecl = self.genDeclarations.get(var.getName())
+
+                    if varDecl != None:
+                        if varDecl.getIndexingExpression() != None:
+                            domain = varDecl.getIndexingExpression().generateCode(self)
                             varStr += "{" + domain + "}"
+                    
+                    if domain == None:
+                        _subIndices = var.getSubIndices().getAllSortedByIndice()
+                        
+                        if len(_subIndices) > 0:
+                            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
+                            
+                            if domain != "" and domain.strip() != "":
+                                varStr += "{" + domain + "}"
 
-                    _type = self.genTypes.get(var)
-                    if _type != None and _type.getType().strip() != "":
-                        varStr += " " + _type.getType()
+                    if varDecl != None:
+                        sets = map(lambda el: el.attribute.generateCode(self), varDecl.getIn())
+                        binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
+
+                        if binary != None and len(binary) > 0:
+                            _type = Constants.BINARY
+                        else:
+                            integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
+                            if integer != None and len(integer) > 0:
+                                _type = integer[-1]
+
+                        if _type != None:
+                            varStr += " " + _type
+
+                    if _type == None:
+                        _type = self.genTypes.get(var)
+                        if _type != None and _type.getType().strip() != "":
+                            varStr += " " + _type.getType()
+
+                    if varDecl != None:
+                        attr = varDecl.getRelationEqualTo()
+                        if attr != None:
+                            varStr += ", = " + attr.attribute.generateCode(self)
+
+                        else:
+                            attr = varDecl.getRelationLessThanOrEqualTo()
+                            if attr != None:
+                                varStr += ", <= " + attr.attribute.generateCode(self)
+
+                            attr = varDecl.getRelationGreaterThanOrEqualTo()
+                            if attr != None:
+                                varStr += ", >= " + attr.attribute.generateCode(self)
 
                     varStr += ";\n\n"
 
@@ -338,19 +438,54 @@ class CodeGenerator:
             for setIn in self.genSets.getAll():
                 if not self.genParameters.has(setIn):
                     setStr += "set " + setIn.getName()
+                    domain = None
+                    dimen = None
 
-                    _subIndices = setIn.getSubIndices().getAllSortedByIndice()
-                    if len(_subIndices) > 0:
-                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
-                        if domain != None and domain.strip() != "":
+                    varDecl = self.genDeclarations.get(setIn.getName())
+
+                    if varDecl != None:
+                        if varDecl.getIndexingExpression() != None:
+                            domain = varDecl.getIndexingExpression().generateCode(self)
                             setStr += "{" + domain + "}"
+                    
+                    if domain == None:
+                        _subIndices = setIn.getSubIndices().getAllSortedByIndice()
+                        if len(_subIndices) > 0:
+                            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
+                            if domain != None and domain.strip() != "":
+                                setStr += "{" + domain + "}"
 
-                    if setIn.getDimension() > 1:
-                        dimen = " dimen " + str(setIn.getDimension())
-                    else:
-                        dimen = ""
+                    if varDecl != None:
+                        if varDecl.getDimen() != None:
+                            setStr += " dimen " + varDecl.getDimen().attribute.generateCode(self)
 
-                    setStr += dimen + ";\n\n"
+                    if dimen == None:
+                        if setIn.getDimension() > 1:
+                            setStr += " dimen " + str(setIn.getDimension())
+
+                    if varDecl != None:
+                        subsets = varDecl.getWithin()
+                        if subsets != None and len(subsets) > 0:
+                            setStr += ", " + ",".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), subsets))
+
+                        sets = varDecl.getIn()
+                        if sets != None and len(sets) > 0:
+                            sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                            ins = ",".join(map(lambda el: "in " + el, sets))
+                            
+                            if ins != "":
+                                setStr += ", " + ins
+
+                        if varDecl.getDefault() != None:
+                            default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                            setStr += default
+
+                        if varDecl.getValue() != None:
+                            value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                            setStr += value
+                            self.genValueAssigned.add(GenObj(setIn.getName()))
+
+                    setStr += ";\n\n"
 
         return setStr
 
@@ -366,16 +501,67 @@ class CodeGenerator:
 
             for paramIn in self.topological_order:
                 paramStr += "param " + paramIn
+                domain = None
+                _type = None
 
-                _genParameter = self.genParameters.get(paramIn)
-                if len(_genParameter.getSubIndices()) > 0:
-                    domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
-                    if domain != None and domain.strip() != "":
+                varDecl = self.genDeclarations.get(paramIn)
+
+                if varDecl != None:
+                    if varDecl.getIndexingExpression() != None:
+                        domain = varDecl.getIndexingExpression().generateCode(self)
                         paramStr += "{" + domain + "}"
+                
+                if domain == None:
+                    _genParameter = self.genParameters.get(paramIn)
+                    if len(_genParameter.getSubIndices()) > 0:
+                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
+                        if domain != None and domain.strip() != "":
+                            paramStr += "{" + domain + "}"
 
-                _type = self.genTypes.get(paramIn)
-                if _type != None:
-                    paramStr += " " + _type.getType()
+                if varDecl != None:
+                    sets = map(lambda el: el.attribute.generateCode(self), varDecl.getIn())
+                    symbolic = filter(lambda el: el.startswith(Constants.SYMBOLIC), sets)
+
+                    if symbolic != None and len(symbolic) > 0:
+                        _type = Constants.SYMBOLIC
+                    else:
+                        binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
+                        if binary != None and len(binary) > 0:
+                            _type = Constants.BINARY
+                        else:
+                            integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
+                            if integer != None and len(integer) > 0:
+                                _type = integer[-1]
+
+                    if _type != None:
+                        paramStr += " " + _type
+
+                if _type == None:
+                    _type = self.genTypes.get(paramIn)
+                    if _type != None:
+                        paramStr += " " + _type.getType()
+
+                if varDecl != None:
+                    sets = varDecl.getIn()
+                    if sets != None and len(sets) > 0:
+                        sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                        ins = ",".join(map(lambda el: "in " + el, sets))
+                        
+                        if ins != "":
+                            paramStr += ", " + ins
+
+                    relations = varDecl.getRelations()
+                    if relations != None and len(relations) > 0:
+                        paramStr += ", " + ",".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), relations))
+
+                    if varDecl.getDefault() != None:
+                        default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                        paramStr += default
+
+                    if varDecl.getValue() != None:
+                        value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                        paramStr += value
+                        self.genValueAssigned.add(GenObj(paramIn))
 
                 paramStr += ";\n\n"
 
@@ -385,15 +571,66 @@ class CodeGenerator:
         paramStr = ""
         paramIn = _genParameter.getName()
         paramStr += "param " + paramIn
+        domain = None
+        _type = None
 
-        if len(_genParameter.getSubIndices()) > 0:
-            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
-            if domain != None and domain.strip() != "":
+        varDecl = self.genDeclarations.get(_genParameter.getName())
+
+        if varDecl != None:
+            if varDecl.getIndexingExpression() != None:
+                domain = varDecl.getIndexingExpression().generateCode(self)
                 paramStr += "{" + domain + "}"
+                
+        if domain == None:
+            if len(_genParameter.getSubIndices()) > 0:
+                domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
+                if domain != None and domain.strip() != "":
+                    paramStr += "{" + domain + "}"
 
-        _type = self.genTypes.get(paramIn)
-        if _type != None:
-            paramStr += " " + _type.getType()
+        if varDecl != None:
+            sets = map(lambda el: el.attribute.generateCode(self), varDecl.getIn())
+            symbolic = filter(lambda el: el.startswith(Constants.SYMBOLIC), sets)
+
+            if symbolic != None and len(symbolic) > 0:
+                _type = Constants.SYMBOLIC
+            else:
+                binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
+                if binary != None and len(binary) > 0:
+                    _type = Constants.BINARY
+                else:
+                    integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
+                    if integer != None and len(integer) > 0:
+                        _type = integer[-1]
+
+            if _type != None:
+                paramStr += " " + _type
+
+        if _type == None:
+            _type = self.genTypes.get(paramIn)
+            if _type != None:
+                paramStr += " " + _type.getType()
+
+        if varDecl != None:
+            sets = varDecl.getIn()
+            if sets != None and len(sets) > 0:
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                ins = ",".join(map(lambda el: "in " + el, sets))
+
+                if ins != "":
+                    paramStr += ", " + ins
+
+            relations = varDecl.getRelations()
+            if relations != None and len(relations) > 0:
+                paramStr += ", " + ",".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), relations))
+
+            if varDecl.getDefault() != None:
+                default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                paramStr += default
+
+            if varDecl.getValue() != None:
+                value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                paramStr += value
+                self.genValueAssigned.add(GenObj(paramIn))
 
         paramStr += ";\n\n"
 
@@ -403,17 +640,53 @@ class CodeGenerator:
         setStr = ""
 
         setStr += "set " + _genSet.getName()
-        if len(_genSet.getSubIndices()) > 0:
-            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet)
-            if domain != None and domain.strip() != "":
+        domain = None
+        dimen = None
+
+        varDecl = self.genDeclarations.get(_genSet.getName())
+
+        if varDecl != None:
+            if varDecl.getIndexingExpression() != None:
+                domain = varDecl.getIndexingExpression().generateCode(self)
                 setStr += "{" + domain + "}"
+        
+        if domain == None:
+            if len(_genSet.getSubIndices()) > 0:
+                domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet)
+                if domain != None and domain.strip() != "":
+                    setStr += "{" + domain + "}"
 
-        if _genSet.getDimension() > 1:
-            dimen = " dimen " + str(_genSet.getDimension())
-        else:
-            dimen = ""
+        if varDecl != None:
+            if varDecl.getDimen() != None:
+                setStr += " dimen " + varDecl.getDimen().attribute.generateCode(self)
 
-        setStr += dimen + ";\n\n"
+        if dimen == None:
+            if _genSet.getDimension() > 1:
+                setStr += " dimen " + str(_genSet.getDimension())
+
+        if varDecl != None:
+            subsets = varDecl.getWithin()
+            if subsets != None and len(subsets) > 0:
+                setStr += ", " + ",".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), subsets))
+
+            sets = varDecl.getIn()
+            if sets != None and len(sets) > 0:
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                ins = ",".join(map(lambda el: "in " + el, sets))
+                
+                if ins != "":
+                    setStr += ", " + ins
+            
+            if varDecl.getDefault() != None:
+                default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                setStr += default
+
+            if varDecl.getValue() != None:
+                value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                setStr += value
+                self.genValueAssigned.add(GenObj(_genSet.getName()))
+
+        setStr += ";\n\n"
 
         return setStr
 
@@ -441,7 +714,7 @@ class CodeGenerator:
         
         if len(self.genSets) > 0:
             for setIn in self.genSets.getAll():
-                if not self.genParameters.has(setIn):
+                if not self.genValueAssigned.has(setIn.getName()) and not self.genParameters.has(setIn):
                     if len(setIn.getSubIndices()) > 0:
                         dimenIdx = "[" + ",".join(["0"] * len(setIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == setIn.getLastStmt() and el.getOrder() == 0))) + "]"
                     else:
@@ -454,16 +727,17 @@ class CodeGenerator:
 
         if len(self.genParameters) > 0:
             for paramIn in self.topological_order:
-                _genParameter = self.genParameters.get(paramIn)
-                
-                value = ""
-                if len(_genParameter.getSubIndices()) == 0:
-                    if _genParameter.getIsSymbolic():
-                        value += " ''"
-                    else:
-                        value += " 0"
+                if not self.genValueAssigned.has(paramIn):
+                    _genParameter = self.genParameters.get(paramIn)
+                    
+                    value = ""
+                    if len(_genParameter.getSubIndices()) == 0:
+                        if _genParameter.getIsSymbolic():
+                            value += " ''"
+                        else:
+                            value += " 0"
 
-                res += "param " + paramIn + " :=" + value + ";\n\n"
+                    res += "param " + paramIn + " :=" + value + ";\n\n"
 
         if res != "":
             res = "data;\n\n" + res + "\n"
@@ -472,26 +746,30 @@ class CodeGenerator:
 
     def _declareDataParam(self, _genParameter):
         res = ""
-        value = ""
 
-        if len(_genParameter.getSubIndices()) == 0:
-            if _genParameter.getIsSymbolic():
-                value += " ''"
-            else:
-                value += " 0"
+        if not self.genValueAssigned.has(_genParameter.getName()):
+            value = ""
 
-        res += "param " + _genParameter.getName() + " :=" + value + ";\n\n"
+            if len(_genParameter.getSubIndices()) == 0:
+                if _genParameter.getIsSymbolic():
+                    value += " ''"
+                else:
+                    value += " 0"
+
+            res += "param " + _genParameter.getName() + " :=" + value + ";\n\n"
 
         return res
 
     def _declareDataSet(self, _genSet):
         res = ""
-        if len(_genSet.getSubIndices()) > 0:
-            dimenIdx = "[" + ",".join(["0"] * len(_genSet.getSubIndices().getAllSortedByOrder(lambda el: str(el.getStmtIndex()) == _genSet.getLastStmt() and el.getOrder() == 0))) + "]"
-        else:
-            dimenIdx = ""
 
-        res += "set " + _genSet.getName() + dimenIdx + " :=;\n\n"
+        if not self.genValueAssigned.has(_genSet.getName()):
+            if len(_genSet.getSubIndices()) > 0:
+                dimenIdx = "[" + ",".join(["0"] * len(_genSet.getSubIndices().getAllSortedByOrder(lambda el: str(el.getStmtIndex()) == _genSet.getLastStmt() and el.getOrder() == 0))) + "]"
+            else:
+                dimenIdx = ""
+
+            res += "set " + _genSet.getName() + dimenIdx + " :=;\n\n"
 
         return res
 
@@ -587,7 +865,7 @@ class CodeGenerator:
 
     # Constraints
     def generateCode_Constraints(self, node):
-        return "\n\n".join(map(self._getCodeConstraint, node.constraints))
+        return "\n\n".join(filter(lambda el: el != "" and el != None, map(self._getCodeConstraint, node.constraints)))
 
     def generateCode_Constraint(self, node):
         res = ""
@@ -808,10 +1086,7 @@ class CodeGenerator:
     # Set Expression
     def generateCode_SetExpressionWithValue(self, node):
         if not Utils._isInstanceOfStr(node.value):
-            if isinstance(node.value, ValueList) or isinstance(node.value, SetExpression):
-                return "{" + node.value.generateCode(self) + "}"
-            else:
-                return node.value.generateCode(self)
+            return node.value.generateCode(self)
         else:
             return node.value
 
@@ -827,8 +1102,26 @@ class CodeGenerator:
     def generateCode_SetExpressionWithOperation(self, node):
         return node.setExpression1.generateCode(self) + " " + node.op + " " + node.setExpression2.generateCode(self)
 
+    def generateCode_SetExpressionBetweenBraces(self, node):
+        if node.setExpression != None:
+            setExpression = node.setExpression.generateCode(self)
+        else:
+            setExpression = ""
+
+        return "{" + setExpression + "}"
+
     def generateCode_SetExpressionBetweenParenthesis(self, node):
         return "(" + node.setExpression.generateCode(self) + ")"
+
+    def generateCode_IteratedSetExpression(self, node):
+        integrands = ""
+        if node.integrands != None:
+            if len(node.integrands) == 1:
+                integrands += node.integrands[0].generateCode(self)
+            else:
+                integrands += "(" + ",".join(map(lambda el: el.generateCode(self), node.integrands)) + ")"
+
+        return "setof {" + node.indexingExpression.generateCode(self) + "} " + integrands
 
     def generateCode_ConditionalSetExpression(self, node):
         return "if " + node.logicalExpression.generateCode(self) + " then " + node.setExpression1.generateCode(self) + " else " + node.setExpression2.generateCode(self)
@@ -865,6 +1158,9 @@ class CodeGenerator:
 
     # Variable
     def generateCode_Variable(self, node):
+        if not node.isSubIndice and not node.isInSet:
+            self.genNames.add(GenObj(node.generateCodeWithoutIndices(self)))
+
         if Utils._isInstanceOfStr(node.sub_indices):
             return ""
 

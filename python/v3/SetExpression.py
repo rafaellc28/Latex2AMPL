@@ -167,6 +167,77 @@ class SetExpressionBetweenParenthesis(SetExpression):
         """
         return codeGenerator.generateCode(self)
 
+class SetExpressionBetweenBraces(SetExpression):
+    """
+    Class representing a set expression between braces node in the AST of a MLP
+    """
+
+    def __init__(self, setExpression):
+        """
+        Set the set expression
+
+        :param setExpression : SetExpression|ValueList|Range|TupleList|IndexingExpression
+        """
+
+        self.setExpression = setExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        setExpr = str(self.setExpression) if self.setExpression != None else ""
+        return "SE: {" + setExpr + "}"
+    
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this set expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this set expression
+        """
+        return codeGenerator.generateCode(self)
+
+class IteratedSetExpression(SetExpression):
+    """
+    Class representing a conditional set expression node in the AST of a MLP
+    """
+    
+    def __init__(self, indexingExpression, integrands):
+        """
+        Set the conditional set expression
+        
+        :param indexingExpression : IndexingExpression
+        :param integrands         : [NumericExpression|SymbolicExpression]
+        """
+        
+        self.indexingExpression = indexingExpression
+        self.integrands         = integrands
+    
+    def __str__(self):
+        """
+        to string
+        """
+        res = str(self.indexingExpression)
+
+        if self.integrands != None and len(self.integrands) > 0:
+            res += ",".join(map(lambda el: str(el), self.integrands))
+
+        return "ItSetExpr: " + res
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this conditional set expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this contitional set expression
+        """
+        return codeGenerator.generateCode(self)
 
 class ConditionalSetExpression(SetExpression):
     """

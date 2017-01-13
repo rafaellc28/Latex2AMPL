@@ -25,6 +25,7 @@ class Variable(Expression):
         self.isVar = False
         self.isParam = False
         self.isSymbolic = False
+        self.isSubIndice = False
 
     def __str__(self):
         """
@@ -81,6 +82,9 @@ class Variable(Expression):
 
     def setIsVar(self, isVar):
         self.isVar = isVar
+
+    def setIsSubIndice(self, isSubIndice):
+        self.isSubIndice = isSubIndice
 
     def setSubIndices(self, subIndices):
         self.sub_indices = subIndices

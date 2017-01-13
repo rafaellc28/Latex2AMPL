@@ -27,18 +27,18 @@ from Value import *
 from Variable import *
 from ID import *
 from SyntaxException import *
-
-# Parsing rules
-#parser2 = yacc.yacc()
+from Declarations import *
+from DeclarationExpression import *
 
 precedence = (
     ('left', 'COMMA', 'DOTS', 'FOR', 'BACKSLASHES'),
     ('left', 'ID'),
     ('left', 'NUMBER'),
     ('left', 'LBRACE', 'RBRACE'),
+    ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('left', 'OR', 'AND', 'NOT'),
     ('left', 'FORALL', 'EXISTS'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'COMMA'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
     ('left', 'UNDERLINE', 'CARET'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
@@ -63,13 +63,12 @@ def p_LinearEquations(t):
 def p_LinearProgram(t):
     '''LinearProgram : Objectives
                      | Objectives Constraints
-                     | Objectives BACKSLASHES Constraints
-                     | LinearProgram Declarations'''
+                     | Objectives BACKSLASHES Constraints'''
 
     if isinstance(t[1], LinearProgram):
       t[1].setDeclarations(t[2])
       t[0] = t[1]
-    
+
     else:
       if len(t) > 3:
           t[0] = LinearProgram(t[1], t[3])
@@ -126,8 +125,10 @@ def p_Constraints(t):
 
 def p_ConstraintList(t):
     '''ConstraintList : ConstraintList BACKSLASHES Constraint
+                      | ConstraintList BACKSLASHES Declaration
                       | ConstraintList BACKSLASHES
-                      | Constraint'''
+                      | Constraint
+                      | Declaration'''
     if len(t) > 3:
         t[0] = t[1] + [t[3]]
     elif len(t) > 2:
@@ -172,6 +173,127 @@ def p_ConstraintExpression(t):
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.LE)
     elif t[2] == "\\geq":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
+
+def p_Declarations(t):
+  '''Declarations : DeclarationList
+                  | DeclarationList BACKSLASHES'''
+  t[0] = Declarations(t[1])
+
+def p_DeclarationList(t):
+    '''DeclarationList : DeclarationList BACKSLASHES Declaration
+                       | Declaration'''
+    if len(t) > 3:
+        t[0] = t[1] + [t[3]]
+    elif len(t) > 2:
+        t[0] = t[1]
+    else:
+        t[0] = [t[1]]
+
+def p_Declaration(t):
+    '''Declaration : DeclarationExpression FOR IndexingExpression
+                   | DeclarationExpression COMMA IndexingExpression
+                   | Variable FOR IndexingExpression
+                   | Variable COMMA IndexingExpression
+                   | DeclarationExpression'''
+    if len(t) > 3:
+        t[3].setStmtIndexing(True)
+        if isinstance(t[1], Variable):
+          t[1] = DeclarationExpression(t[1], [])
+
+        t[0] = Declaration(t[1], t[3])
+    else:
+        t[0] = Declaration(t[1])
+
+def p_DeclarationExpression(t):
+    '''DeclarationExpression : Variable IN SetExpression
+                             | Variable SUBSET SetExpression
+                             | Variable DEFAULT NumericOrSymbolicExpression
+                             | Variable DEFAULT SetExpression
+                             | Variable DIMEN NumericOrSymbolicExpression
+                             | Variable COLON EQ NumericOrSymbolicExpression
+                             | Variable COLON EQ SetExpression
+                             | Variable LT NumericOrSymbolicExpression
+                             | Variable GT NumericOrSymbolicExpression
+                             | Variable NEQ NumericOrSymbolicExpression
+                             | DeclarationExpression COMMA DeclarationAttributeList
+                             | DeclarationExpression DeclarationAttributeList'''
+
+    if isinstance(t[1], DeclarationExpression):
+      if t[2] == ",":
+        t[1].addAttribute(t[3])
+      else:
+        t[1].addAttribute(t[2])
+
+      t[0] = t[1]
+
+    else:
+      attr = None
+      if t[2] == "\\in":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
+      elif t[2] == "subset":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
+      elif t[2] == "default":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.DF)
+      elif t[2] == "dimen":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
+      elif t[2] == ":":
+        attr = DeclarationAttribute(t[4], DeclarationAttribute.ST)
+      elif t[2] == "<":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.LT)
+      elif t[2] == "\\leq":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.LE)
+      elif t[2] == ">":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.GT)
+      elif t[2] == "\\geq":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.GE)
+      elif t[2] == "\\neq":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.NEQ)
+
+      t[0] = DeclarationExpression(t[1], [attr])
+
+def p_DeclarationAttributeList(t):
+  '''DeclarationAttributeList : DeclarationAttribute
+                              | DeclarationAttributeList COMMA DeclarationAttribute'''
+  if len(t) > 3:
+    t[0] = t[1] + [t[3]]
+  else:
+    t[0] = [t[1]]
+
+def p_DeclarationAttribute(t):
+  '''DeclarationAttribute : IN SetExpression
+                          | SUBSET SetExpression
+                          | DEFAULT NumericOrSymbolicExpression
+                          | DEFAULT SetExpression
+                          | DIMEN NumericOrSymbolicExpression
+                          | COLON EQ NumericOrSymbolicExpression
+                          | COLON EQ SetExpression
+                          | LT NumericOrSymbolicExpression
+                          | LE NumericOrSymbolicExpression
+                          | EQ NumericOrSymbolicExpression
+                          | GT NumericOrSymbolicExpression
+                          | GE NumericOrSymbolicExpression
+                          | NEQ NumericOrSymbolicExpression'''
+
+  if t[1] == "\\in":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
+  elif t[1] == "subset":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
+  elif t[1] == "default":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DF)
+  elif t[1] == "dimen":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
+  elif t[1] == ":":
+    t[0] = DeclarationAttribute(t[3], DeclarationAttribute.ST)
+  elif t[1] == "<":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LT)
+  elif t[1] == "\\leq":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LE)
+  elif t[1] == ">":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.GT)
+  elif t[1] == "\\geq":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.GE)
+  elif t[1] == "\\neq":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.NEQ)
 
 #def p_ConstraintExpression_error(t):
 #    '''ConstraintExpression : error EQ
@@ -338,8 +460,8 @@ def p_EntryLogicalExpressionWithSet(t):
 #    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryIteratedLogicalExpression(t):
-    '''EntryLogicalExpression : FORALL LBRACE IndexingExpression RBRACE LogicalExpression
-                              | EXISTS LBRACE IndexingExpression RBRACE LogicalExpression'''
+    '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression'''
 
     if t[1] == "\\forall":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
@@ -347,8 +469,8 @@ def p_EntryIteratedLogicalExpression(t):
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
 
 #def p_EntryIteratedLogicalExpression_error(t):
-#    '''EntryLogicalExpression : FORALL LBRACE error RBRACE
-#                              | EXISTS LBRACE error RBRACE'''
+#    '''EntryLogicalExpression : FORALL LLBRACE error RRBRACE
+#                              | EXISTS LLBRACE error RRBRACE'''
 #    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_SetExpressionWithOperation(t):
@@ -380,11 +502,12 @@ def p_SetExpressionWithOperation(t):
 #    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_SetExpressionWithValue(t):
-    '''SetExpression : LBRACE ValueList RBRACE
-                     | LBRACE Range RBRACE
-                     | LBRACE SetExpression RBRACE
-                     | LBRACE TupleList RBRACE
-                     | LBRACE IndexingExpression RBRACE
+    '''SetExpression : LLBRACE ValueList RRBRACE
+                     | LLBRACE Range RRBRACE
+                     | LLBRACE SetExpression RRBRACE
+                     | LLBRACE TupleList RRBRACE
+                     | LLBRACE IndexingExpression RRBRACE
+                     | LLBRACE RRBRACE
                      | LPAREN SetExpression RPAREN
                      | Range
                      | Variable
@@ -403,7 +526,12 @@ def p_SetExpressionWithValue(t):
                      | SYMBOLIC'''
 
     if len(t) > 2:
-        if t[1] == "(":
+        if t[1] == "{":
+          if t[2] != "}":
+            t[0] = SetExpressionBetweenBraces(SetExpressionWithValue(t[2]))
+          else:
+            t[0] = SetExpressionBetweenBraces(None)
+        elif t[1] == "(":
             t[0] = SetExpressionBetweenParenthesis(t[2])
         else:
             t[0] = SetExpressionWithValue(t[2])
@@ -411,21 +539,31 @@ def p_SetExpressionWithValue(t):
         t[0] = SetExpressionWithValue(t[1])
 
 #def p_SetExpressionWithValue_error(t):
-#    '''SetExpression : LBRACE error RBRACE'''
+#    '''SetExpression : LLBRACE error RRBRACE'''
 #    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Variable LPAREN ValueList RPAREN
-                     | Variable LBRACE ValueList RBRACE
-                     | Variable LBRACE NumericExpression RBRACE
-                     | Variable LPAREN NumericExpression RPAREN'''
+                     | Variable LBRACKET ValueList RBRACKET
+                     | Variable LPAREN NumericExpression RPAREN
+                     | Variable LBRACKET NumericExpression RBRACKET'''
     
     t[0] = SetExpressionWithIndices(t[1], t[3])
 
 #def p_SetExpressionWithIndices_error(t):
-#    '''SetExpression : error LBRACE
+#    '''SetExpression : error LBRACKET
 #                     | error LPAREN'''
 #    sys.stderr.write("Set Expression bad formatted at line %d\n" % t.lineno(2))
+
+def p_IteratedSetExpression(t):
+    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE NumericOrSymbolicExpression
+                     | SETOF LLBRACE IndexingExpression RRBRACE LPAREN ValueList RPAREN'''
+    
+    if t[5] == "(":
+      t[0] = IteratedSetExpression(t[3], t[6])
+    else:
+      t[0] = IteratedSetExpression(t[3], [t[5]])
+
 
 def p_ConditionalSetExpression(t):
     '''SetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression COLON SetExpression'''
@@ -748,6 +886,8 @@ def p_Range(t):
 def p_Variable(t):
     '''Variable : ID UNDERLINE LBRACE ValueList RBRACE
                 | ID UNDERLINE LBRACE NumericOrSymbolicExpression RBRACE
+                | ID LBRACKET ValueList RBRACKET
+                | ID LBRACKET NumericOrSymbolicExpression RBRACKET
                 | ID'''
 
     if len(t) > 2:

@@ -4,7 +4,7 @@ class LinearProgram:
     Class representing the root node in the AST of a MLP
     """
 
-    def __init__(self, objective, constraints, declations = None):
+    def __init__(self, objective, constraints, declarations = None):
         """
         Set the objective and the constraints
         
@@ -22,7 +22,7 @@ class LinearProgram:
         to string
         """
         res = "\nLP:\n" + str(self.objective) + "\n"
-
+        
         if self.constraints:
             res += str(self.constraints) + "\n"
         
