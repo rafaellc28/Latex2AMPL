@@ -51,7 +51,11 @@ class CodeSetup:
     def _addTypeAux(self, variable, _type, minVal = None, maxVal = None):
         name = variable.generateCodeWithoutIndices(self.codeGenerator)
         self.codeGenerator.genTypes.add(GenType(name, _type, minVal, maxVal))
-        self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
+
+        # if the parameter was included in the current statement, remove because it is not a parameter but an index
+        _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
+        if _genParam != None and len(_genParam) > 0:
+            self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
 
         if _type != Constants.SYMBOLIC:
             variable.setIsVar(True)
@@ -82,7 +86,6 @@ class CodeSetup:
             order = self._getOrderFromDomains(_domains)
             order += 1
 
-        #print(ind, self.stmtIndex, order, setExpression)
         _domain = GenDomain(ind, self.stmtIndex, order, setExpression)
         self.codeGenerator.genDomains.add(_domain)
 
@@ -518,7 +521,6 @@ class CodeSetup:
             variable.value.setupEnvironment(self)
         elif isinstance(variable, ValueList):
             for var in variable.getValues():
-                #if len(var.sub_indices) > 0:
                 if isinstance(var, ValuedNumericExpression):
                     var = var.value
 
@@ -560,7 +562,11 @@ class CodeSetup:
         var.setIsInSet(True)
         name = var.generateCode(self.codeGenerator)
         self.codeGenerator.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
-        self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
+
+        # if the parameter was included in the current statement, remove because it is not a parameter but an index
+        _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
+        if _genParam != None and len(_genParam) > 0:
+            self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
 
     def removeSavingFirstStmtAndSubIndicesForName(self, genList, name):
         objName = genList.get(name)
@@ -748,6 +754,14 @@ class CodeSetup:
         """
         node.logicalExpression.setupEnvironment(self)
 
+    def isParamForSure(self, var):
+        param = self.codeGenerator.genParameters.get(var)
+
+        if param != None:
+            return param.getCertainty()
+
+        return False
+
     # Set Expression
     def setupEnvironment_SetExpressionWithValue(self, node):
         """
@@ -759,13 +773,13 @@ class CodeSetup:
                     if isinstance(var, ValuedNumericExpression):
                         var = var.value
 
-                    if isinstance(var, Variable) and not self.codeGenerator.genParameters.has(var.generateCode(self.codeGenerator)):
+                    if isinstance(var, Variable) and not self.isParamForSure(var.generateCode(self.codeGenerator)):
                         var.setIsSet(True)
 
                     var.setupEnvironment(self)
 
             else:
-                if isinstance(node.value, Variable) and not self.codeGenerator.genParameters.has(node.value.generateCode(self.codeGenerator)):
+                if isinstance(node.value, Variable) and not self.isParamForSure(node.value.generateCode(self.codeGenerator)):
                     node.value.setIsSet(True)
 
                 node.value.setupEnvironment(self)
@@ -778,7 +792,7 @@ class CodeSetup:
             node.indices.setupEnvironment(self)
 
         if not Utils._isInstanceOfStr(node.variable):
-            if isinstance(node.variable, Variable) and not self.codeGenerator.genParameters.has(node.variable.generateCode(self.codeGenerator)):
+            if isinstance(node.variable, Variable) and not self.isParamForSure(node.variable.generateCode(self.codeGenerator)):
                 node.variable.setIsSet(True)
 
             if len(node.indices) > 0:
@@ -896,15 +910,16 @@ class CodeSetup:
 
         if node.isVar or self.codeGenerator.genVariables.has(self.varKey):
 
-            firstStmtShowed = None
-            self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, self.varKey)
-            self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
-            firstStmt = self.genFirstStmtList.get(self.varKey)
-
-            if firstStmt != None:
-                firstStmtShowed = firstStmt.getFirstStmt()
-
             if not self.codeGenerator.genVariables.has(self.varKey): # check if this variable was not seen yet
+
+                firstStmtShowed = None
+                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, self.varKey)
+                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
+                firstStmt = self.genFirstStmtList.get(self.varKey)
+
+                if firstStmt != None:
+                    firstStmtShowed = firstStmt.getFirstStmt()
+                
                 _genVar = GenVariable(self.varKey, None, None, None, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex))
 
                 if len(node.sub_indices) > 0:
@@ -922,8 +937,15 @@ class CodeSetup:
             self._checkSubIndices(node)
 
         elif node.isSet:
-            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
-                _genSet = GenSet(self.varKey, node.dimenSet, str(self.stmtIndex), str(self.stmtIndex))
+            if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genSets.has(self.varKey): # check if this variable was not seen yet
+                firstStmtShowed = None
+                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, self.varKey)
+                firstStmt = self.genFirstStmtList.get(self.varKey)
+
+                if firstStmt != None:
+                    firstStmtShowed = firstStmt.getFirstStmt()
+
+                _genSet = GenSet(self.varKey, node.dimenSet, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex))
 
                 if len(node.sub_indices) > 0:
                     _subIndices = GenSubIndices(_genSet)
@@ -935,15 +957,17 @@ class CodeSetup:
             self._checkSubIndices(node)
 
         elif not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)):
-            firstStmtShowed = None
-            self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
-            firstStmt = self.genFirstStmtList.get(self.varKey)
-
-            if firstStmt != None:
-                firstStmtShowed = firstStmt.getFirstStmt()
-
             if not self.codeGenerator.genVariables.has(self.varKey) and not self.codeGenerator.genParameters.has(self.varKey): # check if this param was not seen yet
-                _genParam = GenParameter(self.varKey, node.isSymbolic, str(self.stmtIndex), str(self.stmtIndex))
+                firstStmtShowed = None
+                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
+                firstStmt = self.genFirstStmtList.get(self.varKey)
+
+                if firstStmt != None:
+                    firstStmtShowed = firstStmt.getFirstStmt()
+                
+                _genParam = GenParameter(self.varKey, node.isSymbolic, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex), str(self.stmtIndex))
+                if node.isParam != None and not node.isParam:
+                    _genParam.setCertainty(False)
 
                 if len(node.sub_indices) > 0:
                     _subIndices = GenSubIndices(_genParam)
@@ -955,6 +979,10 @@ class CodeSetup:
                     _genParam.setSubIndices(_subIndices)
 
                 self.codeGenerator.genParameters.add(_genParam)
+            elif node.isSymbolic:
+                _genParam = self.codeGenerator.genParameters.get(self.varKey)
+                if _genParam != None:
+                    _genParam.setIsSymbolic(True)
 
             self.curList = self.codeGenerator.genParameters
             self._checkSubIndices(node)
@@ -1061,14 +1089,11 @@ class CodeSetup:
         """
         Generate the MathProg code for the variables and sets in this declaration
         """
-        #print("setupEnvironment_DeclarationExpression")
-        #print(str(node.variable))
-        #print(map(lambda el: el.getName(), self.codeGenerator.genParameters.getAll()))
-        #print(map(lambda el: el.getName(), self.codeGenerator.genSets.getAll()))
-
         var = node.variable
         if isinstance(var, ValuedNumericExpression):
             var = var.value
+
+        var.setIsParam(False)
 
         name = var.generateCodeWithoutIndices(self.codeGenerator)
         if self.codeGenerator.genSets.has(name):
@@ -1077,6 +1102,7 @@ class CodeSetup:
         map(lambda el: self.setupEnvironment_AttributeList(el, var), node.attributeList)
 
         var.setupEnvironment(self)
+
 
     def setupEnvironment_DeclarationAttribute(self, node):
         """
@@ -1087,20 +1113,12 @@ class CodeSetup:
     def setupEnvironment_AttributeList(self, node, variable):
         node.setupEnvironment(self)
 
-        #print("setupEnvironment_AttributeList")
-        #print(str(variable), node.op)
-        #print(map(lambda el: el.getName(), self.codeGenerator.genParameters.getAll()))
-        #print(map(lambda el: el.getName(), self.codeGenerator.genSets.getAll()))
         if node.op == DeclarationAttribute.IN:
             setExpression = node.attribute.generateCode(self.codeGenerator)
-            #print("setupEnvironment_AttributeList_2")
-            #print(map(lambda el: el.getName(), self.codeGenerator.genParameters.getAll()))
-            #print(map(lambda el: el.getName(), self.codeGenerator.genSets.getAll()))
             self.setupEnvironment_DeclarationExpressionWithSet(setExpression, variable)
         elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF) and isinstance(node.attribute, SetExpression):
-            #print("isSet")
             variable.setIsSet(True)
-
+        
     def setupEnvironment_DeclarationExpressionWithSet(self, setExpression, variable):
 
         if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
@@ -1128,8 +1146,6 @@ class CodeSetup:
 
         elif setCode.startswith(Constants.SYMBOLIC):
             self._addType(variable, setExpression)
+            variable.setIsParam(True)
 
-        #print(str(variable), setExpression)
-        #print(map(lambda el: el.getName(), self.codeGenerator.genParameters.getAll()))
-        #print(map(lambda el: el.getName(), self.codeGenerator.genSets.getAll()))
         self._addDomain(variable, setExpression)

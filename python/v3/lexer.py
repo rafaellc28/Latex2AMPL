@@ -622,7 +622,7 @@ def t_CROSS(t):
    return t
 
 def t_FOR(t):
-   r'for'
+   r'\\text\{for\}'
    return t
 
 def t_ID(t):

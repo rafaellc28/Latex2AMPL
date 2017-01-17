@@ -82,10 +82,24 @@ class CodeGenerator:
             if value != None:
                 self._addDependences(value, decl, dependences)
 
+            value = decl.getDefault()
+            if value != None:
+                self._addDependences(value, decl, dependences)
+
             ins = decl.getIn()
             if ins != None and len(ins) > 0:
                 for pSet in ins:
                     self._addDependences(pSet, decl, dependences)
+
+            withins = decl.getWithin()
+            if withins != None and len(withins) > 0:
+                for pSet in withins:
+                    self._addDependences(pSet, decl, dependences)
+
+            relations = decl.getRelations()
+            if relations != None and len(relations) > 0:
+                for pRel in relations:
+                    self._addDependences(pRel, decl, dependences)
 
         return dependences
 
@@ -179,6 +193,8 @@ class CodeGenerator:
             
         return domain, stmtIndex, _tuplesRet, subIdxDomainsRet
 
+    def _checkAddDependence(self, genObj, genObjOther, graph, name, dep):
+        return dep != name and (genObj.has(dep) or genObjOther.has(dep)) and not dep in graph[name]
 
     def _generateGraphAux(self, graph, genObj, genObjOther):
         if len(genObj) > 0:
@@ -187,44 +203,39 @@ class CodeGenerator:
                 if not name in graph:
                     graph[name] = []
 
-                #print(paramIn.getName())
-
                 dependences = self._getDependences(paramIn)
 
                 if len(dependences) > 0:
                     for dep in dependences:
-                        if (genObj.has(dep) or genObjOther.has(dep)) and not dep in graph[name]:
+                        if self._checkAddDependence(genObj, genObjOther, graph, name, dep):
                             graph[name].append(dep)
 
                 if len(paramIn.getSubIndices()) > 0:
                     
                     _domain, stmtIndex, _tuples, subIdxDomains = self._getSubIndicesDomains(paramIn)
-                    #print(map(lambda el: str(el), subIdxDomains))
-                    #print(_domain)
 
                     if _tuples != None and len(_tuples):
                         for _tuple in _tuples:
                             tupleName = _tuple.getName()
-                            if (genObj.has(tupleName) or genObjOther.has(tupleName)) and not tupleName in graph[name]:
+                            if self._checkAddDependence(genObj, genObjOther, graph, name, tupleName):
                                 graph[name].append(tupleName)
 
                     if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
 
                         for _domain in subIdxDomains:
-                            #print(paramIn.getName(), _domain)
                             if ".." in _domain:
                                 param = _domain.split("..")
 
-                                if (param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0]))) and not param[0] in graph[name]:
-                                    graph[paramIn.getName()].append(param[0])
+                                if param and param[0] and self._checkAddDependence(genObj, genObjOther, graph, name, param[0]):
+                                    graph[name].append(param[0])
 
-                                if (param and param[1] and (genObj.has(param[1]) or genObjOther.has(param[1]))) and not param[1] in graph[name]:
-                                    graph[paramIn.getName()].append(param[1])
+                                if param and param[1] and self._checkAddDependence(genObj, genObjOther, graph, name, param[1]):
+                                    graph[name].append(param[1])
 
                             else:
                                 param = _domain.split("[")
-                                if (param and param[0] and (genObj.has(param[0]) or genObjOther.has(param[0]))) and not param[0] in graph[name]:
-                                    graph[paramIn.getName()].append(param[0])
+                                if param and param[0] and self._checkAddDependence(genObj, genObjOther, graph, name, param[0]):
+                                    graph[name].append(param[0])
 
     # Auxiliary Methods
     def _generateGraph(self):
@@ -457,7 +468,8 @@ class CodeGenerator:
 
                     if varDecl != None:
                         if varDecl.getDimen() != None:
-                            setStr += " dimen " + varDecl.getDimen().attribute.generateCode(self)
+                            dimen = varDecl.getDimen().attribute.generateCode(self)
+                            setStr += " dimen " + dimen
 
                     if dimen == None:
                         if setIn.getDimension() > 1:
@@ -658,7 +670,8 @@ class CodeGenerator:
 
         if varDecl != None:
             if varDecl.getDimen() != None:
-                setStr += " dimen " + varDecl.getDimen().attribute.generateCode(self)
+                dimen = varDecl.getDimen().attribute.generateCode(self)
+                setStr += " dimen " + dimen
 
         if dimen == None:
             if _genSet.getDimension() > 1:

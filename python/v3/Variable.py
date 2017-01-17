@@ -23,7 +23,7 @@ class Variable(Expression):
         self.isInSet = False
         self.isSet = False
         self.isVar = False
-        self.isParam = False
+        self.isParam = None
         self.isSymbolic = False
         self.isSubIndice = False
 

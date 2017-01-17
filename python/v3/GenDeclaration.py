@@ -53,34 +53,7 @@ class GenDeclaration(GenObj):
 
 	def getDimen(self):
 		return self.getValueByOp("dimen")
-
-	def getSymbolic(self):
-		values = self.getByOp("in")
-		symbolicDeclr = filter(lambda el: el.attribute.startsWith("symbolic"), values)
-
-		if symbolicDeclr != None and len(symbolicDeclr) > 0:
-			return symbolicDeclr[-1]
-
-		return None
-
-	def getBinary(self):
-		values = self.getByOp("in")
-		binaryDeclr = filter(lambda el: el.attribute.startsWith("binary"), values)
-
-		if binaryDeclr != None and len(binaryDeclr) > 0:
-			return binaryDeclr[-1]
-
-		return None
-
-	def getInteger(self):
-		values = self.getByOp("in")
-		integerDeclr = filter(lambda el: el.attribute.startsWith("integer"), values)
-		
-		if integerDeclr != None and len(integerDeclr) > 0:
-			return integerDeclr[-1]
-
-		return None
-
+	
 	def getWithin(self):
 		return self.getByOp("within")
 

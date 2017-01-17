@@ -215,6 +215,7 @@ def p_DeclarationExpression(t):
                              | Variable LT NumericOrSymbolicExpression
                              | Variable GT NumericOrSymbolicExpression
                              | Variable NEQ NumericOrSymbolicExpression
+                             | Variable COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList
                              | DeclarationExpression DeclarationAttributeList'''
 
@@ -228,7 +229,9 @@ def p_DeclarationExpression(t):
 
     else:
       attr = None
-      if t[2] == "\\in":
+      if t[2] == ",":
+        attr = t[3]
+      elif t[2] == "\\in":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
       elif t[2] == "subset":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
@@ -249,7 +252,8 @@ def p_DeclarationExpression(t):
       elif t[2] == "\\neq":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.NEQ)
 
-      t[0] = DeclarationExpression(t[1], [attr])
+      t[0] = DeclarationExpression(t[1])
+      t[0].addAttribute(attr)
 
 def p_DeclarationAttributeList(t):
   '''DeclarationAttributeList : DeclarationAttribute
@@ -832,6 +836,18 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.EXP
     elif t[1] == "\\arctan":
         op = NumericExpressionWithFunction.ATAN
+    elif t[1] == "Uniform01":
+        op = NumericExpressionWithFunction.UNIFORM01
+    elif t[1] == "Uniform":
+        op = NumericExpressionWithFunction.UNIFORM
+    elif t[1] == "Normal01":
+        op = NumericExpressionWithFunction.NORMAL01
+    elif t[1] == "Normal":
+        op = NumericExpressionWithFunction.NORMAL
+    elif t[1] == "gmtime":
+        op = NumericExpressionWithFunction.GMTIME
+    elif t[1] == "Irand224":
+        op = NumericExpressionWithFunction.IRAND224
 
     if len(t) > 5:
         t[0] = NumericExpressionWithFunction(op, t[3], t[5])
@@ -890,11 +906,16 @@ def p_Variable(t):
                 | ID LBRACKET NumericOrSymbolicExpression RBRACKET
                 | ID'''
 
-    if len(t) > 2:
+    if len(t) > 5:
         if isinstance(t[4], ValueList):
           t[0] = Variable(ID(t[1]), t[4].getValues())
         else:
           t[0] = Variable(ID(t[1]), t[4])
+    elif len(t) > 2:
+        if isinstance(t[3], ValueList):
+          t[0] = Variable(ID(t[1]), t[3].getValues())
+        else:
+          t[0] = Variable(ID(t[1]), t[3])
     else:
         t[0] = Variable(ID(t[1]))
 
