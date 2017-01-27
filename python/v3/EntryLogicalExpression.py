@@ -210,3 +210,69 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         Generate the MathProg code for this logical expression
         """
         return codeGenerator.generateCode(self)
+
+class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
+    """
+    Class representing a logical expression between parenthesis node in the AST of a MLP
+    """
+
+    def __init__(self, numericOrSymbolicExpression):
+        """
+        Set the logical expression
+
+        :param numericOrSymbolicExpression : NumericExpression|SymbolicExpression
+        """
+
+        self.numericOrSymbolicExpression = numericOrSymbolicExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        
+        return "LE_NSE: (" + str(self.numericOrSymbolicExpression) + ")"
+    
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this logical expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this logical expression
+        """
+        return codeGenerator.generateCode(self)
+
+class EntryLogicalExpressionNot(EntryLogicalExpression):
+    """
+    Class representing a logical expression between parenthesis node in the AST of a MLP
+    """
+
+    def __init__(self, logicalExpression):
+        """
+        Set the logical expression with negation
+
+        :param logicalExpression : LogicalExpression
+        """
+
+        self.logicalExpression = logicalExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        
+        return "NLE: (NOT " + str(self.logicalExpression) + ")"
+    
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the variables and sets used in this logical expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this logical expression
+        """
+        return codeGenerator.generateCode(self)

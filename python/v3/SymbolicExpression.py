@@ -43,7 +43,7 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
             if self.numericExpression2 != None:
                 res += "," + str(self.numericExpression2)
         
-        elif self.functiom == SymbolicExpressionWithFunction.TIME2STR:
+        elif self.function == SymbolicExpressionWithFunction.TIME2STR:
             res += str(self.numericExpression1) + "," + str(self.symbolicExpression)
 
         res += ")"

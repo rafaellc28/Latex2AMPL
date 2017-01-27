@@ -63,43 +63,47 @@ class CodeGenerator:
 
         return orderInStmt
 
-    def _addDependences(self, value, decl, dependences):
-        value.attribute.generateCode(self)
+    def _addDependences(self, value, stmtIndex, dependences):
+        self.genNames = GenList()
+        value.generateCode(self)
 
         names = self.genNames.getAll()
         if names != None and len(names) > 0:
             for name in names:
-                if not self.genBelongsToList.has(GenBelongsTo(name.getName(), decl.getStmtIndex())):
+                if not self.genBelongsToList.has(GenBelongsTo(name.getName(), stmtIndex)):
                     dependences.append(name.getName())
 
     def _getDependences(self, paramIn):
         dependences = []
-        self.genNames = GenList()
 
         decl = self.genDeclarations.get(paramIn.getName())
         if decl != None:
             value = decl.getValue()
             if value != None:
-                self._addDependences(value, decl, dependences)
+                self._addDependences(value.attribute, decl.getStmtIndex(), dependences)
 
             value = decl.getDefault()
             if value != None:
-                self._addDependences(value, decl, dependences)
+                self._addDependences(value.attribute, decl.getStmtIndex(), dependences)
 
             ins = decl.getIn()
             if ins != None and len(ins) > 0:
                 for pSet in ins:
-                    self._addDependences(pSet, decl, dependences)
+                    self._addDependences(pSet.attribute, decl.getStmtIndex(), dependences)
 
             withins = decl.getWithin()
             if withins != None and len(withins) > 0:
                 for pSet in withins:
-                    self._addDependences(pSet, decl, dependences)
+                    self._addDependences(pSet.attribute, decl.getStmtIndex(), dependences)
 
             relations = decl.getRelations()
             if relations != None and len(relations) > 0:
                 for pRel in relations:
-                    self._addDependences(pRel, decl, dependences)
+                    self._addDependences(pRel.attribute, decl.getStmtIndex(), dependences)
+
+            idxExpression = decl.getIndexingExpression()
+            if idxExpression != None:
+                self._addDependences(idxExpression, decl.getStmtIndex(), dependences)
 
         return dependences
 
@@ -109,6 +113,8 @@ class CodeGenerator:
         lastStmt =  int(paramIn.getLastStmt())
         stmtIndex = lastStmt
         domain = ""
+
+        #print(paramIn.getName(), firstStmt, lastStmt)
         
         while domain == "" and stmtIndex >= firstStmt:
             
@@ -117,6 +123,8 @@ class CodeGenerator:
             subIdxDomainsRet = None
 
             _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
+            #print(stmtIndex)
+            #print(map(lambda el: el.getName()+":"+str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice()), _subIndicesAllOrders))
 
             _subIndicesAll = {}
             for _subIndicesOrder in _subIndicesAllOrders:
@@ -189,6 +197,9 @@ class CodeGenerator:
                 if domain != "":
                     break
 
+            if domain != "":
+                break
+
             stmtIndex -= 1
             
         return domain, stmtIndex, _tuplesRet, subIdxDomainsRet
@@ -213,12 +224,20 @@ class CodeGenerator:
                 if len(paramIn.getSubIndices()) > 0:
                     
                     _domain, stmtIndex, _tuples, subIdxDomains = self._getSubIndicesDomains(paramIn)
+                    #print(_domain, stmtIndex, _tuples, subIdxDomains)
 
                     if _tuples != None and len(_tuples):
+                        dependences = []
                         for _tuple in _tuples:
-                            tupleName = _tuple.getName()
-                            if self._checkAddDependence(genObj, genObjOther, graph, name, tupleName):
-                                graph[name].append(tupleName)
+                            #tupleName = _tuple.getName()
+                            self._addDependences(_tuple.getTupleObj(), stmtIndex, dependences)
+                            #if self._checkAddDependence(genObj, genObjOther, graph, name, tupleName):
+                            #    graph[name].append(tupleName)
+                        if len(dependences) > 0:
+                            for dep in dependences:
+                                if self._checkAddDependence(genObj, genObjOther, graph, name, dep):
+                                    graph[name].append(dep)
+
 
                     if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
 
@@ -244,7 +263,8 @@ class CodeGenerator:
         self._generateGraphAux(graph, self.genSets, self.genParameters)
         self._generateGraphAux(graph, self.genParameters, self.genSets)
 
-        #print(graph)
+        #print("tuples", map(lambda el: el.getName()+":"+str(el.getTupleVal())+":"+str(el.getStmtIndex()), self.genTuples.getAll()))
+        #print("graph", graph)
 
         return graph
 
@@ -988,7 +1008,7 @@ class CodeGenerator:
             if node.numericExpression2 != None:
                 res += "," + node.numericExpression2.generateCode(self)
         
-        elif node.functiom == SymbolicExpressionWithFunction.TIME2STR:
+        elif node.function == SymbolicExpressionWithFunction.TIME2STR:
             res += node.numericExpression1.generateCode(self) + "," + node.symbolicExpression.generateCode(self)
 
         res += ")"
@@ -1096,6 +1116,12 @@ class CodeGenerator:
     def generateCode_EntryLogicalExpressionBetweenParenthesis(self, node):
         return "(" + node.logicalExpression.generateCode(self) + ")"
 
+    def generateCode_EntryLogicalExpressionNot(self, node):
+        return "not " + node.logicalExpression.generateCode(self)
+
+    def generateCode_EntryLogicalExpressionNumericOrSymbolic(self, node):
+        return node.numericOrSymbolicExpression.generateCode(self)
+
     # Set Expression
     def generateCode_SetExpressionWithValue(self, node):
         if not Utils._isInstanceOfStr(node.value):
@@ -1137,7 +1163,12 @@ class CodeGenerator:
         return "setof {" + node.indexingExpression.generateCode(self) + "} " + integrands
 
     def generateCode_ConditionalSetExpression(self, node):
-        return "if " + node.logicalExpression.generateCode(self) + " then " + node.setExpression1.generateCode(self) + " else " + node.setExpression2.generateCode(self)
+        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.setExpression1.generateCode(self)
+
+        if node.setExpression2:
+            res += " else " + node.setExpression2.generateCode(self)
+
+        return res
 
     # Range
     def generateCode_Range(self, node):

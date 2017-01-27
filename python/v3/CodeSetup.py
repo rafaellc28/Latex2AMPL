@@ -63,17 +63,20 @@ class CodeSetup:
         else:
             variable.setIsSymbolic(True)
 
+    def _getVariable(self, var):
+        if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
+            var = var.value
+
+        return var
+
     def _addType(self, variable, _type, minVal = None, maxVal = None):
         if isinstance(variable, ValueList):
             for var in variable.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                    var = var.value
+                var = self._getVariable(var)
 
                 self._addTypeAux(var, _type, minVal, maxVal)
         else:
-            var = variable
-            if isinstance(var, ValuedNumericExpression):
-                var = var.value
+            var = self._getVariable(variable)
 
             self._addTypeAux(var, _type, minVal, maxVal)
 
@@ -92,15 +95,12 @@ class CodeSetup:
     def _addDomain(self, variable, setExpression):
         if isinstance(variable, ValueList):
             for var in variable.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                    var = var.value
+                var = self._getVariable(var)
 
                 self._addDomainAux(var, setExpression)
 
         else:
-            var = variable
-            if isinstance(var, ValuedNumericExpression):
-                var = var.value
+            var = self._getVariable(variable)
 
             self._addDomainAux(var, setExpression)
 
@@ -180,17 +180,13 @@ class CodeSetup:
                 indices = range(len(node.sub_indices))
                 for i in indices:
                     var = node.sub_indices[i]
-
-                    if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
-                        var = var.value
+                    var = self._getVariable(var)
 
                     self._setIndices(var, i, self.varKey, self.curList)
 
                 for i in indices:
                     var = node.sub_indices[i]
-
-                    if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression):
-                        var = var.value
+                    var = self._getVariable(var)
 
                     var.setupEnvironment(self)
 
@@ -517,12 +513,11 @@ class CodeSetup:
 
         if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
             variable.setupEnvironment(self)
-        elif isinstance(variable, ValuedNumericExpression):
+        elif isinstance(variable, ValuedNumericExpression) or isinstance(variable, StringSymbolicExpression):
             variable.value.setupEnvironment(self)
         elif isinstance(variable, ValueList):
             for var in variable.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                    var = var.value
+                var = self._getVariable(var)
 
                 var.setupEnvironment(self)
 
@@ -606,13 +601,12 @@ class CodeSetup:
 
         if isinstance(node.variable, ValueList) or isinstance(node.variable, Tuple):
             for var in node.variable.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                    var = var.value
+                var = self._getVariable(var)
 
                 if not setCode.startswith(Constants.SYMBOLIC) and len(var.sub_indices) == 0:
                     self._addBelongsTo(var)
 
-        elif isinstance(node.variable, ValuedNumericExpression):
+        elif isinstance(node.variable, ValuedNumericExpression) or isinstance(node.variable, StringSymbolicExpression):
             if not setCode.startswith(Constants.SYMBOLIC) and len(node.variable.value.sub_indices) == 0:
                 self._addBelongsTo(node.variable.value)
 
@@ -632,7 +626,7 @@ class CodeSetup:
             self.codeGenerator.genTuples.add(GenTuple(
                 node.setExpression.generateCode(self.codeGenerator), 
                 map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
-                node.op, self.stmtIndex))
+                node.op, self.stmtIndex, node.setExpression))
 
         else:
             node.setExpression.setupEnvironment(self)
@@ -680,6 +674,18 @@ class CodeSetup:
         map(self._setupEntryByKey, node.entriesLogicalExpression)
 
     # Entry Logical Expression
+    def setupEnvironment_EntryLogicalExpressionNot(self, node):
+        """
+        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+
+    def setupEnvironment_EntryLogicalExpressionNumericOrSymbolic(self, node):
+        """
+        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        """
+        node.numericOrSymbolicExpression.setupEnvironment(self)
+
     def setupEnvironment_EntryLogicalExpressionRelational(self, node):
         """
         Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
@@ -700,13 +706,12 @@ class CodeSetup:
 
         if isinstance(node.value, ValueList) or isinstance(node.value, Tuple):
             for var in node.value.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                     var = var.value
+                var = self._getVariable(var)
 
                 if not setCode.startswith(Constants.SYMBOLIC) and len(var.sub_indices) == 0:
                     self._addBelongsTo(var)
 
-        elif isinstance(node.value, ValuedNumericExpression):
+        elif isinstance(node.value, ValuedNumericExpression) or isinstance(node.value, StringSymbolicExpression):
             if not setCode.startswith(Constants.SYMBOLIC) and len(node.value.value.sub_indices) == 0:
                 self._addBelongsTo(node.value.value)
 
@@ -726,7 +731,7 @@ class CodeSetup:
             self.codeGenerator.genTuples.add(GenTuple(
                 node.setExpression.generateCode(self.codeGenerator), 
                 map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
-                node.op, self.stmtIndex))
+                node.op, self.stmtIndex, node.setExpression))
 
         else:
             node.setExpression.setupEnvironment(self)
@@ -770,8 +775,7 @@ class CodeSetup:
         if not Utils._isInstanceOfStr(node.value):
             if isinstance(node.value, ValueList):
                 for var in node.value.getValues():
-                    if isinstance(var, ValuedNumericExpression):
-                        var = var.value
+                    var = self._getVariable(var)
 
                     if isinstance(var, Variable) and not self.isParamForSure(var.generateCode(self.codeGenerator)):
                         var.setIsSet(True)
@@ -798,7 +802,7 @@ class CodeSetup:
             if len(node.indices) > 0:
                 if isinstance(node.indices, Variable):
                     node.variable.setSubIndices([node.indices])
-                elif isinstance(node.indices, ValuedNumericExpression):
+                elif isinstance(node.indices, ValuedNumericExpression) or isinstance(node.indices, StringSymbolicExpression):
                     node.variable.setSubIndices([node.indices.value])
                 else:
                     node.variable.setSubIndices(node.indices.getValues())
@@ -840,7 +844,9 @@ class CodeSetup:
         """
         node.logicalExpression.setupEnvironment(self)
         node.setExpression1.setupEnvironment(self)
-        node.setExpression2.setupEnvironment(self)
+
+        if node.setExpression2 != None:
+            node.setExpression2.setupEnvironment(self)
 
     # Range
     def setupEnvironment_Range(self, node):
@@ -1067,8 +1073,7 @@ class CodeSetup:
         Generate the MathProg code for declaration of variables and sets in this declaeation
         """
         var = node.declarationExpression.variable
-        if isinstance(var, ValuedNumericExpression):
-            var = var.value
+        var = self._getVariable(var)
 
         name = var.generateCodeWithoutIndices(self.codeGenerator)
 
@@ -1090,8 +1095,7 @@ class CodeSetup:
         Generate the MathProg code for the variables and sets in this declaration
         """
         var = node.variable
-        if isinstance(var, ValuedNumericExpression):
-            var = var.value
+        var = self._getVariable(var)
 
         var.setIsParam(False)
 
@@ -1123,12 +1127,11 @@ class CodeSetup:
 
         if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
             variable.setupEnvironment(self)
-        elif isinstance(variable, ValuedNumericExpression):
+        elif isinstance(variable, ValuedNumericExpression) or isinstance(variable, StringSymbolicExpression):
             variable.value.setupEnvironment(self)
         elif isinstance(variable, ValueList):
             for var in variable.getValues():
-                if isinstance(var, ValuedNumericExpression):
-                    var = var.value
+                var = self._getVariable(var)
 
                 var.setupEnvironment(self)
 

@@ -202,12 +202,12 @@ class SetExpressionBetweenBraces(SetExpression):
 
 class IteratedSetExpression(SetExpression):
     """
-    Class representing a conditional set expression node in the AST of a MLP
+    Class representing a iterated set expression node in the AST of a MLP
     """
     
     def __init__(self, indexingExpression, integrands):
         """
-        Set the conditional set expression
+        Set the iterated set expression
         
         :param indexingExpression : IndexingExpression
         :param integrands         : [NumericExpression|SymbolicExpression]
@@ -229,7 +229,7 @@ class IteratedSetExpression(SetExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this conditional set expression
+        Generate the MathProg code for the variables and sets used in this iterated set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -244,7 +244,7 @@ class ConditionalSetExpression(SetExpression):
     Class representing a conditional set expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, setExpression1, setExpression2):
+    def __init__(self, logicalExpression, setExpression1, setExpression2 = None):
         """
         Set the conditional set expression
         
@@ -261,8 +261,16 @@ class ConditionalSetExpression(SetExpression):
         """
         to string
         """
-        return "CondSetExpr: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1) + ": " + str(self.setExpression2)
+        res = "CondSetExpr: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1)
         
+        if self.setExpression2 != None:
+            res += ": " + str(self.setExpression2)
+        
+        return res
+
+    def addElseExpression(self, elseExpression):
+        self.setExpression2 = elseExpression
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the variables and sets used in this conditional set expression

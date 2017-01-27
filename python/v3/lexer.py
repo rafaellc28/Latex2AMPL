@@ -16,6 +16,7 @@ reserved = {
    'trunc' : 'TRUNC',
    'substr' : 'SUBSTR',
    'time2str': 'TIME2STR', 
+   'str2time': 'STR2TIME', 
    'gmtime' : 'GMTIME',
    'Irand224': 'IRAND224',
    'Uniform01': 'UNIFORM01',

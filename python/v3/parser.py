@@ -396,13 +396,16 @@ def p_LogicalExpression(t):
 #    sys.stderr.write("Logical Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NOT EntryLogicalExpression
+    '''EntryLogicalExpression : NumericOrSymbolicExpression
+                              | NOT EntryLogicalExpression
                               | LPAREN LogicalExpression RPAREN'''
 
     if t[1] == "not":
-        t[0] = EntryLogicalExpressionNot(t[2])
+      t[0] = EntryLogicalExpressionNot(t[2])
+    elif t[1] == "(":
+      t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
     else:
-        t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
+      t[0] = EntryLogicalExpressionNumericOrSymbolic(t[1])
 
 #def p_EntryLogicalExpression_error(t):
 #    '''EntryLogicalExpression : LPAREN error RPAREN'''
@@ -570,7 +573,8 @@ def p_IteratedSetExpression(t):
 
 
 def p_ConditionalSetExpression(t):
-    '''SetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression COLON SetExpression'''
+    '''ConditionalSetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
+                                | ConditionalSetExpression COLON SetExpression'''
     t[0] = ConditionalSetExpression(t[2], t[5], t[7])
 
 def p_IndexingExpression(t):
@@ -645,7 +649,7 @@ def p_StringSymbolicExpression(t):
         t[0] = StringSymbolicExpression(t[1])
 
 def p_SymbolicExpression_binop(t):
-    '''SymbolicExpression : SymbolicExpression AMPERSAND SymbolicExpression'''
+    '''SymbolicExpression : NumericOrSymbolicExpression AMPERSAND NumericOrSymbolicExpression'''
     if t[2] == "AMP":
         op = SymbolicExpressionWithOperation.CONCAT
 
@@ -795,6 +799,7 @@ def p_FunctionNumericExpression(t):
                          | LENGTH LPAREN NumericOrSymbolicExpression RPAREN
                          | ROUND LPAREN NumericExpression RPAREN
                          | ROUND LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | STR2TIME LPAREN NumericOrSymbolicExpression COMMA NumericOrSymbolicExpression RPAREN
                          | TRUNC LPAREN NumericExpression RPAREN
                          | TRUNC LPAREN NumericExpression COMMA NumericExpression RPAREN
                          | UNIFORM LPAREN NumericExpression COMMA NumericExpression RPAREN
@@ -848,6 +853,8 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.GMTIME
     elif t[1] == "Irand224":
         op = NumericExpressionWithFunction.IRAND224
+    elif t[1] == "str2time":
+        op = NumericExpressionWithFunction.STR2TIME
 
     if len(t) > 5:
         t[0] = NumericExpressionWithFunction(op, t[3], t[5])

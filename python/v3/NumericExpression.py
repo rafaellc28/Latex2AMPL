@@ -28,6 +28,7 @@ class NumericExpressionWithFunction(NumericExpression):
     TRUNC     = "trunc"
     MIN       = "min"
     MAX       = "max"
+    STR2TIME  = "str2time"
     GMTIME    = "gmtime"
     UNIFORM01 = "Uniform01"
     UNIFORM   = "Uniform"
@@ -40,8 +41,8 @@ class NumericExpressionWithFunction(NumericExpression):
         Set the numeric expression and the function
 
         :param function           : (abs | atan | card | ceil | cos | floor | exp | length | log | log10 | round | sin | sqrt | trunc | gmtime)
-        :param numericExpression  : NumericExpression | ValueList
-        :param numericExpression2 : NumericExpression
+        :param numericExpression  : NumericExpression | SymbolicExpression | ValueList
+        :param numericExpression2 : NumericExpression | SymbolicExpression
         """
 
         NumericExpression.__init__(self)
