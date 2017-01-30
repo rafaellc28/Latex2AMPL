@@ -114,8 +114,6 @@ class CodeGenerator:
         stmtIndex = lastStmt
         domain = ""
 
-        #print(paramIn.getName(), firstStmt, lastStmt)
-        
         while domain == "" and stmtIndex >= firstStmt:
             
             domains = {}
@@ -123,8 +121,6 @@ class CodeGenerator:
             subIdxDomainsRet = None
 
             _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
-            #print(stmtIndex)
-            #print(map(lambda el: el.getName()+":"+str(el.getStmtIndex())+":"+str(el.getOrder())+":"+str(el.getIndice()), _subIndicesAllOrders))
 
             _subIndicesAll = {}
             for _subIndicesOrder in _subIndicesAllOrders:
@@ -224,15 +220,12 @@ class CodeGenerator:
                 if len(paramIn.getSubIndices()) > 0:
                     
                     _domain, stmtIndex, _tuples, subIdxDomains = self._getSubIndicesDomains(paramIn)
-                    #print(_domain, stmtIndex, _tuples, subIdxDomains)
 
                     if _tuples != None and len(_tuples):
                         dependences = []
                         for _tuple in _tuples:
-                            #tupleName = _tuple.getName()
                             self._addDependences(_tuple.getTupleObj(), stmtIndex, dependences)
-                            #if self._checkAddDependence(genObj, genObjOther, graph, name, tupleName):
-                            #    graph[name].append(tupleName)
+
                         if len(dependences) > 0:
                             for dep in dependences:
                                 if self._checkAddDependence(genObj, genObjOther, graph, name, dep):
@@ -262,9 +255,6 @@ class CodeGenerator:
 
         self._generateGraphAux(graph, self.genSets, self.genParameters)
         self._generateGraphAux(graph, self.genParameters, self.genSets)
-
-        #print("tuples", map(lambda el: el.getName()+":"+str(el.getTupleVal())+":"+str(el.getStmtIndex()), self.genTuples.getAll()))
-        #print("graph", graph)
 
         return graph
 

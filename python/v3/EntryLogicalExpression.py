@@ -142,14 +142,16 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
     Class representing an entry of iterated logical expression in the AST of the MLP
     """
 
-    FORALL = "forall"
-    EXISTS = "exists"
+    FORALL  = "forall"
+    NFORALL = "not forall"
+    EXISTS  = "exists"
+    NEXISTS = "not exists"
 
     def __init__(self, op, indexingExpression, logicalExpression):
         """
         Set the operator and the numeric expressions
 
-        :param op : (FORALL, EXISTS)
+        :param op : (FORALL, NFORALL, EXISTS, NEXISTS)
         :param indexingExpression : IndexingExpression
         :param logicalExpression  : LogicalExpression
         """

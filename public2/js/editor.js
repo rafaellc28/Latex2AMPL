@@ -49,7 +49,7 @@ CodeMirror.defineSimpleMode("latex", {
     {regex: /\\cdots|\\ldots|\\dots|\.\.\./, token: "atom"},
     {regex: /\+|-|\*|\\cdot|\\ast|\\div|\//, token: "operator"},
     {regex: /\|\||or|&&|and|!|not/, token: "atom"},
-    {regex: /\\forall|for|\\exists/, token: "keyword"},
+    {regex: /\\forall|for|\\exists|\\nexists/, token: "keyword"},
     {regex: /\\mathbb{Z}|\\mathbb{B}|\{0\s*,1\}|\\\{0\s*,1\\\}|\\mathbb{R}\^{\+}|\\mathbb{R}|\\mathbb{N}|\\subseteq|\\subset|\\not\\subseteq|\\not\\subset/, token: "atom"},
     {regex: /\\text\{maximize\}|\\text\{max\}|\\max|maximize|max|\\text\{maximize:\}|\\text\{max:\}|\\max:|maximize:|max:/, token: "keyword"},
     {regex: /\\text\{minimize\}|\\text\{min\}|\\min|minimize|min|\\text\{minimize:\}|\\text\{min:\}|\\min:|minimize:|min:/, token: "keyword"},

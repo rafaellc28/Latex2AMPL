@@ -30,7 +30,9 @@ tokens = [
    'AND',
    'NOT',
    'FORALL',
+   'NFORALL',
    'EXISTS',
+   'NEXISTS',
    'QUESTION_MARK',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
@@ -172,17 +174,17 @@ def t_LESS(t):
    return t
 
 def t_OR(t):
-   r'\\vee|\\text\{or\}'
+   r'\\vee|\\text\{\s*or\s*\}'
    t.value = "or"
    return t
 
 def t_AND(t):
-   r'\\wedge|\\text\{and\}'
+   r'\\wedge|\\text\{\s*and\s*\}'
    t.value = "and"
    return t
 
 def t_NOT(t):
-   r'!|not'
+   r'!|\\text\{\s*not\s*}|not'
    t.value = "not"
    return t
 
@@ -190,8 +192,16 @@ def t_FORALL(t):
    r'\\forall'
    return t
 
+def t_NFORALL(t):
+   r'\\not\\forall'
+   return t
+
 def t_EXISTS(t):
    r'\\exists'
+   return t
+
+def t_NEXISTS(t):
+   r'\\nexists|\\not\\exists'
    return t
 
 def t_DEFAULT(t):

@@ -37,7 +37,7 @@ precedence = (
     ('left', 'LBRACE', 'RBRACE'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('left', 'OR', 'AND', 'NOT'),
-    ('left', 'FORALL', 'EXISTS'),
+    ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
     ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
     ('left', 'UNDERLINE', 'CARET'),
@@ -468,12 +468,18 @@ def p_EntryLogicalExpressionWithSet(t):
 
 def p_EntryIteratedLogicalExpression(t):
     '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression'''
+                              | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression'''
 
     if t[1] == "\\forall":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
+    elif t[1] == "\\not\\forall":
+        t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
     elif t[1] == "\\exists":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
+    elif t[1] == "\\nexists" or t[1] == "\\not\\exists":
+        t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
 
 #def p_EntryIteratedLogicalExpression_error(t):
 #    '''EntryLogicalExpression : FORALL LLBRACE error RRBRACE
@@ -575,7 +581,11 @@ def p_IteratedSetExpression(t):
 def p_ConditionalSetExpression(t):
     '''ConditionalSetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
                                 | ConditionalSetExpression COLON SetExpression'''
-    t[0] = ConditionalSetExpression(t[2], t[5], t[7])
+    if len(t) > 4:
+        t[0] = ConditionalSetExpression(t[2], t[5])
+    else:
+        t[1].addElseExpression(t[3])
+        t[0] = t[1]
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
