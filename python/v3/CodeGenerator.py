@@ -233,9 +233,15 @@ class CodeGenerator:
 
 
                     if subIdxDomains != None and len(subIdxDomains) > 0 and all(subIdxDomains):
-
+                        dependences = []
                         for _domain in subIdxDomains:
-                            if ".." in _domain:
+                            if isinstance(_domain, GenDomain):
+                                self._addDependences(_domain.getDomainObj(), stmtIndex, dependences)
+
+                                if _domain.getDomainSupObj() != None:
+                                    self._addDependences(_domain.getDomainSupObj(), stmtIndex, dependences)
+
+                            elif ".." in _domain:
                                 param = _domain.split("..")
 
                                 if param and param[0] and self._checkAddDependence(genObj, genObjOther, graph, name, param[0]):
@@ -248,6 +254,11 @@ class CodeGenerator:
                                 param = _domain.split("[")
                                 if param and param[0] and self._checkAddDependence(genObj, genObjOther, graph, name, param[0]):
                                     graph[name].append(param[0])
+
+                        if len(dependences) > 0:
+                            for dep in dependences:
+                                if self._checkAddDependence(genObj, genObjOther, graph, name, dep):
+                                    graph[name].append(dep)
 
     # Auxiliary Methods
     def _generateGraph(self):
@@ -325,7 +336,7 @@ class CodeGenerator:
         _domain = self._getDomainByOrder(var, stmtIndex, order)
 
         if _domain != None and _domain.getDomain() != None:
-            return _domain.getDomain()
+            return _domain
 
         elif var.getMinVal() < float('inf'):
             return str(var.getMinVal()) + ".." + str(var.getMaxVal())
@@ -492,7 +503,7 @@ class CodeGenerator:
 
                         sets = varDecl.getIn()
                         if sets != None and len(sets) > 0:
-                            sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                            sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
                             ins = ",".join(map(lambda el: "in " + el, sets))
                             
                             if ins != "":
@@ -547,13 +558,18 @@ class CodeGenerator:
                     if symbolic != None and len(symbolic) > 0:
                         _type = Constants.SYMBOLIC
                     else:
-                        binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
-                        if binary != None and len(binary) > 0:
-                            _type = Constants.BINARY
+                        logical = filter(lambda el: el.startswith(Constants.LOGICAL), sets)
+                        
+                        if logical != None and len(logical) > 0:
+                            _type = Constants.LOGICAL
                         else:
-                            integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
-                            if integer != None and len(integer) > 0:
-                                _type = integer[-1]
+                            binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
+                            if binary != None and len(binary) > 0:
+                                _type = Constants.BINARY
+                            else:
+                                integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
+                                if integer != None and len(integer) > 0:
+                                    _type = integer[-1]
 
                     if _type != None:
                         paramStr += " " + _type
@@ -566,7 +582,7 @@ class CodeGenerator:
                 if varDecl != None:
                     sets = varDecl.getIn()
                     if sets != None and len(sets) > 0:
-                        sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                        sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
                         ins = ",".join(map(lambda el: "in " + el, sets))
                         
                         if ins != "":
@@ -616,13 +632,18 @@ class CodeGenerator:
             if symbolic != None and len(symbolic) > 0:
                 _type = Constants.SYMBOLIC
             else:
-                binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
-                if binary != None and len(binary) > 0:
-                    _type = Constants.BINARY
+                logical = filter(lambda el: el.startswith(Constants.LOGICAL), sets)
+
+                if logical != None and len(logical) > 0:
+                    _type = Constants.LOGICAL
                 else:
-                    integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
-                    if integer != None and len(integer) > 0:
-                        _type = integer[-1]
+                    binary = filter(lambda el: el == Constants.BINARY or el.replace(" ", "") == Constants.BINARY_0_1, sets)
+                    if binary != None and len(binary) > 0:
+                        _type = Constants.BINARY
+                    else:
+                        integer = filter(lambda el: el.startswith(Constants.INTEGER), sets)
+                        if integer != None and len(integer) > 0:
+                            _type = integer[-1]
 
             if _type != None:
                 paramStr += " " + _type
@@ -635,7 +656,7 @@ class CodeGenerator:
         if varDecl != None:
             sets = varDecl.getIn()
             if sets != None and len(sets) > 0:
-                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
                 ins = ",".join(map(lambda el: "in " + el, sets))
 
                 if ins != "":
@@ -694,7 +715,7 @@ class CodeGenerator:
 
             sets = varDecl.getIn()
             if sets != None and len(sets) > 0:
-                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC), map(lambda el: el.attribute.generateCode(self), sets))
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
                 ins = ",".join(map(lambda el: "in " + el, sets))
                 
                 if ins != "":
@@ -967,7 +988,14 @@ class CodeGenerator:
         return "(" + node.numericExpression.generateCode(self) + ")"
 
     def generateCode_NumericExpressionWithArithmeticOperation(self, node):
-        return node.numericExpression1.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
+        res = node.numericExpression1.generateCode(self) + " " + node.op + " "
+
+        if node.op == NumericExpressionWithArithmeticOperation.POW and not (isinstance(node.numericExpression2, ValuedNumericExpression) or isinstance(node.numericExpression2, NumericExpressionBetweenParenthesis)):
+            res += "(" + node.numericExpression2.generateCode(self) + ")"
+        else:
+            res += node.numericExpression2.generateCode(self)
+
+        return res
 
     def generateCode_MinusNumericExpression(self, node):
         return "-" + node.numericExpression.generateCode(self)
@@ -1015,7 +1043,12 @@ class CodeGenerator:
         return node.symbolicExpression1.generateCode(self) + " " + node.op + " " + node.symbolicExpression2.generateCode(self)
 
     def generateCode_ConditionalSymbolicExpression(self, node):
-        return "if " + node.logicalExpression.generateCode(self) + " then " + node.symbolicExpression1.generateCode(self) + " else " + node.symbolicExpression2.generateCode(self)
+        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.symbolicExpression1.generateCode(self)
+
+        if node.symbolicExpression2 != None:
+            res += " else " + node.symbolicExpression2.generateCode(self)
+
+        return res
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
@@ -1054,7 +1087,7 @@ class CodeGenerator:
     
     # Entry Indexing Expression
     def generateCode_EntryIndexingExpressionWithSet(self, node):
-        if node.isBinary or node.isInteger or node.isNatural or node.isReal or node.isSymbolic or Utils._isInstanceOfStr(node.variable):
+        if node.isBinary or node.isInteger or node.isNatural or node.isReal or node.isSymbolic or node.isLogical or Utils._isInstanceOfStr(node.variable):
             return ""
         elif isinstance(node.variable, ValueList):
             return ", ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), node.variable.getValues()))

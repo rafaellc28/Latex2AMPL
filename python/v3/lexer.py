@@ -53,6 +53,7 @@ tokens = [
    'NOTSUBSET',
    'NUMBER',
    'SYMBOLIC',
+   'LOGICAL',
    'PLUS',
    'MINUS',
    'TIMES',
@@ -459,6 +460,11 @@ def t_NOTSUBSET(t):
 def t_SYMBOLIC(t):
    r'\\mathbb{S}'
    t.value = "symbolic"
+   return t
+
+def t_LOGICAL(t):
+   r'\\mathbb{L}'
+   t.value = "logical"
    return t
 
 #t_DOT = r'\\cdot'

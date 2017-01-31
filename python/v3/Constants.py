@@ -5,6 +5,7 @@ class Constants:
     GEN_PARAMETERS = "GenParameters"
 
     SYMBOLIC = "symbolic"
+    LOGICAL = "logical"
     BINARY_0_1 = "{0,1}"
     BINARY = "binary"
     INTEGER = "integer"

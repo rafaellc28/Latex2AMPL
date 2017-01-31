@@ -25,6 +25,7 @@ class Variable(Expression):
         self.isVar = False
         self.isParam = None
         self.isSymbolic = False
+        self.isLogical = False
         self.isSubIndice = False
 
     def __str__(self):
@@ -76,6 +77,9 @@ class Variable(Expression):
 
     def setIsSymbolic(self, isSymbolic):
         self.isSymbolic = isSymbolic
+
+    def setIsLogical(self, isLogical):
+        self.isLogical = isLogical
 
     def setDimenSet(self, dimen):
         self.dimenSet = dimen

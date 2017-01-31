@@ -195,7 +195,7 @@ class ConditionalSymbolicExpression(SymbolicExpression):
     Class representing a conditional symbolic expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, symbolicExpression1, symbolicExpression2):
+    def __init__(self, logicalExpression, symbolicExpression1, symbolicExpression2 = None):
         """
         Set the conditional symbolic expression
         
@@ -214,8 +214,16 @@ class ConditionalSymbolicExpression(SymbolicExpression):
         """
         to string
         """
-        return "CondSymbExpr: " + "("+str(self.logicalExpression)+")?" + str(self.symbolicExpression1) + ": " + str(self.symbolicExpression2)
-        
+        res = "CondSymbExpr: " + "("+str(self.logicalExpression)+")?" + str(self.symbolicExpression1)
+
+        if self.symbolicExpression2 != None:
+            res += ": " + str(self.symbolicExpression2)
+
+        return res
+
+    def addElseExpression(self, elseExpression):
+        self.symbolicExpression2 = elseExpression
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the variables and sets used in this conditional symbolic expression

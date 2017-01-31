@@ -199,8 +199,13 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
         """
         to string
         """
-        
-        return "OpArthNE:" + str(self.numericExpression1) + " " + self.op + " " + str(self.numericExpression2)
+        res = "OpArthNE:" + str(self.numericExpression1) + " " + self.op + " "
+        if self.op == NumericExpressionWithArithmeticOperation.POW and not (isinstance(self.numericExpression2, ValuedNumericExpression) or isinstance(self.numericExpression2, NumericExpressionBetweenParenthesis)):
+            res += "(" + str(self.numericExpression2) + ")"
+        else:
+            res += str(self.numericExpression2)
+
+        return res
     
     def setupEnvironment(self, codeSetup):
         """

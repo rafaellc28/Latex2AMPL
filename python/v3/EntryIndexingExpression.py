@@ -31,6 +31,7 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         self.isNatural = False
         self.isReal = False
         self.isSymbolic = False
+        self.isLogical = False
 
     def __str__(self):
         """

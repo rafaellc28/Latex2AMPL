@@ -39,6 +39,14 @@ class CodeSetup:
         self.genFirstStmtList = GenFirstStmtList()
         self.genSubIndicesByNameList = GenSubIndicesByNameList()
 
+    def _setIsParam(self, variable):
+        variable.setIsParam(True)
+        variable.setIsSet(False)
+
+    def _setIsSet(self, variable):
+        variable.setIsSet(True)
+        variable.setIsParam(False)
+
     def setupEnvironment(self, node):
         cls = node.__class__
         method_name = 'setupEnvironment_' + cls.__name__
@@ -48,11 +56,17 @@ class CodeSetup:
             return method(node)
 
     # Auxiliary Methods
+    def _getVariable(self, var):
+        if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression) or isinstance(var, SetExpressionWithValue):
+            var = var.value
+
+        return var
+
     def _addTypeAux(self, variable, _type, minVal = None, maxVal = None):
         name = variable.generateCodeWithoutIndices(self.codeGenerator)
         self.codeGenerator.genTypes.add(GenType(name, _type, minVal, maxVal))
 
-        if _type != Constants.SYMBOLIC:
+        if not self._checkIsParamType(_type):
             variable.setIsVar(True)
             variable.setIsParam(False)
 
@@ -63,14 +77,7 @@ class CodeSetup:
 
         else:
             variable.setIsSymbolic(True)
-            variable.setIsParam(True)
-            variable.setIsSet(False)
-
-    def _getVariable(self, var):
-        if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression) or isinstance(var, SetExpressionWithValue):
-            var = var.value
-
-        return var
+            self._setIsParam(variable)
 
     def _addType(self, variable, _type, minVal = None, maxVal = None):
         if isinstance(variable, ValueList):
@@ -83,7 +90,7 @@ class CodeSetup:
 
             self._addTypeAux(var, _type, minVal, maxVal)
 
-    def _addDomainAux(self, variable, setExpression):
+    def _addDomainAux(self, variable, setExpression, setExpressionObj):
         ind = variable.generateCodeWithoutIndices(self.codeGenerator)
         _domains = self.codeGenerator.genDomains.getByNameAndStmt(ind, self.stmtIndex)
 
@@ -92,23 +99,22 @@ class CodeSetup:
             order = self._getOrderFromDomains(_domains)
             order += 1
 
-        _domain = GenDomain(ind, self.stmtIndex, order, setExpression)
+        _domain = GenDomain(ind, self.stmtIndex, order, setExpression, setExpressionObj)
         self.codeGenerator.genDomains.add(_domain)
 
-    def _addDomain(self, variable, setExpression):
+    def _addDomain(self, variable, setExpression, setExpressionObj):
         if isinstance(variable, ValueList):
             for var in variable.getValues():
                 var = self._getVariable(var)
 
-                self._addDomainAux(var, setExpression)
+                self._addDomainAux(var, setExpression, setExpressionObj)
 
         else:
             var = self._getVariable(variable)
+            self._addDomainAux(var, setExpression, setExpressionObj)
 
-            self._addDomainAux(var, setExpression)
-
-    def _checkIsParam(self, strValue):
-        return strValue[0].isupper()
+    def _checkIsParamType(self, _type):
+        return _type.startswith(Constants.SYMBOLIC) or _type.startswith(Constants.LOGICAL)
 
     # Get the MathProg code for a given sub-indice
     def _getCodeID(self, id_):
@@ -488,7 +494,9 @@ class CodeSetup:
 
         node.logicalExpression.setupEnvironment(self)
         node.symbolicExpression1.setupEnvironment(self)
-        node.symbolicExpression2.setupEnvironment(self)
+
+        if node.symbolicExpression2 != None:
+            node.symbolicExpression2.setupEnvironment(self)
 
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
@@ -544,7 +552,11 @@ class CodeSetup:
             node.isSymbolic = True
             self._addType(variable, setExpression)
 
-        self._addDomain(variable, setExpression)
+        elif setCode.startswith(Constants.LOGICAL):
+            node.isLogical = True
+            self._addType(variable, setExpression)
+
+        self._addDomain(variable, setExpression, node.setExpression)
 
     def _setDimension(self, setExpression, dimen):
 
@@ -606,15 +618,15 @@ class CodeSetup:
             for var in node.variable.getValues():
                 var = self._getVariable(var)
 
-                if not setCode.startswith(Constants.SYMBOLIC) and len(var.sub_indices) == 0:
+                if not self._checkIsParamType(setCode) and len(var.sub_indices) == 0:
                     self._addBelongsTo(var)
 
         elif isinstance(node.variable, ValuedNumericExpression) or isinstance(node.variable, StringSymbolicExpression):
-            if not setCode.startswith(Constants.SYMBOLIC) and len(node.variable.value.sub_indices) == 0:
+            if not self._checkIsParamType(setCode) and len(node.variable.value.sub_indices) == 0:
                 self._addBelongsTo(node.variable.value)
 
         else:
-            if not setCode.startswith(Constants.SYMBOLIC) and len(node.variable.sub_indices) == 0:
+            if not self._checkIsParamType(setCode) and len(node.variable.sub_indices) == 0:
                 self._addBelongsTo(node.variable)
 
         if isinstance(node.variable, Tuple):
@@ -660,7 +672,7 @@ class CodeSetup:
         if node.hasSup:
             setExpression += ".." + node.supExpression
 
-        _domain = GenDomain(ind, self.stmtIndex, order, setExpression)
+        _domain = GenDomain(ind, self.stmtIndex, order, setExpression, node.value, node.supExpression if node.hasSup else None)
         self.codeGenerator.genDomains.add(_domain)
 
         if len(node.variable.sub_indices) == 0:
@@ -711,15 +723,15 @@ class CodeSetup:
             for var in node.value.getValues():
                 var = self._getVariable(var)
 
-                if not setCode.startswith(Constants.SYMBOLIC) and len(var.sub_indices) == 0:
+                if not self._checkIsParamType(setCode) and len(var.sub_indices) == 0:
                     self._addBelongsTo(var)
 
         elif isinstance(node.value, ValuedNumericExpression) or isinstance(node.value, StringSymbolicExpression):
-            if not setCode.startswith(Constants.SYMBOLIC) and len(node.value.value.sub_indices) == 0:
+            if not self._checkIsParamType(setCode) and len(node.value.value.sub_indices) == 0:
                 self._addBelongsTo(node.value.value)
 
         else:
-            if not setCode.startswith(Constants.SYMBOLIC) and len(node.value.sub_indices) == 0:
+            if not self._checkIsParamType(setCode) and len(node.value.sub_indices) == 0:
                 self._addBelongsTo(node.value)
 
         if isinstance(node.value, Tuple):
@@ -766,7 +778,7 @@ class CodeSetup:
         if var.isParam:
             return True
 
-        name = var.generateCode(self.codeGenerator)
+        name = var.generateCodeWithoutIndices(self.codeGenerator)
         param = self.codeGenerator.genParameters.get(name)
 
         if param != None:
@@ -785,13 +797,13 @@ class CodeSetup:
                     var = self._getVariable(var)
 
                     if isinstance(var, Variable) and not self.isParamForSure(var):
-                        var.setIsSet(True)
+                        self._setIsSet(var)
 
                     var.setupEnvironment(self)
 
             else:
                 if isinstance(node.value, Variable) and not self.isParamForSure(node.value):
-                    node.value.setIsSet(True)
+                    self._setIsSet(node.value)
 
                 node.value.setupEnvironment(self)
 
@@ -804,7 +816,7 @@ class CodeSetup:
 
         if not Utils._isInstanceOfStr(node.variable):
             if isinstance(node.variable, Variable) and not self.isParamForSure(node.variable):
-                node.variable.setIsSet(True)
+                self._setIsSet(node.variable)
 
             if len(node.indices) > 0:
                 if isinstance(node.indices, Variable):
@@ -978,7 +990,7 @@ class CodeSetup:
                 if firstStmt != None:
                     firstStmtShowed = firstStmt.getFirstStmt()
                 
-                _genParam = GenParameter(self.varKey, node.isSymbolic, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex), str(self.stmtIndex))
+                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex), str(self.stmtIndex))
                 if node.isParam != None and not node.isParam:
                     _genParam.setCertainty(False)
 
@@ -992,7 +1004,7 @@ class CodeSetup:
                     _genParam.setSubIndices(_subIndices)
 
                 self.codeGenerator.genParameters.add(_genParam)
-            elif node.isSymbolic:
+            elif node.isSymbolic or node.isLogical:
                 _genParam = self.codeGenerator.genParameters.get(self.varKey)
                 if _genParam != None:
                     _genParam.setIsSymbolic(True)
@@ -1108,7 +1120,7 @@ class CodeSetup:
 
         name = var.generateCodeWithoutIndices(self.codeGenerator)
         if self.codeGenerator.genSets.has(name):
-            var.setIsSet(True)
+            self._setIsSet(var)
 
         map(lambda el: self.setupEnvironment_AttributeListPre(el, var), node.attributeList)
         map(lambda el: self.setupEnvironment_AttributeList(el, var), node.attributeList)
@@ -1122,17 +1134,15 @@ class CodeSetup:
         node.attribute.setupEnvironment(self)
 
     def setupEnvironment_AttributeListPre(self, node, variable):
-        var = self._getVariable(node.attribute)
-
         if node.op == DeclarationAttribute.IN:
-            setExpression = node.attribute.generateCode(self.codeGenerator)
-            self.setupEnvironment_DeclarationExpressionWithSet(setExpression, variable)
+            self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, variable)
 
         elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and isinstance(node.attribute, SetExpression) and (variable.isParam == None or not variable.isParam):
+            var = self._getVariable(node.attribute)
             name = var.generateCode(self.codeGenerator)
             
             if not self.codeGenerator.genParameters.has(name):
-                variable.setIsSet(True)
+                self._setIsSet(variable)
 
     def setupEnvironment_AttributeList(self, node, variable):
         var = self._getVariable(node.attribute)
@@ -1143,22 +1153,22 @@ class CodeSetup:
             if param != None:
                 param.setCertainty(True)
 
-            var.setIsParam(True)
-            var.setIsSet(False)
+            self._setIsParam(var)
 
         node.setupEnvironment(self)
         
-    def setupEnvironment_DeclarationExpressionWithSet(self, setExpression, variable):
+    def setupEnvironment_DeclarationExpressionWithSet(self, attribute, variable):
+        setExpression = attribute.generateCode(self.codeGenerator)
 
-        if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
-            variable.setupEnvironment(self)
-        elif isinstance(variable, ValuedNumericExpression) or isinstance(variable, StringSymbolicExpression):
-            variable.value.setupEnvironment(self)
-        elif isinstance(variable, ValueList):
-            for var in variable.getValues():
-                var = self._getVariable(var)
+        #if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
+        #    variable.setupEnvironment(self)
+        #elif isinstance(variable, ValuedNumericExpression) or isinstance(variable, StringSymbolicExpression):
+        #    variable.value.setupEnvironment(self)
+        #elif isinstance(variable, ValueList):
+        #    for var in variable.getValues():
+        #        var = self._getVariable(var)
 
-                var.setupEnvironment(self)
+        #        var.setupEnvironment(self)
 
         setCode = setExpression.replace(" ", "")
 
@@ -1174,7 +1184,8 @@ class CodeSetup:
 
         elif setCode.startswith(Constants.SYMBOLIC):
             self._addType(variable, setExpression)
-            variable.setIsParam(True)
-            variable.setIsSet(False)
+            
+        elif setCode.startswith(Constants.LOGICAL):
+            self._addType(variable, setExpression)
 
-        self._addDomain(variable, setExpression)
+        self._addDomain(variable, setExpression, attribute)

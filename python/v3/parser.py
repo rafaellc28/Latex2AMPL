@@ -48,7 +48,7 @@ precedence = (
     ('left', 'UPLUS', 'UMINUS'),
     ('left', 'IN', 'NOTIN'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
-      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET', 'SYMBOLIC')
+      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
 )
 
 def p_Main(t):
@@ -369,7 +369,8 @@ def p_IteratedLinearExpression(t):
 #    sys.stderr.write("Linear Expression bad formatted at line %d\n" % t.lineno(1))
 
 def p_ConditionalLinearExpression(t):
-    '''ConditionalLinearExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression
+    '''ConditionalLinearExpression : LPAREN SetExpression RPAREN QUESTION_MARK LinearExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression
                                    | ConditionalLinearExpression COLON LinearExpression'''
     if len(t) > 4:
         t[0] = ConditionalLinearExpression(t[2], t[5])
@@ -536,7 +537,8 @@ def p_SetExpressionWithValue(t):
                      | REALSETWITHONELIMIT
                      | REALSETWITHTWOLIMITS
                      | BINARYSET
-                     | SYMBOLIC'''
+                     | SYMBOLIC
+                     | LOGICAL'''
 
     if len(t) > 2:
         if t[1] == "{":
@@ -579,7 +581,8 @@ def p_IteratedSetExpression(t):
 
 
 def p_ConditionalSetExpression(t):
-    '''ConditionalSetExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
+    '''ConditionalSetExpression : LPAREN SetExpression RPAREN QUESTION_MARK SetExpression
+                                | LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
                                 | ConditionalSetExpression COLON SetExpression'''
     if len(t) > 4:
         t[0] = ConditionalSetExpression(t[2], t[5])
@@ -694,8 +697,14 @@ def p_FunctionSymbolicExpression(t):
 
 
 def p_ConditionalSymbolicExpression(t):
-    '''SymbolicExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression COLON SymbolicExpression'''
-    t[0] = ConditionalSymbolicExpression(t[2], t[5], t[7])
+    '''ConditionalSymbolicExpression : LPAREN SetExpression RPAREN QUESTION_MARK SymbolicExpression
+                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression
+                                     | ConditionalSymbolicExpression COLON SymbolicExpression'''
+    if len(t) > 4:
+        t[0] = ConditionalSymbolicExpression(t[2], t[5])
+    else:
+        t[1].addElseExpression(t[3])
+        t[0] = t[1]
 
 def p_NumericExpression_binop(t):
     '''NumericExpression : NumericExpression PLUS NumericExpression
@@ -705,7 +714,7 @@ def p_NumericExpression_binop(t):
                          | NumericExpression MOD NumericExpression
                          | NumericExpression QUOTIENT NumericExpression
                          | NumericExpression LESS NumericExpression
-                         | NumericExpression CARET NumericExpression'''
+                         | NumericExpression CARET LBRACE NumericExpression RBRACE'''
 
     if t[2] == "+":
         op = NumericExpressionWithArithmeticOperation.PLUS
@@ -724,7 +733,10 @@ def p_NumericExpression_binop(t):
     elif t[2] == "less":
         op = NumericExpressionWithArithmeticOperation.LESS
 
-    t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
+    if t[2] == "^":
+      t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[4])
+    else:
+      t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
 
 #def p_NumericExpression_binop_error(t):
 #    '''NumericExpression : error PLUS
@@ -883,7 +895,8 @@ def p_FunctionNumericExpression(t):
 #    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
 
 def p_ConditionalNumericExpression(t):
-    '''ConditionalNumericExpression : LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression
+    '''ConditionalNumericExpression : LPAREN SetExpression RPAREN QUESTION_MARK NumericExpression
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression
                                     | ConditionalNumericExpression COLON NumericExpression'''
     if len(t) > 4:
         t[0] = ConditionalNumericExpression(t[2], t[5])
