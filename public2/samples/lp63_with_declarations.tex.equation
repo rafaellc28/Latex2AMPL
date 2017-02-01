@@ -1,0 +1,6 @@
+% GLPK/mvcp.mod: ../glpk-4.47/examples/mvcp.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{i \in V} w_{i} * x_{i}\\
+\text{subject to } x_{i} + x_{j} \geq 1, (i,j) \in E\\
+x_{i} \in \mathbb{B}\\
+V := (\text{ setof } \{(i,j) \in E\} i) \cup (\text{ setof } \{(i,j) \in E\} j)\\
+w_{i}, \geq 0, := 1, i \in V\\

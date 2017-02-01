@@ -61,9 +61,18 @@ app.get('/json', function(req, res) {
 app.get('/samples', function(req, res) {
 	if (req.query.number) {
 		var number = req.query.number;
+		var decl = req.query.decl;
 		result = {}
-		var sample = baseSamples+"/lp"+number+".tex.equation";
-		var dataSample = baseSamples+"/data/lp"+number+".tex.dat";
+
+		var name;
+		if (decl == "true") {
+			name = number + "_with_declarations";
+		} else {
+			name = number;
+		}
+
+		var sample = baseSamples+"/lp"+name+".tex.equation";
+		var dataSample = baseSamples+"/data/lp"+name+".tex.dat";
 
 		var d = Deferred();
 

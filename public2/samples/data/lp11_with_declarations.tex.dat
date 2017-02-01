@@ -1,0 +1,29 @@
+param : J :  t :=
+        A    3    /* Excavate */
+        B    4    /* Lay foundation */
+        C    3    /* Rough plumbing */
+        D   10    /* Frame */
+        E    8    /* Finish exterior */
+        F    4    /* Install HVAC */
+        G    6    /* Rough electric */
+        H    8    /* Sheet rock */
+        I    5    /* Install cabinets */
+        J    5    /* Paint */
+        K    4    /* Final plumbing */
+        L    2    /* Final electric */
+        M    4    /* Install flooring */
+;
+
+set P[B] := A;
+set P[C] := B;
+set P[D] := B;
+set P[E] := D;
+set P[F] := D;
+set P[G] := D;
+set P[H] := C E F G;
+set P[I] := H;
+set P[J] := H;
+set P[K] := I;
+set P[L] := J;
+set P[M] := K L;
+

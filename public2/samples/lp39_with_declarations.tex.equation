@@ -1,0 +1,10 @@
+% GLPK/crypto.mod: ../glpk-4.47/examples/crypto.mod in https://www3.nd.edu/~jeff/mathprog/#
+\sum_{j \in VALUES} x_{i,j} = 1, i \in LETTERS\\
+\sum_{i \in LETTERS} x_{i,j} = 1, j \in VALUES\\
+\sum_{k \in 1 \ldots length(word), j \in VALUES} j * x_{substr(word,k,1), j} = total_{word}, word \in WORDS\\
+x_{i,j} \in \mathbb{B}\\
+LETTERS := 
+\{     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+      'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+\}\\
+VALUES := 1 \ldots card(LETTERS)\\
