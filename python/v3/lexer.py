@@ -107,6 +107,7 @@ tokens = [
    'DISPLAYSTYLE',
    'TEXT',
    'COMMA',
+   'SEMICOLON',
    'COLON',
    'DOTS',
    'AMPERSAND',
@@ -172,6 +173,10 @@ def t_DIVIDE(t):
 def t_LESS(t):
    r'\\text\{\s*less\s*\}|less'
    t.value = "less"
+   return t
+
+def t_FOR(t):
+   r'\\text\{\s*for\s*\}'
    return t
 
 def t_OR(t):
@@ -594,6 +599,8 @@ def t_ignore_TEXT(t):
 
 t_COMMA = r','
 
+t_SEMICOLON = r';'
+
 def t_COLON(t):
    r':'
    return t
@@ -636,10 +643,6 @@ def t_INTER(t):
 def t_CROSS(t):
    r'\\times'
    t.value = "CROSS"
-   return t
-
-def t_FOR(t):
-   r'\\text\{for\}'
    return t
 
 def t_ID(t):

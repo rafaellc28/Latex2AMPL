@@ -9,8 +9,7 @@ class ValueList(Expression):
         """
         Set the values
         
-        :param values : [Variable|Number]
-        :param setExpression : SetExpression
+        :param values : [Variable|Number|SymbolicExpression]
         """
         
         self.values = values
@@ -58,12 +57,12 @@ class ValueList(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of variables used in this expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Range
+        Generate the MathProg code for this expression
         """
         return codeGenerator.generateCode(self)

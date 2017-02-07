@@ -47,6 +47,16 @@ class CodeGenerator:
 
         self.varNameSubIndices = []
 
+    # from http://stackoverflow.com/questions/406121/flattening-a-shallow-list-in-python
+    def flatten(self, x):
+        result = []
+        for el in x:
+            if hasattr(el, "__iter__") and not isinstance(el, basestring):
+                result.extend(self.flatten(el))
+            else:
+                result.append(el)
+        return result
+
     def generateCode(self, node):
         cls = node.__class__
         method_name = 'generateCode_' + cls.__name__
@@ -62,6 +72,35 @@ class CodeGenerator:
                 orderInStmt = _s.getOrderInStmt()
 
         return orderInStmt
+
+    def _getLogicalExpressionFromDeclaration(self, declaration, varName, _tuples, _subIndices):
+        if declaration == None or declaration.getIndexingExpression() == None or declaration.getIndexingExpression().logicalExpression == None:
+            return None
+
+        logicalExpression = declaration.getIndexingExpression().logicalExpression
+        self.genNames = GenList()
+        logExpr = logicalExpression.generateCode(self)
+        names = self.genNames.getAll()
+        names = map(lambda el: el.getName(), names)
+
+        if varName in names:
+            return logExpr
+
+        namesSet = set(names)
+
+        tupleListAux = map(lambda el: el.getTupleVal(), _tuples)
+        tupleListAux = self.flatten(tupleListAux)
+        tupleListAux = list(namesSet.intersection(set(tupleListAux)))
+        if len(tupleListAux) > 0:
+            return logExpr
+
+        subIndicesAux = map(lambda el: el.getName(), _subIndices)
+        subIndicesAux = self.flatten(subIndicesAux)
+        subIndicesAux = list(namesSet.intersection(set(subIndicesAux)))
+        if len(subIndicesAux) > 0:
+            return logExpr
+
+        return None
 
     def _addDependences(self, value, stmtIndex, dependences):
         self.genNames = GenList()
@@ -107,18 +146,30 @@ class CodeGenerator:
 
         return dependences
 
-    def _getSubIndicesDomains(self, paramIn):
+    def _getSubIndicesDomains(self, paramIn, stmtIndexInitial = None):
 
+        useTestInitial = False
+        testInitial = False
         firstStmt = int(paramIn.getFirstStmt())
         lastStmt =  int(paramIn.getLastStmt())
-        stmtIndex = lastStmt
+        
+        if stmtIndexInitial != None and isinstance(int(stmtIndexInitial), int):
+            stmtIndex = int(stmtIndexInitial)
+            testInitial = True
+            useTestInitial = True
+        else:
+            stmtIndex = lastStmt
+
         domain = ""
 
         while domain == "" and stmtIndex >= firstStmt:
-            
+
+            if useTestInitial and not testInitial and stmtIndex == stmtIndexInitial:
+                break
+
             domains = {}
             _tuplesRet = []
-            subIdxDomainsRet = None
+            subIdxDomainsRet = []
 
             _subIndicesAllOrders = paramIn.getSubIndices().getAllSortedByOrder(lambda el: el.getStmtIndex() == stmtIndex)
 
@@ -132,6 +183,7 @@ class CodeGenerator:
                 _subIndicesAll[order].append(_subIndicesOrder)
 
             for order in sorted(_subIndicesAll.iterkeys(), reverse=True):
+                
                 _subIndices = _subIndicesAll[order]
                 _subIndices = sorted(_subIndices, key = lambda el: el.getIndice())
 
@@ -195,6 +247,10 @@ class CodeGenerator:
 
             if domain != "":
                 break
+
+            if testInitial:
+                testInitial = False
+                stmtIndex = lastStmt+1
 
             stmtIndex -= 1
             
@@ -409,18 +465,17 @@ class CodeGenerator:
 
                     varDecl = self.genDeclarations.get(var.getName())
 
-                    if varDecl != None:
-                        if varDecl.getIndexingExpression() != None:
-                            domain = varDecl.getIndexingExpression().generateCode(self)
-                            varStr += "{" + domain + "}"
+                    _subIndices = var.getSubIndices().getAllSortedByIndice()
                     
-                    if domain == None:
-                        _subIndices = var.getSubIndices().getAllSortedByIndice()
+                    if len(_subIndices) > 0:
+                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var, None if varDecl == None else varDecl.getStmtIndex())
+                        if domain != "" and domain.strip() != "":
+                            logical = self._getLogicalExpressionFromDeclaration(varDecl, var.getName(), _tuple, subIdxDomains)
+                            varStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
                         
-                        if len(_subIndices) > 0:
-                            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
-                            
-                            if domain != "" and domain.strip() != "":
+                        if not domain  and varDecl != None:
+                            if varDecl.getIndexingExpression() != None:
+                                domain = varDecl.getIndexingExpression().generateCode(self)
                                 varStr += "{" + domain + "}"
 
                     if varDecl != None:
@@ -475,16 +530,16 @@ class CodeGenerator:
 
                     varDecl = self.genDeclarations.get(setIn.getName())
 
-                    if varDecl != None:
-                        if varDecl.getIndexingExpression() != None:
-                            domain = varDecl.getIndexingExpression().generateCode(self)
-                            setStr += "{" + domain + "}"
-                    
-                    if domain == None:
-                        _subIndices = setIn.getSubIndices().getAllSortedByIndice()
-                        if len(_subIndices) > 0:
-                            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var)
-                            if domain != None and domain.strip() != "":
+                    _subIndices = setIn.getSubIndices().getAllSortedByIndice()
+                    if len(_subIndices) > 0:
+                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(var, None if varDecl == None else varDecl.getStmtIndex())
+                        if domain != None and domain.strip() != "":
+                            logical = self._getLogicalExpressionFromDeclaration(varDecl, setIn.getName(), _tuple, subIdxDomains)
+                            setStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+
+                        if not domain and varDecl != None:
+                            if varDecl.getIndexingExpression() != None:
+                                domain = varDecl.getIndexingExpression().generateCode(self)
                                 setStr += "{" + domain + "}"
 
                     if varDecl != None:
@@ -539,16 +594,16 @@ class CodeGenerator:
 
                 varDecl = self.genDeclarations.get(paramIn)
 
-                if varDecl != None:
-                    if varDecl.getIndexingExpression() != None:
-                        domain = varDecl.getIndexingExpression().generateCode(self)
-                        paramStr += "{" + domain + "}"
-                
-                if domain == None:
-                    _genParameter = self.genParameters.get(paramIn)
-                    if len(_genParameter.getSubIndices()) > 0:
-                        domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
-                        if domain != None and domain.strip() != "":
+                _genParameter = self.genParameters.get(paramIn)
+                if len(_genParameter.getSubIndices()) > 0:
+                    domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter, None if varDecl == None else varDecl.getStmtIndex())
+                    if domain != None and domain.strip() != "":
+                        logical = self._getLogicalExpressionFromDeclaration(varDecl, paramIn, _tuple, subIdxDomains)
+                        paramStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+
+                    if not domain and varDecl != None:
+                        if varDecl.getIndexingExpression() != None:
+                            domain = varDecl.getIndexingExpression().generateCode(self)
                             paramStr += "{" + domain + "}"
 
                 if varDecl != None:
@@ -614,15 +669,15 @@ class CodeGenerator:
 
         varDecl = self.genDeclarations.get(_genParameter.getName())
 
-        if varDecl != None:
-            if varDecl.getIndexingExpression() != None:
-                domain = varDecl.getIndexingExpression().generateCode(self)
-                paramStr += "{" + domain + "}"
-                
-        if domain == None:
-            if len(_genParameter.getSubIndices()) > 0:
-                domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter)
-                if domain != None and domain.strip() != "":
+        if len(_genParameter.getSubIndices()) > 0:
+            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genParameter, None if varDecl == None else varDecl.getStmtIndex())
+            if domain != None and domain.strip() != "":
+                logical = self._getLogicalExpressionFromDeclaration(varDecl, paramIn, _tuple, subIdxDomains)
+                paramStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+
+            if not domain and varDecl != None:
+                if varDecl.getIndexingExpression() != None:
+                    domain = varDecl.getIndexingExpression().generateCode(self)
                     paramStr += "{" + domain + "}"
 
         if varDecl != None:
@@ -688,15 +743,15 @@ class CodeGenerator:
 
         varDecl = self.genDeclarations.get(_genSet.getName())
 
-        if varDecl != None:
-            if varDecl.getIndexingExpression() != None:
-                domain = varDecl.getIndexingExpression().generateCode(self)
-                setStr += "{" + domain + "}"
-        
-        if domain == None:
-            if len(_genSet.getSubIndices()) > 0:
-                domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet)
-                if domain != None and domain.strip() != "":
+        if len(_genSet.getSubIndices()) > 0:
+            domain, stmtIndex, _tuple, subIdxDomains = self._getSubIndicesDomains(_genSet, None if varDecl == None else varDecl.getStmtIndex())
+            if domain != None and domain.strip() != "":
+                logical = self._getLogicalExpressionFromDeclaration(varDecl, _genSet.getName(), _tuple, subIdxDomains)
+                setStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+
+            if not domain and varDecl != None:
+                if varDecl.getIndexingExpression() != None:
+                    domain = varDecl.getIndexingExpression().generateCode(self)
                     setStr += "{" + domain + "}"
 
         if varDecl != None:
@@ -1210,6 +1265,10 @@ class CodeGenerator:
     # Value List
     def generateCode_ValueList(self, node):
         return ",".join(map(self._getCodeValue, node.values))
+
+    # Variable List
+    def generateCode_VariableList(self, node):
+        return ",".join(map(self._getCodeValue, node.variables))
 
     # Tuple
     def generateCode_Tuple(self, node):

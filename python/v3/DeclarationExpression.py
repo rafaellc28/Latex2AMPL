@@ -5,21 +5,21 @@ class DeclarationExpression(Expression):
     Class representing a declaration expression node in the AST of a MLP
     """
 
-    def __init__(self, variable, attributeList = None):
+    def __init__(self, variables, attributeList = None):
         """
         Set the expressions being related
         
-        :param variable: Variable
+        :param variables: VariableList
         :param attributeList: [DeclarationAttribute]
         """
-        self.variable = variable
+        self.variables = variables
         self.attributeList = attributeList
         
     def __str__(self):
         """
         to string
         """
-        res = "DeclarationExpression:" + str(self.variable)
+        res = "DeclarationExpression:" + str(self.variables)
         if self.attributeList != None and len(self.attributeList) > 0:
             res += " " + ",".join(map(lambda el: str(el), self.attributeList))
 

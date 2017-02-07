@@ -119,18 +119,23 @@ def p_Objective(t):
 #    sys.stderr.write("Objective Function bad formatted at line %d\n" % t.lineno(1))
 
 def p_Constraints(t):
-    '''Constraints : SUBJECTTO ConstraintList
-                   | SUBJECTTO ConstraintList BACKSLASHES'''
+    '''Constraints : SUBJECTTO ConstraintList'''
     t[0] = Constraints(t[2])
 
 def p_ConstraintList(t):
     '''ConstraintList : ConstraintList BACKSLASHES Constraint
-                      | ConstraintList BACKSLASHES Declaration
+                      | ConstraintList BACKSLASHES Declarations
                       | ConstraintList BACKSLASHES
-                      | Constraint
-                      | Declaration'''
+                      | Declarations
+                      | Constraint'''
     if len(t) > 3:
+      if isinstance(t[3], Declarations):
+        t[0] = t[1] + t[3].declarations
+      else:
         t[0] = t[1] + [t[3]]
+
+    elif isinstance(t[1], Declarations):
+        t[0] = t[1].declarations
     elif len(t) > 2:
         t[0] = t[1]
     else:
@@ -143,6 +148,10 @@ def p_ConstraintList(t):
 def p_Constraint(t):
     '''Constraint : ConstraintExpression FOR IndexingExpression
                   | ConstraintExpression COMMA IndexingExpression
+                  | ConstraintExpression PIPE IndexingExpression
+                  | ConstraintExpression FOR BACKSLASHES IndexingExpression
+                  | ConstraintExpression COMMA BACKSLASHES IndexingExpression
+                  | ConstraintExpression PIPE BACKSLASHES IndexingExpression
                   | ConstraintExpression'''
     if len(t) > 3:
         t[3].setStmtIndexing(True)
@@ -156,11 +165,11 @@ def p_Constraint(t):
 #    sys.stderr.write("Constraint bad formatted at line %d\n" % t.lineno(2))
 
 def p_ConstraintExpression(t):
-    '''ConstraintExpression : NumericOrLinearExpression EQ NumericOrLinearExpression
-                           |  NumericOrLinearExpression LE NumericOrLinearExpression
-                           |  NumericOrLinearExpression GE NumericOrLinearExpression
-                           |  NumericOrLinearExpression LE NumericOrLinearExpression LE NumericOrLinearExpression
-                           |  NumericOrLinearExpression GE NumericOrLinearExpression GE NumericOrLinearExpression'''
+    '''ConstraintExpression : LinearExpression EQ LinearExpression
+                           |  LinearExpression LE LinearExpression
+                           |  LinearExpression GE LinearExpression
+                           |  LinearExpression LE LinearExpression LE LinearExpression
+                           |  LinearExpression GE LinearExpression GE LinearExpression'''
     
     if len(t) > 4:
         if t[4] == "\\leq":
@@ -176,28 +185,56 @@ def p_ConstraintExpression(t):
 
 def p_Declarations(t):
   '''Declarations : DeclarationList
-                  | DeclarationList BACKSLASHES'''
+                  | DeclarationList FOR IndexingExpression
+                  | DeclarationList PIPE IndexingExpression'''
+
+  if len(t) > 3:
+    for decl in t[1]:
+      if decl.indexingExpression == None:
+        decl.setIndexingExpression(t[3])
+  else:
+    lastDecl = t[1][len(t[1])-1]
+    if lastDecl and lastDecl.indexingExpression != None:
+      for i in range(len(t[1])-1):
+        decl = t[1][i]
+        if decl.indexingExpression == None:
+          decl.setIndexingExpression(lastDecl.indexingExpression)
+
   t[0] = Declarations(t[1])
 
 def p_DeclarationList(t):
-    '''DeclarationList : DeclarationList BACKSLASHES Declaration
-                       | Declaration'''
-    if len(t) > 3:
+    '''DeclarationList : Declaration
+                       | DeclarationList SEMICOLON Declaration
+                       | DeclarationList SEMICOLON BACKSLASHES Declaration
+                       | DeclarationList SEMICOLON BACKSLASHES
+                       | DeclarationList SEMICOLON'''
+    if len(t) > 4:
+      t[0] = t[1] + [t[4]]
+    elif len(t) > 3:
+      if isinstance(t[3], Declaration):
         t[0] = t[1] + [t[3]]
-    elif len(t) > 2:
+      else:
         t[0] = t[1]
+    elif len(t) > 2:
+      t[0] = t[1]
     else:
-        t[0] = [t[1]]
+      t[0] = [t[1]]
 
 def p_Declaration(t):
     '''Declaration : DeclarationExpression FOR IndexingExpression
                    | DeclarationExpression COMMA IndexingExpression
-                   | Variable FOR IndexingExpression
-                   | Variable COMMA IndexingExpression
+                   | DeclarationExpression PIPE IndexingExpression
+                   | DeclarationExpression FOR BACKSLASHES IndexingExpression
+                   | DeclarationExpression COMMA BACKSLASHES IndexingExpression
+                   | DeclarationExpression PIPE BACKSLASHES IndexingExpression
+                   | ValueList FOR BACKSLASHES IndexingExpression
+                   | ValueList FOR IndexingExpression
+                   | ValueList PIPE BACKSLASHES IndexingExpression
+                   | ValueList PIPE IndexingExpression
                    | DeclarationExpression'''
     if len(t) > 3:
         t[3].setStmtIndexing(True)
-        if isinstance(t[1], Variable):
+        if isinstance(t[1], ValueList):
           t[1] = DeclarationExpression(t[1], [])
 
         t[0] = Declaration(t[1], t[3])
@@ -205,17 +242,17 @@ def p_Declaration(t):
         t[0] = Declaration(t[1])
 
 def p_DeclarationExpression(t):
-    '''DeclarationExpression : Variable IN SetExpression
-                             | Variable SUBSET SetExpression
-                             | Variable DEFAULT NumericOrSymbolicExpression
-                             | Variable DEFAULT SetExpression
-                             | Variable DIMEN NumericOrSymbolicExpression
-                             | Variable COLON EQ NumericOrSymbolicExpression
-                             | Variable COLON EQ SetExpression
-                             | Variable LT NumericOrSymbolicExpression
-                             | Variable GT NumericOrSymbolicExpression
-                             | Variable NEQ NumericOrSymbolicExpression
-                             | Variable COMMA DeclarationAttributeList
+    '''DeclarationExpression : ValueList IN SetExpression
+                             | ValueList SUBSET SetExpression
+                             | ValueList DEFAULT NumericOrSymbolicExpression
+                             | ValueList DEFAULT SetExpression
+                             | ValueList DIMEN NumericOrSymbolicExpression
+                             | ValueList COLON EQ NumericOrSymbolicExpression
+                             | ValueList COLON EQ SetExpression
+                             | ValueList LT NumericOrSymbolicExpression
+                             | ValueList GT NumericOrSymbolicExpression
+                             | ValueList NEQ NumericOrSymbolicExpression
+                             | ValueList COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList
                              | DeclarationExpression DeclarationAttributeList'''
 
@@ -306,10 +343,7 @@ def p_DeclarationAttribute(t):
 #    sys.stderr.write("Constraint Expression bad formatted at line %d\n" % t.lineno(2))
 
 def p_LinearExpression(t):
-    '''LinearExpression : NUMBER
-                        | Variable
-                        | PLUS LinearExpression %prec UPLUS
-                        | MINUS LinearExpression %prec UMINUS
+    '''LinearExpression : NumericExpression
                         | LPAREN LinearExpression RPAREN
                         | ConditionalLinearExpression'''
 
@@ -331,10 +365,7 @@ def p_LinearExpression(t):
 
 def p_LinearExpression_binop(t):
     '''LinearExpression : LinearExpression PLUS LinearExpression
-                        | LinearExpression PLUS NumericExpression
                         | LinearExpression MINUS LinearExpression
-                        | LinearExpression MINUS NumericExpression
-                        | NumericExpression TIMES LinearExpression
                         | LinearExpression TIMES NumericExpression
                         | LinearExpression DIVIDE NumericExpression'''
 
@@ -580,15 +611,15 @@ def p_IteratedSetExpression(t):
       t[0] = IteratedSetExpression(t[3], [t[5]])
 
 
-def p_ConditionalSetExpression(t):
-    '''ConditionalSetExpression : LPAREN SetExpression RPAREN QUESTION_MARK SetExpression
-                                | LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
-                                | ConditionalSetExpression COLON SetExpression'''
-    if len(t) > 4:
-        t[0] = ConditionalSetExpression(t[2], t[5])
-    else:
-        t[1].addElseExpression(t[3])
-        t[0] = t[1]
+#def p_ConditionalSetExpression(t):
+#    '''ConditionalSetExpression : LPAREN SetExpression RPAREN QUESTION_MARK SetExpression
+#                                | LPAREN LogicalExpression RPAREN QUESTION_MARK SetExpression
+#                                | ConditionalSetExpression COLON SetExpression'''
+#    if len(t) > 4:
+#        t[0] = ConditionalSetExpression(t[2], t[5])
+#    else:
+#        t[1].addElseExpression(t[3])
+#        t[0] = t[1]
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
@@ -696,15 +727,15 @@ def p_FunctionSymbolicExpression(t):
 #    sys.stderr.write("Bad function call at line %d\n" % t.lineno(1))
 
 
-def p_ConditionalSymbolicExpression(t):
-    '''ConditionalSymbolicExpression : LPAREN SetExpression RPAREN QUESTION_MARK SymbolicExpression
-                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression
-                                     | ConditionalSymbolicExpression COLON SymbolicExpression'''
-    if len(t) > 4:
-        t[0] = ConditionalSymbolicExpression(t[2], t[5])
-    else:
-        t[1].addElseExpression(t[3])
-        t[0] = t[1]
+#def p_ConditionalSymbolicExpression(t):
+#    '''ConditionalSymbolicExpression : LPAREN SetExpression RPAREN QUESTION_MARK SymbolicExpression
+#                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression
+#                                     | ConditionalSymbolicExpression COLON SymbolicExpression'''
+#    if len(t) > 4:
+#        t[0] = ConditionalSymbolicExpression(t[2], t[5])
+#    else:
+#        t[1].addElseExpression(t[3])
+#        t[0] = t[1]
 
 def p_NumericExpression_binop(t):
     '''NumericExpression : NumericExpression PLUS NumericExpression
@@ -904,10 +935,10 @@ def p_ConditionalNumericExpression(t):
         t[1].addElseExpression(t[3])
         t[0] = t[1]
 
-def p_NumericOrLinearExpression(t):
-    '''NumericOrLinearExpression : NumericExpression
-                                 | LinearExpression'''
-    t[0] = t[1]
+#def p_NumericOrLinearExpression(t):
+#    '''NumericOrLinearExpression : NumericExpression
+#                                 | LinearExpression'''
+#    t[0] = t[1]
 
 def p_NumericOrSymbolicExpression(t):
     '''NumericOrSymbolicExpression : NumericExpression

@@ -888,6 +888,13 @@ class CodeSetup:
         """
         map(self._setupValue, node.values)
 
+    # Variable List
+    def setupEnvironment_VariableList(self, node):
+        """
+        Generate the MathProg code for the declaration of variables used in this range expression
+        """
+        map(self._setupValue, node.variables)
+
     # Tuple
     def setupEnvironment_Tuple(self, node):
         """
@@ -1091,41 +1098,53 @@ class CodeSetup:
         """
         Generate the MathProg code for declaration of variables and sets in this declaeation
         """
-        var = node.declarationExpression.variable
-        var = self._getVariable(var)
+        #variables = node.declarationExpression.variables
+        #var = self._getVariable(var)
 
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
+        for var in node.declarationExpression.variables:
+            var = self._getVariable(var)
+            
+            if isinstance(var, Variable):
+                name = var.generateCodeWithoutIndices(self.codeGenerator)
+                genDeclaration = self.codeGenerator.genDeclarations.get(name)
+                if genDeclaration == None:
+                    genDeclaration = GenDeclaration(name, node.declarationExpression.attributeList, None, str(self.stmtIndex))
+                    self.codeGenerator.genDeclarations.add(genDeclaration)
+                else:
+                    genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
-        genDeclaration = self.codeGenerator.genDeclarations.get(name)
-        if genDeclaration == None:
-            genDeclaration = GenDeclaration(name, node.declarationExpression.attributeList, None, str(self.stmtIndex))
-            self.codeGenerator.genDeclarations.add(genDeclaration)
-        else:
-            genDeclaration.addAttributes(node.declarationExpression.attributeList)
+                if node.indexingExpression:
+                    genDeclaration.setIndexingExpression(node.indexingExpression)
 
         node.declarationExpression.setupEnvironment(self)
 
         if node.indexingExpression:
-            genDeclaration.setIndexingExpression(node.indexingExpression)
             node.indexingExpression.setupEnvironment(self)
 
     def setupEnvironment_DeclarationExpression(self, node):
         """
         Generate the MathProg code for the variables and sets in this declaration
         """
-        var = node.variable
-        var = self._getVariable(var)
+        #var = node.variable
+        #var = self._getVariable(var)
 
-        var.setIsParam(False)
+        for var in node.variables:
+            var = self._getVariable(var)
 
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        if self.codeGenerator.genSets.has(name):
-            self._setIsSet(var)
+            if isinstance(var, Variable):
+                var.setIsParam(False)
 
-        map(lambda el: self.setupEnvironment_AttributeListPre(el, var), node.attributeList)
-        map(lambda el: self.setupEnvironment_AttributeList(el, var), node.attributeList)
+                name = var.generateCodeWithoutIndices(self.codeGenerator)
+                if self.codeGenerator.genSets.has(name):
+                    self._setIsSet(var)
 
-        var.setupEnvironment(self)
+                map(lambda el: self.setupEnvironment_AttributeListPre(el, var), node.attributeList)
+                map(lambda el: self.setupEnvironment_AttributeList(el, var), node.attributeList)
+
+        map(lambda el: el.setupEnvironment(self), node.attributeList)            
+
+        for var in node.variables:
+            var.setupEnvironment(self)
 
     def setupEnvironment_DeclarationAttribute(self, node):
         """
@@ -1155,7 +1174,7 @@ class CodeSetup:
 
             self._setIsParam(var)
 
-        node.setupEnvironment(self)
+        #node.setupEnvironment(self)
         
     def setupEnvironment_DeclarationExpressionWithSet(self, attribute, variable):
         setExpression = attribute.generateCode(self.codeGenerator)

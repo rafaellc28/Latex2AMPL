@@ -63,9 +63,12 @@ class Declaration:
             res += ",\nfor " + str(self.indexingExpression)
         
         return "Decl:" + res
-
+    
     def setStmtIndexing(self, stmtIndex):
         self.stmtIndex = stmtIndex
+
+    def setIndexingExpression(self, indexingExpression):
+        self.indexingExpression = indexingExpression
     
     def setupEnvironment(self, codeSetup):
         """
