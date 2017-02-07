@@ -1,4 +1,4 @@
-% GLPK/cflsq.mod: ../glpk-4.47/examples/cflsq.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/cflsq.mod: ../glpk-4.47/examples/cflsq.mod
 X + Ex_{z} = Sx_{z}, z \in Sample\\
 \sum_{z \in Sample} Ex_{z} = 0\\
 Y + Ey_{z} = Sy_{z}, z \in Sample\\

@@ -1,4 +1,4 @@
-% GLPK/prod.mod: ../glpk-4.47/examples/prod.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/prod.mod: ../glpk-4.47/examples/prod.mod
 \text{minimize } \sum_{t \in time} rtr * sl * dpp_{t} * cs * Crews_{t} + \sum_{t \in time} hc_{t} * Hire_{t} + \sum_{t \in time} lc_{t} * Layoff_{t} + \sum_{t \in time, p \in prd} otr * cs * pt_{p} * Oprd_{p,t} + \sum_{t \in time, p \in prd, a \in 1 \ldots life} cri_{p} * pc_{p} * Inv_{p,t,a} + \sum_{t \in time, p \in prd} crs_{p} * pc_{p} * Short_{p,t}\\
 \text{subject to } \sum_{p \in prd} pt_{p} * Rprd_{p,t} \leq sl * dpp_{t} * Crews_{t}, t \in time\\
 \sum_{p \in prd} pt_{p} * Oprd_{p,t} \leq ol_{t}, t \in time\\

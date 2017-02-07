@@ -1,4 +1,4 @@
-% GLPK/food.mod: ../glpk-4.47/examples/food.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/food.mod: ../glpk-4.47/examples/food.mod
 \text{maximize } \sum_{m \in month} productprice * production_{m} - \sum_{m \in month, o \in oils} buyingprices_{m,o} * buys_{m,o} - \sum_{m \in month, o \in oils} storagecost * stock_{m,o}\\
 \text{subject to } stock_{1,o} = 500, o \in oils\\
 stock_{6,o} + buys_{6,o} - useoil_{6,o} \geq 500, o \in oils\\

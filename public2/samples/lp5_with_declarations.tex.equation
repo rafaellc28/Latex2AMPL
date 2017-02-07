@@ -1,5 +1,5 @@
-% GLPK/stigler.mod (Stigler's 1939 Diet Problem): ../glpk-4.47/examples/stigler.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/stigler.mod (Stigler's 1939 Diet Problem): ../glpk-4.47/examples/stigler.mod
 \text{minimize} \sum_{c \in C} x_{c}\\
-\text{subject to} \sum_{c \in C} Data_{c,n} * x_{c} \geq Allowance_{n},\\ n \in N\\
-Data_{c,n}, c \in C, n \in \{"price", "weight"\} \cup N\\
-x_{c} \in \mathbb{R}^{+}, c \in C
+\text{subject to} \sum_{c \in C} Data_{c,n} * x_{c} \geq Allowance_{n}, n \in N\\
+Data_{c,n}| c \in C, n \in \{"price", "weight"\} \cup N\\
+x_{c} \in \mathbb{R}^{+}, c \in C\\

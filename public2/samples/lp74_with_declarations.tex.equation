@@ -1,4 +1,4 @@
-% GLPK/graph.mod: ../glpk-4.47/examples/graph.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/graph.mod: ../glpk-4.47/examples/graph.mod
 file \in \mathbb{S}, := "graph.eps"\\
 R := 2\\
 n, > 0\\

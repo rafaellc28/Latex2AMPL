@@ -1,4 +1,4 @@
-% GLPK/train.mod: ../glpk-4.47/examples/train.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/train.mod: ../glpk-4.47/examples/train.mod
 \text{minimize } \sum_{c \in cities} U_{c,last} + \sum_{(c1,t1,c2,t2) \in schedule: t2 < t1} X_{c1,t1,c2,t2}, X_{c1,t1,c2,t2} \in \mathbb{R}^{+}\\
 \text{minimize } \sum_{(c1,t1,c2,t2) \in schedule} distance_{c1,c2} * X_{c1,t1,c2,t2}\\
 \text{subject to } U_{c,t} = U_{c, (t>1)?t-1:last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}, c \in cities, t \in times, U_{c,t} \in \mathbb{R}^{+}\\

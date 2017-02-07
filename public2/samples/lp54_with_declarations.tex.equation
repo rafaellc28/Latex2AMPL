@@ -1,4 +1,4 @@
-% GLPK/egypt.mod: ../glpk-4.47/examples/egypt.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/egypt.mod: ../glpk-4.47/examples/egypt.mod
 \text{minimize } Psip + Psil + Psii\\
 \text{subject to } \sum_{c \in cFinal} fn_{c,n} * (\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r}) \geq cn75_{r,n}, n \in nutr, r \in region\\
 \sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r} \geq cf75_{r,c}, c \in cFinal, r \in region: cf75_{r,c} > 0\\

@@ -1,4 +1,4 @@
-% GLPK/gap.mod: ../glpk-4.47/examples/gap.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/gap.mod: ../glpk-4.47/examples/gap.mod
 \text{minimize } \sum_{i \in I, j \in J} c_{i,j} * x_{i,j}\\
 \text{subject to } \sum_{i \in I} x_{i,j} = 1, j \in J\\
 \sum_{j \in J} a_{i,j} * x_{i,j} \leq b_{i}, i \in I\\
