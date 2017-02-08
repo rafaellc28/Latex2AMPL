@@ -1284,8 +1284,8 @@ class CodeGenerator:
 
     # Variable
     def generateCode_Variable(self, node):
-        if not node.isSubIndice and not node.isInSet:
-            self.genNames.add(GenObj(node.generateCodeWithoutIndices(self)))
+        #if not node.isSubIndice and not node.isInSet:
+        self.genNames.add(GenObj(node.generateCodeWithoutIndices(self)))
 
         if Utils._isInstanceOfStr(node.sub_indices):
             return ""

@@ -1107,13 +1107,14 @@ class CodeSetup:
             if isinstance(var, Variable):
                 name = var.generateCodeWithoutIndices(self.codeGenerator)
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
+
                 if genDeclaration == None:
-                    genDeclaration = GenDeclaration(name, node.declarationExpression.attributeList, None, str(self.stmtIndex))
+                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, str(self.stmtIndex))
                     self.codeGenerator.genDeclarations.add(genDeclaration)
                 else:
                     genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
-                if node.indexingExpression:
+                if node.indexingExpression and len(var.sub_indices) > 0:
                     genDeclaration.setIndexingExpression(node.indexingExpression)
 
         node.declarationExpression.setupEnvironment(self)

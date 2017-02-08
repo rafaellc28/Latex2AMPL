@@ -193,9 +193,15 @@ def p_Declarations(t):
       if decl.indexingExpression == None:
         decl.setIndexingExpression(t[3])
   else:
-    lastDecl = t[1][len(t[1])-1]
+    i = 1
+    length = len(t[1])
+    lastDecl = t[1][length-i]
+    while (not lastDecl or lastDecl.indexingExpression == None) and i < length:
+      i += 1
+      lastDecl = t[1][length-i]
+    
     if lastDecl and lastDecl.indexingExpression != None:
-      for i in range(len(t[1])-1):
+      for i in range(length-i):
         decl = t[1][i]
         if decl.indexingExpression == None:
           decl.setIndexingExpression(lastDecl.indexingExpression)

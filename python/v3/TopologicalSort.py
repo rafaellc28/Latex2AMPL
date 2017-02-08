@@ -1,5 +1,6 @@
 # from http://stackoverflow.com/questions/15038876/topological-sort-python
 
+from CodeGenerationException import *
 from collections import defaultdict
 from itertools import takewhile, count
 
@@ -35,6 +36,10 @@ def sort_topologically_stackless(graph):
             level = 1 + max(levels_by_name[lname] for lname in children)
             add_level_to_name(name, level)
 
+    isCyclic, name, path_set = cyclic(graph)
+    if isCyclic:
+        raise CodeGenerationException("It was detected in your code a cyclic dependence including the name '"+ name +"'. Please, correct this problem!")
+
     for name in graph:
         walk_depth_first(name)
 
@@ -43,3 +48,25 @@ def sort_topologically_stackless(graph):
 
     return result
 
+
+
+# from http://codereview.stackexchange.com/questions/86021/check-if-a-directed-graph-contains-a-cycle
+def cyclic(graph):
+    visited = set()
+    path = [object()]
+    path_set = set(path)
+    stack = [iter(graph)]
+    while stack:
+        for v in stack[-1]:
+            if v in path_set:
+                return True, v, path_set
+            elif v not in visited:
+                visited.add(v)
+                path.append(v)
+                path_set.add(v)
+                stack.append(iter(graph.get(v, ())))
+                break
+        else:
+            path_set.remove(path.pop())
+            stack.pop()
+    return False, "", path_set
