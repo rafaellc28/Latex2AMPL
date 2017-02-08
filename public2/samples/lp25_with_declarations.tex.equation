@@ -4,8 +4,5 @@
 \sum_{(i,j) \in E} x_{i,j} = 1, j \in V\\
 y_{i,j} \leq (n-1) * x_{i,j}, (i,j) \in E\\
 \sum_{(j,i) \in E} y_{j,i} + ((i = 1)? n) = \sum_{(i,j) \in E} y_{i,j} + 1, i \in V\\
-x_{i,j} \in \mathbb{B}\\
-y_{i,j} \in \mathbb{R}^{+}\\
-n, \geq 3\\
-V := 1 \ldots n\\
-E \subset V \times V\\
+x_{i,j} \in \mathbb{B}; y_{i,j} \in \mathbb{R}^{+}\\
+n, \geq 3; V := 1 \ldots n; E \subset V \times V\\
