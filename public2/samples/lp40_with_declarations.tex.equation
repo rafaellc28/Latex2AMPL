@@ -5,7 +5,5 @@
 \sum_{i \in 1 \dots n, k \in N} k * x_{i,j,k} = s, j \in 1 \ldots n\\
 \sum_{i \in 1 \ldots n, k \in N} k * x_{i,i,k} = s\\
 \sum_{i \in 1 \ldots n, k \in N} k * x_{i,n-i+1,k} = s\\
-x_{i,j,k} \in \mathbb{B}\\
-s \in \mathbb{R}\\
-n, > 0, := 4\\
-N := 1 \ldots n^{2}\\
+x_{i,j,k} \in \mathbb{B}; s \in \mathbb{R}\\
+n, > 0, := 4; N := 1 \ldots n^{2}\\

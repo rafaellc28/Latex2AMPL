@@ -3,7 +3,5 @@
 \text{subject to } \sum_{d \in dmus} lambda_{d,td} * outputdata_{d,o} \geq outputdata_{td,o}, o \in outputs, td \in dmus\\
 \sum_{d \in dmus} lambda_{d,td} * inputdata_{d,i} \leq theta_{td} * inputdata_{td,i}, i \in inputs, td \in dmus\\
 \sum_{d \in dmus} lambda_{d,td} = 1, td \in dmus\\
-inputdata_{d,i}, \geq 0\\
-outputdata_{d,o}, \geq 0\\
-theta_{td} \in \mathbb{R}^{+}\\
-lambda_{d,td} \in \mathbb{R}^{+}\\
+inputdata_{d,i}, outputdata_{d,o}, \geq 0\\
+theta_{td}, lambda_{d,td} \in \mathbb{R}^{+}\\

@@ -1,4 +1,4 @@
-% GLPK/money.mod: ../glpk-4.47/examples/money.mod
+% GLPK/money.mod: ../glpk-4.47/examples/money.mod in https://www3.nd.edu/~jeff/mathprog/#
 \sum_{d \in DIGITS} x_{i,d} = 1, i \in LETTERS, x_{i,d} \in \mathbb{B}\\
 \sum_{i \in LETTERS} x_{i,d} \leq 1, d \in DIGITS\\
 dig_{i} = \sum_{d \in DIGITS} d * x_{i,d}, i \in LETTERS, dig_{i} \in \mathbb{R}\\

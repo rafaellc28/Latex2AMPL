@@ -4,5 +4,4 @@
 x_{i} \geq 0, i \in V\\
 w_{i,j}, \geq 0, := 1, (i,j) \in E\\
 V := (\text{ setof }\{(i,j) \in E\} i) \cup (\text{ setof }\{(i,j) \in E\} j)\\
-x_{i} \in \mathbb{B}\\
-t_{i,j} \in \mathbb{B}\\
+x_{i}, t_{i,j} \in \mathbb{B}\\

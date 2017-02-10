@@ -4,7 +4,7 @@
 stock_{6,o} + buys_{6,o} - useoil_{6,o} \geq 500, o \in oils\\
 stock_{m,o} \leq 1000, m \in month, o \in oils\\
 useoil_{m,o} \leq stock_{m,o} + buys_{m,o}, m \in month, o \in oils\\
-stock_{m2,o} = stock_{m1,o} + buys_{m1,o} - useoil_{m1,o}, m1 \in month, m2 \in month, o \in oils : m2 = m1+1\\
+stock_{m2,o} = stock_{m1,o} + buys_{m1,o} - useoil_{m1,o}, m1 \in month, m2 \in month, o \in oils \mid m2 = m1+1\\
 \sum_{o \in oils} oilhardness_{o} * useoil_{m,o} \geq 3 * production_{m}, m \in month\\
 \sum_{o \in oils} oilhardness_{o} * useoil_{m,o} \leq 6 * production_{m}, m \in month\\
 production_{m} = \sum_{o \in oils} useoil_{m,o}, m \in month\\
@@ -15,11 +15,5 @@ M*useoilb_{m,o} \geq useoil_{m,o}, m \in month, o \in oils\\
 20 * useoilb_{m,o} \leq useoil_{m,o}, m \in month, o \in oils\\
 useoilb_{m,"VEG1"} \leq useoilb_{m,"OIL3"}, m \in month\\
 useoilb_{m,"VEG2"} \leq useoilb_{m,"OIL3"}, m \in month\\
-productprice, \geq 0\\
-oilhardness_{o}, \geq 0, o \in oils\\
-M, \geq 0\\
-production_{m} \in \mathbb{R}^{+}\\
-buys_{m,o} \in \mathbb{R}^{+}\\
-stock_{m,o} \in \mathbb{R}^{+}\\
-useoil_{6,o} \in \mathbb{R}^{+}\\
-useoilb_{m,o} \in \mathbb{B}\\
+productprice, oilhardness_{o}, M, \geq 0, o \in oils\\
+production_{m}, buys_{m,o}, stock_{m,o}, useoil_{m,o} \in \mathbb{R}^{+}; useoilb_{m,o} \in \mathbb{B}\\

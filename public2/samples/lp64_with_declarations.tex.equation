@@ -12,35 +12,11 @@ Inv_{p,first+v-1,a} = 0, p \in prd, v \in 1 \ldots life-1, a \in v+1 \ldots life
 Inv_{p,t,1} \leq Rprd_{p,t} + Oprd_{p,t}, p \in prd, t \in time\\
 Inv_{p,t,a} \leq Inv_{p,t-1,a-1}, p \in prd, t \in first+1 \ldots last, a \in 2 \ldots life\\
 Crews_{t} \in \mathbb{R}^{+}, t \in first-1 \ldots last\\
-Hire_{t} \in \mathbb{R}^{+}\\
-Layoff_{t} \in \mathbb{R}^{+}\\
-Oprd_{p,t} \in \mathbb{R}^{+}\\
-Inv_{p,t,a} \in \mathbb{R}^{+}, p \in prd, t \in time, a \in 1 \ldots life\\
-Short_{p,t} \in \mathbb{R}^{+}, p \in prd, t \in time\\
-Rprd_{p,t} \in \mathbb{R}^{+}\\
-pt_{p} > 0, p \in prd\\
-pc_{p} > 0, p \in prd\\
-first > 0\\
-last > first\\
-time := first \ldots last\\
-cs > 0\\
-sl > 0\\
-rtr > 0\\
-otr > rtr\\
-iw, \geq 0\\
-dpp_{t} > 0, t \in time\\
-ol_{t}, \geq 0, t \in time\\
-cmin_{t}, \geq 0, t \in time\\
-cmax_{t}, \geq cmin_{t}, t \in time\\
-hc_{t}, \geq 0, t \in time\\
-lc_{t}, \geq 0, t \in time\\
+Hire_{t}, Layoff_{t}, Oprd_{p,t}, Inv_{p,t,a}, Short_{p,t}, Rprd_{p,t} \in \mathbb{R}^{+}, p \in prd, t \in time, a \in 1 \ldots life\\
+pt_{p}, pc_{p} > 0, p \in prd; first, cs, sl, rtr, dpp_{t} > 0; last > first; time := first \ldots last; otr > rtr\\
+iw, ol_{t}, cmin_{t}, hc_{t}, lc_{t}, \geq 0; cmax_{t}, \geq cmin_{t}, t \in time\\
 dem_{p,i}, \geq 0, p \in prd, i \in first \ldots last+1\\
 pro_{p,i}, \in \mathbb{L}, p \in prd, i \in first \ldots last+1\\
-rir, \geq 0\\
-pir, \geq 0\\
-life > 0\\
-cri_{p} > 0, p \in prd\\
-crs_{p} > 0, p \in prd\\
-iinv_{p}, \geq 0, p \in prd\\
+rir, pir, iinv_{p}, \geq 0; life, cri_{p}, crs_{p} > 0, p \in prd\\
 iil_{p,t} := iinv_{p} \text{ less } \sum_{v \in first \ldots t} dem_{p,v}, p \in prd, t \in time\\
 minv_{p,t} := dem_{p,t+1} * ((pro_{p,t+1})? pir : rir), p \in prd, t \in time\\

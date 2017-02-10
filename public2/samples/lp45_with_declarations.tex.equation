@@ -23,15 +23,9 @@ nationality_{1,"Norwegian"} = 1\\
 smoke_{h,"Lucky_Strike"} = drink_{h,"orange_juice"}, h \in HOUSE\\
 nationality_{h,"Japanese"} = smoke_{h,"Parliament"}, h \in HOUSE\\
 (1 - nationality_{h,"Norwegian"}) + ((h = 1)?0:color_{h-1,"blue"}) + ((h = 5)?0:color_{h+1,"blue"}) \geq 1, h \in HOUSE\\
-color_{h,p} \in \mathbb{B}\\
-nationality_{h,n} \in \mathbb{B}\\
-drink_{h,d} \in \mathbb{B}\\
-smoke_{h,s} \in \mathbb{B}\\
-pet_{h,p} \in \mathbb{B}\\\
-HOUSE := \{1 \ldots 5\}\\
-COLOR := \{"blue", "green", "ivory", "red", "yellow"\}\\
+color_{h,p}, nationality_{h,n}, drink_{h,d}, smoke_{h,s}, pet_{h,p} \in \mathbb{B}\\\
+HOUSE := \{1 \ldots 5\}; COLOR := \{"blue", "green", "ivory", "red", "yellow"\}\\
 NATIONALITY := \{"Englishman", "Japanese", "Norwegian", "Spaniard", "Ukranian"\}\\
 DRINK := \{"coffee", "milk", "orange_juice", "tea", "water"\}\\
 SMOKE := \{"Chesterfield", "Kools", "Lucky_Strike", "Old_Gold", "Parliament"\}\\
 PET := \{"dog", "fox", "horse", "snails", "zebra"\}\\
-

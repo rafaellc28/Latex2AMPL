@@ -1,4 +1,4 @@
-% GLPK/plan.mod: ../glpk-4.47/examples/plan.mod
+% GLPK/plan.mod: ../glpk-4.47/examples/plan.mod in https://www3.nd.edu/~jeff/mathprog/#
 \text{minimize } .03 * bin1 + .08 * bin2 + .17 * bin3 + .12 * bin4 + .15 * bin5 +        .21 * alum + .38 * silicon\\
 \text{subject to } bin1 + bin2 + bin3 + bin4 + bin5 + alum + silicon = 2000\\
 .15 * bin1 + .04 * bin2 + .02 * bin3 + .04 * bin4 + .02 * bin5 +     .01 * alum + .03 * silicon \leq 60\\

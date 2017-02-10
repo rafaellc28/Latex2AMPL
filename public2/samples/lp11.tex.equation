@@ -1,4 +1,4 @@
-% GLPK/cpp.mod: ../glpk-4.47/examples/cpp.mod
+% GLPK/cpp.mod: ../glpk-4.47/examples/cpp.mod in https://www3.nd.edu/~jeff/mathprog/#
 \text{minimize } z\\
 \text{subject to } x_{j} \geq x_{k} + T_{k}, j \in J, k \in P_{j}, x_{j} \in \mathbb{R}^{+}, z \in \mathbb{R}\\
  z \geq x_{j} + T_{j}, j \in J\\
