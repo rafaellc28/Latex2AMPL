@@ -57,7 +57,7 @@ CodeMirror.defineSimpleMode("latex", {
     {regex: /%.*/, token: "comment"},
     {regex: /=|\\neq|\\leq|<|\\geq|>|\\text\{\%\}|\\mod|\\bmod/, token: "operator"},
     {regex: /\\in|\\notin/, token: "atom"},
-    {regex: /\\sum|\\prod|\\max|\\min|\\lfloor|\\rfloor|\\lceil|\\rceil|\\sin|\\cos|\\arctan|\\sqrt|\\log|\\ln|\\exp|\\vert|\|/, token: "def"},
+    {regex: /\\sum|\\prod|\\max|\\min|\\lfloor|\\rfloor|\\lceil|\\rceil|\\sin|\\cos|\\arctan|\\sqrt|\\log|\\ln|\\exp|\\vert|\\mid|\|/, token: "def"},
     {regex: /\\limits|\\begin\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}[\{\[][a-zA-Z0-9][a-zA-Z0-9]*[\*]?[\}\]]|\\begin\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}/, token: "def"},
     {regex: /\\end\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}[\{\[][a-zA-Z0-9][a-zA-Z0-9]*[\*]?[\}\]]|\\end\{[a-zA-Z][a-zA-Z0-9]*[\*]?\}/, token: "def"},
     {regex: /\\begin\{equation\}|\\end\{equation\}|\\begin\{split\}|\\end\{split\}|\\displaystyle|\\quad|\\mathclap|\\text/, token: "def"},
