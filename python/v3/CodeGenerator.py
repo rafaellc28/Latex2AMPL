@@ -495,7 +495,10 @@ class CodeGenerator:
                     if _type == None:
                         _type = self.genTypes.get(var)
                         if _type != None and _type.getType().strip() != "":
-                            varStr += " " + _type.getType()
+                            _typeStr = _type.getType().strip()
+                            
+                            if not _typeStr.startswith(Constants.REALSET) and not _typeStr.startswith(Constants.PARAMETERS) and not _typeStr.startswith(Constants.SETS) and not _typeStr.startswith(Constants.VARIABLES):
+                                varStr += " " + _typeStr
 
                     if varDecl != None:
                         attr = varDecl.getRelationEqualTo()
@@ -558,7 +561,7 @@ class CodeGenerator:
 
                         sets = varDecl.getIn()
                         if sets != None and len(sets) > 0:
-                            sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
+                            sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL) and not el.startswith(Constants.PARAMETERS) and not el.startswith(Constants.SETS) and not el.startswith(Constants.VARIABLES), map(lambda el: el.attribute.generateCode(self), sets))
                             ins = ",".join(map(lambda el: "in " + el, sets))
                             
                             if ins != "":
@@ -631,13 +634,16 @@ class CodeGenerator:
 
                 if _type == None:
                     _type = self.genTypes.get(paramIn)
-                    if _type != None:
-                        paramStr += " " + _type.getType()
+                    if _type != None and _type.getType().strip() != "":
+                        _typeStr = _type.getType().strip()
+
+                        if not _typeStr.startswith(Constants.REALSET) and not _typeStr.startswith(Constants.PARAMETERS) and not _typeStr.startswith(Constants.SETS) and not _typeStr.startswith(Constants.VARIABLES):
+                            paramStr += " " + _typeStr
 
                 if varDecl != None:
                     sets = varDecl.getIn()
                     if sets != None and len(sets) > 0:
-                        sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
+                        sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL) and not el.startswith(Constants.PARAMETERS) and not el.startswith(Constants.SETS) and not el.startswith(Constants.VARIABLES), map(lambda el: el.attribute.generateCode(self), sets))
                         ins = ",".join(map(lambda el: "in " + el, sets))
                         
                         if ins != "":
@@ -705,13 +711,15 @@ class CodeGenerator:
 
         if _type == None:
             _type = self.genTypes.get(paramIn)
-            if _type != None:
-                paramStr += " " + _type.getType()
+            if _type != None and _type.getType().strip() != "":
+                _typeStr = _type.getType().strip()
+                if not _typeStr.startswith(Constants.REALSET) and not _typeStr.startswith(Constants.PARAMETERS) and not _typeStr.startswith(Constants.SETS) and not _typeStr.startswith(Constants.VARIABLES):
+                    paramStr += " " + _typeStr
 
         if varDecl != None:
             sets = varDecl.getIn()
             if sets != None and len(sets) > 0:
-                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL) and not el.startswith(Constants.PARAMETERS) and not el.startswith(Constants.SETS) and not el.startswith(Constants.VARIABLES), map(lambda el: el.attribute.generateCode(self), sets))
                 ins = ",".join(map(lambda el: "in " + el, sets))
 
                 if ins != "":
@@ -770,7 +778,7 @@ class CodeGenerator:
 
             sets = varDecl.getIn()
             if sets != None and len(sets) > 0:
-                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL), map(lambda el: el.attribute.generateCode(self), sets))
+                sets = filter(lambda el: el != Constants.BINARY and el.replace(" ", "") != Constants.BINARY_0_1 and not el.startswith(Constants.INTEGER) and not el.startswith(Constants.REALSET) and not el.startswith(Constants.SYMBOLIC) and not el.startswith(Constants.LOGICAL) and not el.startswith(Constants.PARAMETERS) and not el.startswith(Constants.SETS) and not el.startswith(Constants.VARIABLES), map(lambda el: el.attribute.generateCode(self), sets))
                 ins = ",".join(map(lambda el: "in " + el, sets))
                 
                 if ins != "":
@@ -1142,7 +1150,7 @@ class CodeGenerator:
     
     # Entry Indexing Expression
     def generateCode_EntryIndexingExpressionWithSet(self, node):
-        if node.isBinary or node.isInteger or node.isNatural or node.isReal or node.isSymbolic or node.isLogical or Utils._isInstanceOfStr(node.variable):
+        if node.isBinary or node.isInteger or node.isNatural or node.isReal or node.isSymbolic or node.isLogical or node.isDeclaredAsVar or node.isDeclaredAsParam or node.isDeclaredAsSet or Utils._isInstanceOfStr(node.variable):
             return ""
         elif isinstance(node.variable, ValueList):
             return ", ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), node.variable.getValues()))

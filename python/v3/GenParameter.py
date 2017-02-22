@@ -1,11 +1,12 @@
 from GenObjWithSubIndices import *
 
 class GenParameter(GenObjWithSubIndices):
-	def __init__(self, name, isSymbolic = False, firstStmt = None, lastStmt = None, stmtInclusion = None, certainty = True):
+	def __init__(self, name, isSymbolic = False, firstStmt = None, lastStmt = None, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
 		super(GenParameter, self).__init__(name, firstStmt, lastStmt)
 		self.isSymbolic = isSymbolic
 		self.stmtInclusion = stmtInclusion
 		self.certainty = certainty
+		self.isDeclaredAsParam = isDeclaredAsParam
 	
 	def getIsSymbolic(self):
 		return self.isSymbolic
@@ -24,3 +25,9 @@ class GenParameter(GenObjWithSubIndices):
 
 	def setCertainty(self, certainty):
 		self.certainty = certainty
+
+	def getIsDeclaredAsParam(self):
+		return self.isDeclaredAsParam
+
+	def setIsDeclaredAsParam(self, isDeclaredAsParam):
+		self.isDeclaredAsParam = isDeclaredAsParam

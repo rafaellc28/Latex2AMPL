@@ -76,6 +76,9 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
         self.isReal = False
         self.isSymbolic = False
         self.isLogical = False
+        self.isDeclaredAsVar = False
+        self.isDeclaredAsSet = False
+        self.isDeclaredAsParam = False
 
     def __str__(self):
         """

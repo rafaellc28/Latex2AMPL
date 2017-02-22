@@ -21,12 +21,16 @@ class Variable(Expression):
         self.sub_indices = sub_indices
         self.dimenSet = 1
         self.isInSet = False
-        self.isSet = False
-        self.isVar = False
+        self.isSet = None
+        self.isVar = None
         self.isParam = None
+        self.isReal = False
         self.isSymbolic = False
         self.isLogical = False
         self.isSubIndice = False
+        self.isDeclaredAsParam = None
+        self.isDeclaredAsSet = None
+        self.isDeclaredAsVar = None
 
     def __str__(self):
         """

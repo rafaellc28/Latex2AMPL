@@ -500,7 +500,10 @@ def p_SetExpressionWithValue(t):
                      | REALSETWITHTWOLIMITS
                      | BINARYSET
                      | SYMBOLIC
-                     | LOGICAL'''
+                     | LOGICAL
+                     | PARAMETERS
+                     | SETS
+                     | VARIABLES'''
 
     if len(t) > 2:
         if isinstance(t[1], str) and re.search(r"\\\{", t[1]):

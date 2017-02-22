@@ -124,7 +124,10 @@ tokens = [
    'INTER', 
    'CROSS',
    'STRING',
-   'BY'
+   'BY',
+   'PARAMETERS',
+   'SETS',
+   'VARIABLES'
 ] + list(reserved.values())
 
 def t_STRING(t):
@@ -210,6 +213,21 @@ def t_DIMEN(t):
 
 def t_SETOF(t):
    r'\\text\{\s*setof\s*\}'
+   return t
+
+def t_PARAMETERS(t):
+   r'\\mathbb{P}|\\mathbb{Param}|\\mathbb{Params}|\\mathbb{Parameter}|\\mathbb{Parameters}'
+   t.value2 = "parameters"
+   return t
+
+def t_SETS(t):
+   r'\\mathbb{Set}|\\mathbb{Sets}'
+   t.value2 = "sets"
+   return t
+
+def t_VARIABLES(t):
+   r'\\mathbb{V}|\\mathbb{Var}|\\mathbb{Variable}|\\mathbb{Vars}|\\mathbb{Variables}'
+   t.value2 = "variables"
    return t
 
 def t_BINARYSET(t):
