@@ -81,6 +81,9 @@
 		{"name": "GLPK/xyacfs.mod", "number": 69, "decl": false},
 		{"name": "GLPK/xyacfs.mod (with declaration section)", "number": 69, "decl": true},
 		{"name": "GLPK/yacfs.mod", "number": 70, "decl": false},
-		{"name": "GLPK/yacfs.mod (with declaration section)", "number": 70, "decl": true}
+		{"name": "GLPK/yacfs.mod (with declaration section)", "number": 70, "decl": true},
+		{"name": "GLPK/sorting.mod (with declaration section)", "number": 72, "decl": true},
+		{"name": "GLPK/cal.mod (with declaration section)", "number": 73, "decl": true},
+		{"name": "GLPK/graph.mod (with declaration section)", "number": 74, "decl": true}
 	]
 }

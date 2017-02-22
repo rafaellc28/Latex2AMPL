@@ -4,4 +4,4 @@
 \sum_{i \in 1 \ldots n} x_{i,j} \leq 1, j \in 1 \ldots n\\
 \sum_{i \in 1 \ldots n, j \in 1 \ldots n\mid i-j = k} x_{i,j} \leq 1, k \in 2-n \ldots n-2\\
 \sum_{i \in 1 \ldots n, j \in 1 \ldots n\mid i+j = k} x_{i,j} \leq 1, k \in 3 \ldots n+n-1\\
-x_{i,j} \in \mathbb{B}; n, > 0, := 8\\
+x_{i,j} \in \mathbb{B}; n \in \mathbb{Z}, \in \mathbb{P}, > 0, := 8\\

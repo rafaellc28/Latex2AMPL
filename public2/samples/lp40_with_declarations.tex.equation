@@ -6,4 +6,4 @@
 \sum_{i \in 1 \ldots n, k \in N} k * x_{i,i,k} = s\\
 \sum_{i \in 1 \ldots n, k \in N} k * x_{i,n-i+1,k} = s\\
 x_{i,j,k} \in \mathbb{B}; s \in \mathbb{R}\\
-n, > 0, := 4; N := 1 \ldots n^{2}\\
+n \in \mathbb{P}, \in \mathbb{Z}, > 0, := 4; N := 1 \ldots n^{2}\\

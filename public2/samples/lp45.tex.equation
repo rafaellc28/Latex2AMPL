@@ -1,4 +1,4 @@
-% GLPK/zebra.mod: ../glpk-4.47/examples/zebra.mod in https://www3.nd.edu/~jeff/mathprog/#
+% GLPK/zebra.mod: ../glpk-4.47/examples/zebra.mod
 \sum_{c \in COLOR} color_{h,c} = 1, h \in HOUSE, color_{h,p} \in \mathbb{B}\\
 \sum_{h \in HOUSE} color_{h,c} = 1, c \in COLOR\\
 \sum_{n \in NATIONALITY} nationality_{h,n} = 1, h \in HOUSE, nationality_{h,n} \in \mathbb{B}\\
