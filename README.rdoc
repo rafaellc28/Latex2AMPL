@@ -11,12 +11,19 @@
   - body-parser (https://github.com/expressjs/body-parser)
   - jsesc (https://github.com/mathiasbynens/jsesc)
   - python-shell (https://github.com/extrabacon/python-shell)
+  - i18n (https://github.com/mashpie/i18n-node)
+  - underscore (https://www.npmjs.com/package/underscore)
+  - JQDeffered (https://github.com/jaubourg/jquery-deferred-for-node)
 
 * Python dependency
   - ply (https://github.com/dabeaz/ply)
 
 * JavaScript Libraries
   - jQuery (https://jquery.com/)
+  - jQuery UI (https://jqueryui.com/)
   - MathJax (https://www.mathjax.org/)
-  - writemaths (https://github.com/christianp/writemaths)
-
+  - Mustache (https://mustache.github.io/)
+  - Purl (https://github.com/allmarkedup/purl)
+  - CodeMirror (https://codemirror.net/)
+  - glpk.js https://github.com/hgourvest/glpk.js
+  - Bootstrap (http://getbootstrap.com/javascript/)
