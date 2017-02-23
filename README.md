@@ -5,7 +5,7 @@ This is an experimental tool that aims at converting a Linear Programming Model 
 
 A MathProg Code can be solved using the <a href="https://www.gnu.org/software/glpk/" target="_glpk">GLPK (GNU Linear Programming Kit)</a>. Besides, the GLPK package offers commands/methods to convert a MathProg code to the following formats: <b>CPLEX LP</b>, <b>MPS fixed</b>, <b>MPS free</b> and <b>GLPK</b>.
 
-- Use <b>\text{maximize}<b> or <b>\text{minimize}</b> to the Objective Function(s) in the <b>Objective section</b> and <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
+- Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to the Objective Function(s) in the <b>Objective section</b> and <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
 - A constraint can not end with COMMA "<b>,</b>", thus "<b>,\\\\</b>" means that the constraint continues in the next line.
 - <b>Declarations</b> can be separated by SEMICOLON "<b>;</b>".
 - <b>Variables</b> must belong to one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>.
