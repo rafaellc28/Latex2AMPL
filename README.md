@@ -8,12 +8,12 @@ A MathProg Code can be solved using the <a href="https://www.gnu.org/software/gl
 - Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to the Objective Function(s) in the <b>Objective section</b> and <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
 - A constraint can not end with COMMA "<b>,</b>", thus "<b>,\\\\</b>" means that the constraint continues in the next line.
 - <b>Declarations</b> can be separated by SEMICOLON "<b>;</b>".
-- <b>Variables</b> must belong to one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>.
-- A <b>Variable</b> can be defined by making it belong to one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> and <b>\mathbb{Variables}</b>.
-- A <b>Parameter</b> can be defined by making it belong to one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>.
-- A <b>Set</b> can be defined by making it belong to one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>.
-- <b>Symbolic Parameters</b> must belong to <b>\mathbb{S}</b>.
-- <b>Logical Parameters</b> must belong to <b>\mathbb{L}</b>.
+- <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>.
+- A <b>Variable</b> can be defined by making it be member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> and <b>\mathbb{Variables}</b>.
+- A <b>Parameter</b> can be defined by making it be member of one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>.
+- A <b>Set</b> can be defined by making it be member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>.
+- <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>.
+- <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>.
 
 Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
@@ -41,3 +41,5 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | more or equal than  | <b>\geq</b> | a <b>\geq</b> b |
 | equal to  | =       | a = b       |
 | different from      | <b>\neq</b> | a <b>\neq</b> b |
+
+## Set Notation
