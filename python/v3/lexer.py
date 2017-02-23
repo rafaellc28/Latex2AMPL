@@ -176,15 +176,15 @@ def t_FOR(t):
    return t
 
 def t_OR(t):
-   r'\\vee|\\text\{\s*or\s*\}'
+   r'\\lor|\\vee|\\text\{\s*or\s*\}'
    return t
 
 def t_AND(t):
-   r'\\wedge|\\text\{\s*and\s*\}'
+   r'\\land|\\wedge|\\text\{\s*and\s*\}'
    return t
 
 def t_NOT(t):
-   r'!|\\text\{\s*not\s*}'
+   r'\\neg|!|\\text\{\s*not\s*}'
    return t
 
 def t_FORALL(t):
