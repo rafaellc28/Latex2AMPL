@@ -51,7 +51,7 @@
 	window.UpdateObjectiveMath = function (TeX) {
 		QUEUE.Push(
 		    hideObjectiveFunction,
-		    ["Text",objMath, (!TeX || !TeX.trim() ? "" : "\\displaystyle{"+TeX+"}")],
+		    ["Text",objMath, (!TeX || !TeX.trim()) ? "" : "\\displaystyle{"+TeX+"}"],
 		    showObjectiveFunction
 		);
 
@@ -108,7 +108,7 @@
 	window.UpdateSubjectiveMathOutput = function(subjTeX) {
 		QUEUE.Push(
 	    	hideSubjectiveFunction,
-	    	["Text",subjMath, (!subjTeX || !subjTeX.trim() ? "" : "\\displaystyle{"+subjTeX+"}")],
+	    	["Text",subjMath, (!subjTeX || !subjTeX.trim()) ? "" : "\\displaystyle{"+subjTeX+"}"],
 	    	showSubjectiveFunction
 		);
 	}
