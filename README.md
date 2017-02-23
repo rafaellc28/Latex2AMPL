@@ -43,3 +43,23 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | different from      | <b>\neq</b> | a <b>\neq</b> b |
 
 ## Set Notation
+
+| Math      | Latex   | Example   |
+|-----------|---------|-----------|
+| Natural set | <b>\mathbb{N}</b> | a \in <b>\mathbb{N}</b> |
+| Integer set | <b>\mathbb{Z}</b> | a \in <b>\mathbb{Z}</b> |
+| Binary set | <b>\mathbb{B}</b> or <b>\\{0,1\\}</b> | a \in <b>\mathbb{B}</b> |
+| Real set | <b>\mathbb{R}</b> | a \in <b>\mathbb{R}</b> |
+| Variable | <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> or <b>\mathbb{Variables}</b> | a \in <b>\mathbb{V}</b> |
+| Parameter | <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b>, <b>\mathbb{Parameter}</b> or <b>\mathbb{Parameters}</b> | a \in <b>\mathbb{P}</b> |
+| Set | <b>\mathbb{Set}</b> or <b>\mathbb{Sets}</b> | a \in <b>\mathbb{Set}</b> |
+| Symbolic Parameter | <b>\mathbb{S}</b> | a \in <b>\mathbb{S}</b> |
+| Logical Parameter | <b>\mathbb{L}</b> | a \in <b>\mathbb{L}</b> |
+| is member of | <b>\in</b> | a \in <b>\mathbb{B}</b> |
+| is not member of | <b>\notin</b> | a \notin <b>\mathbb{B}</b> |
+| is (proper) subset of | <b>\subset</b> or <b>\subseteq</b>  | A <b>\subseteq</b> B |
+| union | <b>\cup</b>  | A <b>\cup</b> B |
+| intersection | <b>\cap</b>  | A <b>\cap</b> B |
+| Cartesian product | <b>\cross</b>  | A <b>\cross</b> B |
+| difference | <b>\setminus</b>  | A <b>\setminus</b> B |
+| symetric difference | <b>\triangle</b>, <b>\ominus</b> or <b>\oplus</b>  | A <b>\oplus</b> B |
