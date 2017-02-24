@@ -17,6 +17,7 @@ A MathProg Code can be solved using the <a href="https://www.gnu.org/software/gl
 
 Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
+
 # Tokens
 
 ## Logic Notation
@@ -31,6 +32,7 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | for all    | <b>\forall</b> | <b>\forall</b> \\{u \in unit\\} u \in mPos |
 | not for all  | <b>\not\forall</b> | <b>\not\forall</b> \\{u \in unit\\} u \in mPos |
 
+
 ## Relation Notation
 
 | Math      | Latex   | Example   |
@@ -41,6 +43,7 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | more or equal than  | <b>\geq</b> | a <b>\geq</b> b |
 | equal to  | =       | a = b       |
 | different from      | <b>\neq</b> | a <b>\neq</b> b |
+
 
 ## Set Notation
 
@@ -63,3 +66,19 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | Cartesian product | <b>\cross</b>  | A <b>\cross</b> B |
 | difference | <b>\setminus</b>  | A <b>\setminus</b> B |
 | symetric difference | <b>\triangle</b>, <b>\ominus</b> or <b>\oplus</b>  | A <b>\oplus</b> B |
+
+
+## Functions
+
+| Math      | Latex   | Example   |
+|-----------|---------|-----------|
+| sqrt        | <b>\sqrt</b> | <b>\sqrt</b>{2} |
+| floor       | <b>\lfloor</b> and <b>\rfloor</b> | <b>\lfloor</b> 2.567 <b>\rfloor</b> |
+| ceil        | <b>\lceil</b> and <b>\rceil</b> | <b>\lceil</b> 2.567 <b>\rceil</b> |
+| absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <b>\mid</b> -2.567 <b>\mid</b> |
+| sine        | <b>\sin</b> | <b>\sin</b>(2.567) |
+| cosine      | <b>\cos</b> | <b>\cos</b>(2.567) |
+| arctangent  | <b>\arctan</b> | <b>\arctan</b>(a) and <b>\arctan</b>(y,x) |
+| natural logarithm    | <b>\ln</b> | <b>\ln</b>(a) |
+| decimal logarithm    | <b>\log</b> | <b>\log</b>(a) |
+| base-e exponential   | <b>\exp</b> | <b>\exp</b>(a) |
