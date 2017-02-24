@@ -76,9 +76,25 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | floor       | <b>\lfloor</b> and <b>\rfloor</b> | <b>\lfloor</b> 2.567 <b>\rfloor</b> |
 | ceil        | <b>\lceil</b> and <b>\rceil</b> | <b>\lceil</b> 2.567 <b>\rceil</b> |
 | absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <b>\mid</b> -2.567 <b>\mid</b> |
+| round       | <b>round</b>    | <b>round</b>(2.567) and <b>round</b>(2.567,2) |
+| trunc       | <b>trunc</b>    | <b>trunc</b>(2.567) and <b>trunc</b>(2.567,2) |
 | sine        | <b>\sin</b> | <b>\sin</b>(2.567) |
 | cosine      | <b>\cos</b> | <b>\cos</b>(2.567) |
 | arctangent  | <b>\arctan</b> | <b>\arctan</b>(a) and <b>\arctan</b>(y,x) |
 | natural logarithm    | <b>\ln</b> | <b>\ln</b>(a) |
 | decimal logarithm    | <b>\log</b> | <b>\log</b>(a) |
 | base-e exponential   | <b>\exp</b> | <b>\exp</b>(a) |
+| maximum   | <b>\max</b> | <b>\max</b>(3,6,4,7) |
+| minimum   | <b>\min</b> | <b>\min</b>(3,6,5,7,18,25) |
+| length of string   | <b>length</b> | <b>length</b>("string") |
+| cardinality of set   | <b>card</b> | <b>card</b>(B) |
+| string to calendar time | <b>str2time</b> | <b>str2time</b>("2017-02-03","%Y-%m-%d") |
+| calendar time to string | <b>time2str</b> | <b>time2str</b>(gmtime(),"%Y-%m-%d") |
+| substring | <b>substr</b> | <b>substr</b>(string,start) and <b>substr</b>(string,start,end) |
+| seconds since 00:00:00 Jan 1, 1970 (UTC) | <b>gmtime</b>  | <b>gmtime</b>() |
+| pseudo-random integer in [0,2^24) |  <b>Irand224</b>  | <b>Irand224</b>() |
+| pseudo-random number in [0,1) |  <b>Uniform01</b>  | <b>Uniform01</b>() |
+| pseudo-random number in [0,1) |  <b>Uniform01</b>  | <b>Uniform01</b>() |
+| pseudo-random number in [a,b) |  <b>Uniform</b>  | <b>Uniform</b>(a,b) |
+| Gaussian pseudo-random variable |  <b>Normal01</b>  | <b>Normal01</b>() |
+| Gaussian pseudo-random variable |  <b>Normal</b>  | <b>Normal</b>(mu,sigma) |
