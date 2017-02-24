@@ -20,6 +20,19 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 
 # Tokens
 
+# Arithmetic Notation
+
+| Math      | Latex                         | Example      |
+|-----------|-------------------------------|--------------|
+| addition  | <b>+</b>  | 2 <b>+</b> 3 |
+| subtraction  | <b>-</b>  | 2 <b>-</b> 3 |
+| less (positive difference) | <b>\text{less}</b>  | 2 <b>\text{less}</b> 3 = 0 |
+| multiplication  | <b>*</b>, <b>\cdot</b> or <b>\ast</b> | 2 <b>*</b> 3 |
+| division  | <b>/</b> or <b>\div</b> | 4 <b>/</b> 2 = 2 |
+| exact quotient | <b>\big/</b>, <b>\text{div}</b> | 5 <b>\text{div}</b> 3 = 1 |
+| remainder | <b>\text\{%}</b>, <b>\mod</b> or <b>\bmod</b> | 5 <b>\mod</b> 3 = 2 |
+
+
 ## Logic Notation
 
 | Math      | Latex                         | Example      |
@@ -75,7 +88,7 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | sqrt        | <b>\sqrt</b> | <b>\sqrt</b>{2} |
 | floor       | <b>\lfloor</b> and <b>\rfloor</b> | <b>\lfloor</b> 2.567 <b>\rfloor</b> |
 | ceil        | <b>\lceil</b> and <b>\rceil</b> | <b>\lceil</b> 2.567 <b>\rceil</b> |
-| absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <b>\mid</b> -2.567 <b>\mid</b> |
+| absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <ringb>\mid</b> -2.567 <b>\mid</b> |
 | round       | <b>round</b>    | <b>round</b>(2.567) and <b>round</b>(2.567,2) |
 | trunc       | <b>trunc</b>    | <b>trunc</b>(2.567) and <b>trunc</b>(2.567,2) |
 | sine        | <b>\sin</b> | <b>\sin</b>(2.567) |
@@ -98,3 +111,11 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | pseudo-random number in [a,b) |  <b>Uniform</b>  | <b>Uniform</b>(a,b) |
 | Gaussian pseudo-random variable |  <b>Normal01</b>  | <b>Normal01</b>() |
 | Gaussian pseudo-random variable |  <b>Normal</b>  | <b>Normal</b>(mu,sigma) |
+
+
+## String Notation
+
+| Math      | Latex   | Example   |
+|-----------|---------|-----------|
+| string    | <b>"</b> | "Hello, wold!" |
+| string concatenator   | <b>\&</b> | "Hello, " <b>\&</b> "wold!" |
