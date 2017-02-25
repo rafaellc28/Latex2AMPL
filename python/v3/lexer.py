@@ -616,7 +616,7 @@ def t_DIFF(t):
    return t
 
 def t_SYMDIFF(t):
-   r'\\triangle|\\ominus'
+   r'\\triangle|\\ominus|\\oplus'
    return t
 
 def t_UNION(t):
