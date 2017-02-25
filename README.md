@@ -20,7 +20,7 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 
 # Tokens
 
-# Arithmetic Notation
+## Arithmetic Notation
 
 | Math      | Latex                         | Example      |
 |-----------|-------------------------------|--------------|
@@ -71,8 +71,8 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | Set | <b>\mathbb{Set}</b> or <b>\mathbb{Sets}</b> | a \in <b>\mathbb{Set}</b> |
 | Symbolic Parameter | <b>\mathbb{S}</b> | a \in <b>\mathbb{S}</b> |
 | Logical Parameter | <b>\mathbb{L}</b> | a \in <b>\mathbb{L}</b> |
-| is member of | <b>\in</b> | a \in <b>\mathbb{B}</b> |
-| is not member of | <b>\notin</b> | a \notin <b>\mathbb{B}</b> |
+| is member of | <b>\in</b> | a <b>\in</b> \mathbb{B} |
+| is not member of | <b>\notin</b> | a <b>\notin</b> \mathbb{B} |
 | is (proper) subset of | <b>\subset</b> or <b>\subseteq</b>  | A <b>\subseteq</b> B |
 | union | <b>\cup</b>  | A <b>\cup</b> B |
 | intersection | <b>\cap</b>  | A <b>\cap</b> B |
@@ -119,3 +119,56 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 |-----------|---------|-----------|
 | string    | <b>"</b> | "Hello, wold!" |
 | string concatenator   | <b>\&</b> | "Hello, " <b>\&</b> "wold!" |
+
+
+# Statements and Expressions
+
+## Objective Statement
+
+<b>\text{maximize}</b> || <b>\text{minimize}</b> LinearExpression
+
+
+## Constraints/Declarations Statement
+
+<b>\text{subject to}</b> Constraint \|\| Declaration [<b>\\\\</b> Constraint \|\| Declaration ... ]
+
+
+## Constraint Statement
+
+ConstraintExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+
+
+## Declaration Statement
+
+DeclarationExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+
+
+## Conditional Statement
+
+<b>(</b> LogicalExpression <b>)</b> <b>?</b> Expression when LogicalExpression is True <b>:</b> Expression when LogicalExpression is False
+
+
+## Indexing Expression
+
+EntryIndexingExpression [, EntryIndexingExpression [, EntryIndexingExpression ... ] ] [SUCH_THAT LogicalExpression ], where SUCH_THAT is <b>|</b> or <b>\vert</b> or <b>\mid</b>
+
+
+## Declaration Expression
+Parameter | Set | Variable [ [SEPARATOR] DeclarationAttribute [, DeclarationAttribute ... ] ] [<b>;</b>], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+
+
+## Declaration Attributes
+
+| Math      | Latex   | Example   |
+|-----------|---------|-----------
+| assign    | <b>:=</b> | A <b>:=</b> 1 |
+| default   | <b>default</b> | A <b>\text{default}</b> 1 |
+| less than | <       | a < b     |
+| more than | >       | a > b     |
+| less or equal than  | <b>\leq</b> | a <b>\leq</b> b |
+| more or equal than  | <b>\geq</b> | a <b>\geq</b> b |
+| equal to  | <b>=</b> | a <b>=</b> 1 |
+| different from  | <b>\neq</b> | a <b>\neq</b> 1 |
+| is member of | <b>\in</b> | a <b>\in</b> \mathbb{B} |
+| is (proper) subset of | <b>\subset</b> or <b>\subseteq</b>  | A <b>\subseteq</b> B |
+| dimen | <b>dimen</b>  | A <b>dimen</b> 2 |
