@@ -2,5 +2,5 @@
 \text{minimize } z\\
 \text{subject to } x_{j} \in \mathbb{R}^{+}; z \in \mathbb{R}\\
 P_{j} \in J \text{ default } \{\}\\
-x_{j} \geq x_{k} + t_{k}, j \in J, k \in P_{j}\\
-z \geq x_{j} + t_{j}, j \in J\\
+x_{j} \geq x_{k} + t_{k}: j \in J, k \in P_{j}\\
+z \geq x_{j} + t_{j}: j \in J\\

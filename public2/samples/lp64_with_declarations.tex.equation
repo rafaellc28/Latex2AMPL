@@ -1,22 +1,22 @@
 % GLPK/prod.mod: ../glpk-4.47/examples/prod.mod
 \text{minimize } \sum_{t \in time} rtr * sl * dpp_{t} * cs * Crews_{t} + \sum_{t \in time} hc_{t} * Hire_{t} + \sum_{t \in time} lc_{t} * Layoff_{t} + \sum_{t \in time, p \in prd} otr * cs * pt_{p} * Oprd_{p,t} + \sum_{t \in time, p \in prd, a \in 1 \ldots life} cri_{p} * pc_{p} * Inv_{p,t,a} + \sum_{t \in time, p \in prd} crs_{p} * pc_{p} * Short_{p,t}\\
-\text{subject to } \sum_{p \in prd} pt_{p} * Rprd_{p,t} \leq sl * dpp_{t} * Crews_{t}, t \in time\\
-\sum_{p \in prd} pt_{p} * Oprd_{p,t} \leq ol_{t}, t \in time\\
+\text{subject to } \sum_{p \in prd} pt_{p} * Rprd_{p,t} \leq sl * dpp_{t} * Crews_{t}: t \in time\\
+\sum_{p \in prd} pt_{p} * Oprd_{p,t} \leq ol_{t}: t \in time\\
 Crews_{first-1} = iw\\
-Crews_{t} = Crews_{t-1} + Hire_{t} - Layoff_{t}, t \in time\\
-cmin_{t} \leq Crews_{t} \leq cmax_{t}, t \in time\\
-Rprd_{p,first} + Oprd_{p,first} + Short_{p,first} - Inv_{p,first,1} = dem_{p,first} \text{ less } iinv_{p}, p \in prd\\
-Rprd_{p,t} + Oprd_{p,t} + Short_{p,t} - Short_{p,t-1} + \sum_{a \in 1 \ldots life} (Inv_{p,t-1,a} - Inv_{p,t,a}) = dem_{p,t} \text{ less } iil_{p,t-1}, p \in prd, t \in first+1 \ldots last\\
-\sum_{a \in 1 \ldots life} Inv_{p,t,a} + iil_{p,t} \geq minv_{p,t}, p \in prd, t \in time\\
-Inv_{p,first+v-1,a} = 0, p \in prd, v \in 1 \ldots life-1, a \in v+1 \ldots life\\
-Inv_{p,t,1} \leq Rprd_{p,t} + Oprd_{p,t}, p \in prd, t \in time\\
-Inv_{p,t,a} \leq Inv_{p,t-1,a-1}, p \in prd, t \in first+1 \ldots last, a \in 2 \ldots life\\
-Crews_{t} \in \mathbb{R}^{+}, t \in first-1 \ldots last\\
-Hire_{t}, Layoff_{t}, Oprd_{p,t}, Inv_{p,t,a}, Short_{p,t}, Rprd_{p,t} \in \mathbb{R}^{+}, p \in prd, t \in time, a \in 1 \ldots life\\
-pt_{p}, pc_{p} > 0, p \in prd; sl, rtr, dpp_{t} > 0; cs, first \in \mathbb{Z}, \in \mathbb{P}, > 0; last \in \mathbb{Z}, \in \mathbb{P}, > first; time := first \ldots last; otr > rtr\\
-ol_{t}, cmin_{t}, hc_{t}, lc_{t}, \geq 0; iw \in \mathbb{Z}, \in \mathbb{P}, \geq 0; cmax_{t}, \geq cmin_{t}, t \in time\\
-dem_{p,i}, \geq 0, p \in prd, i \in first \ldots last+1\\
-pro_{p,i}, \in \mathbb{L}, p \in prd, i \in first \ldots last+1\\
-rir, pir, iinv_{p}, \geq 0; cri_{p}, crs_{p} > 0, p \in prd; life \in \mathbb{Z}, \in \mathbb{P}, > 0\\
-iil_{p,t} := iinv_{p} \text{ less } \sum_{v \in first \ldots t} dem_{p,v}, p \in prd, t \in time\\
-minv_{p,t} := dem_{p,t+1} * ((pro_{p,t+1})? pir : rir), p \in prd, t \in time\\
+Crews_{t} = Crews_{t-1} + Hire_{t} - Layoff_{t}: t \in time\\
+cmin_{t} \leq Crews_{t} \leq cmax_{t}: t \in time\\
+Rprd_{p,first} + Oprd_{p,first} + Short_{p,first} - Inv_{p,first,1} = dem_{p,first} \text{ less } iinv_{p}: p \in prd\\
+Rprd_{p,t} + Oprd_{p,t} + Short_{p,t} - Short_{p,t-1} + \sum_{a \in 1 \ldots life} (Inv_{p,t-1,a} - Inv_{p,t,a}) = dem_{p,t} \text{ less } iil_{p,t-1}: p \in prd, t \in first+1 \ldots last\\
+\sum_{a \in 1 \ldots life} Inv_{p,t,a} + iil_{p,t} \geq minv_{p,t}: p \in prd, t \in time\\
+Inv_{p,first+v-1,a} = 0: p \in prd, v \in 1 \ldots life-1, a \in v+1 \ldots life\\
+Inv_{p,t,1} \leq Rprd_{p,t} + Oprd_{p,t}: p \in prd, t \in time\\
+Inv_{p,t,a} \leq Inv_{p,t-1,a-1}: p \in prd, t \in first+1 \ldots last, a \in 2 \ldots life\\
+Crews_{t} \in \mathbb{R}^{+}: t \in first-1 \ldots last\\
+Hire_{t}, Layoff_{t}, Oprd_{p,t}, Inv_{p,t,a}, Short_{p,t}, Rprd_{p,t} \in \mathbb{R}^{+}: p \in prd, t \in time, a \in 1 \ldots life\\
+pt_{p}, pc_{p} > 0: p \in prd; sl, rtr, dpp_{t} > 0; cs, first \in \mathbb{Z}, \in \mathbb{P}, > 0; last \in \mathbb{Z}, \in \mathbb{P}, > first; time := first \ldots last; otr > rtr\\
+ol_{t}, cmin_{t}, hc_{t}, lc_{t}, \geq 0; iw \in \mathbb{Z}, \in \mathbb{P}, \geq 0; cmax_{t}, \geq cmin_{t}: t \in time\\
+dem_{p,i}, \geq 0: p \in prd, i \in first \ldots last+1\\
+pro_{p,i}, \in \mathbb{L}: p \in prd, i \in first \ldots last+1\\
+rir, pir, iinv_{p}, \geq 0; cri_{p}, crs_{p} > 0: p \in prd; life \in \mathbb{Z}, \in \mathbb{P}, > 0\\
+iil_{p,t} := iinv_{p} \text{ less } \sum_{v \in first \ldots t} dem_{p,v}: p \in prd, t \in time\\
+minv_{p,t} := dem_{p,t+1} * ((pro_{p,t+1})? pir : rir): p \in prd, t \in time\\

@@ -1,5 +1,5 @@
 % GLPK/sat.mod: ../glpk-4.47/examples/sat.mod
 \text{minimize } \sum_{i \in 1 \ldots m} y_{i}\\
-\text{subject to } \sum_{j \in C_{i}} ((j > 0)? x_{j}:(1 - x_{-j})) + y_{i} \geq 1, i \in 1 \ldots m\\
-x_{j}, y_{i} \in \{0,1\}, j \in 1 \ldots n\\
+\text{subject to } \sum_{j \in C_{i}} ((j > 0)? x_{j}:(1 - x_{-j})) + y_{i} \geq 1: i \in 1 \ldots m\\
+x_{j}, y_{i} \in \{0,1\}: j \in 1 \ldots n\\
 m, n \in \mathbb{P}, \in \mathbb{Z}, > 0\\

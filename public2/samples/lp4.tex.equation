@@ -7,10 +7,10 @@
 .02 * bin1 + .03 * bin2 + .01 * bin5 \leq 30\\
 .70 * bin1 + .75 * bin2 + .80 * bin3 + .75 * bin4 + .80 * bin5 + .97 * alum \geq 1500\\
 250 \leq .02 * bin1 + .06 * bin2 + .08 * bin3 + .12 * bin4 + .02 * bin5 + .01 * alum + .97 * silicon \leq 300\\
-200 \geq bin1 \geq 0, bin1 \in \mathbb{R}^{+}\\
-2500 \geq bin2 \geq 0, bin2 \in \mathbb{R}^{+}\\
-800 \geq bin3 \geq 400, bin3 \in \mathbb{R}^{+}\\
-700 \geq bin4 \geq 100, bin4 \in \mathbb{R}^{+}\\
-1500 \geq bin5 \geq 0, bin5 \in \mathbb{R}^{+}\\
-alum \geq 0, alum \in \mathbb{R}^{+}\\
-silicon \geq 0, silicon \in \mathbb{R}^{+}
+200 \geq bin1 \geq 0: bin1 \in \mathbb{R}^{+}\\
+2500 \geq bin2 \geq 0: bin2 \in \mathbb{R}^{+}\\
+800 \geq bin3 \geq 400: bin3 \in \mathbb{R}^{+}\\
+700 \geq bin4 \geq 100: bin4 \in \mathbb{R}^{+}\\
+1500 \geq bin5 \geq 0: bin5 \in \mathbb{R}^{+}\\
+alum \geq 0: alum \in \mathbb{R}^{+}\\
+silicon \geq 0: silicon \in \mathbb{R}^{+}

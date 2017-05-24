@@ -1,7 +1,7 @@
 % GLPK/graph.mod: ../glpk-4.47/examples/graph.mod
 file \in \mathbb{S}, := "graph.eps"\\
 R := 2; n \in \mathbb{Z}, \in \mathbb{P}, > 0; V \text{ default } 1 \ldots n; E \subset V \times V\\
-x_{i} \text{ default } 50 * \cos((i - 1) / card(V) * 8 * \arctan(1)), i \in V\\
-y_{i} \text{ default } 50 * \sin((i - 1) / card(V) * 8 * \arctan(1)), i \in V\\
+x_{i} \text{ default } 50 * \cos((i - 1) / card(V) * 8 * \arctan(1)): i \in V\\
+y_{i} \text{ default } 50 * \sin((i - 1) / card(V) * 8 * \arctan(1)): i \in V\\
 x0 := (\min_{i \in V} x_{i}) - R - 3.0; y0 := (\min_{i \in V} y_{i}) - R - 3.0\\
 x1 := (\max_{i \in V} x_{i}) + R + 3.0; y1 := (\max_{i \in V} y_{i}) + R + 3.0\\
