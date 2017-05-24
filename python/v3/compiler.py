@@ -48,7 +48,7 @@ except SyntaxException, msg:
 	while lineNum >= 0:
 		totalCharLinesAbove += len(lines[lineNum])+1
 		lineNum -= 1
-
+	
 	print("Syntax error at line %d, position %d: '%s'.\nContext: %s." % (msg[0], msg[1]-totalCharLinesAbove+1, msg[2], line))
 	exit()
 

@@ -93,8 +93,12 @@ def p_Objectives(t):
 def p_Objective(t):
     '''Objective : MAXIMIZE LinearExpression
                  | MINIMIZE LinearExpression
-                 | MAXIMIZE LinearExpression COMMA IndexingExpression
-                 | MINIMIZE LinearExpression COMMA IndexingExpression'''
+                 | MAXIMIZE LinearExpression FOR IndexingExpression
+                 | MINIMIZE LinearExpression FOR IndexingExpression
+                 | MAXIMIZE LinearExpression WHERE IndexingExpression
+                 | MINIMIZE LinearExpression WHERE IndexingExpression
+                 | MAXIMIZE LinearExpression COLON IndexingExpression
+                 | MINIMIZE LinearExpression COLON IndexingExpression'''
 
     if len(t) > 3:
         t[4].setStmtIndexing(True)
@@ -134,14 +138,18 @@ def p_ConstraintList(t):
         t[0] = [t[1]]
 
 def p_Constraint(t):
-    '''Constraint : ConstraintExpression FOR IndexingExpression
-                  | ConstraintExpression COMMA IndexingExpression
-                  | ConstraintExpression COLON IndexingExpression
-                  | ConstraintExpression FOR BACKSLASHES IndexingExpression
-                  | ConstraintExpression COMMA BACKSLASHES IndexingExpression
+    '''Constraint : ConstraintExpression FOR BACKSLASHES IndexingExpression
+                  | ConstraintExpression WHERE BACKSLASHES IndexingExpression
                   | ConstraintExpression COLON BACKSLASHES IndexingExpression
+                  | ConstraintExpression FOR IndexingExpression
+                  | ConstraintExpression WHERE IndexingExpression
+                  | ConstraintExpression COLON IndexingExpression
                   | ConstraintExpression'''
-    if len(t) > 3:
+    
+    if len(t) > 4:
+        t[4].setStmtIndexing(True)
+        t[0] = Constraint(t[1], t[4])
+    elif len(t) > 3:
         t[3].setStmtIndexing(True)
         t[0] = Constraint(t[1], t[3])
     else:
@@ -169,6 +177,7 @@ def p_ConstraintExpression(t):
 def p_Declarations(t):
   '''Declarations : DeclarationList
                   | DeclarationList FOR IndexingExpression
+                  | DeclarationList WHERE IndexingExpression
                   | DeclarationList COLON IndexingExpression'''
 
   if len(t) > 3:
@@ -211,13 +220,15 @@ def p_DeclarationList(t):
 
 def p_Declaration(t):
     '''Declaration : DeclarationExpression FOR IndexingExpression
-                   | DeclarationExpression COMMA IndexingExpression
+                   | DeclarationExpression WHERE IndexingExpression
                    | DeclarationExpression COLON IndexingExpression
                    | DeclarationExpression FOR BACKSLASHES IndexingExpression
-                   | DeclarationExpression COMMA BACKSLASHES IndexingExpression
+                   | DeclarationExpression WHERE BACKSLASHES IndexingExpression
                    | DeclarationExpression COLON BACKSLASHES IndexingExpression
                    | ValueList FOR BACKSLASHES IndexingExpression
                    | ValueList FOR IndexingExpression
+                   | ValueList WHERE BACKSLASHES IndexingExpression
+                   | ValueList WHERE IndexingExpression
                    | ValueList COLON BACKSLASHES IndexingExpression
                    | ValueList COLON IndexingExpression
                    | DeclarationExpression'''
@@ -368,14 +379,10 @@ def p_IteratedLinearExpression(t):
         t[0] = IteratedLinearExpression(t[6], t[4])
 
 def p_ConditionalLinearExpression(t):
-    '''ConditionalLinearExpression : LPAREN SetExpression RPAREN QUESTION_MARK LinearExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression
-                                   | ConditionalLinearExpression COLON LinearExpression'''
-    if len(t) > 4:
-        t[0] = ConditionalLinearExpression(t[2], t[5])
-    else:
-        t[1].addElseExpression(t[3])
-        t[0] = t[1]
+    '''ConditionalLinearExpression : LPAREN SetExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression'''
+    t[0] = ConditionalLinearExpression(t[2], t[5])
+    t[0].addElseExpression(t[7])
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
@@ -778,14 +785,10 @@ def p_FunctionNumericExpression(t):
           t[0] = NumericExpressionWithFunction(op, t[2])
 
 def p_ConditionalNumericExpression(t):
-    '''ConditionalNumericExpression : LPAREN SetExpression RPAREN QUESTION_MARK NumericExpression
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression
-                                    | ConditionalNumericExpression COLON NumericExpression'''
-    if len(t) > 4:
-        t[0] = ConditionalNumericExpression(t[2], t[5])
-    else:
-        t[1].addElseExpression(t[3])
-        t[0] = t[1]
+    '''ConditionalNumericExpression : LPAREN SetExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression'''
+    t[0] = ConditionalNumericExpression(t[2], t[5])
+    t[0].addElseExpression(t[7])
 
 def p_NumericOrSymbolicExpression(t):
     '''NumericOrSymbolicExpression : NumericExpression

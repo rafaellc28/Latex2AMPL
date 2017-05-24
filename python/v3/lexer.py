@@ -97,26 +97,15 @@ tokens = [
    'PROD',
    'MAX',
    'MIN',
-   'LIMITS',
-   'BEGIN',
-   'END',
-   'BEGIN_EQUATION',
-   'END_EQUATION',
-   'BEGIN_SPLIT',
-   'END_SPLIT',
-   'DISPLAYSTYLE',
-   'TEXT',
    'COMMA',
    'SEMICOLON',
    'COLON',
    'DOTS',
    'AMPERSAND',
-   'AMP',
    'BACKSLASHES',
    'FOR',
+   'WHERE',
    'ID',
-   'QUAD',
-   'MATHCLAP',
    'PIPE', 
    'DIFF',
    'SYMDIFF', 
@@ -172,7 +161,11 @@ def t_LESS(t):
    return t
 
 def t_FOR(t):
-   r'\\text\{\s*for\s*\}'
+   r'\\text\{\s*[fF][oO][rR]\s*\}'
+   return t
+
+def t_WHERE(t):
+   r'\\text\{\s*[wW][hH][eE][rR][eE]\s*\}'
    return t
 
 def t_OR(t):
@@ -607,9 +600,13 @@ def t_ignore_AMP(t):
    pass
 
 def t_BACKSLASHES(t):
-   r'\\\\.*\n'
-   t.lexer.lineno += 1
+   r'\\\\'
    return t
+
+def t_ignore_N(t):
+   r'\n'
+   t.lexer.lineno += 1
+   pass
 
 def t_DIFF(t):
    r'\\setminus'
