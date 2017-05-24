@@ -331,8 +331,16 @@
 			var line = latexLines[i];
 
 			if (line && line.trim() != "") {
-				var match = /\\text\{\s*[a-zA-Z\s]+\s*\}/.exec(line);
+				var match = /^\s*\\text\{\s*maximize\s*\}|maximize|\\text\{\s*maximize:\s*\}|maximize:/.exec(line);
 
+				if (!match) {
+					match = /^\s*\\text\{\s*minimize\s*\}|minimize|\\text\{\s*minimize:\s*\}|minimize:/.exec(line);
+				}
+				
+				if (!match) {
+					match = /^\s*\\text\{\s*subject\sto\s*\}|\\text\{\s*subj\.to\s*\}|\\text\{\s*s\.t\.\s*\}|subject\sto\s*|subj\.to\s*|s\.t\.\s*|\\text\{\s*subject\sto:\s*\}|\\text\{\s*subj\.to:\s*\}|\\text\{\s*s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*|s\.t\.:\s*/.exec(line);
+				}
+				
 				if (match) {
 					formattedLatexCode += match + " & " + line.substring(match.index + match[0].length) + "\n";
 
