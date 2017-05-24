@@ -135,12 +135,12 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 
 ## Constraint Statement
 
-ConstraintExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+ConstraintExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b> .
 
 
 ## Declaration Statement
 
-DeclarationExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+DeclarationExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b> .
 
 
 ## Conditional Statement
@@ -154,7 +154,7 @@ EntryIndexingExpression [, EntryIndexingExpression [, EntryIndexingExpression ..
 
 
 ## Declaration Expression
-Parameter | Set | Variable [ [SEPARATOR] DeclarationAttribute [, DeclarationAttribute ... ] ] [<b>;</b>], where SEPARATOR is <b>,</b> or <b>:</b> or <b>\text{for}</b>
+Parameter | Set | Variable [ [SEPARATOR] DeclarationAttribute [, DeclarationAttribute ... ] ] [<b>;</b>], where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b> .
 
 
 ## Declaration Attributes
