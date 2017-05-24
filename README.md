@@ -145,7 +145,7 @@ DeclarationExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>CO
 
 ## Conditional Statement
 
-<b>(</b> LogicalExpression <b>)</b> <b>?</b> Expression when LogicalExpression is True <b>:</b> Expression when LogicalExpression is False
+<b>(</b> LogicalExpression <b>)</b> <b>?</b> \<Expression when LogicalExpression is True\> <b>COLON</b> \<Expression when LogicalExpression is False\>, where COLON is <b>:</b>
 
 
 ## Indexing Expression
