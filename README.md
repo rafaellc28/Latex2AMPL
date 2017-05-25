@@ -1,21 +1,21 @@
 Latex2MathProg
 ==============
 
-This is an experimental tool that aims at converting a Linear Programming Model Latex Code to a <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial">MathProg</a> Code (without the <b>data section</b>).
+This tool converts a Linear Programming Model written in LaTeX to a <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial">MathProg</a> Code (without the <b>data section</b>).
 
 A MathProg Code can be solved using the <a href="https://www.gnu.org/software/glpk/" target="_glpk">GLPK (GNU Linear Programming Kit)</a>. Besides, the GLPK package offers commands/methods to convert a MathProg code to the following formats: <b>CPLEX LP</b>, <b>MPS fixed</b>, <b>MPS free</b> and <b>GLPK</b>.
 
-- Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to the Objective Function(s) in the <b>Objective section</b> and <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
-- A constraint can not end with COMMA "<b>,</b>", thus "<b>,\\\\</b>" means that the constraint continues in the next line.
-- <b>Declarations</b> can be separated by SEMICOLON "<b>;</b>".
-- <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>.
-- A <b>Variable</b> can be defined by making it be member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> and <b>\mathbb{Variables}</b>.
-- A <b>Parameter</b> can be defined by making it be member of one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>.
-- A <b>Set</b> can be defined by making it be member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>.
-- <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>.
-- <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>.
+- Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to declare the Objective Function(s). It must be declared before the constraints in the <b>Objectives section</b>.
+- Use <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
+- Objectives, constraints and declarations are separated by "<b>\\\\</b>" (without the quotes). Additionally, declarations can be separated by SEMICOLON "<b>;</b>" (without the quotes).
+- <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>. Additionally, a <b>Variable</b> can be defined by making it be member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> or <b>\mathbb{Variables}</b>. Ex.: <b>x \in \mathbb{V}</b>.
+- A <b>Parameter</b> can be defined by making it member of one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>. Ex.: <b>D \in \mathbb{P}</b>.
+- A <b>Set</b> can be defined by making it member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>. Ex.: <b>A \in \mathbb{Set}</b>.
+- <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>. Ex.: <b>sym \in \mathbb{S}</b>.
+- <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>. Ex.: <b>logic \in \mathbb{L}</b>.
+- If a name is neither declared as parameter nor set, then the compiler infers which one (remember that variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and its domain.
 
-Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
+Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
 
 # Tokens
@@ -88,7 +88,7 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | sqrt        | <b>\sqrt</b> | <b>\sqrt</b>{2} |
 | floor       | <b>\lfloor</b> and <b>\rfloor</b> | <b>\lfloor</b> 2.567 <b>\rfloor</b> |
 | ceil        | <b>\lceil</b> and <b>\rceil</b> | <b>\lceil</b> 2.567 <b>\rceil</b> |
-| absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <ringb>\mid</b> -2.567 <b>\mid</b> |
+| absolute    | <b>\mid</b>, <b>\vert</b> or <b>\|</b>| <b>\mid</b> -2.567 <b>\mid</b> |
 | round       | <b>round</b>    | <b>round</b>(2.567) and <b>round</b>(2.567,2) |
 | trunc       | <b>trunc</b>    | <b>trunc</b>(2.567) and <b>trunc</b>(2.567,2) |
 | sine        | <b>\sin</b> | <b>\sin</b>(2.567) |
@@ -107,10 +107,9 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 | seconds since 00:00:00 Jan 1, 1970 (UTC) | <b>gmtime</b>  | <b>gmtime</b>() |
 | pseudo-random integer in [0,2^24) |  <b>Irand224</b>  | <b>Irand224</b>() |
 | pseudo-random number in [0,1) |  <b>Uniform01</b>  | <b>Uniform01</b>() |
-| pseudo-random number in [0,1) |  <b>Uniform01</b>  | <b>Uniform01</b>() |
 | pseudo-random number in [a,b) |  <b>Uniform</b>  | <b>Uniform</b>(a,b) |
-| Gaussian pseudo-random variable |  <b>Normal01</b>  | <b>Normal01</b>() |
-| Gaussian pseudo-random variable |  <b>Normal</b>  | <b>Normal</b>(mu,sigma) |
+| Gaussian pseudo-random variable with mean 0 and deviation 1 |  <b>Normal01</b>  | <b>Normal01</b>() |
+| Gaussian pseudo-random variable with mean mu and deviation sigma |  <b>Normal</b>  | <b>Normal</b>(mu,sigma) |
 
 
 ## String Notation
@@ -125,36 +124,52 @@ Example o use in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>
 
 ## Objective Statement
 
-<b>\text{maximize}</b> || <b>\text{minimize}</b> LinearExpression
+<b>\text{maximize}</b> \<LinearExpression\>
+
+or
+
+<b>\text{minimize}</b> \<LinearExpression\>
+
+It can have more than one objective separated by "<b>\\\\</b>" (without the quotes).
 
 
 ## Constraints/Declarations Statement
 
-<b>\text{subject to}</b> Constraint \|\| Declaration [<b>\\\\</b> Constraint \|\| Declaration ... ]
+<b>\text{subject to}</b> \<Constraint \|\| Declaration\> [<b>\\\\</b> \<Constraint \|\| Declaration\> ... ]
 
 
 ## Constraint Statement
 
-ConstraintExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b>
+\<ConstraintExpression\> [ SEPARATOR \<IndexingExpression\> ]
+
+where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>. COLON is "<b>:</b>" (without the quotes).
 
 
 ## Declaration Statement
 
-DeclarationExpression [ SEPARATOR IndexingExpression ], where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b>
+\<DeclarationExpression\> [ SEPARATOR \<IndexingExpression\> ]
+
+where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>. COLON is "<b>:</b>" (without the quotes).
 
 
 ## Conditional Statement
 
-<b>(</b> LogicalExpression <b>)</b> <b>?</b> \<Expression when LogicalExpression is True\> <b>COLON</b> \<Expression when LogicalExpression is False\>, where COLON is <b>:</b>
+<b>(</b> \<LogicalExpression\> <b>)</b> <b>?</b> \<Expression when LogicalExpression is True\> <b>COLON</b> \<Expression when LogicalExpression is False\>
+
+where COLON is "<b>:</b>" (without the quotes).
 
 
 ## Indexing Expression
 
-EntryIndexingExpression [, EntryIndexingExpression [, EntryIndexingExpression ... ] ] [SUCH_THAT LogicalExpression ], where SUCH_THAT is <b>|</b> or <b>\vert</b> or <b>\mid</b>
+\<EntryIndexingExpression\> [COMMA \<EntryIndexingExpression\> ...] [SUCH_THAT LogicalExpression ]
+
+where SUCH_THAT is <b>|</b> or <b>\vert</b> or <b>\mid</b>, and COMMA is "<b>,</b>" (without the quotes).
 
 
 ## Declaration Expression
-Parameter | Set | Variable [ [SEPARATOR] DeclarationAttribute [, DeclarationAttribute ... ] ] [<b>;</b>], where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, and COLON is <b>:</b>
+\<name\> [ [SEPARATOR] \<DeclarationAttribute\> [COMMA \<DeclarationAttribute\> ... ] ] [SEMICOLON]
+
+where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the quotes), and SEMICOLON is "<b>;</b>" (without the quotes).
 
 
 ## Declaration Attributes
@@ -162,7 +177,7 @@ Parameter | Set | Variable [ [SEPARATOR] DeclarationAttribute [, DeclarationAttr
 | Math      | Latex   | Example   |
 |-----------|---------|-----------
 | assign    | <b>:=</b> | A <b>:=</b> 1 |
-| default   | <b>default</b> | A <b>\text{default}</b> 1 |
+| default   | <b>\text{default}</b> | A <b>\text{default}</b> 1 |
 | less than | <       | a < b     |
 | more than | >       | a > b     |
 | less or equal than  | <b>\leq</b> | a <b>\leq</b> b |
