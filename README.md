@@ -204,7 +204,7 @@ or
 
 \<name\> <b>\geq</b> \<Expression\>
 
-are considered constraints. A declaration must be of the form 
+are considered constraints. If you want these to be declarations, they must be of the form 
 
 \<name\><b>, \leq</b> \<Expression\>
 
