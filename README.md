@@ -5,10 +5,11 @@ This tool converts a Linear Programming Model written in LaTeX to a <a href="htt
 
 A MathProg Code can be solved using the <a href="https://www.gnu.org/software/glpk/" target="_glpk">GLPK (GNU Linear Programming Kit)</a>. Besides, the GLPK package offers commands/methods to convert a MathProg code to the following formats: <b>CPLEX LP</b>, <b>MPS fixed</b>, <b>MPS free</b> and <b>GLPK</b>.
 
-- Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to declare the Objective Function(s). It must be declared before the constraints in the <b>Objectives section</b>.
+- Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to declare the Objective Function(s). It must be declared inside the <b>Objectives section</b>, before the <b>Constraints and Declarations section</b>.
 - Use <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
+- If the LaTeX code is a <b>System of Linear Equations</b>, then it is not necessary to use <b>\text{subject to}</b>, because it is used only to separate the <b>Objectives section</b> from the <b>Constraints and Declarations section</b>.
 - Objectives, constraints and declarations are separated by "<b>\\\\</b>" (without the quotes). Additionally, declarations can be separated by SEMICOLON "<b>;</b>" (without the quotes).
-- <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>. Additionally, a <b>Variable</b> can be defined by making it be member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> or <b>\mathbb{Variables}</b>. Ex.: <b>x \in \mathbb{V}</b>.
+- <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>. Additionally, a <b>Variable</b> can be defined by making it member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> or <b>\mathbb{Variables}</b>. Ex.: <b>x \in \mathbb{V}</b>.
 - A <b>Parameter</b> can be defined by making it member of one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>. Ex.: <b>D \in \mathbb{P}</b>.
 - A <b>Set</b> can be defined by making it member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>. Ex.: <b>A \in \mathbb{Set}</b>.
 - <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>. Ex.: <b>sym \in \mathbb{S}</b>.
@@ -135,7 +136,9 @@ It can have more than one objective separated by "<b>\\\\</b>" (without the quot
 
 ## Constraints/Declarations Statement
 
-<b>\text{subject to}</b> \<Constraint \|\| Declaration\> [<b>\\\\</b> \<Constraint \|\| Declaration\> ... ]
+<b>\text{subject to}</b> \<Constraint \|\| Declaration\> [BACKSLAHES \<Constraint \|\| Declaration\> ... ]
+
+WHERE BACKSLASHES is "<b>\\\\</b>" (without the quotes).
 
 
 ## Constraint Statement
@@ -167,9 +170,9 @@ where SUCH_THAT is <b>|</b> or <b>\vert</b> or <b>\mid</b>, and COMMA is "<b>,</
 
 
 ## Declaration Expression
-\<name\> [ [SEPARATOR] \<DeclarationAttribute\> [COMMA \<DeclarationAttribute\> ... ] ] [SEMICOLON]
+\<name\> [[COMMA] \<DeclarationAttribute\> [COMMA \<DeclarationAttribute\> ... ]] [SEMICOLON]
 
-where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the quotes), and SEMICOLON is "<b>;</b>" (without the quotes).
+where COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the quotes), and SEMICOLON is "<b>;</b>" (without the quotes).
 
 
 ## Declaration Attributes
