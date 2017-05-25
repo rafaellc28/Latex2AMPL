@@ -7,14 +7,15 @@ A MathProg Code can be solved using the <a href="https://www.gnu.org/software/gl
 
 - Use <b>\text{maximize}</b> or <b>\text{minimize}</b> to declare the Objective Function(s). It must be declared inside the <b>Objectives section</b>, before the <b>Constraints and Declarations section</b>.
 - Use <b>\text{subject to}</b> to start the <b>Constraints and Declarations section</b>.
-- If the LaTeX code is a <b>System of Linear Equations</b>, then it is not necessary to use <b>\text{subject to}</b>, because it is used only to separate the <b>Objectives section</b> from the <b>Constraints and Declarations section</b>.
+- If the LaTeX code is a <b>System of Linear Equations</b>, then <b>\text{subject to}</b> must not be used, because it is used only to separate the <b>Objectives section</b> from the <b>Constraints and Declarations section</b>.
 - Objectives, constraints and declarations are separated by "<b>\\\\</b>" (without the quotes). Additionally, declarations can be separated by SEMICOLON "<b>;</b>" (without the quotes).
 - <b>Variables</b> must be members of one of the following sets: <b>\mathbb{B}</b> or <b>\\{0,1\\}</b>, <b>\mathbb{R}</b>, <b>\mathbb{R}^{+}</b>, <b>\mathbb{Z}</b>, <b>\mathbb{Z}^{+}</b> and <b>\mathbb{N}</b>. Additionally, a <b>Variable</b> can be defined by making it member of one of the following sets: <b>\mathbb{V}</b>, <b>\mathbb{Var}</b>, <b>\mathbb{Vars}</b>, <b>\mathbb{Variable}</b> or <b>\mathbb{Variables}</b>. Ex.: <b>x \in \mathbb{V}</b>.
 - A <b>Parameter</b> can be defined by making it member of one of the following sets: <b>\mathbb{P}</b>, <b>\mathbb{Param}</b>, <b>\mathbb{Params}</b> , <b>\mathbb{Parameter}</b> and <b>\mathbb{Parameters}</b>. Ex.: <b>D \in \mathbb{P}</b>.
 - A <b>Set</b> can be defined by making it member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>. Ex.: <b>A \in \mathbb{Set}</b>.
 - <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>. Ex.: <b>sym \in \mathbb{S}</b>.
 - <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>. Ex.: <b>logic \in \mathbb{L}</b>.
-- If a name is neither declared as parameter nor set, then the compiler infers which one (remember that variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and its domain.
+- If a name is neither declared as parameter nor as set, then the compiler infers which one the name belongs to (remember that variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and domain.
+- Within declarations separated by SEMICOLON "<b>;</b>" (without the quotes), the last IndexingExpression (see below) can be used to infer domains of variables, parameters and sets, for those domains that are not explicitly declared by previous IndexingExpressions inside the same line.
 
 Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
@@ -150,9 +151,9 @@ where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>. COL
 
 ## Declaration Statement
 
-\<DeclarationExpression\> [ SEPARATOR \<IndexingExpression\> ]
+\<DeclarationExpression\> [ SEPARATOR \<IndexingExpression\> ] [SEMICOLON]
 
-where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>. COLON is "<b>:</b>" (without the quotes).
+where SEPARATOR is <b>COLON</b> or <b>\text{where}</b> or <b>\text{for}</b>, COLON is "<b>:</b>" (without the quotes), and SEMICOLON is "<b>;</b>" (without the quotes).
 
 
 ## Conditional Statement
@@ -170,9 +171,9 @@ where SUCH_THAT is <b>|</b> or <b>\vert</b> or <b>\mid</b>, and COMMA is "<b>,</
 
 
 ## Declaration Expression
-\<name\> [[COMMA] \<DeclarationAttribute\> [COMMA \<DeclarationAttribute\> ... ]] [SEMICOLON]
+\<name\> [[COMMA] \<DeclarationAttribute\> [COMMA \<DeclarationAttribute\> ... ]]
 
-where COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the quotes), and SEMICOLON is "<b>;</b>" (without the quotes).
+where COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the quotes).
 
 
 ## Declaration Attributes
@@ -190,3 +191,21 @@ where COLON is "<b>:</b>" (without the quotes), COMMA is "<b>,</b>" (without the
 | is member of | <b>\in</b> | a <b>\in</b> \mathbb{B} |
 | is (proper) subset of | <b>\subset</b> or <b>\subseteq</b>  | A <b>\subseteq</b> B |
 | dimen | <b>dimen</b>  | A <b>dimen</b> 2 |
+
+
+<b>NOTE:</b>
+
+\<name\> <b>\leq</b> \<Expression\>
+
+or 
+
+\<name\> <b>\geq</b> \<Expression\>
+
+are considered constraints. A declaration must be of the form 
+
+\<name\><b>, \leq</b> \<Expression\>
+
+or
+
+\<name\><b>, \geq</b> \<Expression\>.
+
