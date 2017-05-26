@@ -14,8 +14,8 @@ A MathProg code can be solved using the <a href="https://www.gnu.org/software/gl
 - A <b>Set</b> can be defined by making it member of one of the following sets: <b>\mathbb{Set}</b> and <b>\mathbb{Sets}</b>. Ex.: <b>A \in \mathbb{Set}</b>.
 - <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>. Ex.: <b>sym \in \mathbb{S}</b>.
 - <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>. Ex.: <b>logic \in \mathbb{L}</b>.
-- If a name is neither declared as parameter nor as set, then the compiler infers which one the name belongs to (remember that variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and domain.
-- Within declarations separated by SEMICOLON ("<b>;</b>", without the quotes), the last IndexingExpression (see below) can be used to infer domains of variables, parameters and sets. However, it can occur only for those domains that are not explicitly declared by previous IndexingExpressions inside the same line. Lines are separated by BACKSLAHES ("<b>\\\\</b>", without the quotes).
+- If a name is neither declared as parameter nor as set, then the compiler infers which one of these the name belongs to (variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and domain.
+- Within declarations separated by SEMICOLON ("<b>;</b>", without the quotes), the last IndexingExpression (see below) can be used to infer domains of variables, parameters and sets. However, it can occur only for those domains that are not explicitly declared by previous IndexingExpressions inside the same line. Lines are separated by BACKSLASHES ("<b>\\\\</b>", without the quotes).
 
 Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
