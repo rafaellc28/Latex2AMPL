@@ -15,7 +15,7 @@ A MathProg code can be solved using the <a href="https://www.gnu.org/software/gl
 - <b>Symbolic Parameters</b> must be member of <b>\mathbb{S}</b>. Ex.: <b>sym \in \mathbb{S}</b>.
 - <b>Logical Parameters</b> must be member of <b>\mathbb{L}</b>. Ex.: <b>logic \in \mathbb{L}</b>.
 - If a name is neither declared as parameter nor as set, then the compiler infers which one the name belongs to (remember that variables must the explicitly declared as such). The inference is done bottom to top, right to left, i.e., it is considered the last position of a name that allows inference of its type and domain.
-- Within declarations separated by SEMICOLON ("<b>;</b>", without the quotes), the last IndexingExpression (see below) can be used to infer domains of variables, parameters and sets, but only for those domains that are not explicitly declared by previous IndexingExpressions inside the same line - lines are separated by BACKSLAHES ("<b>\\\\</b>", without the quotes).
+- Within declarations separated by SEMICOLON ("<b>;</b>", without the quotes), the last IndexingExpression (see below) can be used to infer domains of variables, parameters and sets. However, it can occur only for those domains that are not explicitly declared by previous IndexingExpressions inside the same line. Lines are separated by BACKSLAHES ("<b>\\\\</b>", without the quotes).
 
 Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
@@ -119,7 +119,19 @@ Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https:
 | Math      | Latex   | Example   |
 |-----------|---------|-----------|
 | string    | <b>"</b> | "Hello, wold!" |
-| string concatenator   | <b>\&</b> | "Hello, " <b>\&</b> "wold!" |
+| string concatenator   | <b>\\&</b> | "Hello, " <b>\\&</b> "wold!" |
+
+
+## Ignored Tokens
+
+The following LaTeX environments and tokens can be used to format the Linear Programming Model. They are ignored by the compiler.
+
+| | | | |
+|---------|--------|--------|-----------|
+| \begin{array} | \end{array} | \begin{equation} | \end{equation} |
+| \begin{split} | \end{split} | \displaystyle | \quad |
+| \limits | \mathclap | \text{ } | & |
+| \n | \t | | |
 
 
 # Statements and Expressions
@@ -204,7 +216,7 @@ or
 
 \<name\> <b>\geq</b> \<Expression\>
 
-are considered constraints. If you want these to be declarations, they must be of the form 
+are considered constraints. If you want these to be declarations, they must be written as 
 
 \<name\><b>, \leq</b> \<Expression\>
 
