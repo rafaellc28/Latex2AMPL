@@ -32,8 +32,8 @@ from Declarations import *
 from DeclarationExpression import *
 
 precedence = (
-    ('left', 'COMMA', 'DOTS', 'FOR', 'BACKSLASHES'),
     ('left', 'ID'),
+    ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE', 'BACKSLASHES'),
     ('left', 'NUMBER'),
     ('left', 'LBRACE', 'RBRACE'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
@@ -44,10 +44,11 @@ precedence = (
     ('left', 'UNDERLINE', 'CARET'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'COS', 'ARCTAN', 'SQRT', 'LN', 'LOG', 'EXP'),
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
-    ('left', 'UPLUS', 'UMINUS'),
-    ('left', 'IN', 'NOTIN'),
+    ('right', 'AMPERSAND'),
+    ('right', 'PLUS', 'MINUS'),
+    ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
+    ('right', 'UPLUS', 'UMINUS'),
+    ('right', 'IN', 'NOTIN'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
 )
@@ -92,13 +93,29 @@ def p_Objectives(t):
 
 def p_Objective(t):
     '''Objective : MAXIMIZE LinearExpression
+                 | MAXIMIZE NumericExpression
+                 | MAXIMIZE Variable
                  | MINIMIZE LinearExpression
+                 | MINIMIZE NumericExpression
+                 | MINIMIZE Variable
                  | MAXIMIZE LinearExpression FOR IndexingExpression
+                 | MAXIMIZE NumericExpression FOR IndexingExpression
+                 | MAXIMIZE Variable FOR IndexingExpression
                  | MINIMIZE LinearExpression FOR IndexingExpression
+                 | MINIMIZE NumericExpression FOR IndexingExpression
+                 | MINIMIZE Variable FOR IndexingExpression
                  | MAXIMIZE LinearExpression WHERE IndexingExpression
+                 | MAXIMIZE NumericExpression WHERE IndexingExpression
+                 | MAXIMIZE Variable WHERE IndexingExpression
                  | MINIMIZE LinearExpression WHERE IndexingExpression
+                 | MINIMIZE NumericExpression WHERE IndexingExpression
+                 | MINIMIZE Variable WHERE IndexingExpression
                  | MAXIMIZE LinearExpression COLON IndexingExpression
-                 | MINIMIZE LinearExpression COLON IndexingExpression'''
+                 | MAXIMIZE NumericExpression COLON IndexingExpression
+                 | MAXIMIZE Variable COLON IndexingExpression
+                 | MINIMIZE LinearExpression COLON IndexingExpression
+                 | MINIMIZE NumericExpression COLON IndexingExpression
+                 | MINIMIZE Variable COLON IndexingExpression'''
 
     if len(t) > 3:
         t[4].setStmtIndexing(True)
@@ -157,10 +174,85 @@ def p_Constraint(t):
 
 def p_ConstraintExpression(t):
     '''ConstraintExpression : LinearExpression EQ LinearExpression
-                           |  LinearExpression LE LinearExpression
-                           |  LinearExpression GE LinearExpression
-                           |  LinearExpression LE LinearExpression LE LinearExpression
-                           |  LinearExpression GE LinearExpression GE LinearExpression'''
+                            | NumericExpression EQ LinearExpression
+                            | Variable EQ LinearExpression
+                            | LinearExpression EQ NumericExpression
+                            | LinearExpression EQ Variable
+                            | NumericExpression EQ NumericExpression
+                            | NumericExpression EQ Variable
+                            | Variable EQ NumericExpression
+                            | Variable EQ Variable
+                            | LinearExpression LE LinearExpression
+                            | NumericExpression LE LinearExpression
+                            | Variable LE LinearExpression
+                            | LinearExpression LE NumericExpression
+                            | LinearExpression LE Variable
+                            | NumericExpression LE NumericExpression
+                            | NumericExpression LE Variable
+                            | Variable LE NumericExpression
+                            | Variable LE Variable
+                            | LinearExpression GE LinearExpression
+                            | NumericExpression GE LinearExpression
+                            | Variable GE LinearExpression
+                            | LinearExpression GE NumericExpression
+                            | LinearExpression GE Variable
+                            | NumericExpression GE NumericExpression
+                            | NumericExpression GE Variable
+                            | Variable GE NumericExpression
+                            | Variable GE Variable
+                            | LinearExpression LE LinearExpression LE LinearExpression
+                            | LinearExpression LE LinearExpression LE NumericExpression
+                            | LinearExpression LE LinearExpression LE Variable
+                            | LinearExpression LE NumericExpression LE LinearExpression
+                            | LinearExpression LE Variable LE LinearExpression
+                            | LinearExpression LE NumericExpression LE NumericExpression
+                            | LinearExpression LE NumericExpression LE Variable
+                            | LinearExpression LE Variable LE NumericExpression
+                            | LinearExpression LE Variable LE Variable
+                            | NumericExpression LE LinearExpression LE LinearExpression
+                            | Variable LE LinearExpression LE LinearExpression
+                            | NumericExpression LE LinearExpression LE NumericExpression
+                            | NumericExpression LE LinearExpression LE Variable
+                            | Variable LE LinearExpression LE NumericExpression
+                            | Variable LE LinearExpression LE Variable
+                            | NumericExpression LE NumericExpression LE LinearExpression
+                            | NumericExpression LE Variable LE LinearExpression
+                            | Variable LE NumericExpression LE LinearExpression
+                            | Variable LE Variable LE LinearExpression
+                            | NumericExpression LE NumericExpression LE NumericExpression
+                            | NumericExpression LE NumericExpression LE Variable
+                            | NumericExpression LE Variable LE NumericExpression
+                            | Variable LE NumericExpression LE NumericExpression
+                            | Variable LE NumericExpression LE Variable
+                            | Variable LE Variable LE NumericExpression
+                            | Variable LE Variable LE Variable
+                            | LinearExpression GE LinearExpression GE LinearExpression
+                            | LinearExpression GE LinearExpression GE NumericExpression
+                            | LinearExpression GE LinearExpression GE Variable
+                            | LinearExpression GE NumericExpression GE LinearExpression
+                            | LinearExpression GE Variable GE LinearExpression
+                            | LinearExpression GE NumericExpression GE NumericExpression
+                            | LinearExpression GE NumericExpression GE Variable
+                            | LinearExpression GE Variable GE NumericExpression
+                            | LinearExpression GE Variable GE Variable
+                            | NumericExpression GE LinearExpression GE LinearExpression
+                            | Variable GE LinearExpression GE LinearExpression
+                            | NumericExpression GE LinearExpression GE NumericExpression
+                            | NumericExpression GE LinearExpression GE Variable
+                            | Variable GE LinearExpression GE NumericExpression
+                            | Variable GE LinearExpression GE Variable
+                            | NumericExpression GE NumericExpression GE LinearExpression
+                            | NumericExpression GE Variable GE LinearExpression
+                            | Variable GE NumericExpression GE LinearExpression
+                            | Variable GE Variable GE LinearExpression
+                            | NumericExpression GE NumericExpression GE NumericExpression
+                            | NumericExpression GE NumericExpression GE Variable
+                            | NumericExpression GE Variable GE NumericExpression
+                            | NumericExpression GE Variable GE Variable
+                            | Variable GE NumericExpression GE NumericExpression
+                            | Variable GE NumericExpression GE Variable
+                            | Variable GE Variable GE NumericExpression
+                            | Variable GE Variable GE Variable'''
     
     if len(t) > 4:
         if t[4] == "\\leq":
@@ -226,16 +318,36 @@ def p_Declaration(t):
                    | DeclarationExpression WHERE BACKSLASHES IndexingExpression
                    | DeclarationExpression COLON BACKSLASHES IndexingExpression
                    | ValueList FOR BACKSLASHES IndexingExpression
+                   | NumericExpression FOR BACKSLASHES IndexingExpression
+                   | Variable FOR BACKSLASHES IndexingExpression
+                   | SymbolicExpression FOR BACKSLASHES IndexingExpression
                    | ValueList FOR IndexingExpression
+                   | NumericExpression FOR IndexingExpression
+                   | Variable FOR IndexingExpression
+                   | SymbolicExpression FOR IndexingExpression
                    | ValueList WHERE BACKSLASHES IndexingExpression
+                   | NumericExpression WHERE BACKSLASHES IndexingExpression
+                   | Variable WHERE BACKSLASHES IndexingExpression
+                   | SymbolicExpression WHERE BACKSLASHES IndexingExpression
                    | ValueList WHERE IndexingExpression
+                   | NumericExpression WHERE IndexingExpression
+                   | Variable WHERE IndexingExpression
+                   | SymbolicExpression WHERE IndexingExpression
                    | ValueList COLON BACKSLASHES IndexingExpression
+                   | NumericExpression COLON BACKSLASHES IndexingExpression
+                   | Variable COLON BACKSLASHES IndexingExpression
+                   | SymbolicExpression COLON BACKSLASHES IndexingExpression
                    | ValueList COLON IndexingExpression
+                   | NumericExpression COLON IndexingExpression
+                   | Variable COLON IndexingExpression
+                   | SymbolicExpression COLON IndexingExpression
                    | DeclarationExpression'''
     if len(t) > 3:
         t[3].setStmtIndexing(True)
         if isinstance(t[1], ValueList):
           t[1] = DeclarationExpression(t[1], [])
+        elif isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Variable):
+          t[1] = DeclarationExpression(ValueList([t[1]]), [])
 
         t[0] = Declaration(t[1], t[3])
     else:
@@ -243,18 +355,110 @@ def p_Declaration(t):
 
 def p_DeclarationExpression(t):
     '''DeclarationExpression : ValueList IN SetExpression
+                             | NumericExpression IN SetExpression
+                             | Variable IN SetExpression
+                             | SymbolicExpression IN SetExpression
+                             | ValueList IN Variable
+                             | NumericExpression IN Variable
+                             | Variable IN Variable
+                             | SymbolicExpression IN Variable
                              | ValueList SUBSET SetExpression
-                             | ValueList DEFAULT NumericOrSymbolicExpression
+                             | NumericExpression SUBSET SetExpression
+                             | Variable SUBSET SetExpression
+                             | SymbolicExpression SUBSET SetExpression
+                             | ValueList SUBSET Variable
+                             | NumericExpression SUBSET Variable
+                             | Variable SUBSET Variable
+                             | SymbolicExpression SUBSET Variable
+                             | ValueList DEFAULT NumericExpression
+                             | ValueList DEFAULT Variable
+                             | NumericExpression DEFAULT NumericExpression
+                             | NumericExpression DEFAULT Variable
+                             | Variable DEFAULT NumericExpression
+                             | Variable DEFAULT Variable
+                             | SymbolicExpression DEFAULT NumericExpression
+                             | SymbolicExpression DEFAULT Variable
+                             | ValueList DEFAULT SymbolicExpression
+                             | NumericExpression DEFAULT SymbolicExpression
+                             | Variable DEFAULT SymbolicExpression
+                             | SymbolicExpression DEFAULT SymbolicExpression
                              | ValueList DEFAULT SetExpression
-                             | ValueList DIMEN NumericOrSymbolicExpression
-                             | ValueList COLON EQ NumericOrSymbolicExpression
+                             | NumericExpression DEFAULT SetExpression
+                             | Variable DEFAULT SetExpression
+                             | SymbolicExpression DEFAULT SetExpression
+                             | ValueList DIMEN NumericExpression
+                             | ValueList DIMEN Variable
+                             | NumericExpression DIMEN NumericExpression
+                             | NumericExpression DIMEN Variable
+                             | Variable DIMEN NumericExpression
+                             | Variable DIMEN Variable
+                             | SymbolicExpression DIMEN NumericExpression
+                             | SymbolicExpression DIMEN Variable
+                             | ValueList DIMEN SymbolicExpression
+                             | NumericExpression DIMEN SymbolicExpression
+                             | Variable DIMEN SymbolicExpression
+                             | SymbolicExpression DIMEN SymbolicExpression
+                             | ValueList COLON EQ NumericExpression
+                             | ValueList COLON EQ Variable
+                             | NumericExpression COLON EQ NumericExpression
+                             | NumericExpression COLON EQ Variable
+                             | Variable COLON EQ NumericExpression
+                             | Variable COLON EQ Variable
+                             | SymbolicExpression COLON EQ NumericExpression
+                             | SymbolicExpression COLON EQ Variable
+                             | ValueList COLON EQ SymbolicExpression
+                             | NumericExpression COLON EQ SymbolicExpression
+                             | Variable COLON EQ SymbolicExpression
+                             | SymbolicExpression COLON EQ SymbolicExpression
                              | ValueList COLON EQ SetExpression
-                             | ValueList LT NumericOrSymbolicExpression
-                             | ValueList GT NumericOrSymbolicExpression
-                             | ValueList NEQ NumericOrSymbolicExpression
+                             | NumericExpression COLON EQ SetExpression
+                             | Variable COLON EQ SetExpression
+                             | SymbolicExpression COLON EQ SetExpression
+                             | ValueList LT NumericExpression
+                             | ValueList LT Variable
+                             | NumericExpression LT NumericExpression
+                             | NumericExpression LT Variable
+                             | Variable LT NumericExpression
+                             | Variable LT Variable
+                             | SymbolicExpression LT NumericExpression
+                             | SymbolicExpression LT Variable
+                             | ValueList LT SymbolicExpression
+                             | NumericExpression LT SymbolicExpression
+                             | Variable LT SymbolicExpression
+                             | SymbolicExpression LT SymbolicExpression
+                             | ValueList GT NumericExpression
+                             | ValueList GT Variable
+                             | NumericExpression GT NumericExpression
+                             | NumericExpression GT Variable
+                             | Variable GT NumericExpression
+                             | Variable GT Variable
+                             | SymbolicExpression GT NumericExpression
+                             | SymbolicExpression GT Variable
+                             | ValueList GT SymbolicExpression
+                             | NumericExpression GT SymbolicExpression
+                             | Variable GT SymbolicExpression
+                             | SymbolicExpression GT SymbolicExpression
+                             | ValueList NEQ NumericExpression
+                             | ValueList NEQ Variable
+                             | NumericExpression NEQ NumericExpression
+                             | NumericExpression NEQ Variable
+                             | Variable NEQ NumericExpression
+                             | Variable NEQ Variable
+                             | SymbolicExpression NEQ NumericExpression
+                             | SymbolicExpression NEQ Variable
+                             | ValueList NEQ SymbolicExpression
+                             | NumericExpression NEQ SymbolicExpression
+                             | Variable NEQ SymbolicExpression
+                             | SymbolicExpression NEQ SymbolicExpression
                              | ValueList COMMA DeclarationAttributeList
+                             | NumericExpression COMMA DeclarationAttributeList
+                             | Variable COMMA DeclarationAttributeList
+                             | SymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList
                              | DeclarationExpression DeclarationAttributeList'''
+
+    if len(t) > 3 and isinstance(t[3], Variable):
+      t[3] = SetExpressionWithValue(t[3])    
 
     if isinstance(t[1], DeclarationExpression):
       if t[2] == ",":
@@ -289,6 +493,9 @@ def p_DeclarationExpression(t):
       elif t[2] == "\\neq":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.NEQ)
 
+      if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Variable):
+        t[1] = ValueList([t[1]])
+
       t[0] = DeclarationExpression(t[1])
       t[0].addAttribute(attr)
 
@@ -302,18 +509,40 @@ def p_DeclarationAttributeList(t):
 
 def p_DeclarationAttribute(t):
   '''DeclarationAttribute : IN SetExpression
+                          | IN Variable
                           | SUBSET SetExpression
-                          | DEFAULT NumericOrSymbolicExpression
+                          | SUBSET Variable
+                          | DEFAULT NumericExpression
+                          | DEFAULT Variable
+                          | DEFAULT SymbolicExpression
                           | DEFAULT SetExpression
-                          | DIMEN NumericOrSymbolicExpression
-                          | COLON EQ NumericOrSymbolicExpression
+                          | DIMEN NumericExpression
+                          | DIMEN Variable
+                          | DIMEN SymbolicExpression
+                          | COLON EQ NumericExpression
+                          | COLON EQ Variable
+                          | COLON EQ SymbolicExpression
                           | COLON EQ SetExpression
-                          | LT NumericOrSymbolicExpression
-                          | LE NumericOrSymbolicExpression
-                          | EQ NumericOrSymbolicExpression
-                          | GT NumericOrSymbolicExpression
-                          | GE NumericOrSymbolicExpression
-                          | NEQ NumericOrSymbolicExpression'''
+                          | LT NumericExpression
+                          | LT Variable
+                          | LT SymbolicExpression
+                          | LE NumericExpression
+                          | LE Variable
+                          | LE SymbolicExpression
+                          | EQ NumericExpression
+                          | EQ Variable
+                          | EQ SymbolicExpression
+                          | GT NumericExpression
+                          | GT Variable
+                          | GT SymbolicExpression
+                          | GE NumericExpression
+                          | GE Variable
+                          | GE SymbolicExpression
+                          | NEQ NumericExpression
+                          | NEQ Variable
+                          | NEQ SymbolicExpression'''
+  if isinstance(t[2], Variable):
+    t[2] = SetExpressionWithValue(t[2])    
 
   if t[1] == "\\in":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
@@ -337,17 +566,12 @@ def p_DeclarationAttribute(t):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.NEQ)
 
 def p_LinearExpression(t):
-    '''LinearExpression : NumericExpression
+    '''LinearExpression : SymbolicExpression
                         | LPAREN LinearExpression RPAREN
                         | ConditionalLinearExpression'''
 
     if len(t) > 3:
         t[0] = LinearExpressionBetweenParenthesis(t[2])
-    elif len(t) > 2:
-        if t[1] == "\+":
-            t[0] = PlusLinearExpression(t[2])
-        else:
-            t[0] = MinusLinearExpression(t[2])
     elif isinstance(t[1], ConditionalLinearExpression):
         t[0] = t[1]
     else:
@@ -355,9 +579,19 @@ def p_LinearExpression(t):
 
 def p_LinearExpression_binop(t):
     '''LinearExpression : LinearExpression PLUS LinearExpression
+                        | LinearExpression PLUS NumericExpression
+                        | LinearExpression PLUS Variable
+                        | NumericExpression PLUS LinearExpression
+                        | Variable PLUS LinearExpression
                         | LinearExpression MINUS LinearExpression
+                        | LinearExpression MINUS NumericExpression
+                        | LinearExpression MINUS Variable
+                        | NumericExpression MINUS LinearExpression
+                        | Variable MINUS LinearExpression
                         | LinearExpression TIMES NumericExpression
-                        | LinearExpression DIVIDE NumericExpression'''
+                        | LinearExpression TIMES Variable
+                        | LinearExpression DIVIDE NumericExpression
+                        | LinearExpression DIVIDE Variable'''
 
     if t[2] == "+":
         op = LinearExpressionWithArithmeticOperation.PLUS
@@ -370,17 +604,25 @@ def p_LinearExpression_binop(t):
 
     t[0] = LinearExpressionWithArithmeticOperation(op, t[1], t[3])
 
-def p_IteratedLinearExpression(t):
-    '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
-                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression'''
-    if len(t) > 7:
-        t[0] = IteratedLinearExpression(t[10], t[4], t[8])
-    else:
-        t[0] = IteratedLinearExpression(t[6], t[4])
+#def p_IteratedLinearExpression(t):
+#    '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
+#                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression'''
+#    if len(t) > 7:
+#        t[0] = IteratedLinearExpression(t[10], t[4], t[8])
+#    else:
+#        t[0] = IteratedLinearExpression(t[6], t[4])
 
 def p_ConditionalLinearExpression(t):
-    '''ConditionalLinearExpression : LPAREN SetExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression'''
+    '''ConditionalLinearExpression : LPAREN Variable RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
+                                   | LPAREN Variable RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
+                                   | LPAREN Variable RPAREN QUESTION_MARK LinearExpression COLON Variable
+                                   | LPAREN Variable RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
+                                   | LPAREN Variable RPAREN QUESTION_MARK Variable COLON LinearExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON Variable
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
+                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON LinearExpression'''
     t[0] = ConditionalLinearExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
 
@@ -398,7 +640,8 @@ def p_LogicalExpression(t):
         t[0] = LogicalExpression([t[1]])
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NumericOrSymbolicExpression
+    '''EntryLogicalExpression : NumericExpression
+                              | Variable
                               | NOT EntryLogicalExpression
                               | LPAREN LogicalExpression RPAREN'''
 
@@ -410,12 +653,60 @@ def p_EntryLogicalExpression(t):
       t[0] = EntryLogicalExpressionNumericOrSymbolic(t[1])
 
 def p_EntryRelationalLogicalExpression(t):
-    '''EntryLogicalExpression : NumericOrSymbolicExpression LT NumericOrSymbolicExpression
-                              | NumericOrSymbolicExpression LE NumericOrSymbolicExpression
-                              | NumericOrSymbolicExpression EQ NumericOrSymbolicExpression
-                              | NumericOrSymbolicExpression GT NumericOrSymbolicExpression
-                              | NumericOrSymbolicExpression GE NumericOrSymbolicExpression
-                              | NumericOrSymbolicExpression NEQ NumericOrSymbolicExpression'''
+    '''EntryLogicalExpression : NumericExpression LT NumericExpression
+                              | NumericExpression LT Variable
+                              | Variable LT NumericExpression
+                              | Variable LT Variable
+                              | NumericExpression LT SymbolicExpression
+                              | Variable LT SymbolicExpression
+                              | SymbolicExpression LT NumericExpression
+                              | SymbolicExpression LT Variable
+                              | SymbolicExpression LT SymbolicExpression
+                              | NumericExpression LE NumericExpression
+                              | NumericExpression LE Variable
+                              | Variable LE NumericExpression
+                              | Variable LE Variable
+                              | NumericExpression LE SymbolicExpression
+                              | Variable LE SymbolicExpression
+                              | SymbolicExpression LE NumericExpression
+                              | SymbolicExpression LE Variable
+                              | SymbolicExpression LE SymbolicExpression
+                              | NumericExpression EQ NumericExpression
+                              | NumericExpression EQ Variable
+                              | Variable EQ NumericExpression
+                              | Variable EQ Variable
+                              | NumericExpression EQ SymbolicExpression
+                              | Variable EQ SymbolicExpression
+                              | SymbolicExpression EQ NumericExpression
+                              | SymbolicExpression EQ Variable
+                              | SymbolicExpression EQ SymbolicExpression
+                              | NumericExpression GT NumericExpression
+                              | NumericExpression GT Variable
+                              | Variable GT NumericExpression
+                              | Variable GT Variable
+                              | NumericExpression GT SymbolicExpression
+                              | Variable GT SymbolicExpression
+                              | SymbolicExpression GT NumericExpression
+                              | SymbolicExpression GT Variable
+                              | SymbolicExpression GT SymbolicExpression
+                              | NumericExpression GE NumericExpression
+                              | NumericExpression GE Variable
+                              | Variable GE NumericExpression
+                              | Variable GE Variable
+                              | NumericExpression GE SymbolicExpression
+                              | Variable GE SymbolicExpression
+                              | SymbolicExpression GE NumericExpression
+                              | SymbolicExpression GE Variable
+                              | SymbolicExpression GE SymbolicExpression
+                              | NumericExpression NEQ NumericExpression
+                              | NumericExpression NEQ Variable
+                              | Variable NEQ NumericExpression
+                              | Variable NEQ Variable
+                              | NumericExpression NEQ SymbolicExpression
+                              | Variable NEQ SymbolicExpression
+                              | SymbolicExpression NEQ NumericExpression
+                              | SymbolicExpression NEQ Variable
+                              | SymbolicExpression NEQ SymbolicExpression'''
 
     if t[2] == "<":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
@@ -432,13 +723,36 @@ def p_EntryRelationalLogicalExpression(t):
 
 def p_EntryLogicalExpressionWithSet(t):
     '''EntryLogicalExpression : ValueList IN SetExpression
-                              | Tuple IN SetExpression
+                              | NumericExpression IN SetExpression
                               | Variable IN SetExpression
+                              | SymbolicExpression IN SetExpression
+                              | ValueList IN Variable
+                              | NumericExpression IN Variable
+                              | Variable IN Variable
+                              | SymbolicExpression IN Variable
+                              | Tuple IN SetExpression
+                              | Tuple IN Variable
                               | ValueList NOTIN SetExpression
-                              | Tuple NOTIN SetExpression
+                              | NumericExpression NOTIN SetExpression
                               | Variable NOTIN SetExpression
+                              | SymbolicExpression NOTIN SetExpression
+                              | ValueList NOTIN Variable
+                              | NumericExpression NOTIN Variable
+                              | Variable NOTIN Variable
+                              | SymbolicExpression NOTIN Variable
+                              | Tuple NOTIN SetExpression
+                              | Tuple NOTIN Variable
                               | SetExpression SUBSET SetExpression
-                              | SetExpression NOTSUBSET SetExpression'''
+                              | Variable SUBSET SetExpression
+                              | SetExpression SUBSET Variable
+                              | SetExpression NOTSUBSET SetExpression
+                              | Variable NOTSUBSET SetExpression
+                              | SetExpression NOTSUBSET Variable'''
+    if not isinstance(t[3], SetExpression):
+      t[3] = SetExpressionWithValue(t[3])
+
+    if isinstance(t[1], ValueList):
+      t[1] = ValueList([t[1]])
 
     if t[2] == "\\in":
         t[0] = EntryLogicalExpressionWithSet(EntryLogicalExpressionWithSet.IN, t[1], t[3])
@@ -465,11 +779,26 @@ def p_EntryIteratedLogicalExpression(t):
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
 
 def p_SetExpressionWithOperation(t):
-    '''SetExpression : SetExpression DIFF SetExpression
+    '''SetExpression : Variable DIFF Variable
+                     | SetExpression DIFF SetExpression
+                     | Variable DIFF SetExpression
+                     | SetExpression DIFF Variable
                      | SetExpression SYMDIFF SetExpression
+                     | Variable SYMDIFF Variable
+                     | Variable SYMDIFF SetExpression
+                     | SetExpression SYMDIFF Variable
                      | SetExpression UNION SetExpression
+                     | Variable UNION Variable
+                     | Variable UNION SetExpression
+                     | SetExpression UNION Variable
                      | SetExpression INTER SetExpression
-                     | SetExpression CROSS SetExpression'''
+                     | Variable INTER Variable
+                     | Variable INTER SetExpression
+                     | SetExpression INTER Variable
+                     | SetExpression CROSS SetExpression
+                     | Variable CROSS Variable
+                     | Variable CROSS SetExpression
+                     | SetExpression CROSS Variable'''
 
     if re.search(r"\\setminus", t[2]):
         op = SetExpressionWithOperation.DIFF
@@ -482,10 +811,19 @@ def p_SetExpressionWithOperation(t):
     elif re.search(r"\\times", t[2]):
         op = SetExpressionWithOperation.CROSS
 
+    if not isinstance(t[1], SetExpression):
+      t[1] = SetExpressionWithValue(t[1])
+
+    if not isinstance(t[3], SetExpression):
+      t[3] = SetExpressionWithValue(t[3])
+
     t[0] = SetExpressionWithOperation(op, t[1], t[3])
 
 def p_SetExpressionWithValue(t):
     '''SetExpression : LLBRACE ValueList RRBRACE
+                     | LLBRACE NumericExpression RRBRACE
+                     | LLBRACE Variable RRBRACE
+                     | LLBRACE SymbolicExpression RRBRACE
                      | LLBRACE Range RRBRACE
                      | LLBRACE SetExpression RRBRACE
                      | LLBRACE TupleList RRBRACE
@@ -493,7 +831,6 @@ def p_SetExpressionWithValue(t):
                      | LLBRACE RRBRACE
                      | LPAREN SetExpression RPAREN
                      | Range
-                     | Variable
                      | NATURALSET
                      | INTEGERSET
                      | INTEGERSETPOSITIVE
@@ -515,13 +852,19 @@ def p_SetExpressionWithValue(t):
     if len(t) > 2:
         if isinstance(t[1], str) and re.search(r"\\\{", t[1]):
           if not (isinstance(t[2], str) and re.search(r"\\\}", t[2])):
+            if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Variable):
+              t[2] = ValueList([t[2]])
+
             t[0] = SetExpressionBetweenBraces(SetExpressionWithValue(t[2]))
           else:
             t[0] = SetExpressionBetweenBraces(None)
         elif t[1] == "(":
-            t[0] = SetExpressionBetweenParenthesis(t[2])
+          t[0] = SetExpressionBetweenParenthesis(t[2])
         else:
-            t[0] = SetExpressionWithValue(t[2])
+          if not isinstance(t[2], SetExpression):
+            t[2] = SetExpressionWithValue(t[2])
+
+          t[0] = SetExpressionWithValue(t[2])
     else:
         value = t[1]
         if hasattr(t.slice[1], 'value2'):
@@ -531,19 +874,31 @@ def p_SetExpressionWithValue(t):
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Variable LPAREN ValueList RPAREN
-                     | Variable LBRACKET ValueList RBRACKET
                      | Variable LPAREN NumericExpression RPAREN
-                     | Variable LBRACKET NumericExpression RBRACKET'''
-    
+                     | Variable LPAREN Variable RPAREN
+                     | Variable LPAREN SymbolicExpression RPAREN
+                     | Variable LBRACKET ValueList RBRACKET
+                     | Variable LBRACKET NumericExpression RBRACKET
+                     | Variable LBRACKET Variable RBRACKET
+                     | Variable LBRACKET SymbolicExpression RBRACKET'''
+    if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Variable):
+      t[3] = ValueList([t[3]])
+
     t[0] = SetExpressionWithIndices(t[1], t[3])
 
 def p_IteratedSetExpression(t):
-    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE NumericOrSymbolicExpression
+    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE ValueList
+                     | SETOF LLBRACE IndexingExpression RRBRACE NumericExpression
+                     | SETOF LLBRACE IndexingExpression RRBRACE Variable
+                     | SETOF LLBRACE IndexingExpression RRBRACE SymbolicExpression
                      | SETOF LLBRACE IndexingExpression RRBRACE LPAREN ValueList RPAREN'''
     
     if t[5] == "(":
       t[0] = IteratedSetExpression(t[3], t[6])
     else:
+      if isinstance(t[5], NumericExpression) or isinstance(t[5], SymbolicExpression) or isinstance(t[5], Variable):
+        t[5] = ValueList([t[5]])
+
       t[0] = IteratedSetExpression(t[3], [t[5]])
 
 def p_IndexingExpression(t):
@@ -564,8 +919,22 @@ def p_IndexingExpression(t):
 
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : ValueList IN SetExpression
+                               | NumericExpression IN SetExpression
+                               | Variable IN SetExpression
+                               | SymbolicExpression IN SetExpression
+                               | ValueList IN Variable
+                               | NumericExpression IN Variable
+                               | Variable IN Variable
+                               | SymbolicExpression IN Variable
                                | Tuple IN SetExpression
-                               | Variable IN SetExpression'''
+                               | Tuple IN Variable'''
+
+    if not isinstance(t[3], SetExpression):
+      t[3] = SetExpressionWithValue(t[3])
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Variable):
+      t[1] = ValueList([t[1]])
+
     t[0] = EntryIndexingExpressionWithSet(t[1], t[3])
 
 def p_EntryIndexingExpressionEq(t):
@@ -573,10 +942,15 @@ def p_EntryIndexingExpressionEq(t):
                                | Variable EQ Variable
                                | Variable EQ Range
                                | Variable NEQ NumericExpression
+                               | Variable NEQ Variable
                                | Variable LE NumericExpression
+                               | Variable LE Variable
                                | Variable GE NumericExpression
+                               | Variable GE Variable
                                | Variable LT NumericExpression
-                               | Variable GT NumericExpression'''
+                               | Variable LT Variable
+                               | Variable GT NumericExpression
+                               | Variable GT Variable'''
     if t[2] == "=":
         t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.EQ, t[1], t[3])
     elif t[2] == "\\neq":
@@ -600,16 +974,45 @@ def p_StringSymbolicExpression(t):
         t[0] = StringSymbolicExpression(t[1])
 
 def p_SymbolicExpression_binop(t):
-    '''SymbolicExpression : NumericOrSymbolicExpression AMPERSAND NumericOrSymbolicExpression'''
+    '''SymbolicExpression : NumericExpression AMPERSAND NumericExpression
+                          | NumericExpression AMPERSAND Variable
+                          | Variable AMPERSAND NumericExpression
+                          | Variable AMPERSAND Variable
+                          | NumericExpression AMPERSAND SymbolicExpression
+                          | Variable AMPERSAND SymbolicExpression
+                          | SymbolicExpression AMPERSAND NumericExpression
+                          | SymbolicExpression AMPERSAND Variable
+                          | SymbolicExpression AMPERSAND SymbolicExpression'''
     if re.search(r"\\&", t[2]):
         op = SymbolicExpressionWithOperation.CONCAT
 
     t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
 
 def p_FunctionSymbolicExpression(t):
-    '''SymbolicExpression : SUBSTR LPAREN NumericOrSymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN NumericOrSymbolicExpression COMMA NumericExpression RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA NumericOrSymbolicExpression RPAREN'''
+    '''SymbolicExpression : SUBSTR LPAREN NumericExpression COMMA NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN NumericExpression COMMA NumericExpression COMMA Variable RPAREN
+                          | SUBSTR LPAREN NumericExpression COMMA Variable COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN NumericExpression COMMA Variable COMMA Variable RPAREN
+                          | SUBSTR LPAREN Variable COMMA NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN Variable COMMA NumericExpression COMMA Variable RPAREN
+                          | SUBSTR LPAREN Variable COMMA Variable COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN Variable COMMA Variable COMMA Variable RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA Variable RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA Variable COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA Variable COMMA Variable RPAREN
+                          | SUBSTR LPAREN NumericExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN NumericExpression COMMA Variable RPAREN
+                          | SUBSTR LPAREN Variable COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN Variable COMMA Variable RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression RPAREN
+                          | SUBSTR LPAREN SymbolicExpression COMMA Variable RPAREN
+                          | TIME2STR LPAREN NumericExpression COMMA NumericExpression RPAREN
+                          | TIME2STR LPAREN NumericExpression COMMA Variable RPAREN
+                          | TIME2STR LPAREN Variable COMMA NumericExpression RPAREN
+                          | TIME2STR LPAREN Variable COMMA Variable RPAREN
+                          | TIME2STR LPAREN NumericExpression COMMA SymbolicExpression RPAREN
+                          | TIME2STR LPAREN Variable COMMA SymbolicExpression RPAREN'''
 
     if t[1] == "substr":
         op = SymbolicExpressionWithFunction.SUBSTR
@@ -626,13 +1029,37 @@ def p_FunctionSymbolicExpression(t):
 
 def p_NumericExpression_binop(t):
     '''NumericExpression : NumericExpression PLUS NumericExpression
+                         | NumericExpression PLUS Variable
+                         | Variable PLUS NumericExpression
+                         | Variable PLUS Variable
                          | NumericExpression MINUS NumericExpression
+                         | NumericExpression MINUS Variable
+                         | Variable MINUS NumericExpression
+                         | Variable MINUS Variable
                          | NumericExpression TIMES NumericExpression
+                         | NumericExpression TIMES Variable
+                         | Variable TIMES NumericExpression
+                         | Variable TIMES Variable
                          | NumericExpression DIVIDE NumericExpression
+                         | NumericExpression DIVIDE Variable
+                         | Variable DIVIDE NumericExpression
+                         | Variable DIVIDE Variable
                          | NumericExpression MOD NumericExpression
+                         | NumericExpression MOD Variable
+                         | Variable MOD NumericExpression
+                         | Variable MOD Variable
                          | NumericExpression QUOTIENT NumericExpression
+                         | NumericExpression QUOTIENT Variable
+                         | Variable QUOTIENT NumericExpression
+                         | Variable QUOTIENT Variable
                          | NumericExpression LESS NumericExpression
-                         | NumericExpression CARET LBRACE NumericExpression RBRACE'''
+                         | NumericExpression LESS Variable
+                         | Variable LESS NumericExpression
+                         | Variable LESS Variable
+                         | NumericExpression CARET LBRACE NumericExpression RBRACE
+                         | NumericExpression CARET LBRACE Variable RBRACE
+                         | Variable CARET LBRACE NumericExpression RBRACE
+                         | Variable CARET LBRACE Variable RBRACE'''
 
     if t[2] == "+":
         op = NumericExpressionWithArithmeticOperation.PLUS
@@ -651,6 +1078,13 @@ def p_NumericExpression_binop(t):
     elif re.search(r"\\text\{\s*less\s*\}", t[2]):
         op = NumericExpressionWithArithmeticOperation.LESS
 
+    if len(t) > 4 and isinstance(t[4], Variable):
+      t[4] = ValuedNumericExpression(t[4])
+    elif len(t) > 3 and isinstance(t[3], Variable):
+      t[3] = ValuedNumericExpression(t[3])
+    elif isinstance(t[1], Variable):
+      t[1] = ValuedNumericExpression(t[1])
+
     if t[2] == "^":
       t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[4])
     else:
@@ -658,13 +1092,29 @@ def p_NumericExpression_binop(t):
 
 def p_IteratedNumericExpression(t):
     '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Variable
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE Variable
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE Variable
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Variable
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE Variable
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE Variable
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Variable
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE Variable
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE Variable
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression'''
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Variable
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Variable RBRACE Variable
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE Variable'''
 
     if t[1] == "\\sum":
         op = IteratedNumericExpression.SUM
@@ -682,46 +1132,95 @@ def p_IteratedNumericExpression(t):
 
 def p_NumericExpression(t):
     '''NumericExpression : MINUS NumericExpression %prec UMINUS
+                         | MINUS Variable %prec UMINUS
                          | PLUS NumericExpression %prec UPLUS
+                         | PLUS Variable %prec UPLUS
                          | LPAREN NumericExpression RPAREN
+                         | LPAREN Variable RPAREN
                          | ConditionalNumericExpression
-                         | Variable
                          | NUMBER'''
 
+    if len(t) > 2 and isinstance(t[2], Variable):
+      t[2] = ValuedNumericExpression(t[2])
+
     if len(t) > 3:
-        t[0] = NumericExpressionBetweenParenthesis(t[2])
+      t[0] = NumericExpressionBetweenParenthesis(t[2])
     elif t[1] == "+":
-        t[0] = t[2]
+      t[0] = t[2]
     elif t[1] == "-":
-        t[0] = MinusNumericExpression(t[2])
+      t[0] = MinusNumericExpression(t[2])
     elif isinstance(t[1], ConditionalNumericExpression):
-        t[0] = t[1]
+      t[0] = t[1]
     else:
-        t[0] = ValuedNumericExpression(t[1])
+      t[0] = ValuedNumericExpression(t[1])
 
 def p_FunctionNumericExpression(t):
     '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
+                         | SQRT LBRACE Variable RBRACE
                          | LFLOOR NumericExpression RFLOOR
+                         | LFLOOR Variable RFLOOR
                          | LCEIL NumericExpression RCEIL
+                         | LCEIL Variable RCEIL
                          | PIPE NumericExpression PIPE
+                         | PIPE Variable PIPE
                          | MAX LPAREN ValueList RPAREN
+                         | MAX LPAREN NumericExpression RPAREN
+                         | MAX LPAREN Variable RPAREN
+                         | MAX LPAREN SymbolicExpression RPAREN
                          | MIN LPAREN ValueList RPAREN
+                         | MIN LPAREN NumericExpression RPAREN
+                         | MIN LPAREN Variable RPAREN
+                         | MIN LPAREN SymbolicExpression RPAREN
                          | SIN LPAREN NumericExpression RPAREN
+                         | SIN LPAREN Variable RPAREN
                          | COS LPAREN NumericExpression RPAREN
+                         | COS LPAREN Variable RPAREN
                          | LOG LPAREN NumericExpression RPAREN
+                         | LOG LPAREN Variable RPAREN
                          | LN LPAREN NumericExpression RPAREN
+                         | LN LPAREN Variable RPAREN
                          | EXP LPAREN NumericExpression RPAREN
+                         | EXP LPAREN Variable RPAREN
                          | ARCTAN LPAREN NumericExpression RPAREN
+                         | ARCTAN LPAREN Variable RPAREN
                          | ARCTAN LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | ARCTAN LPAREN NumericExpression COMMA Variable RPAREN
+                         | ARCTAN LPAREN Variable COMMA NumericExpression RPAREN
+                         | ARCTAN LPAREN Variable COMMA Variable RPAREN
                          | CARD LPAREN SetExpression RPAREN
-                         | LENGTH LPAREN NumericOrSymbolicExpression RPAREN
+                         | CARD LPAREN Variable RPAREN
+                         | LENGTH LPAREN NumericExpression RPAREN
+                         | LENGTH LPAREN Variable RPAREN
+                         | LENGTH LPAREN SymbolicExpression RPAREN
                          | ROUND LPAREN NumericExpression RPAREN
+                         | ROUND LPAREN Variable RPAREN
                          | ROUND LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | STR2TIME LPAREN NumericOrSymbolicExpression COMMA NumericOrSymbolicExpression RPAREN
+                         | ROUND LPAREN NumericExpression COMMA Variable RPAREN
+                         | ROUND LPAREN Variable COMMA NumericExpression RPAREN
+                         | ROUND LPAREN Variable COMMA Variable RPAREN
+                         | STR2TIME LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | STR2TIME LPAREN NumericExpression COMMA Variable RPAREN
+                         | STR2TIME LPAREN Variable COMMA NumericExpression RPAREN
+                         | STR2TIME LPAREN Variable COMMA Variable RPAREN
+                         | STR2TIME LPAREN NumericExpression COMMA SymbolicExpression RPAREN
+                         | STR2TIME LPAREN Variable COMMA SymbolicExpression RPAREN
+                         | STR2TIME LPAREN SymbolicExpression COMMA NumericExpression RPAREN
+                         | STR2TIME LPAREN SymbolicExpression COMMA Variable RPAREN
+                         | STR2TIME LPAREN SymbolicExpression COMMA SymbolicExpression RPAREN
                          | TRUNC LPAREN NumericExpression RPAREN
+                         | TRUNC LPAREN Variable RPAREN
                          | TRUNC LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | TRUNC LPAREN NumericExpression COMMA Variable RPAREN
+                         | TRUNC LPAREN Variable COMMA NumericExpression RPAREN
+                         | TRUNC LPAREN Variable COMMA Variable RPAREN
                          | UNIFORM LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | UNIFORM LPAREN NumericExpression COMMA Variable RPAREN
+                         | UNIFORM LPAREN Variable COMMA NumericExpression RPAREN
+                         | UNIFORM LPAREN Variable COMMA Variable RPAREN
                          | NORMAL LPAREN NumericExpression COMMA NumericExpression RPAREN
+                         | NORMAL LPAREN NumericExpression COMMA Variable RPAREN
+                         | NORMAL LPAREN Variable COMMA NumericExpression RPAREN
+                         | NORMAL LPAREN Variable COMMA Variable RPAREN
                          | GMTIME LPAREN RPAREN
                          | IRAND224 LPAREN RPAREN
                          | UNIFORM01 LPAREN RPAREN
@@ -729,6 +1228,10 @@ def p_FunctionNumericExpression(t):
 
     if t[1] == "card":
         op = NumericExpressionWithFunction.CARD
+
+        if not isinstance(t[3], SetExpression):
+          t[3] = SetExpressionWithValue(t[3])
+
     elif t[1] == "length":
         op = NumericExpressionWithFunction.LENGTH
     elif t[1] == "round":
@@ -775,8 +1278,14 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.STR2TIME
 
     if len(t) > 5:
+        if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Variable):
+          t[3] = ValueList([t[3]])
+
         t[0] = NumericExpressionWithFunction(op, t[3], t[5])
     elif len(t) > 4:
+        if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Variable):
+          t[3] = ValueList([t[3]])
+
         t[0] = NumericExpressionWithFunction(op, t[3])
     else:
         if t[2] == "(":
@@ -785,20 +1294,36 @@ def p_FunctionNumericExpression(t):
           t[0] = NumericExpressionWithFunction(op, t[2])
 
 def p_ConditionalNumericExpression(t):
-    '''ConditionalNumericExpression : LPAREN SetExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression'''
+    '''ConditionalNumericExpression : LPAREN Variable RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
+                                    | LPAREN Variable RPAREN QUESTION_MARK NumericExpression COLON Variable
+                                    | LPAREN Variable RPAREN QUESTION_MARK Variable COLON NumericExpression
+                                    | LPAREN Variable RPAREN QUESTION_MARK Variable COLON Variable
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON Variable
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON NumericExpression
+                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON Variable'''
     t[0] = ConditionalNumericExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
 
-def p_NumericOrSymbolicExpression(t):
-    '''NumericOrSymbolicExpression : NumericExpression
-                                   | SymbolicExpression'''
-    t[0] = t[1]
+#def p_NumericOrSymbolicExpression(t):
+#    '''NumericOrSymbolicExpression : NumericExpression
+#                                   | SymbolicExpression'''
+#    t[0] = t[1]
 
 
 def p_Range(t):
     '''Range : NumericExpression DOTS NumericExpression BY NumericExpression
-             | NumericExpression DOTS NumericExpression'''
+             | NumericExpression DOTS NumericExpression BY Variable
+             | NumericExpression DOTS Variable BY NumericExpression
+             | NumericExpression DOTS Variable BY Variable
+             | Variable DOTS NumericExpression BY NumericExpression
+             | Variable DOTS NumericExpression BY Variable
+             | Variable DOTS Variable BY NumericExpression
+             | Variable DOTS Variable BY Variable
+             | NumericExpression DOTS NumericExpression
+             | NumericExpression DOTS Variable
+             | Variable DOTS NumericExpression
+             | Variable DOTS Variable'''
 
     if len(t) > 4:
       t[0] = Range(t[1], t[3], t[5])
@@ -807,36 +1332,54 @@ def p_Range(t):
 
 def p_Variable(t):
     '''Variable : ID UNDERLINE LBRACE ValueList RBRACE
-                | ID UNDERLINE LBRACE NumericOrSymbolicExpression RBRACE
+                | ID UNDERLINE LBRACE NumericExpression RBRACE
+                | ID UNDERLINE LBRACE Variable RBRACE
+                | ID UNDERLINE LBRACE SymbolicExpression RBRACE
                 | ID LBRACKET ValueList RBRACKET
-                | ID LBRACKET NumericOrSymbolicExpression RBRACKET
+                | ID LBRACKET NumericExpression RBRACKET
+                | ID LBRACKET Variable RBRACKET
+                | ID LBRACKET SymbolicExpression RBRACKET
                 | ID'''
 
     if len(t) > 5:
         if isinstance(t[4], ValueList):
           t[0] = Variable(ID(t[1]), t[4].getValues())
         else:
-          t[0] = Variable(ID(t[1]), t[4])
+          t[0] = Variable(ID(t[1]), [t[4]])
     elif len(t) > 2:
         if isinstance(t[3], ValueList):
           t[0] = Variable(ID(t[1]), t[3].getValues())
         else:
-          t[0] = Variable(ID(t[1]), t[3])
+          t[0] = Variable(ID(t[1]), [t[3]])
     else:
         t[0] = Variable(ID(t[1]))
 
 def p_ValueList(t):
-    '''ValueList : ValueList COMMA NumericOrSymbolicExpression
-                 | NumericOrSymbolicExpression'''
+    '''ValueList : ValueList COMMA NumericExpression
+                 | ValueList COMMA Variable
+                 | ValueList COMMA SymbolicExpression
+                 | NumericExpression COMMA NumericExpression
+                 | NumericExpression COMMA Variable
+                 | Variable COMMA NumericExpression
+                 | Variable COMMA Variable
+                 | NumericExpression COMMA SymbolicExpression
+                 | Variable COMMA SymbolicExpression
+                 | SymbolicExpression COMMA NumericExpression
+                 | SymbolicExpression COMMA Variable
+                 | SymbolicExpression COMMA SymbolicExpression'''
 
     if not isinstance(t[1], ValueList):
-        t[0] = ValueList([t[1]])
+        t[0] = ValueList([t[1],t[3]])
     else:
         t[0] = t[1].add(t[3])
 
 def p_Tuple(t):
     '''Tuple : LPAREN ValueList RPAREN'''
-    t[0] = Tuple(t[2].getValues())
+
+    if isinstance(t[2], ValueList):
+      t[0] = Tuple(t[2].getValues())
+    else:
+      t[0] = Tuple([t[2]])
 
 def p_TupleList(t):
     '''TupleList : TupleList COMMA Tuple

@@ -151,7 +151,7 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
         to string
         """
         
-        return "NE: (" + str(self.numericExpression) + ")"
+        return "NEBetweenParenthesis: (" + str(self.numericExpression) + ")"
     
     def setupEnvironment(self, codeSetup):
         """
@@ -201,7 +201,7 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
         """
         res = "OpArthNE:" + str(self.numericExpression1) + " " + self.op + " "
         if self.op == NumericExpressionWithArithmeticOperation.POW and not (isinstance(self.numericExpression2, ValuedNumericExpression) or isinstance(self.numericExpression2, NumericExpressionBetweenParenthesis)):
-            res += "(" + str(self.numericExpression2) + ")"
+            res += "{" + str(self.numericExpression2) + "}"
         else:
             res += str(self.numericExpression2)
 
@@ -291,7 +291,7 @@ class IteratedNumericExpression(NumericExpression):
         res = str(self.op) + "(" + str(self.indexingExpression) + ")"
 
         if self.supNumericExpression:
-            res += "^(" + str(self.supNumericExpression) + ")"
+            res += "^" + str(self.supNumericExpression)
 
         res += str(self.numericExpression)
 
