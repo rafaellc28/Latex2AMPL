@@ -1311,7 +1311,7 @@ class CodeGenerator:
 
     # Number
     def generateCode_Number(self, node):
-        return str(node.number)
+        return node.number
 
     # ID
     def generateCode_ID(self, node):

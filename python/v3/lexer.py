@@ -636,7 +636,7 @@ def t_ID(t):
 # A regular expression rule with some action code
 def t_NUMBER(t):
    r'[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
-   t.value = Number(float(t.value))
+   t.value = Number(t.value)
    return t
 
 # Define a rule so we can track line numbers
