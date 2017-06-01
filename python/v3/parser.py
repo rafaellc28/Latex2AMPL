@@ -454,8 +454,7 @@ def p_DeclarationExpression(t):
                              | NumericExpression COMMA DeclarationAttributeList
                              | Variable COMMA DeclarationAttributeList
                              | SymbolicExpression COMMA DeclarationAttributeList
-                             | DeclarationExpression COMMA DeclarationAttributeList
-                             | DeclarationExpression DeclarationAttributeList'''
+                             | DeclarationExpression COMMA DeclarationAttributeList'''
 
     if len(t) > 3 and isinstance(t[3], Variable):
       t[3] = SetExpressionWithValue(t[3])    
@@ -604,13 +603,13 @@ def p_LinearExpression_binop(t):
 
     t[0] = LinearExpressionWithArithmeticOperation(op, t[1], t[3])
 
-#def p_IteratedLinearExpression(t):
-#    '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
-#                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression'''
-#    if len(t) > 7:
-#        t[0] = IteratedLinearExpression(t[10], t[4], t[8])
-#    else:
-#        t[0] = IteratedLinearExpression(t[6], t[4])
+def p_IteratedLinearExpression(t):
+    '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
+                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression'''
+    if len(t) > 7:
+        t[0] = IteratedLinearExpression(t[10], t[4], t[8])
+    else:
+        t[0] = IteratedLinearExpression(t[6], t[4])
 
 def p_ConditionalLinearExpression(t):
     '''ConditionalLinearExpression : LPAREN Variable RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
@@ -618,20 +617,35 @@ def p_ConditionalLinearExpression(t):
                                    | LPAREN Variable RPAREN QUESTION_MARK LinearExpression COLON Variable
                                    | LPAREN Variable RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
                                    | LPAREN Variable RPAREN QUESTION_MARK Variable COLON LinearExpression
+                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
+                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
+                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON Variable
+                                   | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
+                                   | LPAREN NumericExpression RPAREN QUESTION_MARK Variable COLON LinearExpression
                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON Variable
                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON LinearExpression'''
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+
     t[0] = ConditionalLinearExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
                          | LogicalExpression OR EntryLogicalExpression
-                         | LogicalExpression AND EntryLogicalExpression'''
+                         | LogicalExpression OR NumericExpression
+                         | LogicalExpression OR Variable
+                         | LogicalExpression AND EntryLogicalExpression
+                         | LogicalExpression AND NumericExpression
+                         | LogicalExpression AND Variable'''
 
     if len(t) > 3:
+      if isinstance(t[3], NumericExpression) or isinstance(t[3], Variable):
+        t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
+
       if re.search(r"\\wedge|\\text\{\s*and\s*\}", t[2]):
         t[0] = t[1].addAnd(t[3])
       else:
@@ -640,17 +654,19 @@ def p_LogicalExpression(t):
         t[0] = LogicalExpression([t[1]])
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NumericExpression
-                              | Variable
-                              | NOT EntryLogicalExpression
+    '''EntryLogicalExpression : NOT EntryLogicalExpression
+                              | NOT NumericExpression
+                              | NOT Variable
                               | LPAREN LogicalExpression RPAREN'''
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], Variable):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
 
     if isinstance(t[1], str) and re.search(r"!|\\text\{\s*not\s*}", t[1]):
       t[0] = EntryLogicalExpressionNot(t[2])
     elif t[1] == "(":
       t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
     else:
-      t[0] = EntryLogicalExpressionNumericOrSymbolic(t[1])
+      t[0] = t[2]
 
 def p_EntryRelationalLogicalExpression(t):
     '''EntryLogicalExpression : NumericExpression LT NumericExpression
@@ -765,9 +781,19 @@ def p_EntryLogicalExpressionWithSet(t):
 
 def p_EntryIteratedLogicalExpression(t):
     '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE Variable
                               | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE Variable
                               | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression'''
+                              | EXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE Variable
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE Variable'''
+    if not isinstance(t[5], LogicalExpression):
+      t[5] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[5])])
 
     if t[1] == "\\forall":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
@@ -904,6 +930,8 @@ def p_IteratedSetExpression(t):
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
                           | IndexingExpression PIPE LogicalExpression
+                          | IndexingExpression PIPE NumericExpression
+                          | IndexingExpression PIPE Variable
                           | IndexingExpression COMMA EntryIndexingExpression
                           | IndexingExpression COMMA BACKSLASHES EntryIndexingExpression'''
 
@@ -911,6 +939,9 @@ def p_IndexingExpression(t):
         t[0] = t[1].add(t[4])
     elif len(t) > 3:
         if re.search(r"\\mid|\\vert|\|", t[2]):
+            if isinstance(t[3], NumericExpression) or isinstance(t[3], Variable):
+              t[3] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[3])])
+
             t[0] = t[1].setLogicalExpression(t[3])
         else:
             t[0] = t[1].add(t[3])
@@ -1126,8 +1157,17 @@ def p_IteratedNumericExpression(t):
         op = IteratedNumericExpression.MIN
 
     if len(t) > 7:
+        if isinstance(t[8], Variable):
+          t[8] = ValuedNumericExpression(t[8])
+
+        if isinstance(t[10], Variable):
+          t[10] = ValuedNumericExpression(t[10])
+
         t[0] = IteratedNumericExpression(op, t[10], t[4], t[8])
     else:
+        if isinstance(t[6], Variable):
+          t[6] = ValuedNumericExpression(t[6])
+
         t[0] = IteratedNumericExpression(op, t[6], t[4])
 
 def p_NumericExpression(t):
@@ -1298,10 +1338,23 @@ def p_ConditionalNumericExpression(t):
                                     | LPAREN Variable RPAREN QUESTION_MARK NumericExpression COLON Variable
                                     | LPAREN Variable RPAREN QUESTION_MARK Variable COLON NumericExpression
                                     | LPAREN Variable RPAREN QUESTION_MARK Variable COLON Variable
+                                    | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
+                                    | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON Variable
+                                    | LPAREN NumericExpression RPAREN QUESTION_MARK Variable COLON NumericExpression
+                                    | LPAREN NumericExpression RPAREN QUESTION_MARK Variable COLON Variable
                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON Variable
                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON NumericExpression
                                     | LPAREN LogicalExpression RPAREN QUESTION_MARK Variable COLON Variable'''
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], Variable):
+      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+    
+    if isinstance(t[5], Variable):
+      t[5] = ValuedNumericExpression(t[5])
+
+    if isinstance(t[7], Variable):
+      t[7] = ValuedNumericExpression(t[7])
+
     t[0] = ConditionalNumericExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
 
