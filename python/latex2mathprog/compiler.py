@@ -1,7 +1,7 @@
 #!/usr/bin/python -tt
 
 import sys
-from latex2mathprog.Compiler import *
+from Compiler import *
 
 DEBUG = False
 
@@ -14,3 +14,5 @@ doc = sys.stdin.read()
 compiler = Compiler(DEBUG)
 result = compiler.compile(doc)
 print(result)
+
+

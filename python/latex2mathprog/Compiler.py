@@ -1,19 +1,15 @@
 #!/usr/bin/python -tt
 
-#from os import sys, path
-#sys.path.append(path.dirname(path.abspath(__file__)))
-
-#from Lexer import *
 import ply.lex as lex
 import ply.yacc as yacc
-import latex2mathprog.lexer as lexer
-import latex2mathprog.parser as parser
+import lexer as lexer
+import parser as parser
 import re
 import logging
 
-from latex2mathprog.SyntaxException import *
-from latex2mathprog.CodeSetup import *
-from latex2mathprog.CodeGenerator import *
+from SyntaxException import *
+from CodeSetup import *
+from CodeGenerator import *
 
 class Compiler:
 
