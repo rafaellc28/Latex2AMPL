@@ -122,6 +122,10 @@ Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https:
 | string concatenator   | <b>\\&</b> | "Hello, " <b>\\&</b> "wold!" |
 
 
+## Comments
+The token <b>%</b> can be used as a line comment delimiter. However, <b>%</b> has no effect as a comment delimiter when inside a string, like in "%", or inside a <b>\\text</b>, like in <b>\\text{%}</b>.
+
+
 ## Ignored Tokens
 
 The following LaTeX environments and tokens can be used to format the Linear Programming Model. They are ignored by the compiler.
@@ -159,12 +163,12 @@ or
 
 <b>\text{minimize}</b> \<LinearExpression\>
 
-It can have more than one objective separated by BACKSLAHES.
+It can have more than one objective separated by BACKSLASHES.
 
 
 ## Constraints/Declarations Statement
 
-<b>\text{subject to}</b> \<Constraint \|\| Declaration\> [BACKSLAHES \<Constraint \|\| Declaration\> ... ]
+<b>\text{subject to}</b> \<Constraint \|\| Declaration\> [BACKSLASHES \<Constraint \|\| Declaration\> ... ]
 
 
 ## Constraint Statement
