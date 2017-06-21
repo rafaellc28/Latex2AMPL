@@ -32,5 +32,8 @@
     "MathProg",
     "Linear Programming"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "pip install pytest-runner && pip install ply"
+  }
 }
