@@ -122,6 +122,27 @@ Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https:
 | string concatenator   | <b>\\&</b> | "Hello, " <b>\\&</b> "wold!" |
 
 
+## Range Notation
+
+Consider that
+
+DOTS is <b>\cdots</b> or <b>\ldots</b> or <b>\dots</b> or <b>...</b>
+
+LIMIT is \<number\> or \<name\>
+
+
+Then a range is expressed as 
+
+LIMIT DOTS LIMIT
+
+
+## Tuple Notation
+
+A tuple is expressed as
+
+<b>(</b>\<Expression1\><b>, </b>\<Expression2\>[<b>, </b>...]<b>)</b>
+
+
 ## Comments
 The token <b>%</b> can be used as a line comment delimiter. However, <b>%</b> has no effect as a comment delimiter when inside a string, like in "%", or inside a <b>\\text</b>, like in <b>\\text{%}</b>.
 
