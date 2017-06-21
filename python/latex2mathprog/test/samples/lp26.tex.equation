@@ -1,0 +1,5 @@
+% The Newsvendor Problem: Newsvendor.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize } ExProfit: ExProfit \in \mathbb{R}\\
+\text{subject to } ExProfit = -C*x + \sum_{k \in SCENS} Pr_{k}*(R*y_{k} + W*(x-y_{k})): x \in \mathbb{R}^{+}, y_{k} \in \mathbb{R}^{+}\\
+y_{k} \leq x: k \in SCENS\\
+y_{k} \leq D_{k}: k \in SCENS

@@ -1,0 +1,7 @@
+% Generation/Consumption Analysis: Solvay.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize } \sum_{s \in PRODUCTS} MW_{s}*n_{s}: n_{s} \in \mathbb{R}\\
+\text{subject to } n_{s} = \sum_{r \in REACTIONS} Stoich_{s,r}*x_{r}: s \in SPECIES, x_{r} \in \mathbb{R}\\
+\sum_{r \in REACTIONS} n_{s} \leq 0: s \in RAWMATERIALS\\
+\sum_{r \in REACTIONS} n_{s} \geq 0: s \in SPECIES \setminus RAWMATERIALS\\
+\sum_{s \in RAWMATERIALS} -n_{s} \leq 1\\
+n_{s} \leq 1: s \in SPECIES

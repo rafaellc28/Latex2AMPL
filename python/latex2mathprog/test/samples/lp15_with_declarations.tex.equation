@@ -1,0 +1,11 @@
+% Stock Cutting: StockCutting.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{r \in RAWMATERIALS, s \in S[r]} rLength[r]*s*u[r,s]\\
+\text{subject to } u[r,s] \in \mathbb{B}\\
+\sum_{r \in RAWMATERIALS, s \in S[r]} y[p,q,r,s] = 1: p \in PRODUCTS, q \in Q[p]\\
+y[p,q,r,s] \in \{0,1\}\\
+\sum_{q \in Q[p], r \in RAWMATERIALS, s \in S[r]} y[p,q,r,s] = demand[p]: p \in PRODUCTS\\
+\sum_{p \in PRODUCTS, q \in Q[p]} pLength[p]*y[p,q,r,s] + w[r,s] = rLength[r]: r \in RAWMATERIALS, s \in S[r]\\
+w[r,s] \in \mathbb{R}^{+}\\
+bigM*u[r,s] \geq \sum_{p \in PRODUCTS, q \in Q[p]} y[p,q,r,s]: r \in RAWMATERIALS, s \in S[r]\\
+Q[p] := 1...demand[p]: p \in PRODUCTS\\
+S[r] := 1...avail[r]: r \in RAWMATERIALS\\

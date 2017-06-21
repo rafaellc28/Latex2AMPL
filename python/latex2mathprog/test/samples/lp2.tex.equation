@@ -1,0 +1,5 @@
+% Linear Equations: linearEqns.mod in https://www3.nd.edu/~jeff/mathprog/#
+2*x +   y +  z = 12\\
+x + 2*y +  z = 23\\
+x +   y +  z = 10:\\
+x,y,z \in \mathbb{Variable}

@@ -1,0 +1,8 @@
+% Sets: Sets.mod
+DOGS := \{'Beagle','Labrador','Shepherd','Boxer'\}\\
+CATS := \{'Tiger','Lion'\}\\
+FISH := \{'Goldfish','Guppy','Shark'\}\\
+PETS := DOGS \cup CATS \cup FISH\\
+DANGEROUS := \{'Tiger','Lion','Shark','Crocodile'\}\\
+SAFE := PETS \setminus DANGEROUS\\
+

@@ -1,0 +1,5 @@
+% GLPK/cf12a.mod: ../glpk-4.47/examples/cf12a.mod
+\text{minimize } \sum_{i \in I} u_{i} + \sum_{i \in I} v_{i}\\
+\text{subject to } b * x_{i} + a + u_{i} - v_{i} = y_{i}: i \in I\\
+u_{i}, v_{i} \in \mathbb{R}^{+}\\
+a, b \in \mathbb{R}\\

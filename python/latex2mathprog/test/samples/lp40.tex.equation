@@ -1,0 +1,7 @@
+% GLPK/magic.mod: ../glpk-4.47/examples/magic.mod
+\sum_{k \in N} x_{i,j,k} = 1: i \in 1 \dots C, j \in 1 \dots C, C \in \mathbb{Z}, C \in \mathbb{Param}, x_{i,j,k} \in \mathbb{B}\\
+\sum_{i \in 1 \dots C, j \in 1 \dots C} x_{i,j,k} = 1: k \in N\\
+\sum_{j \in 1 \dots C, k \in N} k * x_{i,j,k} = s: i \in 1 \ldots C, s \in \mathbb{R}\\
+\sum_{i \in 1 \dots C, k \in N} k * x_{i,j,k} = s: j \in 1 \ldots C\\
+\sum_{i \in 1 \ldots C, k \in N} k * x_{i,i,k} = s\\
+\sum_{i \in 1 \ldots C, k \in N} k * x_{i,C-i+1,k} = s

@@ -1,0 +1,14 @@
+% Saving for Retirement: retirement.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } fSave\\
+\text{subject to } w_{Nper} = 8*salary_{Nper}\\
+x_{n,"TuitionA"} = 40000*(1+Rf)^{n}: n \in 18/dT \cdots 21/dT\\
+x_{n,"TuitionB"} = 40000*(1+Rf)^{n}: n \in 20/dT \ldots 23/dT\\
+x_{n,"TuitionC"} = 40000*(1+Rf)^{n}: n \in 22/dT \ldots 25/dT\\
+w_{0} = Wi\\
+w_{n} = (1+Ri)*(w_{n-1} + u_{n-1}) - \sum_{e \in EXPENSES}x_{n,e}: n \in 1 \ldots Nper\\
+u_{n} \leq fSave*salary_{n}: n \in 0 \ldots Nper\\
+T := 40; Nper := 1*T; Ri := 0.05; Rf := 0.03; Wi := 0; N := 0 \ldots Nper; dT := T/Nper\\
+t_{n} := n*dT: n \in N; ri := Ri*dT; rf := Rf*dT\\
+salary_{n} := (150000*(1+rf)^{n})*(0.4+0.1*t_{n})/(1+0.1*t_{n}): n \in N\\
+EXPENSES := \{"TuitionA","TuitionB","TuitionC"\}\\
+w_{n}, u_{n}, x_{n,e} \in \mathbb{R}^{+}: n \in N, e \in EXPENSES; fSave \in \mathbb{R}\\

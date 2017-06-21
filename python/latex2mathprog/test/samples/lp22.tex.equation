@@ -1,0 +1,18 @@
+% Traveling Salesman Problem with Time Windows: tsptw.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{a \in PLACES} (1*tea_{a} + 2*tla_{a} + 2*ted_{a} + 1*tld_{a}) + 2*Tmax: tea_{a} \in \mathbb{R}^{+}, tla_{a} \in \mathbb{R}^{+}, ted_{a} \in \mathbb{R}^{+}, tld_{a} \in \mathbb{R}^{+}, Tmax \in \mathbb{R}^{+}\\
+\text{subject to } \sum_{b \in PLACES} x_{a,b} = 1: a \in PLACES \mid a \neq Finish, Finish \in \mathbb{S}\\
+\sum_{b \in PLACES} x_{Finish,b} = 0\\
+\sum_{b \in PLACES} x_{b,a} = 1: a \in PLACES \mid a \neq Start, Start \in \mathbb{S}\\
+\sum_{b \in PLACES} x_{b,Start} = 0\\
+y_{a,b} \leq (card(PLACES)-1)*x_{a,b}: a \in PLACES, b \in PLACES, y_{a,b} \in \mathbb{Z}^{+}\\
+\sum_{b \in PLACES} y_{b,a} + ((a=Start)? card(PLACES):0) = 1 + \sum_{b \in PLACES} y_{a,b}: a \in PLACES\\
+tlv_{a} \geq tar_{a}: a \in PLACES, tlv_{a} \in \mathbb{R}, tar_{a} \in \mathbb{R}\\
+tar_{b} \geq tlv_{a} + Gcdist_{a,b}/Maxspeed - BigM*(1-x_{a,b}): a \in PLACES, b \in PLACES, x_{a,b} \in \mathbb{B}\\
+tea_{a} \geq S1_{a} - tar_{a}: a \in PLACES \mid a \neq Start\\
+tla_{a} \geq tar_{a} - S2_{a}: a \in PLACES \mid a \neq Start\\
+ted_{a} \geq S1_{a} - tlv_{a}: a \in PLACES \mid a \neq Finish\\
+tld_{a} \geq tlv_{a} - S2_{a}: a \in PLACES \mid a \neq Finish\\
+tea_{a} \leq Tmax: a \in PLACES\\
+tla_{a} \leq Tmax: a \in PLACES\\
+ted_{a} \leq Tmax: a \in PLACES\\
+tld_{a} \leq Tmax: a \in PLACES

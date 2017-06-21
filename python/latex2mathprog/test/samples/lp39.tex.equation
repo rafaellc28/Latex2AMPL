@@ -1,0 +1,4 @@
+% GLPK/crypto.mod: ../glpk-4.47/examples/crypto.mod
+\sum_{j \in VALUES} x_{i,j} = 1: i \in LETTERS, x_{i,j} \in \mathbb{B}\\
+\sum_{i \in LETTERS} x_{i,j} = 1: j \in VALUES\\
+\sum_{k \in 1 \ldots length(word), j \in VALUES} j * x_{substr(word,k,1), j} = Total_{word}: word \in WORDS

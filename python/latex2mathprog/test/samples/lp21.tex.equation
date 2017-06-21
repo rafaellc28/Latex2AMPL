@@ -1,0 +1,4 @@
+% GLPK/transp.mod: ../glpk-4.47/examples/transp.mod
+\text{minimize } \sum_{i \in I, j \in J} C_{i,j} * x_{i,j}: x_{i,j} \in \mathbb{R}^{+}\\
+\text{subject to } \sum_{j \in J} x_{i,j} \leq A_{i}: i \in I\\
+\sum_{i \in I} x_{i,j} \geq B_{j}: j \in J

@@ -1,0 +1,3 @@
+% GLPK/misp.mod: ../glpk-4.47/examples/misp.mod
+\text{maximize } \sum_{i \in V} x_{i}: x_{i} \in \{0,1\}\\
+\text{subject to } x_{i} + x_{j} \leq 1: (i,j) \in E

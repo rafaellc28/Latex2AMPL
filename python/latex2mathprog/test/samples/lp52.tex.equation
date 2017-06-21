@@ -1,0 +1,4 @@
+% GLPK/color.mod: ../glpk-4.47/examples/color.mod
+\text{minimize } \sum_{c \in 1 \ldots Nc} u_{c}: u_{c} \in \mathbb{B}\\
+\text{subject to } \sum_{c \in 1 \ldots Nc} x_{i,c} = 1: i \in V, x_{i,c} \in \mathbb{B}\\
+x_{i,c} + x_{j,c} \leq u_{c}: (i,j) \in E, c \in 1 \ldots Nc

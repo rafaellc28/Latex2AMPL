@@ -1,0 +1,6 @@
+% Scenario Analysis for a Plant Expansion: PlantExpansion.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } capcost + \sum_{s \in SCENARIOS} 0.25*v_{s}: capcost \in \mathbb{R}, v_{s} \in \mathbb{R}\\
+\text{subject to } capcost = \sum_{p \in PLANTS} C_{p}*(E_{p}+x_{p}): x_{p} \in \mathbb{R}^{+}\\
+v_{s} = \sum_{p \in PLANTS, d \in DEMAND} T_{d}*O_{p}*y_{p,d,s}: s \in SCENARIOS, y_{p,d,s} \in \mathbb{R}^{+}\\
+E_{p} + x_{p} \geq \sum_{d \in DEMAND} y_{p,d,s}: p \in PLANTS, s \in SCENARIOS\\
+D_{d,s} = \sum_{p \in PLANTS} y_{p,d,s}: d \in DEMAND, s \in SCENARIOS

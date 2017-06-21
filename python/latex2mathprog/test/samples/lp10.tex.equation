@@ -1,0 +1,11 @@
+% Jesuit Volunteer Corps: JesuitVols.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } z\\
+\text{subject to } \sum_{t \in TASKS} x_{v,t,w} = 1: v \in VOLS, w \in WEEKS, x_{v,t,w} \in \mathbb{B}, z \in \mathbb{Z}\\
+\sum_{v \in VOLS} x_{v,'Trash',w} = 1: w \in WEEKS\\
+\sum_{v \in VOLS} x_{v,t,w} = 2: t \in TASKS, w \in WEEKS | t \neq 'Trash'\\
+\sum_{w \in WEEKS} x_{v,t,w} \geq 2: t \in TASKS, v \in VOLS| t \neq 'Trash'\\
+\sum_{w \in WEEKS} x_{v,'Trash',w} \leq z: v \in VOLS\\
+p_{u,v,t,w} \leq x_{u,t,w}: t \in TASKS, w \in WEEKS, (u,v) \in PAIRS, p_{u,v,t,w} \in \mathbb{B}\\
+p_{u,v,t,w} \leq x_{v,t,w}: t \in TASKS, w \in WEEKS, (u,v) \in PAIRS\\
+p_{u,v,t,w} \geq x_{u,t,w} + x_{v,t,w} - 1: t \in TASKS, w \in WEEKS, (u,v) \in PAIRS\\
+\sum_{t \in TASKS, w \in WEEKS} p_{u,v,t,w} \geq 1: (u,v) \in PAIRS

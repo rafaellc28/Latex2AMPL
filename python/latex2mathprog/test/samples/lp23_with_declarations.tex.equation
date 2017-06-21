@@ -1,0 +1,27 @@
+% Vehicle Routing Problem: vrp.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{p \in P} routeDistance_{p}\\
+\text{subject to } x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in  N, (b,bLoc) \in START\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in FINISH, (b,bLoc) \in N\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in START, (b,bLoc) \in N \mid p \neq a\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in N, (b,bLoc) \in FINISH \mid p \neq b\\
+\sum_{p \in P, (a,aLoc) \in (CUSTOMERS \cup START)} x_{p,a,aLoc,b,bLoc} = 1: (b,bLoc) \in (CUSTOMERS \cup FINISH)\\
+\sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup FINISH)} x_{p,a,aLoc,b,bLoc} = 1: (a,aLoc) \in (START \cup CUSTOMERS)\\
+\sum_{(b,bLoc) \in (CUSTOMERS \cup START)} x_{p,b,bLoc,a,aLoc} = \sum_{(b,bLoc) \in (CUSTOMERS \cup FINISH)} x_{p,a,aLoc,b,bLoc}: p \in P, (a,aLoc) \in CUSTOMERS\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in N, (b,bLoc) \in N \mid (a=b) \wedge (aLoc=bLoc)\\
+y_{p,a,aLoc,b,bLoc} \leq card(CUSTOMERS)*x_{p,a,aLoc,b,bLoc}: p \in P, (a,aLoc) \in N, (b,bLoc) \in N\\
+\sum_{p \in P, (a,aLoc) \in START, (b,bLoc) \in N } y_{p,a,aLoc,b,bLoc} = card(CUSTOMERS)\\
+\sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup START)} y_{p,b,bLoc,a,aLoc} = 1 + \sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup FINISH)} y_{p,a,aLoc,b,bLoc}: (a,aLoc) \in CUSTOMERS\\
+routeDistance_{p} = \sum_{(a,aLoc) \in N, (b,bLoc) \in N} gcdist_{aLoc,bLoc}*x_{p,a,aLoc,b,bLoc}: p \in P\\
+routeLegs_{p} = \sum_{(a,aLoc) \in START, (b,bLoc) \in N} y_{p,a,aLoc,b,bLoc}: p \in P\\
+routeDistance_{p} \leq maxDistance: p \in P\\
+routeLegs_{p} \leq maxLegs: p \in P\\
+x_{p,a,aLoc,b,bLoc} \in \mathbb{B}: p \in P, (a,aLoc) \in N, (b,bLoc) \in N\\
+y_{p,a,aLoc,b,bLoc} \in \mathbb{Z}^{+}: p \in P, (a,aLoc) \in N, (b,bLoc) \in N\\
+routeDistance_{p}, routeLegs_{P}, maxDistance, maxLegs \in \mathbb{R}^{+}\\
+lat_{l}, lng_{l} : l \in LOCATIONS; d2r := 3.1415926/180\\
+P := \text{setof}\{(p,sLoc,fLoc) \in PLANES\} p\\
+START := \text{setof}\{(p,sLoc,fLoc) \in PLANES\} (p,sLoc)\\
+FINISH := \text{setof}\{(p,sLoc,fLoc) \in PLANES\} (p,fLoc)\\
+N := CUSTOMERS \cup (START \cup FINISH)\\
+alpha_{a,b} := \sin(d2r*(lat_{a}-lat_{b})/2)^{2} + \cos(d2r*lat_{a})*\cos(d2r*lat_{b})*\sin(d2r*(lng_{a}-lng_{b})/2)^{2}: a \in LOCATIONS, b \in LOCATIONS\\
+gcdist_{a,b} := 2*6371*\arctan(\sqrt{alpha_{a,b}}, \sqrt{1-alpha_{a,b}}): a \in LOCATIONS, b \in LOCATIONS\\

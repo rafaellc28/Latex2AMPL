@@ -1,0 +1,8 @@
+% Piecewise Linear Interpolation: PiecewiseLinearInterpolation.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize } f\\
+\text{subject to } s_{n} \leq z_{n}: n \in 1 \ldots N\\
+1 = \sum_{n \in 1 \ldots N} z_{n}\\
+x = \sum_{n \in 1 \ldots N} (xi_{n-1}*z_{n} + (xi_{n}-xi_{n-1})*s_{n})\\
+f = \sum_{n \in 1 \ldots N} (fi_{n-1}*z_{n} + (fi_{n}-fi_{n-1})*s_{n})\\
+xi_{n}, fi_{n} : n \in 0 \ldots N\\
+f, x \in \mathbb{R}; s_{n} \in \mathbb{R}^{+}; z_{n} \in \mathbb{B}\\

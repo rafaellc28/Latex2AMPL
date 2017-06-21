@@ -1,0 +1,3 @@
+% GLPK/mvcp.mod: ../glpk-4.47/examples/mvcp.mod
+\text{minimize } \sum_{i \in V} W_{i} * x_{i}: x_{i} \in \mathbb{B}\\
+\text{subject to } x_{i} + x_{j} \geq 1: (i,j) \in E

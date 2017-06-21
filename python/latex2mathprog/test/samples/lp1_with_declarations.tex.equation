@@ -1,0 +1,11 @@
+% Linear Program in Two Variables: lpTwoVars.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize} 3*x+4*y\\
+
+\text{subject to} x+2*y \leq 14\\
+
+3*x-y \geq 0\\
+
+x-y \leq 2\\
+
+x,y \in \mathbb{V}\\
+

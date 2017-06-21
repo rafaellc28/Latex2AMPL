@@ -1,0 +1,3 @@
+% GLPK/todd.mod: ../glpk-4.47/examples/todd.mod
+\text{maximize } \sum_{j \in 1 \ldots N} A_{j} * x_{j}: x_{j} \in \mathbb{B}, N \in \mathbb{Z}, N \in \mathbb{P}\\
+\text{subject to } \sum_{j \in 1 \ldots N} A_{j} * x_{j} \leq B

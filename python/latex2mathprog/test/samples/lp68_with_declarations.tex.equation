@@ -1,0 +1,7 @@
+% GLPK/todd.mod: ../glpk-4.47/examples/todd.mod
+\text{maximize } \sum_{j \in 1 \ldots n} a_{j} * x_{j}\\
+\text{subject to } \sum_{j \in 1 \ldots n} a_{j} * x_{j} \leq b\\
+x_{j} \in \mathbb{B}\\
+n \in \mathbb{Z}, \in \mathbb{P}, > 0; log2n := \ln(n) / \ln(2); k := \lfloor log2n \rfloor\\
+a_{j} := 2 ^ {k + n + 1} + 2 ^ {k + n + 1 - j} + 1: j \in 1 \ldots n\\
+b := 0.5 * \lfloor \sum_{j \in 1 \ldots n} a_{j} \rfloor\\

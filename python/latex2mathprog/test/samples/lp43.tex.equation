@@ -1,0 +1,3 @@
+% GLPK/shikaku.mod: ../glpk-4.47/examples/shikaku.mod
+\text{minimize } 0\\
+\text{subject to } \sum_{(i,j,k,l,m,n) \in B\mid s \geq k \wedge s < m \wedge t \geq l \wedge t < n} x_{i,j,k,l,m,n} = 1: (s,t) \in \{ rows, cols \}, x_{i,j,k,l,m,n} \in \mathbb{B}

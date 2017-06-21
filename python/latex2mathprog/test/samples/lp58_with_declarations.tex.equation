@@ -1,0 +1,7 @@
+% GLPK/maxflow.mod: ../glpk-4.47/examples/maxflow.mod
+\text{maximize } flow\\
+\text{subject to } \sum_{(j,i) \in E} x_{j,i} + ((i = s)? flow:0) = \sum_{(i,j) \in E} x_{i,j} + ((i = t)?flow:0): i \in V\\
+x_{i,j} \leq a_{i,j}: (i,j) \in E\\
+n \in \mathbb{Z}, \in \mathbb{P}, \geq 2; V := \{1 \ldots n\}; E \subset V \times V; a_{i,j}, > 0: (i,j) \in E\\
+t := n, \in V, \neq s, \in \mathbb{S}; s \in \mathbb{S}, \in V, := 1\\
+flow,  \in \mathbb{R}^{+}; x_{i,j} \in \mathbb{R}^{+}, \leq a_{i,j}: (i,j) \in E\\

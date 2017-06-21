@@ -1,0 +1,19 @@
+% GLPK/egypt.mod: ../glpk-4.47/examples/egypt.mod
+\text{minimize } Psip + Psil + Psii: Psip \in \mathbb{R}, Psil \in \mathbb{R}, Psii \in \mathbb{R}\\
+\text{subject to } \sum_{c \in cFinal} Fn_{c,n} * (\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r}) \geq Cn75_{r,n}: n \in nutr, r \in region, Xf_{c,pl,r} \in \mathbb{R}^{+}, Vf_{c,r,po} \in \mathbb{R}^{+}\\
+\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r} \geq Cf75_{r,c}: c \in cFinal, r \in region\mid Cf75_{r,c} > 0\\
+\sum_{pr \in pPos_{pl}} Io_{c,pr} * Z_{pl,pr} + ((c \in cShip)? ((pl \in cpPos_{c})? \sum_{p2 \in ccPos_{c}} Xi_{c,pl,p2}:0) - ((pl \in ccPos_{c})? \sum_{p2 \in cpPos_{c}} Xi_{c,p2,pl}:0):0) + ((c \in cRaw \wedge pl \in ccPos_{c})? (((PImp_{c} > 0)? Vr_{c,pl}:0) + ((PDom_{pl,c} > 0)? U_{c,pl}:0)):0) \geq (c \in cFinal \wedge pl \in cpPos_{c})? \sum_{r \in region} Xf_{c,pl,r}:0: c \in commod, pl \in plant, Z_{pl,pr} \in \mathbb{R}^{+}, Xi_{c,pl,p2} \in \mathbb{R}^{+}, Vr_{c,pl} \in \mathbb{R}^{+}, U_{c,pl} \in \mathbb{R}^{+}\\
+\sum_{pr \in pPos_{pl}} Util_{u,pr} * Z_{pl,pr} \leq UtilPct * Icap_{u,pl}: pl \in plant, u \in mPos_{pl}\\
+Psip = \sum_{c \in cRaw, pl \in ccPos_{c}} PDom_{pl,c} * U_{c,pl}\\
+Psil = \sum_{c \in cFinal} (\sum_{pl \in cpPos_{c}, r \in region} TranFinal_{pl,r} * Xf_{c,pl,r} + \sum_{po \in port, r \in region} TranImport_{r,po} * Vf_{c,r,po}) + \sum_{c \in cShip, p1 \in cpPos_{c}, p2 \in ccPos_{c}} TranInter_{p1,p2} * Xi_{c,p1,p2} + \sum_{c \in cRaw, pl \in ccPos_{c}\mid PImp_{c} > 0} TranRaw_{pl} * Vr_{c,pl}\\
+Psii / Exch  =  \sum_{c \in cFinal, r \in region, po \in port} PImp_{c} * Vf_{c,r,po} + \sum_{c \in cRaw, pl \in ccPos_{c}} PImp_{c} * Vr_{c,pl}\\
+TranRaw_{pl} \geq 0: pl \in plant\\
+TranInter_{p1,p2} \geq 0: p1 \in plant, p2 \in plant\\
+TranFinal_{pl,r} \geq 0: pl \in plant, r \in region\\
+Util_{u,p} \geq 0: u \in unit, p \in proc\\
+Io_{c,p} \leq 1: c \in commod, p \in proc\\
+Icap_{u,pl} \geq 0: u \in unit, pl \in plant\\
+PDom_{pl,r} \geq 0: pl \in plant, r \in cRaw\\
+PImp_{c} \geq 0: c \in commod\\
+\sum_{pl \in cpPos_{c}}1 \geq 0: c \in commod\\
+\sum_{pl \in ccPos_{c}}1 \geq 0: c \in commod\\

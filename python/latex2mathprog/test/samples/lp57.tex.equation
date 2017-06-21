@@ -1,0 +1,4 @@
+% GLPK/maxcut.mod: ../glpk-4.47/examples/maxcut.mod
+\text{maximize } \sum_{(i,j) \in E} W_{i,j} * (x_{i} + x_{j} - 2 * t_{i,j}): x_{i} \in \mathbb{B}, t_{i,j} \in \mathbb{B}\\
+\text{subject to } 0 \leq x_{i} + x_{j} - 2 * t_{i,j} \leq 1: (i,j) \in E\\
+x_{i} \geq 0: i \in V

@@ -1,0 +1,10 @@
+% Sorting in MathProg: Sorting.mod in https://www3.nd.edu/~jeff/mathprog/#
+a_{i} \leq a_{j} + BigM*y_{i,j}: i \in I, j \in I \mid i \neq j\\
+a_{j} \leq a_{i} + BigM*(1-y_{i,j}): i \in I, j \in I \mid i \neq j\\
+y_{i,j} + y_{j,i} = 1: i \in I, j \in I \mid i \neq j\\
+t_{i} = 1 + \sum_{j \in I\mid i \neq j} y_{i,j}: i \in I\\
+y_{i,j} \in \mathbb{B}: i, j \in I\mid i \neq j\\
+t_{i} \in \mathbb{R}\\
+r_{i} := 1 + \sum_{j \in I} ((a_{j} < a_{i} \vee a_{j} = a_{i} \wedge j < i))? 1:0: i \in I\\
+s_{i} := 1 + \sum_{j \in I\mid a_{i} < a_{j} \vee a_{i} = a_{j} \wedge i < j} 1: i \in I\\
+BigM := 1 + \sum_{i \in I}\vert a_{i} \vert\\

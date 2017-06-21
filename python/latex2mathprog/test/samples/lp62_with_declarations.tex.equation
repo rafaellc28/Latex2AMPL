@@ -1,0 +1,4 @@
+% GLPK/misp.mod: ../glpk-4.47/examples/misp.mod
+\text{maximize } \sum_{i \in V} x_{i}\\
+\text{subject to } x_{i} + x_{j} \leq 1: (i,j) \in E\\
+x_{i} \in \{0,1\}; n \in \mathbb{Z}, \in \mathbb{P}, > 0; V := 1 \ldots n; E \subset V \times V\\

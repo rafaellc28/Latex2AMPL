@@ -1,0 +1,6 @@
+% Risk Averse Gambler (Stochastic Dynamic Programming): RAGambling.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{t \in 0 \cdots T-1, x \in X} V_{t,x}: V_{t,x} \in \mathbb{R}^{+}\\
+\text{subject to } V_{t,x} \geq  P*V_{t+1,x+u} + Q*V_{t+1,x-u}: t \in 0 \cdots T-1, x \in 1 \cdots N, u \in U_{x}\\
+V_{T,x} = \ln(x): x \in X\\
+V_{t,x} \geq 0: t \in 0 \cdots T, x \in X\\
+u \geq 0: x \in X, u \in U_{x}\\

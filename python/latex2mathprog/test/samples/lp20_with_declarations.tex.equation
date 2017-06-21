@@ -1,0 +1,14 @@
+% GLPK/train.mod: ../glpk-4.47/examples/train.mod
+\text{minimize } \sum_{c \in cities} U_{c,last} + \sum_{(c1,t1,c2,t2) \in schedule\mid t2 < t1} X_{c1,t1,c2,t2}\\
+\text{minimize } \sum_{(c1,t1,c2,t2) \in schedule} distance_{c1,c2} * X_{c1,t1,c2,t2}\\
+\text{subject to } U_{c,t} = U_{c, (t>1)?t-1:last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}: c \in cities, t \in times, U_{c,t} \in \mathbb{R}^{+}\\
+low_{c1,t1,c2,t2} \leq X_{c1,t1,c2,t2} \leq high_{c1,t1,c2,t2}: (c1,t1,c2,t2) \in schedule\\
+links \subset \{c1 \in cities, c2 \in cities\mid c1 \neq c2\}\\
+last, section \in \mathbb{Z}, \in \mathbb{P}, > 0; times := 1 \ldots last\\
+demand_{s} > 0\\
+schedule \subset \{c1 \in cities, t1 \in times, c2 \in cities, t2 \in times\mid (c1,c2) \in links\}\\
+low := \lceil demand_{c1,t1,c2,t2} \rceil: (c1,t1,c2,t2) \in schedule\\
+high := \max(2, \min(\lceil 2*demand_{c1,t1,c2,t2} \rceil, section * \lceil demand_{c1,t1,c2,t2}/section \rceil)): (c1,t1,c2,t2) \in schedule\\
+disttable_{l1,l2}, \geq 0, \text{default} 0.0: (l1,l2) \in links\\
+distance_{c1,c2} > 0, := (disttable_{c1,c2} > 0)? disttable_{c1,c2} : disttable_{c2,c1}: (c1,c2) \in links\\
+X_{c1,t1,c2,t2} \in \mathbb{R}^{+}\\

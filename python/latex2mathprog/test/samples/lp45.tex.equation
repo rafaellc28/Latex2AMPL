@@ -1,0 +1,26 @@
+% GLPK/zebra.mod: ../glpk-4.47/examples/zebra.mod
+\sum_{c \in COLOR} color_{h,c} = 1: h \in HOUSE, color_{h,p} \in \mathbb{B}\\
+\sum_{h \in HOUSE} color_{h,c} = 1: c \in COLOR\\
+\sum_{n \in NATIONALITY} nationality_{h,n} = 1: h \in HOUSE, nationality_{h,n} \in \mathbb{B}\\
+\sum_{h \in HOUSE} nationality_{h,n} = 1: n \in NATIONALITY\\
+\sum_{d \in DRINK} drink_{h,d} = 1: h \in HOUSE, drink_{h,d} \in \mathbb{B}\\
+\sum_{h \in HOUSE} drink_{h,d} = 1: d \in DRINK\\
+\sum_{s \in SMOKE} smoke_{h,s} = 1: h \in HOUSE, smoke_{h,s} \in \mathbb{B}\\
+\sum_{h \in HOUSE} smoke_{h,s} = 1: s \in SMOKE\\
+\sum_{p \in PET} pet_{h,p} = 1: h \in HOUSE, pet_{h,p} \in \mathbb{B}\\
+\sum_{h \in HOUSE} pet_{h,p} = 1: p \in PET\\
+nationality_{h,"Englishman"} = color_{h,"red"}: h \in HOUSE\\
+nationality_{h,"Spaniard"} = pet_{h,"dog"}: h \in HOUSE\\
+drink_{h,"coffee"} = color_{h,"green"}: h \in HOUSE\\
+nationality_{h,"Ukranian"} = drink_{h,"tea"}: h \in HOUSE\\
+color_{h,"green"} = (h = 1)? 0:color_{h-1,"ivory"}: h \in HOUSE\\
+smoke_{h,"Old_Gold"} = pet_{h,"snails"}: h \in HOUSE\\
+smoke_{h,"Kools"} = color_{h,"yellow"}: h \in HOUSE\\
+drink_{3,"milk"} = 1\\
+nationality_{1,"Norwegian"} = 1\\
+(1 - smoke_{h,"Chesterfield"}) + ((h = 1)?0:pet_{h-1,"fox"}) + ((h = 5)? 0:pet_{h+1,"fox"}) \geq 1: h \in HOUSE\\
+(1 - smoke_{h,"Kools"}) + ((h = 1)?0:pet_{h-1,"horse"}) + ((h = 5)?0:pet_{h+1,"horse"}) \geq 1: h \in HOUSE\\
+smoke_{h,"Lucky_Strike"} = drink_{h,"orange_juice"}: h \in HOUSE\\
+nationality_{h,"Japanese"} = smoke_{h,"Parliament"}: h \in HOUSE\\
+(1 - nationality_{h,"Norwegian"}) + ((h = 1)?0:color_{h-1,"blue"}) + ((h = 5)?0:color_{h+1,"blue"}) \geq 1: h \in HOUSE
+

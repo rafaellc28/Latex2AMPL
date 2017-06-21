@@ -1,0 +1,3 @@
+% GLPK/stigler.mod (Stigler's 1939 Diet Problem): ../glpk-4.47/examples/stigler.mod
+\text{minimize} \sum_{c \in C} x_{c}\\
+\text{subject to} \sum_{c \in C} Data_{c,n} * x_{c} \geq Allowance_{n} : \\ n \in N, x_{c} \in \mathbb{R}^{+}\\

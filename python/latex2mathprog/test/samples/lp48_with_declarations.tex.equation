@@ -1,0 +1,8 @@
+% GLPK/bpp.mod: ../glpk-4.47/examples/bpp.mod
+\text{minimize } \sum_{j \in J} used_{j}\\
+\text{subject to } \sum_{j \in J} x_{i,j} = 1: i \in I\\
+\sum_{i \in I} w_{i} * x_{i,j} \leq c * used_{j}: j \in J\\
+used_{j}, x_{i,j} \in \mathbb{B}\\
+m \in \mathbb{Z}, \in \mathbb{Parameters}, > 0; I := 1 \ldots m; w_{i}, > 0: i \in 1 \ldots m; c, > 0\\
+z_{i,j} := (i = 1 \wedge j = 1)? 1 : (\exists\{jj \in 1 \ldots j-1\} z_{i,jj})? 0 : (\sum_{ii \in 1 \ldots i-1} w_{ii} * z_{ii,j} + w_{i} > c)? 0 : 1: i \in I, j \in 1 \ldots m\\
+n := \sum_{j \in 1 \ldots m} (\exists\{i \in I\} z[i,j])? 1:0; J := 1 \ldots n\\

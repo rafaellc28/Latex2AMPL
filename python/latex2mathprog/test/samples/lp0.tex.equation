@@ -1,0 +1,9 @@
+% Modeling Language GNU MathProg, Appendix E (https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf)
+\begin{equation}
+\begin{split}
+\text{minimize} & \displaystyle\sum\limits_{i \in I,j \in J}C_{i,j} * x_{i,j}\\
+\text{subject to} & \displaystyle\sum\limits_{j \in J}x_{i,j} \leq A_{i} \text{ FOR } i \in I\\
+& \displaystyle\sum\limits_{i \in I}x_{i,j} \geq B_{j} \text{ for } j \in J,\\
+& x_{i,j} \in \mathbb{N}
+\end{split}
+\end{equation}

@@ -1,0 +1,7 @@
+% Risk Neutral Gambler (Stochastic Dynamic Programming): RNGambling.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{x \in X} V_{x}: V_{x} \in \mathbb{R}\\
+\text{subject to } V_{x} \geq  A*(P*V_{x+u} + Q*V_{x-u}): x \in 1 \cdots N-1, u \in U_{x}\\
+V_{0} = 0\\
+V_{N} = N\\ 
+V_{x} \geq 0: x \in X\\
+u \geq 0: x \in X, u \in U_{x}\\

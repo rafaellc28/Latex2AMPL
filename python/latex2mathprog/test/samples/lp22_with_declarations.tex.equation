@@ -1,0 +1,27 @@
+% Traveling Salesman Problem with Time Windows: tsptw.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{a \in PLACES} (1*tea_{a} + 2*tla_{a} + 2*ted_{a} + 1*tld_{a}) + 2*Tmax\\
+\text{subject to } \sum_{b \in PLACES} x_{a,b} = 1: a \in PLACES \mid a \neq finish\\
+\sum_{b \in PLACES} x_{finish,b} = 0\\
+\sum_{b \in PLACES} x_{b,a} = 1: a \in PLACES \mid a \neq start\\
+\sum_{b \in PLACES} x_{b,start} = 0\\
+y_{a,b} \leq (card(PLACES)-1)*x_{a,b}: a \in PLACES, b \in PLACES\\
+\sum_{b \in PLACES} y_{b,a} + ((a=start)? card(PLACES):0) = 1 + \sum_{b \in PLACES} y_{a,b}: a \in PLACES\\
+tlv_{a} \geq tar_{a}: a \in PLACES\\
+tar_{b} \geq tlv_{a} + gcdist_{a,b}/maxspeed - bigM*(1-x_{a,b}): a \in PLACES, b \in PLACES\\
+tea_{a} \geq S1_{a} - tar_{a}: a \in PLACES \mid a \neq start\\
+tla_{a} \geq tar_{a} - S2_{a}: a \in PLACES \mid a \neq start\\
+ted_{a} \geq S1_{a} - tlv_{a}: a \in PLACES \mid a \neq finish\\
+tld_{a} \geq tlv_{a} - S2_{a}: a \in PLACES \mid a \neq finish\\
+tea_{a} \leq Tmax: a \in PLACES\\
+tla_{a} \leq Tmax: a \in PLACES\\
+ted_{a} \leq Tmax: a \in PLACES\\
+tld_{a} \leq Tmax: a \in PLACES\\
+tea_{a}, tla_{a}, ted_{a}, tld_{a}, Tmax \in \mathbb{R}^{+}\\
+start, finish \in \mathbb{S}\\
+y_{a,b} \in \mathbb{Z}^{+}; tlv_{a}, tar_{a} \in \mathbb{R}; x_{a,b} \in \mathbb{B}\\
+lat_{p},lng_{p} : p \in PLACES\\
+S2_{p}, \geq S1_{p}: p \in PLACES\\
+d2r := 3.1415926/180; bigM := 50\\
+alpha_{a,b} := \sin(d2r*(lat_{a}-lat_{b})/2)^{2} + \cos(d2r*lat_{a})*\cos(d2r*lat_{b})*\sin(d2r*(lng_{a}-lng_{b})/2)^{2}: a \in PLACES, b \in PLACES\\
+gcdist_{a,b} := 2*6371*\arctan(\sqrt{alpha_{a,b}},\sqrt{1-alpha_{a,b}}): a \in PLACES, b \in PLACES\\
+finish, \neq start;\\

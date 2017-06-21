@@ -1,0 +1,8 @@
+% Linear Ordering of Tasks: TaskOrder.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize} \sum_{(a,b) \in PAIRS}(saving_{a,b}*before_{a,b} + saving_{b,a}*(1-before_{a,b}))\\
+\text{subject to} before_{a,b} - before_{c,b} - before_{a,c} \leq 0:a \in TASKS, b \in TASKS, c \in TASKS\mid a < b \wedge a < c \wedge c < b\\
+before_{a,b} + before_{b,c} - before_{a,c} \leq 1: a \in TASKS, b \in TASKS, c \in TASKS\mid a < b \wedge a < c \wedge b < c\\
+saving_{d,e}: d \in 1 \dots M, e \in 1 \dots M\\
+before_{a,b} \in \mathbb{B}\\
+TASKS := 1 \ldots M\\
+PAIRS := \{a \in TASKS, b \in TASKS\mid a < b\}\\

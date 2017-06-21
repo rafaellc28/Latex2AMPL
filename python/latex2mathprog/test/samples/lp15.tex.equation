@@ -1,0 +1,6 @@
+% Stock Cutting: StockCutting.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{r \in RAWMATERIALS, s \in S_{r}} RLength_{r}*s*u_{r,s}\\
+\text{subject to } \sum_{r \in RAWMATERIALS, s \in S_{r}} y_{p,q,r,s} = 1: p \in PRODUCTS, q \in Q_{p}, y_{p,q,r,s} \in \{0,1\}\\
+\sum_{q \in Q_{p}, r \in RAWMATERIALS, s \in S_{r}} y_{p,q,r,s} = Demand_{p}: p \in PRODUCTS\\
+\sum_{p \in PRODUCTS, q \in Q_{p}} PLength_{p}*y_{p,q,r,s} + w_{r,s} = RLength_{r}: r \in RAWMATERIALS, s \in S_{r}, w_{r,s} \in \mathbb{R}^{+}\\
+BigM*u_{r,s} \geq \sum_{p \in PRODUCTS, q \in Q_{p}} y_{p,q,r,s}: r \in RAWMATERIALS, s \in S_{r}, u_{r,s} \in \mathbb{B}

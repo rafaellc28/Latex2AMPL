@@ -1,0 +1,7 @@
+% GLPK/shikaku.mod: ../glpk-4.47/examples/shikaku.mod
+\text{minimize } 0\\
+\text{subject to } \sum_{(i,j,k,l,m,n) \in B\mid s \geq k \wedge s < m \wedge t \geq l \wedge t < n} x_{i,j,k,l,m,n} = 1: (s,t) \in \{ rows, cols \}\\
+x_{i,j,k,l,m,n} \in \mathbb{B}; ndim := 10; rows := 1 \ldots ndim; rows1 := 1 \ldots (ndim+1); cols := 1 \ldots ndim; cols1 := 1 \ldots (ndim+1)\\
+givens_{r,c} \in \mathbb{Z}, \in \mathbb{Param}, \geq 0, \text{ default } 0: r \in rows, c \in cols\\
+V := \{(i,j) \in \{rows, cols\}\mid givens_{i,j} \neq 0\}\\
+B := \{(i,j,k,l,m,n) \in \{V, rows, cols, rows1, cols1\}\mid i \geq k \wedge i < m \wedge j \geq l \wedge j < n \wedge ((m-k)*(n-l)) = givens_{i,j} \wedge card(\{(s,t) \in V\mid s \geq k \wedge s < m \wedge t \geq l \wedge t < n\}) = 1\}

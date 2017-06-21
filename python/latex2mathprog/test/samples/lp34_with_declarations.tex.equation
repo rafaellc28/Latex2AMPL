@@ -1,0 +1,13 @@
+% American Call Option: AmericanCall.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } C_{0,0}\\
+\text{subject to } C_{p,s} = x_{p,s} * B_{p,s} + y_{p,s} * S_{p,s}: p \in PERIODS, s \in STATES_{p}\\
+x_{p,s} * B_{p+1,s} + y_{p,s} * S_{p+1,s} \geq C_{p+1,s}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s+1} + y_{p,s} * S_{p+1,s+1} \geq C_{p+1,s+1}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s} + y_{p,s} * S_{p+1,s} \geq S_{p+1,s} - Kstrike: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s+1} + y_{p,s} * S_{p+1,s+1} \geq S_{p+1,s+1} - Kstrike: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+C_{nPeriods,s} \geq \max(0, S_{nPeriods,s} - Kstrike): s \in STATES_{nPeriods}\\
+C_{p,s}, x_{p,s}, y_{p,s} \in \mathbb{R}\\
+S0 := 100; r := 0.06; sigma := 0.3; B0 := 1; rf := 0.05; Kstrike := 100; Tf := 0.5; nPeriods := 10\\
+PERIODS := \{0 \ldots nPeriods\}; STATES := \{0 \ldots p\}: p \in PERIODS\\
+u := \exp(sigma*\sqrt{Tf/nPeriods}); d := 1/u; pr := (\exp(r*Tf/nPeriods)-d)/(u-d)\\
+B := B0*(1 + rf*Tf/nPeriods)^{p}; S := S0*(d^{p-s})*(u^{s}): p \in PERIODS, s \in STATES_{p}\\

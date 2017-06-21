@@ -1,0 +1,34 @@
+% Vehicle Routing Problem with Time Windows: vrptw.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } 5*timePenalty + totalDistance/Maxspeed: timePenalty \in \mathbb{R}^{+}, totalDistance \in \mathbb{R}^{+}\\
+\text{subject to } x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in  N, (b,bLoc) \in START\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in FINISH, (b,bLoc) \in N\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in START, (b,bLoc) \in N \mid p \neq a\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in N, (b,bLoc) \in FINISH \mid p \neq b\\
+\sum_{p \in P, (a,aLoc) \in (CUSTOMERS \cup START)} x_{p,a,aLoc,b,bLoc} = 1: (b,bLoc) \in (CUSTOMERS \cup FINISH)\\
+\sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup FINISH)} x_{p,a,aLoc,b,bLoc} = 1: (a,aLoc) \in (START \cup CUSTOMERS)\\
+\sum_{(b,bLoc) \in (CUSTOMERS \cup START)} x_{p,b,bLoc,a,aLoc} = \sum_{(b,bLoc) \in (CUSTOMERS \cup FINISH)} x_{p,a,aLoc,b,bLoc}: p \in P, (a,aLoc) \in CUSTOMERS\\
+x_{p,a,aLoc,b,bLoc} = 0: p \in P, (a,aLoc) \in N, (b,bLoc) \in N \mid (a=b) \wedge (aLoc=bLoc)\\
+\sum_{p \in P, (a,aLoc) \in START, (b,bLoc) \in N } y_{p,a,aLoc,b,bLoc} = card(CUSTOMERS)\\
+\sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup START)} y_{p,b,bLoc,a,aLoc} = 1 + \sum_{p \in P, (b,bLoc) \in (CUSTOMERS \cup FINISH)} y_{p,a,aLoc,b,bLoc}: (a,aLoc) \in CUSTOMERS\\
+tlv_{a,aLoc} \geq tar_{a,aLoc}: (a,aLoc) \in N, tlv_{a,aLoc} \in \mathbb{R}, tar_{a,aLoc} \in \mathbb{R}\\
+tar_{b,bLoc} \geq tlv_{a,aLoc} + Gcdist_{aLoc,bLoc}/Maxspeed - BigM*(1-x_{p,a,aLoc,b,bLoc}): p \in P, (a,aLoc) \in N, (b,bLoc) \in N\\
+tar_{b,bLoc} \leq tlv_{a,aLoc} + Gcdist_{aLoc,bLoc}/Minspeed + BigM*(1-x_{p,a,aLoc,b,bLoc}): p \in P, (a,aLoc) \in N, (b,bLoc) \in N\\
+tea_{a,aLoc} \geq T1_{a,aLoc} - tar_{a,aLoc}: (a,aLoc) \in CUSTOMERS, tea_{a,aLoc} \in \mathbb{R}^{+}\\
+tea_{a,aLoc} \geq TF1_{a,aLoc} - tar_{a,aLoc}: (a,aLoc) \in FINISH\\
+tla_{a,aLoc} \geq tar_{a,aLoc} - T2_{a,aLoc}: (a,aLoc) \in CUSTOMERS, tla_{a,aLoc} \in \mathbb{R}^{+}\\
+tla_{a,aLoc} \geq tar_{a,aLoc} - TF2_{a,aLoc}: (a,aLoc) \in FINISH\\
+ted_{a,aLoc} \geq TS1_{a,aLoc} - tlv_{a,aLoc}: (a,aLoc) \in START, ted_{a,aLoc} \in \mathbb{R}^{+}\\
+ted_{a,aLoc} \geq T1_{a,aLoc} - tlv_{a,aLoc}: (a,aLoc) \in CUSTOMERS\\
+tld_{a,aLoc} \geq tlv_{a,aLoc} - TS2_{a,aLoc}: (a,aLoc) \in START, tld_{a,aLoc} \in \mathbb{R}^{+}\\
+tld_{a,aLoc} \geq tlv_{a,aLoc} - T2_{a,aLoc}: (a,aLoc) \in CUSTOMERS\\
+routeDistance_{p} = \sum_{(a,aLoc) \in N, (b,bLoc) \in N} Gcdist_{aLoc,bLoc}*x_{p,a,aLoc,b,bLoc}: p \in P, routeDistance_{p} \in \mathbb{R}^{+}\\
+totalDistance = \sum_{p \in P} routeDistance_{p}\\
+timePenalty = \sum_{(a,aLoc) \in N} (tea_{a,aLoc} + 2*tla_{a,aLoc} + 2*ted_{a,aLoc} + tld_{a,aLoc})\\
+y_{p,a,aLoc,b,bLoc} \leq card(CUSTOMERS)*x_{p,a,aLoc,b,bLoc}: p \in P, (a,aLoc) \in N, (b,bLoc) \in N, x_{p,a,aLoc,b,bLoc} \in \mathbb{B}, y_{p,a,aLoc,b,bLoc} \in \mathbb{R}^{+}\\
+Gcdist_{a,b} \geq 0: a \in LOCATIONS, b \in LOCATIONS\\
+tlv_{a,aLoc} \geq 0: (a,aLoc) \in N\\
+tar_{a,aLoc} \geq 0: (a,aLoc) \in N\\
+tea_{a,aLoc} \geq 0: (a,aLoc) \in N\\
+tla_{a,aLoc} \geq 0: (a,aLoc) \in N\\
+ted_{a,aLoc} \geq 0: (a,aLoc) \in N\\
+tld_{a,aLoc} \geq 0: (a,aLoc) \in N\\

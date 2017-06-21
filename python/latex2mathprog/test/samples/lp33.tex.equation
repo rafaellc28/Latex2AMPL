@@ -1,0 +1,5 @@
+% Portfolio Optimization using Mean Absolute Deviation: PortfolioMAD.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } (1/card(T))*\sum_{t \in T} (y_{t} + z_{t}): y_{t} \in \mathbb{R}^{+}, z_{t} \in \mathbb{R}^{+}\\
+\text{subject to } \sum_{s \in S} w_{s} * R_{s} \geq Rportfolio: w_{s} \in \mathbb{R}^{+}\\
+\sum_{s \in S} w_{s} = 1\\
+(y_{t} - z_{t}) = \sum_{s \in S} (Rt_{s,t}-R_{s})*w_{s}: t \in T

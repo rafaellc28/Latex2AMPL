@@ -1,0 +1,9 @@
+% GLPK/min01ks.mod: ../glpk-4.47/examples/min01ks.mod
+\text{minimize } \sum_{j \in N} alfa_{j} + beta\\
+\text{subject to } \sum_{j \in N} alfa_{j} * x_{i,j} \leq beta: i \in D\\
+\sum_{j \in N} alfa_{j} * x_{i,j} \geq beta + 1: i \in U \setminus D\\
+alfa_{j}, beta \in \mathbb{Z}^{+}\\
+n \in \mathbb{Z}, \in \mathbb{P}, > 0; N := 1 \ldots n; U := 0 \ldots 2^{n}-1\\
+x_{i,j} := (i \text{ div } 2^{j-1}) \mod 2: i \in U, j \in N\\
+a_{j}, \geq 0: j \in N; b, \geq 0\\
+D := \text{ setof } \{i \in U\mid \sum_{j \in N} a_{j} * x_{i,j} \leq b\} i\\

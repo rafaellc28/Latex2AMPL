@@ -1,0 +1,6 @@
+% GLPK/assign.mod: ../glpk-4.47/examples/assign.mod
+\text{minimize } \sum_{i \in I, j \in J} c_{i,j} * x_{i,j}\\
+\text{subject to } \sum_{j \in J} x_{i,j} \leq 1: i \in I\\
+\sum_{i \in I} x_{i,j} = 1: j \in J\\
+x_{i,j} \in \mathbb{R}^{+}; c_{i,j}, \geq 0\\
+n, m \in \mathbb{Z}, \in \mathbb{P}, > 0; I := 1 \ldots m; J := 1 \ldots n\\

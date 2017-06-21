@@ -1,0 +1,10 @@
+% Giapetto's Workshop: giapetto.mod
+\text{maximize} 3*x1+2*x2\\
+
+\text{subject to} 1.85*x1 + x2 \leq 100\\
+
+x1 + x2 \leq 80\\
+
+x1 \leq 40\\
+
+x1,x2 \in \mathbb{N}

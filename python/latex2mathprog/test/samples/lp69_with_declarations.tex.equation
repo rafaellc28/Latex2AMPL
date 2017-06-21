@@ -1,0 +1,6 @@
+% GLPK/xyacfs.mod: ../glpk-4.47/examples/xyacfs.mod
+\sum_{z \in Sample} q * Sy_{z} * Sy_{z} + \sum_{z \in Sample} p * Sy_{z} = \sum_{z \in Sample} Sy_{z} * Sx_{z}\\
+\sum_{z \in Sample} q * Sy_{z} + \sum_{z \in Sample} p = \sum_{z \in Sample} Sx_{z}\\
+\sum_{z \in Sample} a * Sx_{z} * Sx_{z} + \sum_{z \in Sample} b * Sx_{z} = \sum_{z \in Sample} Sy_{z} * Sx_{z}\\
+\sum_{z \in Sample} a * Sx_{z} + \sum_{z \in Sample} b = \sum_{z \in Sample} Sy_{z}\\
+p, q, a, b \in \mathbb{R}\\

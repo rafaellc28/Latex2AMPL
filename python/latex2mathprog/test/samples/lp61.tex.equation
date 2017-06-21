@@ -1,0 +1,6 @@
+% GLPK/min01ks.mod: ../glpk-4.47/examples/min01ks.mod
+\text{minimize } \sum_{j \in N} alfa_{j} + beta: alfa_{j} \in \mathbb{Z}^{+}, beta \in \mathbb{Z}^{+}\\
+\text{subject to } \sum_{j \in N} alfa_{j} * X_{i,j} \leq beta: i \in D\\
+\sum_{j \in N} alfa_{j} * X_{i,j} \geq beta + 1: i \in U \setminus D\\
+X_{i,j} \geq 0: i \in U, j \in N
+

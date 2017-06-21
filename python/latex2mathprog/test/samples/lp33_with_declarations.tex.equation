@@ -1,0 +1,12 @@
+% Portfolio Optimization using Mean Absolute Deviation: PortfolioMAD.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } (1/card(T))*\sum_{t \in T} (y_{t} + z_{t})\\
+\text{subject to } \sum_{s \in S} w_{s} * r_{s} \geq rportfolio\\
+\sum_{s \in S} w_{s} = 1\\
+(y_{t} - z_{t}) = \sum_{s \in S} (rt_{s,t}-r_{s})*w_{s}: t \in T\\
+y_{t}, z_{t}, w_{s} \in \mathbb{R}^{+}\\
+cov_{s1,s2} : s1,s2 \in S\\
+rportfolio \text{ default } (1/card(S))*\sum_{i \in S}r_{i}\\
+c_{i,j} := (i = j)? \sqrt{cov_{i,i}-(\sum_{k \in S\mid k < i} (c_{i,k}*c_{i,k}))} : (cov_{i,j}-\sum_{k \in S\mid k < j} c_{i,k}*c_{j,k})/c_{j,j}: i \in S, j \in S\mid i \geq j\\
+utc := \prod_{i \in 1 \ldots 2} (gmtime()-1000000000); seed := utc - 100000 * \lfloor utc/100000 \rfloor\\
+N \text{ default } 5000; T := 1 \ldots N; zn_{j,t} := Normal(0,1): j \in S, t \in T\\
+rt_{i,t} := r_{i} + \sum_{j \in S\mid j \leq i} c_{i,j}*zn_{j,t}: i \in S, t \in T\\

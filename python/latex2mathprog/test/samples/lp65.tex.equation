@@ -1,0 +1,4 @@
+% GLPK/qfit.mod: ../glpk-4.47/examples/qfit.mod
+\sum_{z \in Sample} a * Sx_{z} * Sx_{z} * Sx_{z} * Sx_{z} + \sum_{z \in Sample} b * Sx_{z} * Sx_{z} * Sx_{z} + \sum_{z \in Sample} c * Sx_{z} * Sx_{z} = \sum_{z \in Sample} Sy_{z} * Sx_{z} * Sx_{z}: a, b, c \in \mathbb{R}\\
+\sum_{z \in Sample} a * Sx_{z} * Sx_{z} * Sx_{z} + \sum_{z \in Sample} b * Sx_{z} * Sx_{z} + \sum_{z \in Sample} c * Sx_{z} = \sum_{z \in Sample} Sy_{z} * Sx_{z}\\
+\sum_{z \in Sample} a * Sx_{z} * Sx_{z} + \sum_{z \in Sample} b * Sx_{z} + \sum_{z \in Sample} c = \sum_{z \in Sample} Sy_{z}

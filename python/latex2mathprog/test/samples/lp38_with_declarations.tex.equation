@@ -1,0 +1,8 @@
+% Arbitrage in the Political Prediction Markets: PoliticalArb.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{maximize } minpayout\\
+\text{subject to } \sum_{(m,e) \in CONTRACTS} price_{m,e} * x_{m,e} \leq 1000\\
+\sum_{m \in MARKETS} payout_{m,e} * x_{m,e} \geq minpayout: e \in EVENTS\\
+minpayout, x_{m,e} \in \mathbb{R}^{+}\\
+payout_{m,e} : (m,e) \in CONTRACTS\\
+MARKETS := \text{setof }\{(m,e) \in CONTRACTS\} m\\
+EVENTS := \text{setof }\{(m,e) \in CONTRACTS\} e\\

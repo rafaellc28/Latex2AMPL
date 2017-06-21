@@ -1,0 +1,9 @@
+% Sampling a Multivariate Normal Distribution: MVNormal.mod in https://www3.nd.edu/~jeff/mathprog/#
+Mu_{i}: i \in I; Sigma_{i1,i2}: i1, i2 \in I\\
+N, \geq 1, \text{ default } 50; T := 1 \ldots N\\
+Chol_{i,j} := (i = j)? \sqrt{Sigma_{i,i}-(\sum_{k \in I\mid k < i}(Chol_{i,k}*Chol_{i,k}))} : (Sigma_{i,j}-\sum_{k \in I\mid k < j}Chol_{i,k}*Chol_{j,k})/Chol_{j,j}: i, j \in I\mid i \geq j\\
+utc := \prod_{i \in 1 \ldots 2} (gmtime()-1000000000)\\
+seed := utc - 100000*\lfloor utc/100000 \rfloor\\
+z_{i,t} := Normal(0,1); x_{i,t} := Mu_{i} + \sum_{j \in I\mid i \geq j}Chol_{i,j}*z_{j,t}: i \in I, t \in T\\
+xbar_{i} := (1/card(T))*\sum_{t \in T}x_{i,t}: i \in I\\
+Cov_{i,j} := (1/card(T))*\sum_{t \in T}(x_{i,t}-xbar_{i})*(x_{j,t}-xbar_{j}): i, j \in I\\

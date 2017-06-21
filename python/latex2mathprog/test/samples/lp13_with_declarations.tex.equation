@@ -1,0 +1,4 @@
+% GLPK/shiftcover.mod: ../glpk-4.47/examples/shiftcover.mod
+\text{minimize } \sum_{s \in S} crew_{s}\\
+\text{subject to } \sum_{s \in S} crew_{s}*shifts_{d,h,s} \geq dmnd_{h,d}: h \in H, d \in D\\
+crew_{s} \in \mathbb{Z}^{+}; H := 1...numhrs\\

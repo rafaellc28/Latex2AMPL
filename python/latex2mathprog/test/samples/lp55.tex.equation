@@ -1,0 +1,12 @@
+% GLPK/food.mod: ../glpk-4.47/examples/food.mod
+\text{maximize } \sum_{m \in month} Productprice * production_{m} - \sum_{m \in month, o \in oils} Buyingprices_{m,o} * buys_{m,o} - \sum_{m \in month, o \in oils} Storagecost * stock_{m,o}: production_{m} \in \mathbb{R}^{+}, buys_{m,o} \in \mathbb{R}^{+}, stock_{m,o} \in \mathbb{R}^{+}\\
+\text{subject to } stock_{1,o} = 500: o \in oils\\
+stock_{6,o} + buys_{6,o} - useoil_{6,o} \geq 500: o \in oils, useoil_{6,o} \in \mathbb{R}^{+}\\
+stock_{m,o} \leq 1000: m \in month, o \in oils\\
+useoil_{m,o} \leq stock_{m,o} + buys_{m,o}: m \in month, o \in oils\\
+stock_{m2,o} = stock_{m1,o} + buys_{m1,o} - useoil_{m1,o}: m1 \in month, m2 \in month, o \in oils \mid m2 = m1+1\\
+\sum_{o \in oils} Oilhardness_{o} * useoil_{m,o} \geq 3 * production_{m}: m \in month\\
+\sum_{o \in oils} Oilhardness_{o} * useoil_{m,o} \leq 6 * production_{m}: m \in month\\
+production_{m} = \sum_{o \in oils} useoil_{m,o}: m \in month\\
+useoil_{m,"VEG1"} + useoil_{m,"VEG2"} \leq 200: m \in month\\
+useoil_{m,"OIL1"} + useoil_{m,"OIL2"} + useoil_{m,"OIL3"} \leq 250: m \in month

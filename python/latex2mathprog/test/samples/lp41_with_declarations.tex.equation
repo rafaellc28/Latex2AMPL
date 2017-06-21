@@ -1,0 +1,11 @@
+% GLPK/money.mod: ../glpk-4.47/examples/money.mod
+\sum_{d \in DIGITS} x_{i,d} = 1: i \in LETTERS\\
+\sum_{i \in LETTERS} x_{i,d} \leq 1: d \in DIGITS\\
+dig_{i} = \sum_{d \in DIGITS} d * x_{i,d}: i \in LETTERS\\
+dig_{'D'} + dig_{'E'} = dig_{'Y'} + 10 * carry_{1}\\
+dig_{'N'} + dig_{'R'} + carry_{1} = dig_{'E'} + 10 * carry_{2}\\
+dig_{'E'} + dig_{'O'} + carry_{2} = dig_{'N'} + 10 * carry_{3}\\
+dig_{'S'} + dig_{'M'} + carry_{3} = dig_{'O'} + 10 * dig_{'M'}\\
+dig_{'M'} \geq 1\\
+x_{i,d} \in \mathbb{B}; dig_{i} \in \mathbb{R}: i \in LETTERS, d \in DIGITS\\
+carry_{i} \in \mathbb{B}: i \in 1 \ldots 3; LETTERS := \{'D', 'E', 'M', 'N', 'O', 'R', 'S', 'Y'\}; DIGITS := 0 \ldots 9\\

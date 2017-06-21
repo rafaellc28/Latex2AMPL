@@ -1,0 +1,17 @@
+% GLPK/color.mod: ../glpk-4.47/examples/color.mod
+\text{minimize } \sum_{c \in 1 \ldots nc} u_{c}\\
+\text{subject to } \sum_{c \in 1 \ldots nc} x_{i,c} = 1: i \in V\\
+x_{i,c} + x_{j,c} \leq u_{c}: (i,j) \in E, c \in 1 \ldots nc\\
+u_{c}, x_{i,c} \in \mathbb{B}; n \in \mathbb{Z}, \in \mathbb{P}, \geq 2; V := \{1 \ldots n\}; E \subset V \times V; nc := \max_{i \in V} z_{i,0}\\
+EE := \text{ setof } \{(i,j) \in E\} (i,j) \cup \text{ setof } \{(i,j) \in E\} (j,i)\\
+z_{i,case} :=
+((case = 0)? 
+   (  
+      \min_{c \in 1 \ldots z_{i,1}}
+      ((\not\exists\{j \in V\mid j < i \wedge (i,j) \in EE\} z_{j,0} = c)? c : z_{i,1} + 1)
+   )
+   :
+   (
+      (\nexists\{j \in V\mid j < i\} (i,j) \in EE)? 1 : \max_{j \in V\mid j < i \wedge (i,j) \in EE} z_{j,0}
+   )
+): i \in V, case \in 0 \ldots 1\\

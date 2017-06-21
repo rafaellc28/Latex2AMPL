@@ -1,0 +1,11 @@
+% Project Management with the Critical Path Method: ProjectCPM.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize} card(TASKS)*Tf - \sum_{j \in TASKS} Tsl_{j}\\
+\text{subject to} Tef_{j} \leq Tf: j \in TASKS\\
+Tlf_{j} \leq Tf: j \in TASKS\\
+Tef_{j} = Tes_{j} + Dur_{j}: j \in TASKS\\
+Tlf_{j} = Tls_{j} + Dur_{j}: j \in TASKS\\
+Tsl_{j} = Tls_{j} - Tes_{j}: j \in TASKS\\
+Tef_{i} \leq Tes_{j}: (i,j) \in ARCS\\
+Tlf_{j} \leq Tls_{k}: (j,k) \in ARCS\\
+ARCS \subset \{TASKS \times TASKS\}\\
+Tef_{j}, Tf, Tlf_{j}, Tes_{j}, Tls_{j}, Tsl_{j} \in \mathbb{R}^{\geq 0}\\

@@ -1,0 +1,5 @@
+% Parameters: Parameters.mod
+credits_{c}, \geq 0: c \in COURSES\\
+schedules_{s,c} \in \mathbb{B}, \in \mathbb{P}: s \in STUDENTS, c \in COURSES\\
+loads_{s} := \sum_{c \in COURSES} schedules_{s,c}*credits_{c}: s \in STUDENTS\\
+

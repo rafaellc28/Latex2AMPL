@@ -1,0 +1,6 @@
+% GLPK/cflsq.mod: ../glpk-4.47/examples/cflsq.mod
+X + Ex_{z} = Sx_{z}: z \in Sample\\
+\sum_{z \in Sample} Ex_{z} = 0\\
+Y + Ey_{z} = Sy_{z}: z \in Sample\\
+\sum_{z \in Sample} Ey_{z} = 0\\
+X, Y, Ex_{z}, Ey_{z} \in \mathbb{R}\\

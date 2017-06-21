@@ -1,0 +1,39 @@
+% GLPK/egypt.mod: ../glpk-4.47/examples/egypt.mod
+\text{minimize } Psip + Psil + Psii\\
+\text{subject to } \sum_{c \in cFinal} fn_{c,n} * (\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r}) \geq cn75_{r,n}: n \in nutr, r \in region\\
+\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cpPos_{c}} Xf_{c,pl,r} \geq cf75_{r,c}: c \in cFinal, r \in region\mid cf75_{r,c} > 0\\
+\sum_{pr \in pPos_{pl}} io_{c,pr} * Z_{pl,pr} + ((c \in cShip)? ((pl \in cpPos_{c})? \sum_{p2 \in ccPos_{c}} Xi_{c,pl,p2}:0) - ((pl \in ccPos_{c})? \sum_{p2 \in cpPos_{c}} Xi_{c,p2,pl}:0):0) + ((c \in cRaw \wedge pl \in ccPos_{c})? (((pImp_{c} > 0)? Vr_{c,pl}:0) + ((pDom_{pl,c} > 0)? U_{c,pl}:0)):0) \geq (c \in cFinal \wedge pl \in cpPos_{c})? \sum_{r \in region} Xf_{c,pl,r}: 0: c \in commod, pl \in plant\\
+\sum_{pr \in pPos_{pl}} util_{u,pr} * Z_{pl,pr} \leq utilPct * icap_{u,pl}: pl \in plant, u \in mPos_{pl}\\
+Psip = \sum_{c \in cRaw, pl \in ccPos_{c}} pDom_{pl,c} * U_{c,pl}\\
+Psil = \sum_{c \in cFinal} (\sum_{pl \in cpPos_{c}, r \in region} tranFinal_{pl,r} * Xf_{c,pl,r} + \sum_{po \in port, r \in region} tranImport_{r,po} * Vf_{c,r,po}) + \sum_{c \in cShip, p1 \in cpPos_{c}, p2 \in ccPos_{c}} tranInter_{p1,p2} * Xi_{c,p1,p2} + \sum_{c \in cRaw, pl \in ccPos_{c}\mid pImp_{c} > 0} tranRaw_{pl} * Vr_{c,pl}\\
+Psii / exch  =  \sum_{c \in cFinal, r \in region, po \in port} pImp_{c} * Vf_{c,r,po} + \sum_{c \in cRaw, pl \in ccPos_{c}} pImp_{c} * Vr_{c,pl}\\
+port, plant, \subset center; cShip \subset cInter\\
+commod := cFinal \cup cInter \cup cRaw\\
+cf75_{r,cf}, \geq 0: r \in region, cf \in cFinal\\
+fn_{cf,n}, \geq 0: cf \in cFinal, n \in nutr\\
+cn75_{r,n} := \sum_{c \in cFinal} cf75_{r,c} * fn_{c,n}: r \in region, n \in nutr\\
+road_{r,c}, \geq 0: r \in region, c \in center\\
+railHalf_{p1,p2}, \geq 0: p1,p2 \in plant\\
+rail_{p1,p2} := (railHalf_{p1,p2} > 0)? railHalf_{p1,p2} : railHalf_{p2,p1}: p1,p2 \in plant\\
+impdBarg_{p}, impdRoad_{p}, \geq 0: p \in plant\\
+tranFinal_{pl,r} := (road_{r,pl} > 0)? .5 + .0144 * road_{r,pl} : 0: pl \in plant, r \in region\\
+tranImport_{r,po} := (road_{r,po} > 0)? .5 + .0144 * road_{r,po} : 0: r \in region, po \in port\\
+tranInter_{p1,p2} := (rail_{p1,p2} > 0)? 3.5 + .03 * rail_{p1,p2} : 0: p1,p2 \in plant\\
+tranRaw_{pl} := ((impdBarg_{pl} > 0)? 1.0 + .0030 * impdBarg_{pl} : 0) + ((impdRoad_{pl} > 0)? 0.5 + .0144 * impdRoad_{pl} : 0): pl \in plant\\
+io_{c,p}: c \in commod, p \in proc\\
+util_{u,p}, \geq 0: u \in unit, p \in proc\\
+pImp_{c}, \geq 0: c \in commod\\
+pR_{cr}, \geq 0: cr \in cRaw\\
+pPr_{p,cr}, \geq 0: p \in plant, cr \in cRaw\\
+pDom_{pl,c} := (pR_{c} > 0)? pR_{c} : pPr_{pl,c}: pl \in plant, c \in cRaw\\
+dcap_{p,u}, \geq 0: p \in plant, u \in unit\\
+icap_{u,pl} := 0.33 * dcap_{pl,u}: u \in unit, pl \in plant\\
+exch := 0.4; utilPct := 0.85; mPos_{pl} := \{u \in unit\mid icap_{u,pl} > 0\}: pl \in plant\\
+pCap_{pl} := \{pr \in proc\mid \forall\{u \in unit\mid util_{u,pr} > 0\} u \in mPos_{pl} \}: pl \in plant\\
+pExcept_{p} \subset proc: p \in plant\\
+pPos_{pl} := pCap_{pl} \setminus pExcept_{pl}: pl \in plant\\
+cpPos_{c} := \{pl \in plant\mid \sum_{pr \in pPos_{pl}} io_{c,pr} > 0\}: c \in commod\\
+ccPos_{c} := \{pl \in plant\mid \sum_{pr \in pPos_{pl}} io_{c,pr} < 0\}: c \in commod\\
+cPos_{c} := cpPos_{c} \cup ccPos_{c}: c \in commod\\
+Psip, Psil, Psii \in \mathbb{R}\\
+Xf_{c,pl,r}, Vf_{c,r,po}, Z_{pl,pr}, Xi_{c,pl,p2}, Vr_{c,pl}, U_{c,pl} \in \mathbb{R}^{+}\\

@@ -1,0 +1,4 @@
+% GLPK/yacfs.mod: ../glpk-4.47/examples/yacfs.mod
+\sum_{z \in Sample} a * Sx_{z} * Sx_{z} + \sum_{z \in Sample} b * Sx_{z} = \sum_{z \in Sample} Sy_{z} * Sx_{z}\\
+\sum_{z \in Sample} a * Sx_{z} + \sum_{z \in Sample} b = \sum_{z \in Sample} Sy_{z}\\
+a, b \in \mathbb{R}\\

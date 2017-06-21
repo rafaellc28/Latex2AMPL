@@ -1,0 +1,6 @@
+% GLPK/transp.mod: ../glpk-4.47/examples/transp.mod
+\text{minimize } \sum_{i \in I, j \in J} c_{i,j} * x_{i,j}\\
+\text{subject to } \sum_{j \in J} x_{i,j} \leq a_{i}: i \in I\\
+\sum_{i \in I} x_{i,j} \geq b_{j}: j \in J\\
+x_{i,j} \in \mathbb{R}^{+}; d_{i,j} : i \in I, j \in J\\
+c := f * d_{i,j} / 1000: i \in I, j \in J\\

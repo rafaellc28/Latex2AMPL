@@ -1,0 +1,7 @@
+% GLPK/spp.mod: ../glpk-4.47/examples/spp.mod
+\text{minimize } \sum_{(i,j) \in E} c_{i,j} * x_{i,j}\\
+\text{subject to } \sum_{(j,i) \in E} x_{j,i} + ((i = s)?1:0) = \sum_{(i,j) \in E} x_{i,j} + ((i = t)?1:0): i \in 1 \ldots n\\
+n \in \mathbb{Z}, \in \mathbb{P}, > 0\\
+E \subset \{i \in 1 \ldots n, j \in 1 \ldots n\}\\
+s, t \in \{1 \ldots n\}\\
+x_{i,j} \in \mathbb{R}^{+}\\

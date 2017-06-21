@@ -1,0 +1,13 @@
+% American Put Option: AmericanPut.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } P_{0,0}\\
+\text{subject to } P_{p,s} = x_{p,s} * B_{p,s} + y_{p,s} * S_{p,s}: p \in PERIODS, s \in STATES_{p}\\
+x_{p,s} * B_{p+1,s} + y_{p,s} * S_{p+1,s} \geq P_{p+1,s}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s+1} + y_{p,s} * S_{p+1,s+1} \geq P_{p+1,s+1}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s} + y_{p,s} * S_{p+1,s} \geq Kstrike - S_{p+1,s}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+x_{p,s} * B_{p+1,s+1} + y_{p,s} * S_{p+1,s+1} \geq Kstrike - S_{p+1,s+1}: p \in PERIODS, s \in STATES_{p} \mid p < nPeriods\\
+P_{nPeriods,s} \geq \max(0, Kstrike - S_{nPeriods,s}): s \in STATES_{nPeriods}\\
+P_{p,s}, x_{p,s}, y_{p,s} \in \mathbb{R}\\
+S0 := 50; r := 0.06; sigma := 0.3; B0 := 1; rf := 0.05; Kstrike := 52; Tf := 2; nPeriods := 2\\
+PERIODS := \{0 \ldots nPeriods\}; STATES := \{0 \ldots p\}: p \in PERIODS\\
+u := \exp(sigma*\sqrt{Tf/nPeriods}); d := 1/u; pr := (\exp(r*Tf/nPeriods)-d)/(u-d)\\
+B := B0*(1 + rf*Tf/nPeriods)^{p}; S := S0*(d^{p-s})*(u^{s}): p \in PERIODS, s \in STATES_{p}\\

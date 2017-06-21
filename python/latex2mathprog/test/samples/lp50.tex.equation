@@ -1,0 +1,5 @@
+% GLPK/cf12b.mod: ../glpk-4.47/examples/cf12b.mod
+\text{minimize } z: z \in \mathbb{R}\\
+\text{subject to } b * X_{i} + a + u_{i} - v_{i} = Y_{i}: i \in I, a,b \in \mathbb{R}\\
+z - u_{i} \geq 0: i \in I, u_{i} \in \mathbb{R}^{+}\\
+z - v_{i} \geq 0: i \in I, v_{i} \in \mathbb{R}^{+}

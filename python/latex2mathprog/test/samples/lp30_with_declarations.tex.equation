@@ -1,0 +1,9 @@
+% Data Reconciliation and Gross Error Detection: DataReconciliation.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } \sum_{k \in SENSORS} (epos_{k}+eneg_{k} + bigM*gerr_{k})\\
+\text{subject to } \sum_{j \in STREAMS} A_{i,j}*x_{j} = 0: i \in UNITS\\
+y_{k} = x_{s_{k}} + epos_{k} - eneg_{k}: k \in SENSORS\\
+epos_{k} \leq emax_{k} + bigM*gerr_{k}: k \in SENSORS\\
+eneg_{k} \leq emax_{k} + bigM*gerr_{k}: k \in SENSORS\\
+x_{k}, epos_{k}, eneg_{k} \in \mathbb{R}^{+}; gerr_{k} \in \mathbb{B}: k \in STREAMS\\
+A_{u,k} \text{ default } 0: u \in UNITS, k \in STREAMS\\
+y_{k}, emax_{k}, \geq 0; s_{k} > 0: k \in SENSORS; bigM := 100\\

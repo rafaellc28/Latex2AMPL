@@ -1,0 +1,4 @@
+% GLPK/sorting.mod: ../glpk-4.47/examples/sorting.mod
+I := 1 \ldots 12; a_{i} := Uniform(2, 7): i \in I\\
+pos_{i} := 1 + card(\{j \in I\mid a_{j} < a_{i} \vee a_{j} = a_{i} \wedge j < i\}): i \in I\\
+ind_{k} := \sum_{i \in I\mid pos_{i} = k} i: k \in 1 \ldots card(I)\\

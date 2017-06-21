@@ -1,0 +1,9 @@
+% GLPK/jssp.mod: ../glpk-4.47/examples/jssp.mod
+\text{minimize } z\\
+\text{subject to } x_{j, Sigma_{j,t}} \geq x_{j, Sigma_{j,t-1}} + P_{j, Sigma_{j,t-1}}: j \in J, t \in 2 \dots MS, MS \in \mathbb{P}, MS \in \mathbb{Z}\\
+x_{i,a} \geq x_{j,a} + P_{j,a} - K * Y_{i,j,a}: i \in J, j \in J, a \in M\vert i \neq j, x_{j,a} \in \mathbb{R}^{+}, Y_{i,j,a} \in \mathbb{B}\\
+x_{j,a} \geq x_{i,a} + P_{i,a} - K * (1 - Y_{i,j,a}): i \in J, j \in J, a \in M\vert i \neq j\\
+z \geq x_{j, Sigma_{j,MS}} + P_{j, Sigma_{j,MS}}: j \in J, z \in \mathbb{R}\\
+MS \geq Sigma_{j,t} \geq 1 : j \in J, t \in 1 \dots MS\\
+P_{j,a} \geq 0: j \in J, a \in M\\
+x_{j,a} \geq 0: j \in J, a \in M

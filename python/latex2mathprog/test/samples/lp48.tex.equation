@@ -1,0 +1,4 @@
+% GLPK/bpp.mod: ../glpk-4.47/examples/bpp.mod
+\text{minimize } \sum_{j \in J} used_{j}: used_{j} \in \mathbb{B}\\
+\text{subject to } \sum_{j \in J} x_{i,j} = 1: i \in I, x_{i,j} \in \mathbb{B}\\
+\sum_{i \in I} W_{i} * x_{i,j} \leq C * used_{j}: j \in J

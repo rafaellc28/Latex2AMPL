@@ -1,2 +1,0 @@
-class CodeGenerationException(Exception):
-   pass

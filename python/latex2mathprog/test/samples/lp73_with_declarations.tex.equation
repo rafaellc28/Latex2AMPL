@@ -1,0 +1,6 @@
+% GLPK/cal.mod: ../glpk-4.47/examples/cal.mod
+year \in \mathbb{Z}, \in \mathbb{P}, \geq 0001, \leq 3999, := 2010\\
+firstday_{m} \in \mathbb{Z}, \in \mathbb{P}, \geq 0, \leq 6, := time2str(str2time(year \& "-" \& m \& "-01", "%Y-%m-%d"), "%w"): m \in 1 \ldots 12\\
+daysinmonth_{m} \in \mathbb{Z}, \in \mathbb{P}, \geq 28, \leq 31, := (str2time(year + ((m < 12)? 0 : 1) \& "-" \& ((m < 12)? m+1 : 1) \& "-01", "%Y-%m-%d") - str2time(year \& "-" \& m \& "-01", "%Y-%m-%d")) / 86400: m \in 1 \ldots 12\\
+foo_{m,k,d} \in \mathbb{Z}, \in \mathbb{P}, := 7 * k + d + 1 - firstday_{m}: m \in 1 \ldots 12, k \in 0 \ldots 5, d \in 0 \ldots 6\\
+cal_{m,k,d} \in \mathbb{Z}, \in \mathbb{P}, := (1 \leq foo_{m,k,d} \wedge foo_{m,k,d} \leq daysinmonth_{m})? foo_{m,k,d}: 0: m \in 1 \ldots 12, k \in 0 \ldots 5, d \in 0 \ldots 6\\

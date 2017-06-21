@@ -1,0 +1,9 @@
+% Machine Bottleneck: Bottleneck.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize} \sum_{k \in JOBS} pastdue_{k}\\
+\text{subject to} start_{k} \geq rel_{k}: k \in JOBS\\
+start_{k} + dur_{k} \leq due_{k} + pastdue_{k}: k \in JOBS\\
+start_{j} + dur_{j} \leq start_{k} + bigM*(1-y_{j,k}): j,k \in JOBS\mid j < k\\
+start_{k} + dur_{k} \leq start_{j} + bigM*y_{j,k}: j,k \in JOBS\mid j < k\\
+bigM := (\max_{k \in JOBS}rel_{k}) + \sum_{k \in JOBS}dur_{k}\\
+rel_{k} \text{ default } 0: k \in JOBS\\
+start_{k}, pastdue_{k} \in \mathbb{R}^{\geq 0}; y_{j,k} \in \mathbb{B}: j,k \in JOBS\\

@@ -1,0 +1,5 @@
+% GLPK/dea.mod: ../glpk-4.47/examples/dea.mod
+\text{minimize } \sum_{td \in dmus} theta_{td}: theta_{td} \in \mathbb{R}^{+}\\
+\text{subject to } \sum_{d \in dmus} lambda_{d,td} * OutputData_{d,o} \geq OutputData_{td,o}: o \in outputs, td \in dmus, lambda_{d,td} \in \mathbb{R}^{+}\\
+\sum_{d \in dmus} lambda_{d,td} * InputData_{d,i} \leq theta_{td} * InputData_{td,i}: i \in inputs, td \in dmus\\
+\sum_{d \in dmus} lambda_{d,td} = 1: td \in dmus

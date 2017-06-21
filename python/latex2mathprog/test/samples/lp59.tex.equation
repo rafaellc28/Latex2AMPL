@@ -1,0 +1,4 @@
+% GLPK/mfasp.mod: ../glpk-4.47/examples/mfasp.mod
+\text{minimize } \sum_{(i,j) \in E} x_{i,j}: x_{i,j} \in \{0,1\}\\
+\text{subject to } k_{j} - k_{i} \geq 1 - card(V) * x_{i,j}: (i,j) \in E, k_{i} \in \mathbb{R}^{\geq 1}\\
+k_{i} \leq card(V): i \in V

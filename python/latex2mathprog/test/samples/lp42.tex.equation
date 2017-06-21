@@ -1,0 +1,6 @@
+% GLPK/queens.mod: ../glpk-4.47/examples/queens.mod
+\text{maximize } \sum_{i \in 1 \ldots N, j \in 1 \ldots N} x_{i,j}: x_{i,j} \in \mathbb{B}\\
+\text{subject to } \sum_{j \in 1 \ldots N} x_{i,j} \leq 1: i \in 1 \dots N, N \in \mathbb{P}, N \in \mathbb{Z}\\
+\sum_{i \in 1 \ldots N} x_{i,j} \leq 1: j \in 1 \ldots N\\
+\sum_{i \in 1 \ldots N, j \in 1 \ldots N\mid i-j = k} x_{i,j} \leq 1: k \in 2-N \ldots N-2\\
+\sum_{i \in 1 \ldots N, j \in 1 \ldots N\mid i+j = k} x_{i,j} \leq 1: k \in 3 \ldots N+N-1

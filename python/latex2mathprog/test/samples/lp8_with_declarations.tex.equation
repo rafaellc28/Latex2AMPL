@@ -1,0 +1,12 @@
+% Job Shop Scheduling: JobShop.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } BigM*makespan + \sum_{(j,m) \in TASKS} start_{j,m}\\
+\text{subject to } start_{j,m} + dur_{j,m} \leq makespan: (j,m) \in TASKS\\
+start_{k,n} + dur_{k,n} \leq start_{j,m}: (k,n,j,m) \in TASKORDER\\
+start_{i,m} + dur_{i,m} \leq start_{j,m} + BigM*(1-y_{i,m,j}): (i,m) \in TASKS, (j,m) \in TASKS\mid i < j\\
+start_{j,m} + dur_{j,m} \leq start_{i,m} + BigM*y_{i,m,j}: (i,m) \in TASKS,(j,m) \in TASKS\mid i < j\\
+y_{i,m,j} \in \{0,1\}: (i,m) \in TASKS,(j,m) \in TASKS\mid i < j\\
+BigM := 1 + \sum_{(j,m) \in TASKS}dur_{j,m}\\
+TASKORDER \subset \{TASKS,TASKS\}\\
+JOBS := \text{ setof } \{ (j,m) \in TASKS \} j\\
+MACHINES := \text{ setof } \{(j,m) \in TASKS\} m\\
+start_{j,m}, makespan \in \mathbb{R}^{\geq 0}\\

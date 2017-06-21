@@ -1,0 +1,6 @@
+% GLPK/mfasp.mod: ../glpk-4.47/examples/mfasp.mod
+\text{minimize } \sum_{(i,j) \in E} x_{i,j}\\
+\text{subject to } k_{j} - k_{i} \geq 1 - card(V) * x_{i,j}: (i,j) \in E\\
+k_{i} \in \mathbb{R}^{\geq 1}, \leq card(V): i \in V\\
+x_{i,j} \in \{0,1\}; n \in \mathbb{P}, \geq 0, \in \mathbb{Z}; V := 1 \ldots n\\
+E \subset V \times V, \text{ default } \text{ setof }\{i \in V, j \in V\mid i \neq j \wedge Uniform(0,1) \leq 0.15\} (i,j)\\

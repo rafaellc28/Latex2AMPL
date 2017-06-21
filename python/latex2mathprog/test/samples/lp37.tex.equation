@@ -1,0 +1,6 @@
+% European Put Option: EuropeanPut.mod in https://www3.nd.edu/~jeff/mathprog/#
+\text{minimize } P_{0,0}\\
+\text{subject to } P_{p,s} = x_{p,s} * B_{p,s} + y_{p,s} * S_{p,s}: p \in PERIODS, s \in STATES_{p}, P_{p,s} \in \mathbb{R}, x_{p,s} \in \mathbb{R}, y_{p,s} \in \mathbb{R}\\
+x_{p,s} * B_{p+1,s} + y_{p,s} * S_{p+1,s} \geq P_{p+1,s}: p \in PERIODS, s \in STATES_{p} \mid p < NPeriods\\
+x_{p,s} * B_{p+1,s+1} + y_{p,s} * S_{p+1,s+1} \geq P_{p+1,s+1}: p \in PERIODS, s \in STATES_{p} \mid p < NPeriods\\
+P_{NPeriods,s} \geq \max(0, Kstrike - S_{NPeriods,s}): s \in STATES_{NPeriods}
