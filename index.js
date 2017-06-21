@@ -102,7 +102,7 @@ app.post('/', function(req, res) {
 
     var str = req.body.latex;
 
-	var pyshell = new PythonShell('python/v3/compiler.py');
+	var pyshell = new PythonShell('python/latex2mathprog/compiler.py');
 	
 	// sends a message to the Python script via stdin 
 	pyshell.send(str);
