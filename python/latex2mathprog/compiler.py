@@ -14,5 +14,3 @@ doc = sys.stdin.read()
 compiler = Compiler(DEBUG)
 result = compiler.compile(doc)
 print(result)
-
-

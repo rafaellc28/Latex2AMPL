@@ -63,7 +63,9 @@ class Compiler:
 				except:
 					res += "Error while generating MathProg code. Please, check your Latex code!"
 			else:
-				res += str(result)
+				if self.DEBUG:
+					res += str(result)
+
 				codeGenerator = CodeGenerator()
 				result.setupEnvironment(CodeSetup(codeGenerator))
 				response = result.generateCode(codeGenerator)
