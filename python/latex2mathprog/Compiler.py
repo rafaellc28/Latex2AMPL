@@ -40,7 +40,7 @@ class Compiler:
 
 		try:
 			result = self.parser.parse(doc, debug=self.log)
-		except SyntaxException, msg:
+		except SyntaxException as msg:
 			if msg[0] == "EOF":
 				res += "Syntax error at EOF."
 			else:
@@ -62,7 +62,7 @@ class Compiler:
 					result.setupEnvironment(CodeSetup(codeGenerator))
 					response = result.generateCode(codeGenerator)
 					res += response
-				except CodeGenerationException, msg:
+				except CodeGenerationException as msg:
 					res += msg
 				except:
 					res += "Error while generating MathProg code. Please, check your Latex code!"
