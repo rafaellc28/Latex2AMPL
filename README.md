@@ -128,12 +128,12 @@ Consider that
 
 DOTS is <b>\cdots</b> or <b>\ldots</b> or <b>\dots</b> or <b>...</b>
 
-LIMIT is \<number\> or \<name\>
+BOUND is \<NumericExpression\> or \<name\>
 
 
 Then a range is expressed as 
 
-LIMIT DOTS LIMIT
+BOUND DOTS BOUND [<b>by</b> BOUND]
 
 
 ## Tuple Notation
