@@ -32,6 +32,7 @@ class Compiler:
 
 	def compile(self, doc):
 
+		self.lexer.lineno = 1
 		res = ""
 		doc = re.sub(',\s*\\\\\\\\', ', ', doc)
 		lines = doc.split("\n")
@@ -40,16 +41,19 @@ class Compiler:
 		try:
 			result = self.parser.parse(doc, debug=self.log)
 		except SyntaxException, msg:
-			lineNum = msg[0]-1
-			line = lines[lineNum]
+			if msg[0] == "EOF":
+				res += "Syntax error at EOF."
+			else:
+				lineNum = msg[0]-1
+				line = lines[lineNum]
 
-			totalCharLinesAbove = 0
-			lineNum -= 1
-			while lineNum >= 0:
-				totalCharLinesAbove += len(lines[lineNum])+1
+				totalCharLinesAbove = 0
 				lineNum -= 1
-						
-			res += "Syntax error at line %d, position %d: '%s'.\nContext: %s." % (msg[0], msg[1]-totalCharLinesAbove+1, msg[2], line)
+				while lineNum >= 0:
+					totalCharLinesAbove += len(lines[lineNum])+1
+					lineNum -= 1
+							
+				res += "Syntax error at line %d, position %d: '%s'.\nContext: %s." % (msg[0], msg[1]-totalCharLinesAbove+1, msg[2], line)
 
 		if result:
 			if not self.DEBUG:
