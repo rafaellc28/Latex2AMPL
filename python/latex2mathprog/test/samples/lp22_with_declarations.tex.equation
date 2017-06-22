@@ -24,4 +24,4 @@ S2_{p}, \geq S1_{p}: p \in PLACES\\
 d2r := 3.1415926/180; bigM := 50\\
 alpha_{a,b} := \sin(d2r*(lat_{a}-lat_{b})/2)^{2} + \cos(d2r*lat_{a})*\cos(d2r*lat_{b})*\sin(d2r*(lng_{a}-lng_{b})/2)^{2}: a \in PLACES, b \in PLACES\\
 gcdist_{a,b} := 2*6371*\arctan(\sqrt{alpha_{a,b}},\sqrt{1-alpha_{a,b}}): a \in PLACES, b \in PLACES\\
-finish, \neq start;\\
+finish, \neq start\\

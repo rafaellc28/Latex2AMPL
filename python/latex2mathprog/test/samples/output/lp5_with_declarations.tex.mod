@@ -2,7 +2,7 @@ set C;
 
 set N;
 
-param Data{c in C, n in N};
+param Data{c in C, n in {"price","weight"} union N};
 
 param Allowance{n in N};
 
