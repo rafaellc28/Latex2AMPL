@@ -1,4 +1,5 @@
 from Expression import *
+from Utils import *
 
 class Tuple(Expression):
     """
@@ -9,9 +10,10 @@ class Tuple(Expression):
         """
         Set the values
         
-        :param values : [Variable|Number]
+        :param values : [Identifier|Number]
         """
-        
+        Expression.__init__(self)
+
         self.values = values
         self.i = -1
 
@@ -39,7 +41,13 @@ class Tuple(Expression):
         else:
             self.i = -1
             raise StopIteration
-    
+        
+    def getSymbolName(self, codeGenerator):
+        return ",".join(map(lambda v: v.generateCode(codeGenerator), self.values))
+
+    def getDependencies(self):
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.values))))
+
     def getValues(self):
         """
         get the values in this Tuple
@@ -57,7 +65,7 @@ class Tuple(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         codeSetup.setupEnvironment(self)
     

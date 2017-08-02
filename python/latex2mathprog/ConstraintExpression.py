@@ -33,9 +33,12 @@ class ConstraintExpression2(ConstraintExpression):
         
         return "CntExprWith2:" + str(self.linearExpression1) + " " + self.op + " " + str(self.linearExpression2)
 
+    def getDependencies(self):
+        return list(set(self.linearExpression1.getDependencies() + self.linearExpression2.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets in this constraint
+        Generate the MathProg code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
     
@@ -72,9 +75,12 @@ class ConstraintExpression3(ConstraintExpression):
         
         return "CntExprWith3:" + str(self.numericExpression1) + " " + self.op + " " + str(self.linearExpression) + " " + self.op + " " + str(self.numericExpression2)
     
+    def getDependencies(self):
+        return list(set(self.linearExpression.getDependencies() + self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+    
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets in this constraint
+        Generate the MathProg code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
     

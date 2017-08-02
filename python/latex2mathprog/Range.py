@@ -9,8 +9,9 @@ class Range(Expression):
         """
         Set the range init and end
         
-        :param rangeInit : NumericExpression
-        :param rangeEnd  : NumericExpression
+        :param rangeInit : NumericExpression | Identifier
+        :param rangeEnd  : NumericExpression | Identifier
+        :param by        : NumericExpression | Identifier
         """
         
         self.rangeInit = rangeInit
@@ -27,10 +28,18 @@ class Range(Expression):
         res += "]"
         
         return res
+    
+    def getDependencies(self):
+        dep = self.rangeInit.getDependencies() + self.rangeEnd.getDependencies()
+
+        if self.by != None:
+            dep += self.by.getDependencies()
+
+        return list(set(dep))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         codeSetup.setupEnvironment(self)
 

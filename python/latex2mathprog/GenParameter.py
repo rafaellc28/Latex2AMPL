@@ -1,8 +1,8 @@
 from GenObjWithSubIndices import *
 
 class GenParameter(GenObjWithSubIndices):
-	def __init__(self, name, isSymbolic = False, firstStmt = None, lastStmt = None, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
-		super(GenParameter, self).__init__(name, firstStmt, lastStmt)
+	def __init__(self, name, isSymbolic = False, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
+		super(GenParameter, self).__init__(name)
 		self.isSymbolic = isSymbolic
 		self.stmtInclusion = stmtInclusion
 		self.certainty = certainty

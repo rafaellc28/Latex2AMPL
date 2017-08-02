@@ -1,32 +1,24 @@
-from Utils import *
 from Tuple import *
 from ValueList import *
-from Variable import *
-from String import *
+from Identifier import *
 from SetExpression import *
-from NumericExpression import *
-from SymbolicExpression import *
-from GenSubIndices import *
 from GenSet import *
-from GenSubIndice import *
 from GenVariable import *
 from GenParameter import *
-from GenDomain import *
-from GenType import *
-from GenTuple import *
-from GenIndexingExpression import *
 from GenVariables import *
 from GenSets import *
 from GenParameters import *
 from GenBelongsTo import *
-from GenFirstStmtList import *
-from GenFirstStmt import *
-from GenSubIndicesByNameList import *
-from GenSubIndicesByName import *
 from CodeGenerationException import *
 from GenDeclaration import *
+from GenProperties import *
+from GenItemDomain import *
 from Constants import *
 from DeclarationExpression import *
+from Declarations import *
+
+from SymbolTable import *
+from SymbolTableEntry import *
 
 class CodeSetup:
     """ Visitor in the Visitor Pattern """
@@ -34,25 +26,24 @@ class CodeSetup:
     def __init__(self, codeGenerator = None):
         self.codeGenerator = codeGenerator
         self.varKey = None
-        self.curList = None
         self.stmtIndex = 0
-        self.genFirstStmtList = GenFirstStmtList()
-        self.genSubIndicesByNameList = GenSubIndicesByNameList()
+        self.level = 0
+        self.currentTable = None
 
-    def _setIsParam(self, variable):
-        variable.setIsParam(True)
-        variable.setIsSet(False)
-        variable.setIsVar(False)
+    def _setIsParam(self, identifier):
+        identifier.setIsParam(True)
+        identifier.setIsSet(False)
+        identifier.setIsVar(False)
 
-    def _setIsSet(self, variable):
-        variable.setIsSet(True)
-        variable.setIsParam(False)
-        variable.setIsVar(False)
+    def _setIsSet(self, identifier):
+        identifier.setIsSet(True)
+        identifier.setIsParam(False)
+        identifier.setIsVar(False)
 
-    def _setIsVar(self, variable):
-        variable.setIsVar(True)
-        variable.setIsSet(False)
-        variable.setIsParam(False)
+    def _setIsVar(self, identifier):
+        identifier.setIsVar(True)
+        identifier.setIsSet(False)
+        identifier.setIsParam(False)
 
     def setupEnvironment(self, node):
         cls = node.__class__
@@ -63,89 +54,73 @@ class CodeSetup:
             return method(node)
 
     # Auxiliary Methods
-    def _getVariable(self, var):
-        if isinstance(var, ValuedNumericExpression) or isinstance(var, StringSymbolicExpression) or isinstance(var, SetExpressionWithValue):
-            var = var.value
+    def _getIdentifier(self, var):
+        return var.getSymbol()
 
-        return var
-
-    def _addTypeAux(self, variable, _type, minVal = None, maxVal = None):
-        name = variable.generateCodeWithoutIndices(self.codeGenerator)
-        if not _type.startswith(Constants.PARAMETERS) and not _type.startswith(Constants.SETS) and not _type.startswith(Constants.VARIABLES):
-            self.codeGenerator.genTypes.add(GenType(name, _type, minVal, maxVal))
+    def _addTypeAux(self, identifier, _type):
+        name = identifier.getSymbolName(self.codeGenerator)
 
         if not self._checkIsParamType(_type):
-            self._setIsVar(variable)
+            self._setIsVar(identifier)
 
             # if the parameter was included in the current statement, remove because it is not a parameter but an index
             _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
             if _genParam != None and len(_genParam) > 0:
-                if not self.isDeclaredAsParam(variable):
-                    self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
+                if not self.isParamForSure(identifier):
+                    self.codeGenerator.genParameters.remove(name)
+    
+    def _addType(self, identifier, _type):
+        if isinstance(identifier, ValueList):
+            for var in identifier.getValues():
+                var = self._getIdentifier(var)
 
+                self._addTypeAux(var, _type)
         else:
-            variable.setIsSymbolic(True)
-            self._setIsParam(variable)
-
-    def _addType(self, variable, _type, minVal = None, maxVal = None):
-        if isinstance(variable, ValueList):
-            for var in variable.getValues():
-                var = self._getVariable(var)
-
-                self._addTypeAux(var, _type, minVal, maxVal)
-        else:
-            var = self._getVariable(variable)
-
-            self._addTypeAux(var, _type, minVal, maxVal)
-
-    def _addDomainAux(self, variable, setExpression, setExpressionObj):
-        ind = variable.generateCodeWithoutIndices(self.codeGenerator)
-        _domains = self.codeGenerator.genDomains.getByNameAndStmt(ind, self.stmtIndex)
-
-        order = 0
-        if _domains != None and len(_domains) > 0:
-            order = self._getOrderFromDomains(_domains)
-            order += 1
-
-        _domain = GenDomain(ind, self.stmtIndex, order, setExpression, setExpressionObj)
-        self.codeGenerator.genDomains.add(_domain)
-
-    def _addDomain(self, variable, setExpression, setExpressionObj):
-        if isinstance(variable, ValueList):
-            for var in variable.getValues():
-                var = self._getVariable(var)
-
-                self._addDomainAux(var, setExpression, setExpressionObj)
-
-        else:
-            var = self._getVariable(variable)
-            self._addDomainAux(var, setExpression, setExpressionObj)
+            var = self._getIdentifier(identifier)
+            self._addTypeAux(var, _type)
 
     def _checkIsParamType(self, _type):
         return _type.startswith(Constants.SYMBOLIC) or _type.startswith(Constants.LOGICAL)
 
     # Get the MathProg code for a given sub-indice
     def _getCodeID(self, id_):
-        val = id_.generateCode(self.codeGenerator)
+        val = id_.getSymbolName(self.codeGenerator)
         if val.replace('.','',1).isdigit():
             val = str(int(float(val)))
 
         return val
 
+    def _getSetExpression(self, value):
+        setExpression = value.getSymbolName(self.codeGenerator)
+        setCode = setExpression.replace(" ", "")
+
+        if setCode == Constants.BINARY_0_1:
+            setExpression = Constants.BINARY_0_1
+
+        return setExpression
+
     # Get the MathProg code for a given objective
     def _setupObjective(self, objective):
+        self.level = 0
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), self.level)
+
         objective.setupEnvironment(self)
         self.stmtIndex += 1
+        self.currentTable = None
 
     # Get the MathProg code for a given constraint
     def _setupConstraint(self, constraint):
+        self.level = 0
+
+        if not isinstance(constraint, Declarations) and not isinstance(constraint, Declaration):
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), self.level, 
+                                                                       True if isinstance(constraint, Declarations) or isinstance(constraint, Declaration) else False)
+        else:
+            self.currentTable = None
+
         constraint.setupEnvironment(self)
         self.stmtIndex += 1
-
-    # Get the MathProg code for a given declaration
-    def _setupDeclaration(self, declaration):
-        declaration.setupEnvironment(self)
-        self.stmtIndex += 1
+        self.currentTable = None
 
     # Get the MathProg code for a given constraint
     def _setupEntry(self, entry): return entry.setupEnvironment(self)
@@ -158,94 +133,147 @@ class CodeSetup:
     def _setupValue(self, value):
         value.setupEnvironment(self)
 
-    def _setIndices(self, var, i, varKey, curList):
+    def _setIndices(self, var, i, varKey):
         var.setIndice(i)
         var.setVarName(varKey)
 
-        if isinstance(curList, GenVariables):
-            var.setVarList(Constants.GEN_VARIABLES)
-        elif isinstance(curList, GenSets):
-            var.setVarList(Constants.GEN_SETS)
-        elif isinstance(curList, GenParameters):
-            var.setVarList(Constants.GEN_PARAMETERS)
-
-    def _getCurList(self, node):
-        curList = None
-        if node.getVarList() == Constants.GEN_VARIABLES:
-            curList = self.codeGenerator.genVariables
-        elif node.getVarList() == Constants.GEN_PARAMETERS:
-            curList = self.codeGenerator.genParameters
-        elif node.getVarList() == Constants.GEN_SETS:
-            curList = self.codeGenerator.genSets
-
-        return curList
-
-    def _getOrderFromDomains(self, _domains):
-        order = -1
-        for _d in _domains:
-            if _d.getOrder() > order:
-                order = _d.getOrder()
-
-        return order
-
     def _checkSubIndices(self, node):
-        if Utils._isInstanceOfStr(node.sub_indices):
+        if isinstance(node.sub_indices, str):
             return
 
         if len(node.sub_indices) > 0:
-            if Utils._isInstanceOfList(node.sub_indices):
+            if isinstance(node.sub_indices, list):
                 indices = range(len(node.sub_indices))
                 for i in indices:
                     var = node.sub_indices[i]
-                    var = self._getVariable(var)
+                    var = self._getIdentifier(var)
 
-                    self._setIndices(var, i, self.varKey, self.curList)
+                    self._setIndices(var, i, self.varKey)
 
                 for i in indices:
                     var = node.sub_indices[i]
-                    var = self._getVariable(var)
+                    var = self._getIdentifier(var)
 
                     var.setupEnvironment(self)
 
-            elif isinstance(node.sub_indices, ValuedNumericExpression) or isinstance(node.sub_indices, StringSymbolicExpression):
-                self._setIndices(node.sub_indices.value, 0, self.varKey, self.curList)
-                node.sub_indices.value.setupEnvironment(self)
-
             else:
-                self._setIndices(node.sub_indices, 0, self.varKey, self.curList)
-                node.sub_indices.setupEnvironment(self)
+                var = self._getIdentifier(node.sub_indices)
+                self._setIndices(var, 0, self.varKey)
+                var.setupEnvironment(self)
 
-    def _setupEnvironment_SubIndice(self, node):
-        ind = node.generateCode(self.codeGenerator)
-        _domains = self.codeGenerator.genDomains.getByNameAndStmt(ind, self.stmtIndex)
-        order = 0
-        if _domains != None and len(_domains) > 0:
-            order = self._getOrderFromDomains(_domains)
-            order += 1
+    def _setDimension(self, setExpression, dimen):
+        if isinstance(setExpression, SetExpressionWithValue) or isinstance(setExpression, SetExpressionWithIndices):
+            setExpression.setDimension(dimen)
+        elif isinstance(setExpression, SetExpressionBetweenParenthesis):
+            self._setDimension(setExpression.setExpression, dimen)
+        elif isinstance(setExpression, ConditionalSetExpression) or isinstance(setExpression, SetExpressionWithOperation):
+            self._setDimension(setExpression.setExpression1, dimen)
+            self._setDimension(setExpression.setExpression2, dimen)
 
-        _domain = GenDomain(ind, self.stmtIndex, order)
-        self.codeGenerator.genDomains.add(_domain)
+    def _addItemBelongsTo(self, var, name):
+        if len(var.sub_indices) == 0:
+            var.setIsInSet(True)
+            self.codeGenerator.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
 
-        if node.getVarList() == None:
-            return
+            # if the parameter was included in the current statement, remove because it is not a parameter but an index
+            _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
+            if _genParam != None and len(_genParam) > 0:
+                if not self.isDeclaredAsParam(var):
+                    self.codeGenerator.genParameters.remove(name)
 
-        curList = self._getCurList(node)
-        _genObj = None
-        if curList != None:
-            _genObj = curList.get(node.getVarName())
+    def _addBelongsTo(self, var, setExpressionObj, op = None, supExpressionObj = None):
+        self._addDomainExpression(var, setExpressionObj, op, supExpressionObj)
 
-        if _genObj != None:
-            orderSub = 0
+        if isinstance(var, Tuple):
+            for var1 in var.getValues():
+                name1 = var1.getSymbolName(self.codeGenerator)
+                self._addItemBelongsTo(var1, name1)
 
-            _subIndices = _genObj.getSubIndices()
-            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
+        else:
+            name = var.getSymbolName(self.codeGenerator)
+            self._addItemBelongsTo(var, name)
 
-            if _subIndice != None and len(_subIndice) > 0:
-                orderSub = self._getOrderFromDomains(_subIndice)
-                orderSub += 1
+    def _addDomainExpression(self, var, setExpressionObj, op = None, supExpressionObj = None):
 
-            _subInd = GenSubIndice(node.getIndice(), ind, self.stmtIndex, orderSub, order, None, None, _subIndices)
-            _subIndices.add(_subInd) # set the name of the variable as the index
+        name = var.getSymbolName(self.codeGenerator)
+        setExpression = self._getSetExpression(setExpressionObj)
+        dependencies = setExpressionObj.getDependencies()
+
+        if supExpressionObj != None:
+            setExpression += ".." + supExpressionObj.getSymbolName(self.codeGenerator)
+            dependencies = list(set(dependencies + supExpressionObj.getDependencies()))
+
+        _symbolTableEntry = self.currentTable.lookup(name)
+        if _symbolTableEntry == None:
+            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, op, dependencies)], setExpressionObj.getDimension(), None, None), 
+                                                 None, self.level, [])
+            self.currentTable.insert(name, _symbolTableEntry)
+
+        else:
+            if _symbolTableEntry.getInferred():
+                _symbolTableEntry.setType(None)
+
+            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, op, dependencies))
+            _symbolTableEntry.getProperties().setDimension(setExpressionObj.getDimension())
+
+        _symbolTableEntry = self.currentTable.lookup(setExpression)
+        if _symbolTableEntry == None:
+            _symbolTableEntry = SymbolTableEntry(setExpression, GenProperties(setExpression, [], setExpressionObj.getDimension(), None, None), 
+                                                 None, self.level, [])
+            self.currentTable.insert(setExpression, _symbolTableEntry)
+
+        else:
+            if _symbolTableEntry.getInferred():
+                _symbolTableEntry.setType(None)
+
+            _symbolTableEntry.getProperties().setDimension(setExpressionObj.getDimension())
+
+    def isParamForSure(self, identifier):
+        if identifier.isDeclaredAsParam:
+            return True
+
+        name = identifier.getSymbolName(self.codeGenerator)
+        param1 = self.codeGenerator.genParameters.get(name)
+        if param1 != None:
+            #print(param1.getCertainty(), param1.getIsDeclaredAsParam())
+            return param1.getCertainty()
+
+        return False
+
+    def isDeclaredAsParam(self, identifier):
+        if identifier.isDeclaredAsParam:
+            return True
+
+        name = identifier.getSymbolName(self.codeGenerator)
+        param1 = self.codeGenerator.genParameters.get(name)
+        if param1 != None:
+            return param1.getIsDeclaredAsParam()
+
+        return False
+
+    def isDeclaredAsSet(self, identifier):
+        if identifier.isDeclaredAsSet:
+            return True
+
+        name = identifier.getSymbolName(self.codeGenerator)
+        set1 = self.codeGenerator.genSets.get(name)
+
+        if set1 != None:
+            return set1.getIsDeclaredAsSet()
+
+        return False
+
+    def isDeclaredAsVar(self, identifier):
+        if identifier.isDeclaredAsVar:
+            return True
+        
+        name = identifier.getSymbolName(self.codeGenerator)
+        var1 = self.codeGenerator.genVariables.get(name)
+
+        if var1 != None:
+            return var1.getIsDeclaredAsVar()
+
+        return False
 
     def setupEnvironment_Main(self, node):
         node.problem.setupEnvironment(self)
@@ -253,34 +281,31 @@ class CodeSetup:
     # Linear Equations
     def setupEnvironment_LinearEquations(self, node):
         """
-        Generate the MathProg code for the Set, Parameter and Variable statements
+        Generate the MathProg code for the Set, Parameter and Identifier statements
         """
         node.constraints.setupEnvironment(self)
 
     # Linear Program
     def setupEnvironment_LinearProgram(self, node):
         """
-        Generate the MathProg code for the Set, Parameter and Variable statements
+        Generate the MathProg code for the Set, Parameter and Identifier statements
         """
         
-        node.objective.setupEnvironment(self)
+        node.objectives.setupEnvironment(self)
         if node.constraints:
             node.constraints.setupEnvironment(self)
         
-        if node.declarations:
-            node.declarations.setupEnvironment(self)
-
     # Objectives
     def setupEnvironment_Objectives(self, node):
         """
-        Generate the MathProg code for the variables and sets used in these objectives
+        Generate the MathProg code for the identifiers and sets used in these objectives
         """
         map(self._setupObjective, node.objectives)
 
     # Objective
     def setupEnvironment_Objective(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this objective function
+        Generate the MathProg code for the identifiers and sets used in this objective function
         """
         node.linearExpression.setupEnvironment(self)
 
@@ -290,14 +315,14 @@ class CodeSetup:
     # Constraints
     def setupEnvironment_Constraints(self, node):
         """
-        Generate the MathProg code for the variables and sets used in these constraints
+        Generate the MathProg code for the identifiers and sets used in these constraints
         """
         map(self._setupConstraint, node.constraints)
 
     # Constraint
     def setupEnvironment_Constraint(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets in this constraint
+        Generate the MathProg code for declaration of identifiers and sets in this constraint
         """
         node.constraintExpression.setupEnvironment(self)
 
@@ -306,14 +331,14 @@ class CodeSetup:
 
     def setupEnvironment_ConstraintExpression2(self, node):
         """
-        Generate the MathProg code for the variables and sets in this constraint
+        Generate the MathProg code for the identifiers and sets in this constraint
         """
         node.linearExpression1.setupEnvironment(self)
         node.linearExpression2.setupEnvironment(self)
 
     def setupEnvironment_ConstraintExpression3(self, node):
         """
-        Generate the MathProg code for the variables and sets in this constraint
+        Generate the MathProg code for the identifiers and sets in this constraint
         """
         node.numericExpression1.setupEnvironment(self)
         node.linearExpression.setupEnvironment(self)
@@ -322,36 +347,53 @@ class CodeSetup:
     # Linear Expression
     def setupEnvironment_ValuedLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         node.value.setupEnvironment(self)
 
     def setupEnvironment_LinearExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.linearExpression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
 
     def setupEnvironment_LinearExpressionWithArithmeticOperation(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         node.expression1.setupEnvironment(self)
         node.expression2.setupEnvironment(self)
 
     def setupEnvironment_MinusLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         node.linearExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         if node.numericExpression:
             node.indexingExpression.setHasSup(True)
-            node.indexingExpression.setSupExpression(node.numericExpression.generateCode(self.codeGenerator))
+            node.indexingExpression.setSupExpression(node.numericExpression)
         
         node.indexingExpression.setupEnvironment(self)
 
@@ -359,25 +401,47 @@ class CodeSetup:
             node.numericExpression.setupEnvironment(self)
 
         node.linearExpression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
         
 
     def setupEnvironment_ConditionalLinearExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this linear expression
+        Generate the MathProg code for the identifiers and sets used in this linear expression
         """
         node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.linearExpression1.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
         if node.linearExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
             node.linearExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
 
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         if node.numericExpression1 != None:
             node.numericExpression1.setupEnvironment(self)
 
@@ -386,51 +450,54 @@ class CodeSetup:
 
     def setupEnvironment_ValuedNumericExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.value.setupEnvironment(self)
 
     def setupEnvironment_NumericExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
         node.numericExpression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+
     def setupEnvironment_NumericExpressionWithArithmeticOperation(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.numericExpression1.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
     def setupEnvironment_MinusNumericExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedNumericExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
         if node.supNumericExpression:
             node.indexingExpression.setHasSup(True)
-            node.indexingExpression.setSupExpression(node.supNumericExpression.generateCode(self.codeGenerator))
+            node.indexingExpression.setSupExpression(node.supNumericExpression)
 
         node.indexingExpression.setupEnvironment(self)
         
@@ -439,27 +506,48 @@ class CodeSetup:
 
         node.numericExpression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+
     def setupEnvironment_ConditionalNumericExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.numericExpression1.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+
         if node.numericExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+            
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
             node.numericExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
 
 
     # Symbolic Expression
     def setupEnvironment_SymbolicExpressionWithFunction(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.symbolicExpression.setupEnvironment(self)
         node.numericExpression1.setupEnvironment(self)
         if node.numericExpression2 != None:
@@ -467,44 +555,64 @@ class CodeSetup:
 
     def setupEnvironment_StringSymbolicExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.value.setupEnvironment(self)
 
     def setupEnvironment_SymbolicExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
         node.symbolicExpression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+
     def setupEnvironment_SymbolicExpressionWithOperation(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
 
     def setupEnvironment_ConditionalSymbolicExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
-        if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
         node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.symbolicExpression1.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
         if node.symbolicExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+            
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
             node.symbolicExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
 
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
@@ -514,8 +622,6 @@ class CodeSetup:
         if node.hasSup:
             if len(node.entriesIndexingExpression) != 1:
                 raise CodeGenerationException('Statement '+str(self.stmtIndex+1)+': If iterated expression has a superior expression, then it must have a single entry in the inferior expression!')
-            #elif Utils._isInstanceOfStr(node.entriesIndexingExpression[0]) or not node.entriesIndexingExpression[0].isInstanceOfEntryIndexingExpressionEq():
-            #    raise Exception('If iterated expression has a superior expression, then its single entry must be of type EntryIndexingExpressionEq!')
             else:
                 node.entriesIndexingExpression[0].setHasSup(True)
                 node.entriesIndexingExpression[0].setSupExpression(node.supExpression)
@@ -525,54 +631,38 @@ class CodeSetup:
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
 
-        if node.stmtIndexing:
-            self.codeGenerator.genIndexingExpressionConstraints.add(GenIndexingExpression(str(self.stmtIndex), node.generateCode(self.codeGenerator)))
-
-    def setupEnvironment_EntryExpressionWithSet(self, node, variable):
+    def setupEnvironment_EntryExpressionWithSet(self, node, identifier):
 
         var = None
-        if isinstance(variable, Variable):# and len(variable.sub_indices) > 0:
-            var = variable
-            var.setupEnvironment(self)
-        elif isinstance(variable, ValuedNumericExpression) or isinstance(variable, StringSymbolicExpression):
-            var = variable.value
-            var.setupEnvironment(self)
-        elif isinstance(variable, ValueList):
+        if isinstance(identifier, ValueList):
             var = []
-            for var1 in variable.getValues():
-                var2 = self._getVariable(var1)
+            for var1 in identifier.getValues():
+                var2 = self._getIdentifier(var1)
                 var.append(var2)
-                var1.setupEnvironment(self)
+        else:
+            var = self._getIdentifier(identifier)
 
-        setExpression = node.setExpression.generateCode(self.codeGenerator)
-        setCode = setExpression.replace(" ", "")
+        setExpression = self._getSetExpression(node.setExpression)
 
-        if setCode == Constants.BINARY_0_1 or setCode == Constants.BINARY:
-            node.isBinary = True
-
+        if setExpression == Constants.BINARY_0_1 or setExpression == Constants.BINARY:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isBinary = True
             else:
                 var.isBinary = True
 
-            self._addType(variable, Constants.BINARY)
-            setExpression = Constants.BINARY_0_1
+            self._addType(identifier, Constants.BINARY)
 
-        elif setCode.startswith(Constants.INTEGER):
-            node.isInteger = True
-
+        elif setExpression.startswith(Constants.INTEGER):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isInteger = True
             else:
                 var.isInteger = True
 
-            self._addType(variable, setExpression)
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.REALSET):
-            node.isReal = True
-
+        elif setExpression.startswith(Constants.REALSET):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isReal = True
@@ -581,73 +671,62 @@ class CodeSetup:
                 var.isReal = True
                 var.isDeclaredAsVar = True
 
-            self._addType(variable, setExpression[8:], 0)
+            self._addType(identifier, setExpression[8:])
 
-        elif setCode.startswith(Constants.SYMBOLIC):
-            node.isSymbolic = True
-
+        elif setExpression.startswith(Constants.SYMBOLIC):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isSymbolic = True
+                    self._setIsParam(var[i])
             else:
+                self._setIsParam(var)
                 var.isSymbolic = True
 
-            self._addType(variable, setExpression)
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.LOGICAL):
-            node.isLogical = True
-
+        elif setExpression.startswith(Constants.LOGICAL):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isLogical = True
+                    self._setIsParam(var[i])
             else:
                 var.isLogical = True
+                self._setIsParam(var)
 
-            self._addType(variable, setExpression)
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.PARAMETERS):
-            node.isParam = True
-            node.isDeclaredAsParam = True
-
+        elif setExpression.startswith(Constants.PARAMETERS):
             if isinstance(var, list):
                 for i in range(len(var)):
-                    var[i].isParam = True
+                    self._setIsParam(var[i])
                     var[i].isDeclaredAsParam = True
             else:
-                var.isParam = True
+                self._setIsParam(var)
                 var.isDeclaredAsParam = True
 
-            self._addType(variable, setExpression)
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.VARIABLES):
-            node.isVar = True
-            node.isDeclaredAsVar = True
-
+        elif setExpression.startswith(Constants.VARIABLES):
             if isinstance(var, list):
                 for i in range(len(var)):
-                    var[i].isVar = True
+                    self._setIsVar(var[i])
                     var[i].isDeclaredAsVar = True
             else:
-                var.isVar = True
+                self._setIsVar(var)
                 var.isDeclaredAsVar = True
 
-            self._addType(variable, setExpression)
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.SETS):
-            node.isSet = True
-            node.isDeclaredAsSet = True
-
+        elif setExpression.startswith(Constants.SETS):
             if isinstance(var, list):
                 for i in range(len(var)):
-                    var[i].isSet = True
+                    self._setIsSet(var[i])
                     var[i].isDeclaredAsSet = True
             else:
-                var.isSet = True
+                self._setIsSet(var)
                 var.isDeclaredAsSet = True
 
-            self._addType(variable, setExpression)
-
-        self._addDomain(variable, setExpression, node.setExpression)
+            self._addType(identifier, setExpression)
 
         if isinstance(var, list):
             for i in range(len(var)):
@@ -655,382 +734,318 @@ class CodeSetup:
         else:
             var.setupEnvironment(self)
 
-    def _setDimension(self, setExpression, dimen):
-
-        if isinstance(setExpression, SetExpressionWithValue) or isinstance(setExpression, SetExpressionWithIndices):
-            setExpression.setDimension(dimen)
-        elif isinstance(setExpression, SetExpressionBetweenParenthesis):
-            self._setDimension(setExpression.setExpression, dimen)
-        elif isinstance(setExpression, ConditionalSetExpression) or isinstance(setExpression, SetExpressionWithOperation):
-            self._setDimension(setExpression.setExpression1, dimen)
-            self._setDimension(setExpression.setExpression2, dimen)
-
-    def _addBelongsTo(self, var):
-        var.setIsInSet(True)
-        name = var.generateCode(self.codeGenerator)
-        self.codeGenerator.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
-
-        # if the parameter was included in the current statement, remove because it is not a parameter but an index
-        _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
-        if _genParam != None and len(_genParam) > 0:
-            if not self.isDeclaredAsParam(var):
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, name)
-
-    def removeSavingFirstStmtAndSubIndicesForName(self, genList, name):
-        objName = genList.get(name)
-        if objName != None:
-            genFirstStmt = self.genFirstStmtList.get(name)
-            if genFirstStmt != None:
-                genFirstStmt.setFirstStmt(objName.getFirstStmt())
-            else:
-                self.genFirstStmtList.add(GenFirstStmt(name, objName.getFirstStmt()))
-
-            genSubIndicesByName = self.genSubIndicesByNameList.get(name)
-            if genSubIndicesByName != None:
-                _sub = objName.getSubIndices().getAll()
-                genSubIndicesByName.getSubIndices().addAll(_sub)
-
-            else:
-                _subIndices = GenSubIndices()
-                _sub = objName.getSubIndices().getAll()
-                _subIndices.addAll(_sub)
-                _subIndicesByName = GenSubIndicesByName(name)
-                _subIndicesByName.setSubIndices(_subIndices)
-                self.genSubIndicesByNameList.add(_subIndicesByName)
-
-            genList.remove(name)
-
     # Entry Indexing Expression
     def setupEnvironment_EntryIndexingExpressionWithSet(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for indexing expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for indexing expression
         """
 
-        if Utils._isInstanceOfStr(node.variable):
+        if isinstance(node.identifier, str):
             return
 
-        setExpression = node.setExpression.generateCode(self.codeGenerator)
-        setCode = setExpression.replace(" ", "")
+        setExpression = self._getSetExpression(node.setExpression)
 
-        if isinstance(node.variable, ValueList) or isinstance(node.variable, Tuple):
-            for var in node.variable.getValues():
-                var = self._getVariable(var)
-
-                if not self._checkIsParamType(setCode) and len(var.sub_indices) == 0:
-                    self._addBelongsTo(var)
-
-        elif isinstance(node.variable, ValuedNumericExpression) or isinstance(node.variable, StringSymbolicExpression):
-            if not self._checkIsParamType(setCode) and len(node.variable.value.sub_indices) == 0:
-                self._addBelongsTo(node.variable.value)
-
-        else:
-            if not self._checkIsParamType(setCode) and len(node.variable.sub_indices) == 0:
-                self._addBelongsTo(node.variable)
-
-        if isinstance(node.variable, Tuple):
-            tupleVal = node.variable.getValues()
+        if isinstance(node.identifier, Tuple):
+            tupleVal = node.identifier.getValues()
             dimen = len(tupleVal)
 
             if dimen > 1:
                 self._setDimension(node.setExpression, dimen)
 
-            node.setExpression.setupEnvironment(self)
+        if not self._checkIsParamType(setExpression):
+            if isinstance(node.identifier, ValueList):
+                for var in node.identifier.getValues():
+                    var = self._getIdentifier(var)
 
-            self.codeGenerator.genTuples.add(GenTuple(
-                node.setExpression.generateCode(self.codeGenerator), 
-                map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
-                node.op, self.stmtIndex, node.setExpression))
+                    self._addBelongsTo(var, node.setExpression, node.op)
+            else:
+                var = self._getIdentifier(node.identifier)
+                self._addBelongsTo(var, node.setExpression, node.op)
 
         else:
-            node.setExpression.setupEnvironment(self)
-            self.setupEnvironment_EntryExpressionWithSet(node, node.variable)
+            if isinstance(node.identifier, ValueList):
+                for var in node.identifier.getValues():
+                    var = self._getIdentifier(var)
 
-        node.variable.setupEnvironment(self)
+                    self._addDomainExpression(var, node.setExpression, node.op)
+            else:
+                var = self._getIdentifier(node.identifier)
+                self._addBelongsTo(var, node.setExpression, node.op)
+
+        if isinstance(node.identifier, Tuple):
+            for var in tupleVal:
+                #self.setupEnvironment_EntryExpressionWithSet(node, var)
+                var.setupEnvironment(self)
+
+        else:
+            self.setupEnvironment_EntryExpressionWithSet(node, node.identifier)
+
+        node.setExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryIndexingExpressionCmp(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets used in this entry for indexing expressions
+        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryIndexingExpressionEq(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets used in this entry for indexing expressions
+        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
         """
-        ind = node.variable.generateCode(self.codeGenerator)
-        _domains = self.codeGenerator.genDomains.getByNameAndStmt(ind, self.stmtIndex)
+        setExpression = node.value.getSymbolName(self.codeGenerator)
 
-        order = 0
-        if _domains != None and len(_domains) > 0:
-            order = self._getOrderFromDomains(_domains)
-            order += 1
-
-        setExpression = node.value.generateCode(self.codeGenerator)
         if node.hasSup:
-            setExpression += ".." + node.supExpression
+            setExpression += ".." + node.supExpression.getSymbolName(self.codeGenerator)
 
-        _domain = GenDomain(ind, self.stmtIndex, order, setExpression, node.value, node.supExpression if node.hasSup else None)
-        self.codeGenerator.genDomains.add(_domain)
+        self._addBelongsTo(node.identifier, node.value, DeclarationAttribute.IN, node.supExpression if node.hasSup else None)
 
-        if len(node.variable.sub_indices) == 0:
-            self._addBelongsTo(node.variable)
-
+        node.identifier.setupEnvironment(self)
         node.value.setupEnvironment(self)
-
-        node.variable.setupEnvironment(self)
 
     def setupEnvironment_LogicalExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         map(self._setupEntryByKey, node.entriesLogicalExpression)
 
     # Entry Logical Expression
     def setupEnvironment_EntryLogicalExpressionNot(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.logicalExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionNumericOrSymbolic(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.numericOrSymbolicExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionRelational(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.numericExpression1.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionWithSet(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
 
-        if Utils._isInstanceOfStr(node.value):
+        if isinstance(node.identifier, str):
             return
 
-        setExpression = node.setExpression.generateCode(self.codeGenerator)
-        setCode = setExpression.replace(" ", "")
+        setExpression = self._getSetExpression(node.setExpression)
 
-        if isinstance(node.value, ValueList) or isinstance(node.value, Tuple):
-            for var in node.value.getValues():
-                var = self._getVariable(var)
-
-                if not self._checkIsParamType(setCode) and len(var.sub_indices) == 0:
-                    self._addBelongsTo(var)
-
-        elif isinstance(node.value, ValuedNumericExpression) or isinstance(node.value, StringSymbolicExpression):
-            if not self._checkIsParamType(setCode) and len(node.value.value.sub_indices) == 0:
-                self._addBelongsTo(node.value.value)
-
-        else:
-            if not self._checkIsParamType(setCode) and len(node.value.sub_indices) == 0:
-                self._addBelongsTo(node.value)
-
-        if isinstance(node.value, Tuple):
-            tupleVal = node.value.getValues()
+        if isinstance(node.identifier, Tuple):
+            tupleVal = node.identifier.getValues()
             dimen = len(tupleVal)
 
             if dimen > 1:
-                node.setExpression.setDimension(dimen)
+                self._setDimension(node.setExpression, dimen)
 
-            node.setExpression.setupEnvironment(self)
+        if not self._checkIsParamType(setExpression):
+            if isinstance(node.identifier, ValueList):
+                for var in node.identifier.getValues():
+                    var = self._getIdentifier(var)
 
-            self.codeGenerator.genTuples.add(GenTuple(
-                node.setExpression.generateCode(self.codeGenerator), 
-                map(lambda val: val.generateCode(self.codeGenerator), tupleVal), 
-                node.op, self.stmtIndex, node.setExpression))
+                    self._addBelongsTo(var, node.setExpression, node.op)
+            else:
+                var = self._getIdentifier(node.identifier)
+                self._addBelongsTo(var, node.setExpression, node.op)
 
         else:
-            node.setExpression.setupEnvironment(self)
-            self.setupEnvironment_EntryExpressionWithSet(node, node.value)
+            if isinstance(node.identifier, ValueList):
+                for var in node.identifier.getValues():
+                    var = self._getIdentifier(var)
 
-        node.value.setupEnvironment(self)
+                    self._addDomainExpression(var, node.setExpression, node.op)
+            else:
+                var = self._getIdentifier(node.identifier)
+                self._addDomainExpression(var, node.setExpression, node.op)
+
+        if isinstance(node.identifier, Tuple):
+            for var in tupleVal:
+                var.setupEnvironment(self)
+        else:
+            self.setupEnvironment_EntryExpressionWithSet(node, node.identifier)
+        
+        node.setExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionWithSetOperation(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionIterated(self, node):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.indexingExpression.setupEnvironment(self)
         node.logicalExpression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+
     def setupEnvironment_EntryLogicalExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this logical expression
+        Generate the MathProg code for the identifiers and sets used in this logical expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.logicalExpression.setupEnvironment(self)
 
-    def isParamForSure(self, var):
-        if var.isDeclaredAsParam:
-            return True
-
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        param1 = self.codeGenerator.genParameters.get(name)
-        if param1 != None:
-            return param1.getCertainty()
-
-        return False
-
-    def isSetForSure(self, var):
-        if var.isDeclaredAsSet:
-            return True
-
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        set1 = self.codeGenerator.genSets.get(name)
-
-        if set1 != None:
-            return set1.getCertainty()
-
-        return False
-
-    def isVarForSure(self, var):
-        if var.isDeclaredAsVar:
-            return True
-        
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        var1 = self.codeGenerator.genVariables.get(name)
-
-        if var1 != None:
-            return var1.getCertainty()
-
-        return False
-
-    def isDeclaredAsParam(self, var):
-        if var.isDeclaredAsParam:
-            return True
-
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        param1 = self.codeGenerator.genParameters.get(name)
-        if param1 != None:
-            return param1.getIsDeclaredAsParam()
-
-        return False
-
-    def isDeclaredAsSet(self, var):
-        if var.isDeclaredAsSet:
-            return True
-
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        set1 = self.codeGenerator.genSets.get(name)
-
-        if set1 != None:
-            return set1.getIsDeclaredAsSet()
-
-        return False
-
-    def isDeclaredAsVar(self, var):
-        if var.isDeclaredAsVar:
-            return True
-        
-        name = var.generateCodeWithoutIndices(self.codeGenerator)
-        var1 = self.codeGenerator.genVariables.get(name)
-
-        if var1 != None:
-            return var1.getIsDeclaredAsVar()
-
-        return False
+        self.level = previousLevel
+        self.currentTable = previousTable
 
     # Set Expression
     def setupEnvironment_SetExpressionWithValue(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
-        if not Utils._isInstanceOfStr(node.value):
+        if not isinstance(node.value, str):
             if isinstance(node.value, ValueList):
                 for var in node.value.getValues():
-                    var = self._getVariable(var)
+                    var = self._getIdentifier(var)
 
-                    if isinstance(var, Variable) and not self.isParamForSure(var):
+                    if isinstance(var, Identifier) and not self.isParamForSure(var):
                         self._setIsSet(var)
 
                     var.setupEnvironment(self)
 
             else:
-                if isinstance(node.value, Variable) and not self.isParamForSure(node.value):
+                if isinstance(node.value, Identifier) and not self.isParamForSure(node.value):
                     self._setIsSet(node.value)
 
                 node.value.setupEnvironment(self)
 
     def setupEnvironment_SetExpressionWithIndices(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
+        if not isinstance(node.identifier, str):
+            if isinstance(node.identifier, Identifier) and not self.isParamForSure(node.identifier):
+                self._setIsSet(node.identifier)
+
+            if len(node.indices) > 0:
+                if isinstance(node.indices, ValueList):
+                    node.identifier.setSubIndices(node.indices.getValues())
+                else:
+                    var = self._getIdentifier(node.indices)
+                    node.identifier.setSubIndices([var])
+
+            node.identifier.setupEnvironment(self)
+
         if len(node.indices) > 0:
             node.indices.setupEnvironment(self)
 
-        if not Utils._isInstanceOfStr(node.variable):
-            if isinstance(node.variable, Variable) and not self.isParamForSure(node.variable):
-                self._setIsSet(node.variable)
-
-            if len(node.indices) > 0:
-                if isinstance(node.indices, Variable):
-                    node.variable.setSubIndices([node.indices])
-                elif isinstance(node.indices, ValuedNumericExpression) or isinstance(node.indices, StringSymbolicExpression):
-                    node.variable.setSubIndices([node.indices.value])
-                else:
-                    node.variable.setSubIndices(node.indices.getValues())
-
-            node.variable.setupEnvironment(self)
-
     def setupEnvironment_SetExpressionWithOperation(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
     def setupEnvironment_SetExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.setExpression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
 
     def setupEnvironment_SetExpressionBetweenBraces(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
         if node.setExpression != None:
             node.setExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedSetExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.indexingExpression.setupEnvironment(self)
 
         if node.integrands != None and len(node.integrands) > 0:
-            map(lambda el: el.setupEnvironment(self), node.integrands)
+            map(self._setupEntry, node.integrands)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
 
     def setupEnvironment_ConditionalSetExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
         node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.setExpression1.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
         if node.setExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+            
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
             node.setExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
 
     # Range
     def setupEnvironment_Range(self, node):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
-        if not Utils._isInstanceOfStr(node.rangeInit):
+        if not isinstance(node.rangeInit, str):
             node.rangeInit.setupEnvironment(self)
         
-        if not Utils._isInstanceOfStr(node.rangeEnd):
+        if not isinstance(node.rangeEnd, str):
             node.rangeEnd.setupEnvironment(self)
 
         if node.by != None:
@@ -1039,132 +1054,118 @@ class CodeSetup:
     # Value List
     def setupEnvironment_ValueList(self, node):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
-    # Variable List
-    def setupEnvironment_VariableList(self, node):
+    # Identifier List
+    def setupEnvironment_IdentifierList(self, node):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
-        map(self._setupValue, node.variables)
+        map(self._setupValue, node.identifiers)
 
     # Tuple
     def setupEnvironment_Tuple(self, node):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
     # Tuple List
     def setupEnvironment_TupleList(self, node):
         """
-        Generate the MathProg code for the declaration of variables used in this range expression
+        Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
     # Value
     def setupEnvironment_Value(self, node):
         """
-        Generate the MathProg code for the declaration of the variable of this value
+        Generate the MathProg code for the declaration of the identifier of this value
         """
         node.value.setupEnvironment(self)
 
-    def _setLastStmt(self, name, genList):
-        _genObj = genList.get(name)
-        if _genObj != None:
-            if int(_genObj.getLastStmt()) < self.stmtIndex:
-                _genObj.setLastStmt(str(self.stmtIndex))
-
-
-    # Variable
-    def setupEnvironment_Variable(self, node):
+    # Identifier
+    def setupEnvironment_Identifier(self, node):
         """
-        Generate the MathProg code for the declaration of this variable
+        Generate the MathProg code for the declaration of this identifier
         """
+
         if node.getIndice() > -1:
-            self._setupEnvironment_SubIndice(node)
-
             if len(node.sub_indices) == 0:
                 return
         
-        self.varKey = node.variable.generateCode(self.codeGenerator)
-        
-        self._setLastStmt(self.varKey, self.codeGenerator.genSets)
-        self._setLastStmt(self.varKey, self.codeGenerator.genVariables)
-        self._setLastStmt(self.varKey, self.codeGenerator.genParameters)
+        self.varKey = node.getSymbolName(self.codeGenerator)
+                
+        _symbolTableEntry = self.currentTable.lookup(self.varKey)
+        if _symbolTableEntry == None:
+            justInserted = True
+            _symbolTableEntry = SymbolTableEntry(self.varKey, GenProperties(self.varKey), None, self.level, 
+                                                 [map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices)] if node.sub_indices != None else [])
+            self.currentTable.insert(self.varKey, _symbolTableEntry)
+            
+        elif node.sub_indices != None:
+            _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
-        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.varKey)) and not node.isDeclaredAsParam and not node.isDeclaredAsSet:
+        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.varKey)) and not self.isDeclaredAsParam(node) and not node.isDeclaredAsSet:
 
             _genVar = self.codeGenerator.genVariables.get(self.varKey)
             if node.isDeclaredAsVar and _genVar != None:
                 _genVar.setCertainty(True)
                 _genVar.setIsDeclaredAsVar(True)
 
-            elif node.isDeclaredAsVar or (not _genVar and not self.isDeclaredAsSet(node) and not self.isDeclaredAsParam(node)): # check if this variable was not seen yet
+            elif node.isDeclaredAsVar or (not _genVar and not self.isDeclaredAsSet(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                firstStmtShowed = None
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, self.varKey)
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
-                firstStmt = self.genFirstStmtList.get(self.varKey)
+                self.codeGenerator.genParameters.remove(self.varKey)
+                self.codeGenerator.genSets.remove(self.varKey)
 
-                if firstStmt != None:
-                    firstStmtShowed = firstStmt.getFirstStmt()
-                
-                _genVar = GenVariable(self.varKey, None, None, None, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex))
-
+                _genVar = GenVariable(self.varKey, None)
                 if (node.isVar != None and not node.isVar) or (node.isDeclaredAsVar != None and not node.isDeclaredAsVar):
                     _genVar.setCertainty(False)
 
                 if node.isDeclaredAsVar:
+                    _genVar.setCertainty(True)
                     _genVar.setIsDeclaredAsVar(True)
 
-                if len(node.sub_indices) > 0:
-                    _subIndices = GenSubIndices(_genVar)
+                _symbolTableEntry = self.currentTable.lookup(self.varKey)
+                if _symbolTableEntry.getInferred() or node.isDeclaredAsVar:
+                    _symbolTableEntry.setType(Constants.VARIABLES)
 
-                    _subIndicesByName = self.genSubIndicesByNameList.get(self.varKey)
-                    if _subIndicesByName != None:
-                        _subIndices.addAll(_subIndicesByName.getSubIndices().getAll())
-
-                    _genVar.setSubIndices(_subIndices)
-
+                if node.isDeclaredAsVar:
+                    _symbolTableEntry.setInferred(False)
+                
                 self.codeGenerator.genVariables.add(_genVar)
 
-            self.curList = self.codeGenerator.genVariables
             self._checkSubIndices(node)
 
-        elif (node.isSet or node.isDeclaredAsSet) and not node.isDeclaredAsParam and not node.isDeclaredAsVar:
+        elif (node.isSet or node.isDeclaredAsSet) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node):
             _genSet = self.codeGenerator.genSets.get(self.varKey)
             if node.isDeclaredAsSet and _genSet != None:
                 _genSet.setCertainty(True)
                 _genSet.setIsDeclaredAsSet(True)
             
-            elif node.isDeclaredAsSet or (not _genSet and not self.isDeclaredAsVar(node) and not self.isDeclaredAsParam(node)): # check if this variable was not seen yet
+            elif node.isDeclaredAsSet or (not _genSet and not self.isDeclaredAsVar(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                firstStmtShowed = None
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genParameters, self.varKey)
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genVariables, self.varKey)
-                firstStmt = self.genFirstStmtList.get(self.varKey)
+                self.codeGenerator.genParameters.remove(self.varKey)
+                self.codeGenerator.genVariables.remove(self.varKey)
 
-                if firstStmt != None:
-                    firstStmtShowed = firstStmt.getFirstStmt()
-
-                _genSet = GenSet(self.varKey, node.dimenSet, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex))
-
+                _genSet = GenSet(self.varKey, node.dimenSet)
                 if (node.isSet != None and not node.isSet) or (node.isDeclaredAsSet != None and not node.isDeclaredAsSet):
                     _genSet.setCertainty(False)
 
                 if node.isDeclaredAsSet:
+                    _genSet.setCertainty(True)
                     _genSet.setIsDeclaredAsSet(True)
 
-                if len(node.sub_indices) > 0:
-                    _subIndices = GenSubIndices(_genSet)
-                    _genSet.setSubIndices(_subIndices)
+                if _symbolTableEntry.getInferred() or node.isDeclaredAsSet:
+                    _symbolTableEntry.setType(Constants.SETS)
+
+                if node.isDeclaredAsSet:
+                    _symbolTableEntry.setInferred(False)
 
                 self.codeGenerator.genSets.add(_genSet)
 
-            self.curList = self.codeGenerator.genSets
             self._checkSubIndices(node)
 
         elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)))) and not node.isDeclaredAsVar and not node.isDeclaredAsSet:
@@ -1174,109 +1175,63 @@ class CodeSetup:
                 _genParam.setIsDeclaredAsParam(True)
             
             elif node.isDeclaredAsParam or (not _genParam and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)): # check if this param was not seen yet
-                firstStmtShowed = None
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genSets, self.varKey)
-                self.removeSavingFirstStmtAndSubIndicesForName(self.codeGenerator.genVariables, self.varKey)
-                firstStmt = self.genFirstStmtList.get(self.varKey)
 
-                if firstStmt != None:
-                    firstStmtShowed = firstStmt.getFirstStmt()
-                
-                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, firstStmtShowed if firstStmtShowed != None else str(self.stmtIndex), str(self.stmtIndex), str(self.stmtIndex))
+                self.codeGenerator.genSets.remove(self.varKey)
+                self.codeGenerator.genVariables.remove(self.varKey)
+
+                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, str(self.stmtIndex))
                 if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
                     _genParam.setCertainty(False)
 
                 if node.isDeclaredAsParam:
+                    _genParam.setCertainty(True)
                     _genParam.setIsDeclaredAsParam(True)
 
-                if len(node.sub_indices) > 0:
-                    _subIndices = GenSubIndices(_genParam)
+                if _symbolTableEntry.getInferred() or node.isDeclaredAsParam:
+                    _symbolTableEntry.setType(Constants.PARAMETERS)
 
-                    _subIndicesByName = self.genSubIndicesByNameList.get(self.varKey)
-                    if _subIndicesByName != None:
-                        _subIndices.addAll(_subIndicesByName.getSubIndices().getAll())
-
-                    _genParam.setSubIndices(_subIndices)
+                if node.isDeclaredAsParam:
+                    _symbolTableEntry.setInferred(False)
 
                 self.codeGenerator.genParameters.add(_genParam)
+
             elif node.isSymbolic or node.isLogical:
                 _genParam = self.codeGenerator.genParameters.get(self.varKey)
                 if _genParam != None:
                     _genParam.setIsSymbolic(True)
 
-            self.curList = self.codeGenerator.genParameters
             self._checkSubIndices(node)
 
         else:
-            if self.codeGenerator.genSets.has(self.varKey):
-                self.curList = self.codeGenerator.genSets
-            elif self.codeGenerator.genParameters.has(self.varKey):
-                self.curList = self.codeGenerator.genParameters 
-            else:
-                self.curList = self.codeGenerator.genVariables
-
             self._checkSubIndices(node)
 
         self.varKey = None
-        self.curList = None
 
     def setupEnvironment_Number(self, node):
 
-        if node.getIndice() == -1 or node.getVarList() == None:
+        if node.getIndice() == -1:
             return
 
-        curList = self._getCurList(node)
+        num = int(self._getCodeID(node))
 
-        _genObj = None
-        if curList != None:
-            _genObj = curList.get(node.getVarName())
+        _symbolTableEntry = self.currentTable.lookup(node.getVarName())
+        if _symbolTableEntry == None:
+            _symbolTableEntry = SymbolTableEntry(self.varKey, GenProperties(self.varKey, [], None, num, num), 
+                                                 None, self.level, [])
+            self.currentTable.insert(self.varKey, _symbolTableEntry)
 
-        if _genObj != None:
-            num = int(self._getCodeID(node))
-            order = 0
+        else:
+            if _symbolTableEntry.getProperties().getMinVal() == None or num < _symbolTableEntry.getProperties().getMinVal():
+                _symbolTableEntry.getProperties().setMinVal(num)
 
-            _subIndices = _genObj.getSubIndices()
-            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
-
-            if _subIndice != None and len(_subIndice) > 0:
-                order = self._getOrderFromDomains(_subIndice)
-                order += 1
-
-            _subIndice = GenSubIndice(node.getIndice(), num, self.stmtIndex, order, None, None, None, _subIndices)
-            _genObj.getSubIndices().add(_subIndice)
-
-            if num < _subIndice.getMinVal():
-                _subIndice.setMinVal(num)
-            elif num > _subIndice.getMaxVal():
-                _subIndice.setMaxVal(num)
+            if _symbolTableEntry.getProperties().getMaxVal() == None or num > _symbolTableEntry.getProperties().getMaxVal():
+                _symbolTableEntry.getProperties().setMaxVal(num)
 
     def setupEnvironment_ID(self, node):
-        self._setupEnvironment_SubIndice(node)
+        pass
 
     def setupEnvironment_String(self, node):
-
-        if node.getIndice() == -1 or node.getVarList() == None:
-            return
-
-        curList = self._getCurList(node)
-
-        _genObj = None
-        if curList != None:
-            string = node.string
-            _genObj = curList.get(node.getVarName())
-
-        if _genObj != None:
-            order = 0
-
-            _subIndices = _genObj.getSubIndices()
-            _subIndice = _subIndices.getByIndiceAndStmt(node.getIndice(), self.stmtIndex)
-
-            if _subIndice != None and len(_subIndice) > 0:
-                order = self._getOrderFromDomains(_subIndice)
-                order += 1
-
-            _subIndice = GenSubIndice(node.getIndice(), string, self.stmtIndex, order, None, None, None, _subIndices)
-            _genObj.getSubIndices().add(_subIndice)
+        pass
 
     # Declarations
     def setupEnvironment_Declarations(self, node):
@@ -1284,14 +1239,15 @@ class CodeSetup:
     
     def setupEnvironment_Declaration(self, node):
         """
-        Generate the MathProg code for declaration of variables and sets in this declaeation
+        Generate the MathProg code for declaration of identifiers and sets in this declaeation
         """
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
 
-        for var in node.declarationExpression.variables:
-            var = self._getVariable(var)
+        for identifier in node.declarationExpression.identifiers:
+            identifier = self._getIdentifier(identifier)
             
-            if isinstance(var, Variable):
-                name = var.generateCodeWithoutIndices(self.codeGenerator)
+            if isinstance(identifier, Identifier):
+                name = identifier.getSymbolName(self.codeGenerator)
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
 
                 if genDeclaration == None:
@@ -1300,8 +1256,17 @@ class CodeSetup:
                 else:
                     genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
-                if node.indexingExpression and len(var.sub_indices) > 0:
+                if node.indexingExpression and len(identifier.sub_indices) > 0:
                     genDeclaration.setIndexingExpression(node.indexingExpression)
+
+                _symbolTableEntry = self.currentTable.lookup(name)
+                if _symbolTableEntry == None:
+                    _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [], None, None, None, None, genDeclaration), 
+                                                         None, self.level, [], True, True)
+                    self.currentTable.insert(name, _symbolTableEntry)
+                    
+                else:
+                    _symbolTableEntry.getProperties().setAttributes(genDeclaration)
 
         node.declarationExpression.setupEnvironment(self)
 
@@ -1310,96 +1275,106 @@ class CodeSetup:
 
     def setupEnvironment_DeclarationExpression(self, node):
         """
-        Generate the MathProg code for the variables and sets in this declaration
+        Generate the MathProg code for the identifiers and sets in this declaration
         """
 
-        for var in node.variables:
-            var = self._getVariable(var)
-
-            if isinstance(var, Variable):
+        for identifier in node.identifiers:
+            identifier = self._getIdentifier(identifier)
+            
+            if isinstance(identifier, Identifier):
                 
-                var.setIsParam(False)
-                name = var.generateCodeWithoutIndices(self.codeGenerator)
-
+                identifier.setIsParam(False)
+                name = identifier.getSymbolName(self.codeGenerator)
+                
                 if self.codeGenerator.genSets.has(name):
-                    self._setIsSet(var)
+                    self._setIsSet(identifier)
 
-                map(lambda el: self.setupEnvironment_AttributeListPre(el, var), node.attributeList)
-                map(lambda el: self.setupEnvironment_AttributeList(el, var), node.attributeList)
+                map(lambda el: self.setupEnvironment_AttributeListPre(el, identifier), node.attributeList)
+                map(lambda el: self.setupEnvironment_AttributeList(el, identifier), node.attributeList)
 
-        map(lambda el: el.setupEnvironment(self), node.attributeList)            
+        for identifier in node.identifiers:
+            identifier = self._getIdentifier(identifier)
+            identifier.setupEnvironment(self)
 
-        for var in node.variables:
-            var = self._getVariable(var)
-            var.setupEnvironment(self)
+        map(lambda el: el.setupEnvironment(self), node.attributeList)
 
     def setupEnvironment_DeclarationAttribute(self, node):
         """
-        Generate the MathProg code for the variables and sets in this declaration
+        Generate the MathProg code for the identifiers and sets in this declaration
         """
         node.attribute.setupEnvironment(self)
 
-    def setupEnvironment_AttributeListPre(self, node, variable):
+    def setupEnvironment_AttributeListPre(self, node, identifier):
         if node.op == DeclarationAttribute.IN:
-            self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, variable)
+            self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)
 
-        elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and isinstance(node.attribute, SetExpression) and not variable.isParam:
-            var = self._getVariable(node.attribute)
-            name = var.generateCode(self.codeGenerator)
+        elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and isinstance(node.attribute, SetExpression) and not identifier.isParam:
+            var = self._getIdentifier(node.attribute)
+            name = var.getSymbolName(self.codeGenerator)
             
             if not self.codeGenerator.genParameters.has(name):
-                self._setIsSet(variable)
+                self._setIsSet(identifier)
 
-    def setupEnvironment_AttributeList(self, node, variable):
-        var = self._getVariable(node.attribute)
-        if (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF) and variable.isParam and isinstance(var, Variable):
+    def setupEnvironment_AttributeList(self, node, identifier):
+        identifier1 = self._getIdentifier(node.attribute)
+        if (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF) and identifier.isParam and isinstance(identifier1, Identifier):
 
-            name = var.generateCodeWithoutIndices(self.codeGenerator)
+            name = identifier1.getSymbolName(self.codeGenerator)
             param = self.codeGenerator.genParameters.get(name)
             if param != None:
                 param.setCertainty(True)
 
-            self._setIsParam(var)
+            self._setIsParam(identifier1)
         
-    def setupEnvironment_DeclarationExpressionWithSet(self, attribute, variable):
-        setExpression = attribute.generateCode(self.codeGenerator)
-        setCode = setExpression.replace(" ", "")
+    def setupEnvironment_DeclarationExpressionWithSet(self, attribute, identifier):
+        name = identifier.getSymbolName(self.codeGenerator)
+        setExpression = self._getSetExpression(attribute)
 
-        if setCode == Constants.BINARY_0_1 or setCode == Constants.BINARY:
-            variable.isBinary = True
-            self._addType(variable, Constants.BINARY)
-            setExpression = Constants.BINARY_0_1
+        _symbolTableEntry = self.currentTable.lookup(name)
+        if _symbolTableEntry == None:
+            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies())], None, None, None), 
+                                                 None, self.level, [], True, True)
+            self.currentTable.insert(name, _symbolTableEntry)
 
-        elif setCode.startswith(Constants.INTEGER):
-            variable.isInteger = True
-            self._addType(variable, setExpression)
+        else:
+            if _symbolTableEntry.getInferred():
+                _symbolTableEntry.setType(None)
 
-        elif setCode.startswith(Constants.REALSET):
-            variable.isReal = True
-            #variable.isDeclaredAsVar = True
-            self._addType(variable, setExpression[8:], 0)
+            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies()))
 
-        elif setCode.startswith(Constants.SYMBOLIC):
-            variable.isSymbolic = True
-            self._addType(variable, setExpression)
+        if setExpression == Constants.BINARY_0_1 or setExpression == Constants.BINARY:
+            identifier.isBinary = True
+            self._addType(identifier, Constants.BINARY)
+
+        elif setExpression.startswith(Constants.INTEGER):
+            identifier.isInteger = True
+            self._addType(identifier, setExpression)
+
+        elif setExpression.startswith(Constants.REALSET):
+            identifier.isReal = True
+            self._addType(identifier, setExpression[8:])
+
+        elif setExpression.startswith(Constants.SYMBOLIC):
+            self._setIsParam(identifier)
+            identifier.isSymbolic = True
+            self._addType(identifier, setExpression)
             
-        elif setCode.startswith(Constants.LOGICAL):
-            variable.isLogical = True
-            self._addType(variable, setExpression)
+        elif setExpression.startswith(Constants.LOGICAL):
+            self._setIsParam(identifier)
+            identifier.isLogical = True
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.PARAMETERS):
-            variable.isParam = True
-            variable.isDeclaredAsParam = True
-            self._addType(variable, setExpression)
+        elif setExpression.startswith(Constants.PARAMETERS):
+            self._setIsParam(identifier)
+            identifier.isDeclaredAsParam = True
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.VARIABLES):
-            variable.isVar = True
-            variable.isDeclaredAsVar = True
-            self._addType(variable, setExpression)
+        elif setExpression.startswith(Constants.VARIABLES):
+            self._setIsVar(identifier)
+            identifier.isDeclaredAsVar = True
+            self._addType(identifier, setExpression)
 
-        elif setCode.startswith(Constants.SETS):
-            variable.isSet = True
-            variable.isDeclaredAsSet = True
-            self._addType(variable, setExpression)
-
-        self._addDomain(variable, setExpression, attribute)
+        elif setExpression.startswith(Constants.SETS):
+            self._setIsSet(identifier)
+            identifier.isDeclaredAsSet = True
+            self._addType(identifier, setExpression)

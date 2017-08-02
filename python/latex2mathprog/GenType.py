@@ -1,28 +1,51 @@
 from GenObj import *
 
 class GenType(GenObj):
-	def __init__(self, name, _type = None, minVal = None, maxVal = None):
-		super(GenType, self).__init__(name)
-		self.type = _type
-		self.minVal = minVal
-		self.maxVal = maxVal
-	
-	def getType(self):
-		return self.type
+    def __init__(self, name, _type = None, minVal = None, maxVal = None, dimension = None):
+        """
+        Constructor
+        
+        :param name      : string
+        :param _type     : string
+        :param dimension : int
+        :param minVal    : float
+        :param maxVal    : float
+        """
+        
+        super(GenType, self).__init__(name)
+        self.type = _type
+        self.minVal = minVal
+        self.maxVal = maxVal
+        self.dimension = dimension
 
-	def setType(self, _type):
-		self.type = _type
+    def getName(self):
+        return self.name
 
-	def getMinVal(self):
-		return self.minVal
+    def setName(self, name):
+        self.name = name
+    
+    def getType(self):
+        return self.type
 
-	def setMinVal(self, minVal):
-		if self.minVal == None or minVal < self.minVal:
-			self.minVal = minVal
+    def setType(self, _type):
+        self.type = _type
 
-	def getMaxVal(self):
-		return self.maxVal
+    def setDimension(self, dimension):
+        self.dimension = dimension
 
-	def setMaxVal(self, maxVal):
-		if self.maxVal == None or maxVal > self.maxVal:
-			self.maxVal = minVal
+    def getDimension(self):
+        return self.dimension
+
+    def getMinVal(self):
+        return self.minVal
+
+    def setMinVal(self, minVal):
+        if self.minVal == None or minVal < self.minVal:
+            self.minVal = minVal
+
+    def getMaxVal(self):
+        return self.maxVal
+
+    def setMaxVal(self, maxVal):
+        if self.maxVal == None or maxVal > self.maxVal:
+            self.maxVal = minVal

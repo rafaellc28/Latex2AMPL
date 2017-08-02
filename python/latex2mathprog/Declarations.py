@@ -21,7 +21,7 @@ class Declarations:
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in these declarations
+        Generate the MathProg code for the identifiers and sets used in these declarations
         """
         codeSetup.setupEnvironment(self)
 
@@ -72,7 +72,7 @@ class Declaration:
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets in this declaration
+        Generate the MathProg code for declaration of identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
     

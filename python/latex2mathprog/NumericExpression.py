@@ -67,9 +67,20 @@ class NumericExpressionWithFunction(NumericExpression):
         
         return res
 
+    def getDependencies(self):
+        dep = []
+
+        if self.numericExpression1 != None:
+            dep += self.numericExpression1.getDependencies()
+
+        if self.numericExpression2 != None:
+            dep += self.numericExpression2.getDependencies()
+
+        return list(set(dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -89,7 +100,7 @@ class ValuedNumericExpression(NumericExpression):
         """
         Set the single value of this numeric expression
 
-        :param value : Variable | Number
+        :param value : Identifier | Number
         """
 
         NumericExpression.__init__(self)
@@ -117,9 +128,15 @@ class ValuedNumericExpression(NumericExpression):
 
         return [self]
 
+    def getSymbol(self):
+        return self.value
+
+    def getDependencies(self):
+        return self.value.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -152,10 +169,13 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
         """
         
         return "NEBetweenParenthesis: (" + str(self.numericExpression) + ")"
+
+    def getDependencies(self):
+        return self.numericExpression.getDependencies()
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -206,10 +226,13 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
             res += str(self.numericExpression2)
 
         return res
-    
+
+    def getDependencies(self):
+        return list(set(self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -242,10 +265,13 @@ class MinusNumericExpression(NumericExpression):
         """
         
         return "MinusNE:" + "-(" + str(self.numericExpression) + ")"
-    
+
+    def getDependencies(self):
+        return self.numericExpression.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -295,11 +321,19 @@ class IteratedNumericExpression(NumericExpression):
 
         res += str(self.numericExpression)
 
-        return "ItNumExp:" + res
+        return "ItNumExp:" + res + "|"
+
+    def getDependencies(self):
+        dep = self.numericExpression.getDependencies() + self.indexingExpression.getDependencies()
+
+        if self.supNumericExpression != None:
+            dep += self.supNumericExpression.getDependencies()
+
+        return list(set(dep))
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -343,9 +377,17 @@ class ConditionalNumericExpression(NumericExpression):
     def addElseExpression(self, elseExpression):
         self.numericExpression2 = elseExpression
     
+    def getDependencies(self):
+        dep = self.logicalExpression.getDependencies() + self.numericExpression1.getDependencies()
+
+        if self.numericExpression2 != None:
+            dep += self.numericExpression2.getDependencies()
+
+        return list(set(dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this conditional numeric expression
+        Generate the MathProg code for the identifiers and sets used in this conditional numeric expression
         """
         codeSetup.setupEnvironment(self)
 

@@ -1,11 +1,21 @@
 from Expression import *
-from Variable import *
+from Identifier import *
 from ValueList import *
+from Utils import *
 
 class SetExpression(Expression):
     """
     Class representing a set in the AST of the MLP
     """
+    def __init__(self, dimension = 1):
+        Expression.__init__(self)
+        self.dimension = dimension
+
+    def setDimension(self, dimension):
+        self.dimension = dimension
+
+    def getDimension(self):
+        return self.dimension
 
 class SetExpressionWithValue(SetExpression):
     """
@@ -16,11 +26,12 @@ class SetExpressionWithValue(SetExpression):
         """
         Set the value that correspond to the Set expression
         
-        :param value : Variable | ValueList | Range
+        :param value : Identifier | ValueList | Range
         """
+        SetExpression.__init__(self, dimension)
 
         self.value = value
-        self.dimension = dimension
+        
     
     def __str__(self):
         """
@@ -34,12 +45,24 @@ class SetExpressionWithValue(SetExpression):
     def setDimension(self, dimension):
         self.dimension = dimension
 
-        if isinstance(self.value, Variable):
+        if isinstance(self.value, Identifier):
             self.value.setDimenSet(dimension)
+
+    def getDimension(self):
+        return self.dimension
+
+    def getSymbol(self):
+        return self.value
+
+    def getDependencies(self):
+        if not isinstance(self.value, str):
+            return self.value.getDependencies()
+
+        return [self.value]
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -55,15 +78,16 @@ class SetExpressionWithIndices(SetExpression):
     Class representing a set with indices in the AST of the MLP
     """
 
-    def __init__(self, variable, indices, dimension = 0):
+    def __init__(self, identifier, indices, dimension = 0):
         """
         Set the value that correspond to the Set expression
         
-        :param variable : Variable
-        :param indices: ValueList | Variable
+        :param identifier : Identifier
+        :param indices    : ValueList | Identifier
         """
+        SetExpression.__init__(self, dimension)
 
-        self.variable = variable
+        self.identifier = identifier
         self.indices = indices
         self.dimension = dimension
 
@@ -72,19 +96,25 @@ class SetExpressionWithIndices(SetExpression):
         to string
         """
 
-        #if isinstance(self.indices, Variable):
-        #    return "SEI: " + str(self.variable) + "[" + str(self.indices) + "]"
+        #if isinstance(self.indices, Identifier):
+        #    return "SEI: " + str(self.identifier) + "[" + str(self.indices) + "]"
         #else:
-        #    return "SEI: " + str(self.variable) + "[" + ",".join(map(lambda ind: str(ind), self.indices)) + "]"
-        return "SEI: " + str(self.variable)
+        #    return "SEI: " + str(self.identifier) + "[" + ",".join(map(lambda ind: str(ind), self.indices)) + "]"
+        return "SEI: " + str(self.identifier)
 
     def setDimension(self, dimension):
         self.dimension = dimension
-        self.variable.setDimenSet(dimension)
+        self.identifier.setDimenSet(dimension)
+
+    def getDimension(self):
+        return self.dimension
+
+    def getDependencies(self):
+        return list(set(self.identifier.getDependencies() + self.indices.getDependencies()))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
     
@@ -110,7 +140,8 @@ class SetExpressionWithOperation(SetExpression):
         """
         Set the operator and the expressions
         """
-        
+        SetExpression.__init__(self)
+
         self.op             = op
         self.setExpression1 = setExpression1
         self.setExpression2 = setExpression2
@@ -122,9 +153,12 @@ class SetExpressionWithOperation(SetExpression):
 
         return "SETOP: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
+    def getDependencies(self):
+        return list(set(self.setExpression1.getDependencies() + self.setExpression2.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets used in this set expression
+        Generate the MathProg code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -145,6 +179,7 @@ class SetExpressionBetweenParenthesis(SetExpression):
 
         :param setExpression : SetExpression
         """
+        SetExpression.__init__(self)
 
         self.setExpression = setExpression
 
@@ -154,10 +189,13 @@ class SetExpressionBetweenParenthesis(SetExpression):
         """
         
         return "SE: (" + str(self.setExpression) + ")"
+
+    def getDependencies(self):
+        return self.setExpression.getDependencies()
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -178,6 +216,7 @@ class SetExpressionBetweenBraces(SetExpression):
 
         :param setExpression : SetExpression|ValueList|Range|TupleList|IndexingExpression
         """
+        SetExpression.__init__(self)
 
         self.setExpression = setExpression
 
@@ -187,10 +226,16 @@ class SetExpressionBetweenBraces(SetExpression):
         """
         setExpr = str(self.setExpression) if self.setExpression != None else ""
         return "SE: {" + setExpr + "}"
+
+    def getDependencies(self):
+        if self.setExpression != None:
+            return self.setExpression.getDependencies()
+
+        return []
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this set expression
+        Generate the MathProg code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -212,7 +257,8 @@ class IteratedSetExpression(SetExpression):
         :param indexingExpression : IndexingExpression
         :param integrands         : [NumericExpression|SymbolicExpression]
         """
-        
+        SetExpression.__init__(self)
+
         self.indexingExpression = indexingExpression
         self.integrands         = integrands
     
@@ -226,10 +272,13 @@ class IteratedSetExpression(SetExpression):
             res += ",".join(map(lambda el: str(el), self.integrands))
 
         return "ItSetExpr: " + res
+
+    def getDependencies(self):
+        return list(set(self.indexingExpression.getDependencies() + Utils._flatten(map(lambda el: el.getDependencies(), self.integrands))))
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this iterated set expression
+        Generate the MathProg code for the identifiers and sets used in this iterated set expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -252,7 +301,8 @@ class ConditionalSetExpression(SetExpression):
         :param setExpression1    : SetExpression
         :param setExpression2    : SetExpression
         """
-        
+        SetExpression.__init__(self)
+
         self.logicalExpression = logicalExpression
         self.setExpression1    = setExpression1
         self.setExpression2    = setExpression2
@@ -271,9 +321,17 @@ class ConditionalSetExpression(SetExpression):
     def addElseExpression(self, elseExpression):
         self.setExpression2 = elseExpression
 
+    def getDependencies(self):
+        dep = self.logicalExpression.getDependencies() + self.setExpression1.getDependencies()
+
+        if self.setExpression2 != None:
+            dep += self.setExpression2.getDependencies()
+
+        return list(set(dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this conditional set expression
+        Generate the MathProg code for the identifiers and sets used in this conditional set expression
         """
         codeSetup.setupEnvironment(self)
 

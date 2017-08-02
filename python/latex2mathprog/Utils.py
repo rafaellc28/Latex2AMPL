@@ -1,3 +1,12 @@
+def _flatten(x):
+    result = []
+    for el in x:
+        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+            result.extend(_flatten(el))
+        else:
+            result.append(el)
+    return result
+
 class Utils:
     @staticmethod
     def _deleteEmpty(str):
@@ -10,10 +19,5 @@ class Utils:
 
         return val
 
-    @staticmethod
-    def _isInstanceOfList(obj):
-    	return isinstance(obj, list)
-
-    @staticmethod
-    def _isInstanceOfStr(obj):
-    	return isinstance(obj, str)
+    # from http://stackoverflow.com/questions/406121/flattening-a-shallow-list-in-python
+    _flatten = staticmethod(_flatten)

@@ -100,7 +100,7 @@ tokens = [
    'COLON',
    'DOTS',
    'AMPERSAND',
-   'BACKSLASHES',
+   #'BACKSLASHES',
    'FOR',
    'WHERE',
    'ID',
@@ -597,9 +597,9 @@ def t_ignore_AMP(t):
    r'&'
    pass
 
-def t_BACKSLASHES(t):
+def t_ignore_BACKSLASHES(t):
    r'\\\\'
-   return t
+   pass#return t
 
 def t_ignore_N(t):
    r'\n'

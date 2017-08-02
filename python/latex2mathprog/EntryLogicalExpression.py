@@ -37,9 +37,12 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
 
         return str(self.numericExpression1) + " " + self.op + " " + str(self.numericExpression2)
 
+    def getDependencies(self):
+        return list(set(self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -58,17 +61,17 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
     IN = "in"
     NOTIN = "not in"
 
-    def __init__(self, op, value, setExpression):
+    def __init__(self, op, identifier, setExpression):
         """
-        Set the operator, the value and the set expression
+        Set the operator, the identifier and the set expression
 
         :param op : op
-        :param value : ValueList| Variable | TupleList
+        :param identifier : ValueList| Identifier | TupleList
         :param setExpression : setExpression
         """
-
+        
         self.op = op
-        self.value = value
+        self.identifier = identifier
         self.setExpression = setExpression
         self.isBinary = False
         self.isInteger = False
@@ -85,11 +88,14 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
         to string
         """
 
-        return str(self.value) + " " + self.op + " " + str(self.setExpression)
+        return str(self.identifier) + " " + self.op + " " + str(self.setExpression)
+
+    def getDependencies(self):
+        return list(set(self.identifier.getDependencies() + self.setExpression.getDependencies()))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -128,9 +134,12 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
 
         return str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
+    def getDependencies(self):
+        return list(set(self.setExpression1.getDependencies() + self.setExpression2.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -171,9 +180,12 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
 
         return self.op + "{" + str(self.indexingExpression) + "} " +  str(self.logicalExpression)
 
+    def getDependencies(self):
+        return list(set(self.indexingExpression.getDependencies() + self.logicalExpression.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for logical expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -204,10 +216,13 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         """
         
         return "LE: (" + str(self.logicalExpression) + ")"
-    
+ 
+    def getDependencies(self):
+        return self.logicalExpression.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this logical expression
+        Generate the MathProg code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -237,10 +252,13 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
         """
         
         return "LE_NSE: (" + str(self.numericOrSymbolicExpression) + ")"
-    
+
+    def getDependencies(self):
+        return self.numericOrSymbolicExpression.getDependencies()
+   
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this logical expression
+        Generate the MathProg code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -270,10 +288,13 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
         """
         
         return "NLE: (NOT " + str(self.logicalExpression) + ")"
+
+    def getDependencies(self):
+        return self.logicalExpression.getDependencies()
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this logical expression
+        Generate the MathProg code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 

@@ -67,9 +67,17 @@ class IndexingExpression(Expression):
     def setSupExpression(self, supExpression):
         self.supExpression = supExpression
 
+    def getDependencies(self):
+        dep = Utils._flatten(map(lambda el: el.getDependencies(), self.entriesIndexingExpression))
+        
+        if self.logicalExpression != None:
+            dep += self.logicalExpression.getDependencies()
+        
+        return list(set(dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
     

@@ -33,6 +33,9 @@ class String(Expression):
         Get the iterator of the class
         """
         return [self]
+
+    def getDependencies(self):
+        return []
     
     def setupEnvironment(self, codeSetup):
         """

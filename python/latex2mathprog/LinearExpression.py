@@ -14,7 +14,7 @@ class ValuedLinearExpression(LinearExpression):
         """
         Set the single value of this linear expression
 
-        :param value : Variable | Number
+        :param value : Identifier | Number
         """
 
         self.value = value
@@ -28,7 +28,7 @@ class ValuedLinearExpression(LinearExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         codeSetup.setupEnvironment(self)
     
@@ -62,7 +62,7 @@ class LinearExpressionBetweenParenthesis(LinearExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         codeSetup.setupEnvironment(self)
     
@@ -105,7 +105,7 @@ class LinearExpressionWithArithmeticOperation(LinearExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -139,7 +139,7 @@ class MinusLinearExpression(LinearExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -184,7 +184,7 @@ class IteratedLinearExpression(LinearExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets in this linear expression
+        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -228,7 +228,7 @@ class ConditionalLinearExpression(LinearExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this conditional linear expression
+        Generate the MathProg code for the identifiers and sets used in this conditional linear expression
         """
         codeSetup.setupEnvironment(self)
 

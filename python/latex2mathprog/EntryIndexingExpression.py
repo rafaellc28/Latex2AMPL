@@ -13,17 +13,17 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
 
     IN = "in"
     NOTIN = "not in"
-
-    def __init__(self, variable, setExpression, op = IN):
+    
+    def __init__(self, identifier, setExpression, op = IN):
         """
-        Set the variable(s) and the set
+        Set the identifier(s) and the set
 
-        :param variable      : Variable | ValueList
+        :param identifier    : Identifier | ValueList
         :param setExpression : SetExpression
         :param op            : (IN | NOTIN)
         """
 
-        self.variable      = variable
+        self.identifier    = identifier
         self.setExpression = setExpression
         self.op = op
         self.isBinary = False
@@ -41,14 +41,17 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         to string
         """
 
-        if isinstance(self.variable, ValueList):
-            return "EIE_S: ValueList: [" + ", ".join(map(lambda var: str(var) + " " + self.op + " " + str(self.setExpression), self.variable)) + "]"
+        if isinstance(self.identifier, ValueList):
+            return "EIE_S: ValueList: [" + ", ".join(map(lambda var: str(var) + " " + self.op + " " + str(self.setExpression), self.identifier)) + "]"
         else:
-            return "EIE_S: " + str(self.variable) + " " + self.op + " " + str(self.setExpression)
+            return "EIE_S: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
     
+    def getDependencies(self):
+        return list(set(self.identifier.getDependencies() + self.setExpression.getDependencies()))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables and sets used in this entry for indexing expression
+        Generate the MathProg code for the declaration of identifiers and sets used in this entry for indexing expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -70,30 +73,32 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
     LT  = "<"
     GT  = ">"
 
-    def __init__(self, op, variable, numericExpression):
+    def __init__(self, op, identifier, numericExpression):
         """
-        Set the variable and the numeric expression being compared, and the comparison operator
+        Set the identifier and the numeric expression being compared, and the comparison operator
 
         :param op                : op
-        :param variable          : Variable
+        :param identifier        : Identifier
         :param numericExpression : NumericExpression
         """
 
         self.op                = op
-        self.variable          = variable
+        self.identifier        = identifier
         self.numericExpression = numericExpression
-        self.internalSet       = 0
 
     def __str__(self):
         """
         to string
         """
 
-        return "EIE_C: " + str(self.variable) + " " + self.op + " " + str(self.numericExpression)
+        return "EIE_C: " + str(self.identifier) + " " + self.op + " " + str(self.numericExpression)
+
+    def getDependencies(self):
+        return list(set(self.identifier.getDependencies() + self.numericExpression.getDependencies()))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets used in this entry for indexing expressions
+        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
 
@@ -112,28 +117,29 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
     EQ = "="
     NEQ = "!=" # delete this constant, make no sense a indexing expression with inequality instead of equality
     
-    def __init__(self, op, variable, value, supExpression = None):
+    def __init__(self, op, identifier, value, supExpression = None):
         """
-        Set the variable and the numeric expression being compared, and the comparison operator
-
-        :param          : op
-        :param variable : Variable
-        :param value    : Value | Range
+        Set the identifier and the value it receives
+        
+        :param               : op
+        :param identifier    : Identifier
+        :param value         : Value | Range
+        :param supExpression : Expression
         """
 
-        self.op       = op
-        self.variable = variable
-        self.value    = value
-        self.internalSet = 0
-        self.hasSup = False
+        self.op         = op
+        self.identifier = identifier
+        self.value      = value
         self.supExpression = supExpression
+        self.hasSup = False
+        
 
     def __str__(self):
         """
         to string
         """
 
-        return "EIE_E: " + str(self.variable) + " " + self.op + " " + str(self.value)
+        return "EIE_E: " + str(self.identifier) + " " + self.op + " " + str(self.value)
     
     def setHasSup(self, value):
         """
@@ -144,12 +150,17 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
     def setSupExpression(self, supExpression):
         self.supExpression = supExpression
     
-    def setInternalSet(internalSet):
-        self.internalSet = internalSet
-    
+    def getDependencies(self):
+        dep = self.identifier.getDependencies() + self.value.getDependencies()
+
+        if self.supExpression != None:
+            dep += self.supExpression.getDependencies()
+
+        return list(set(dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets used in this entry for indexing expressions
+        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
 

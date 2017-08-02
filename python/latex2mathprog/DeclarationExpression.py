@@ -1,25 +1,26 @@
 from Expression import *
+from Utils import *
 
 class DeclarationExpression(Expression):
     """
     Class representing a declaration expression node in the AST of a MLP
     """
 
-    def __init__(self, variables, attributeList = None):
+    def __init__(self, identifiers, attributeList = None):
         """
         Set the expressions being related
         
-        :param variables: VariableList
+        :param identifiers: ValueList
         :param attributeList: [DeclarationAttribute]
         """
-        self.variables = variables
+        self.identifiers = identifiers
         self.attributeList = attributeList
         
     def __str__(self):
         """
         to string
         """
-        res = "DeclarationExpression:" + str(self.variables)
+        res = "DeclarationExpression:" + str(self.identifiers)
         if self.attributeList != None and len(self.attributeList) > 0:
             res += " " + ",".join(map(lambda el: str(el), self.attributeList))
 
@@ -46,9 +47,13 @@ class DeclarationExpression(Expression):
         elif not self.attrExists(attribute):
             self.attributeList.append(attribute)
 
+    def getDependencies(self):
+        dep = Utils._flatten(map(lambda el: el.getDependencies(), self.attributeList))
+        return list(set(self.identifiers.getDependencies() + dep))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets in this declaration
+        Generate the MathProg code for the identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
     
@@ -90,9 +95,12 @@ class DeclarationAttribute(Expression):
         """
         return "DeclAttr:" + self.op + " " + str(self.attribute)
 
+    def getDependencies(self):
+        return self.attribute.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets in this declaration
+        Generate the MathProg code for the identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
     

@@ -1,4 +1,5 @@
 from Expression import *
+from Utils import *
 
 class LogicalExpression(Expression):
     """
@@ -56,9 +57,14 @@ class LogicalExpression(Expression):
         self.entriesLogicalExpression.append({"or": entry})
         return self
     
+    def getDependencies(self):
+        entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), entries))))
+
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this numeric expression
+        Generate the MathProg code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
     

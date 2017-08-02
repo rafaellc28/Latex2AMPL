@@ -21,7 +21,7 @@ class Constraints:
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in these constraints
+        Generate the MathProg code for the identifiers and sets used in these constraints
         """
         codeSetup.setupEnvironment(self)
 
@@ -66,7 +66,7 @@ class Constraint:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of variables and sets in this constraint
+        Generate the MathProg code for declaration of identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
     

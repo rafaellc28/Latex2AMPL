@@ -1,4 +1,5 @@
 from Expression import *
+from Utils import *
 
 class ValueList(Expression):
     """
@@ -9,7 +10,7 @@ class ValueList(Expression):
         """
         Set the values
         
-        :param values : [Variable|Number|SymbolicExpression]
+        :param values : [Identifier|Number|SymbolicExpression]
         """
         
         self.values = values
@@ -55,9 +56,12 @@ class ValueList(Expression):
         self.values += [value]
         return self
 
+    def getDependencies(self):
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.values))))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this expression
+        Generate the MathProg code for the declaration of identifiers used in this expression
         """
         codeSetup.setupEnvironment(self)
     

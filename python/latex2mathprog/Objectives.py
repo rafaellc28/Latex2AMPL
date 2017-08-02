@@ -50,7 +50,7 @@ class Objectives:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this objective list
+        Generate the MathProg code for the identifiers and sets used in this objective list
         """
         codeSetup.setupEnvironment(self)
     
@@ -97,7 +97,7 @@ class Objective:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this objective function
+        Generate the MathProg code for the identifiers and sets used in this objective function
         """
         codeSetup.setupEnvironment(self)
     

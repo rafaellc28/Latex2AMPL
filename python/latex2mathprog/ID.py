@@ -2,26 +2,26 @@ from Expression import *
 
 class ID(Expression):
     """
-    Class representing a variable node in the AST of the MLP
+    Class representing a Identifier node in the AST of the MLP
     """
     
-    def __init__(self, variable):
+    def __init__(self, value):
         """
-        Set the string that represents the variable
+        Set the string that represents the identifier
         
-        :param variable: String
+        :param value: string
         """
 
         Expression.__init__(self)
         
-        self.variable = variable
+        self.value = value
     
     def __str__(self):
         """
         to string
         """
         
-        return "ID: " +self.variable
+        return "ID: " +self.value
 
     def __iter__(self):
         """
@@ -29,6 +29,9 @@ class ID(Expression):
         """
 
         return [self]
+    
+    def getDependencies(self):
+        return [self.value]
     
     def setupEnvironment(self, codeSetup):
         """
@@ -38,6 +41,6 @@ class ID(Expression):
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Variable
+        Generate the MathProg code for this Identifier
         """
         return codeGenerator.generateCode(self)

@@ -7,6 +7,15 @@ class Expression:
 	    self.varName = None
 	    self.varList = None
 
+    def getSymbol(self):
+        return self
+
+    def getSymbolName(self, codeGenerator):
+        return self.generateCode(codeGenerator)
+
+    def getDimension(self):
+        return 1
+
     def getIndice(self):
     	return self.indice
 

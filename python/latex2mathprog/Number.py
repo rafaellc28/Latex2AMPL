@@ -35,6 +35,9 @@ class Number(Expression):
         """
 
         return [self]
+
+    def getDependencies(self):
+        return []
     
     def setupEnvironment(self, codeSetup):
         """

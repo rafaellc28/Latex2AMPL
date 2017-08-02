@@ -1,8 +1,8 @@
 from GenObjWithSubIndices import *
 
 class GenSet(GenObjWithSubIndices):
-	def __init__(self, name, dimen = 1, firstStmt = None, lastStmt = None, certainty = True, isDeclaredAsSet = False):
-		super(GenSet, self).__init__(name, firstStmt, lastStmt)
+	def __init__(self, name, dimen = 1, certainty = True, isDeclaredAsSet = False):
+		super(GenSet, self).__init__(name)
 		self.dimen = dimen
 		self.certainty = certainty
 		self.isDeclaredAsSet = isDeclaredAsSet

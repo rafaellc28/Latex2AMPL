@@ -9,7 +9,7 @@ class Value(Expression):
         """
         Set the value
 
-        :param value: float|Variable
+        :param value: float|Identifier
         """
 
         if isinstance(value, float):
@@ -24,9 +24,12 @@ class Value(Expression):
 
         return "Value: "  + str(self.value)
 
+    def getDependencies(self):
+        return self.value.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of the variable of this value
+        Generate the MathProg code for the declaration of the identifier of this value
         """
         codeSetup.setupEnvironment(self)
     

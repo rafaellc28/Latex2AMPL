@@ -4,16 +4,15 @@ class LinearProgram:
     Class representing the root node in the AST of a MLP
     """
 
-    def __init__(self, objective, constraints, declarations = None):
+    def __init__(self, objectives, constraints, declarations = None):
         """
         Set the objective and the constraints
         
-        :param objective: Objective
+        :param objectives: Objectives
         :param constraints: Constraints
-        :param declarations: Declarations
         """
         
-        self.objective = objective
+        self.objectives = objectives
         self.constraints = constraints
         self.declarations = declarations
     
@@ -21,19 +20,13 @@ class LinearProgram:
         """
         to string
         """
-        res = "\nLP:\n" + str(self.objective) + "\n"
+        res = "\nLP:\n" + str(self.objectives) + "\n"
         
         if self.constraints:
             res += str(self.constraints) + "\n"
         
-        if self.declarations:
-            res += str(self.declarations) + "\n"
-        
         return res
     
-    def setDeclarations(self, declarations):
-        self.declarations = declarations
-
     def setupEnvironment(self, codeSetup):
         codeSetup.setupEnvironment(self)
     

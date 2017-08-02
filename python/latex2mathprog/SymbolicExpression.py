@@ -50,9 +50,20 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
 
         return res
 
+    def getDependencies(self):
+        deps = []
+
+        if self.numericExpression1 != None:
+            deps += self.numericExpression1.getDependencies()
+
+        if self.numericExpression2 != None:
+            deps += self.numericExpression2.getDependencies()
+
+        return list(set(self.symbolicExpression.getDependencies() + deps))
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -100,6 +111,12 @@ class StringSymbolicExpression(SymbolicExpression):
 
         return [self]
 
+    def getSymbol(self):
+        return self.value
+
+    def getDependencies(self):
+        return self.value.getDependencies()
+    
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the string used in this symbolic expression
@@ -136,9 +153,12 @@ class SymbolicExpressionBetweenParenthesis(SymbolicExpression):
         
         return "SE: (" + str(self.symbolicExpression) + ")"
     
+    def getDependencies(self):
+        return self.symbolicExpression.getDependencies()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -177,10 +197,13 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
         """
         
         return "OpSE:" + str(self.symbolicExpression1) + " " + self.op + " " + str(self.symbolicExpression2)
+
+    def getDependencies(self):
+        return list(set(self.symbolicExpression1.getDependencies() + self.symbolicExpression2.getDependencies()))
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
@@ -224,9 +247,17 @@ class ConditionalSymbolicExpression(SymbolicExpression):
     def addElseExpression(self, elseExpression):
         self.symbolicExpression2 = elseExpression
 
+    def getDependencies(self):
+        dep = self.logicalExpression.getDependencies() + self.symbolicExpression1.getDependencies()
+        
+        if self.symbolicExpression2 != None:
+            dep += self.symbolicExpression2.getDependencies()
+        
+        return list(set(dep))    
+        
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the variables and sets used in this conditional symbolic expression
+        Generate the MathProg code for the identifiers and sets used in this conditional symbolic expression
         """
         codeSetup.setupEnvironment(self)
 

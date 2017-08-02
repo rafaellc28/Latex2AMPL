@@ -9,8 +9,7 @@ class TupleList(Expression):
         """
         Set the values
         
-        :param values : [Variable|Number]
-        :param setExpression : SetExpression
+        :param values : [Identifier|Number]
         """
         
         self.values = values
@@ -55,10 +54,13 @@ class TupleList(Expression):
 
         self.values += [value]
         return self
+    
+    def getDependencies(self):
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.values))))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of variables used in this tuple list expression
+        Generate the MathProg code for the declaration of identifiers used in this tuple list expression
         """
         codeSetup.setupEnvironment(self)
     
