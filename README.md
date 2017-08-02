@@ -19,6 +19,10 @@ A MathProg code can be solved using the <a href="https://www.gnu.org/software/gl
 
 Example in <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a>
 
+$$
+\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
+$$
+
 
 # Tokens
 
