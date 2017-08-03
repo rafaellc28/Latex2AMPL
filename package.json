@@ -4,7 +4,8 @@
   "description": "Convert a Latex Linear Program Model to a MathProg code",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "pip install pytest-runner && pip install ply"
   },
   "dependencies": {
     "JQDeferred": "^2.1.0",
@@ -32,8 +33,5 @@
     "MathProg",
     "Linear Programming"
   ],
-  "license": "MIT",
-  "scripts": {
-    "postinstall": "pip install pytest-runner && pip install ply"
-  }
+  "license": "MIT"
 }

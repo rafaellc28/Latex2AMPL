@@ -10,7 +10,7 @@ var fs = require('fs');
 var Deferred = require('JQDeferred');
 var q = require('q');
 
-var baseSamples = "public2/samples";
+var baseSamples = "public/samples";
 
 i18n.configure({
     directory: __dirname + '/locales'
@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
 });
 
 app.set('port', (process.env.PORT || 5000));
-app.use(express.static('public2'));
+app.use(express.static('public'));
 
 // instruct the app to use the `bodyParser()` middleware for all routes
 app.use(bodyParser.urlencoded({ extended: true }));
