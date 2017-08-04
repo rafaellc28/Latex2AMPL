@@ -599,11 +599,15 @@ def t_ignore_AMP(t):
 
 def t_ignore_BACKSLASHES(t):
    r'\\\\'
-   pass#return t
+   pass
 
 def t_ignore_N(t):
    r'\n'
    t.lexer.lineno += 1
+   pass
+
+def t_ignore_R(t):
+   r'\r'
    pass
 
 def t_DIFF(t):
