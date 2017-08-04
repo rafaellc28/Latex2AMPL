@@ -1,8 +1,8 @@
-set month;
+set oils;
 
 param M, >= 0;
 
-set oils;
+set month;
 
 param productprice, >= 0;
 
@@ -77,11 +77,11 @@ solve;
 
 data;
 
-set month :=;
+set oils :=;
 
 param M := 0;
 
-set oils :=;
+set month :=;
 
 param productprice := 0;
 

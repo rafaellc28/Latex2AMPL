@@ -4,7 +4,7 @@ set V, := {1..n};
 
 set E dimen 2, within V cross V;
 
-set EE, := setof {(i,j) in E} (i,j) union setof {(i,j) in E} (j,i);
+set EE dimen 2, := setof {(i,j) in E} (i,j) union setof {(i,j) in E} (j,i);
 
 param z{i in V, case in 0..1}, := (if case = 0 then (min{c in 1..z[i,1]}(if not exists{j in V : j < i and (i,j) in EE} z[j,0] = c then c else z[i,1] + 1)) else (if not exists{j in V : j < i} (i,j) in EE then 1 else max{j in V : j < i and (i,j) in EE}z[j,0]));
 

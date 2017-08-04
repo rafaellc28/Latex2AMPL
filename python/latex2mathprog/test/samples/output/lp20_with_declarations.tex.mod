@@ -4,7 +4,7 @@ set cities;
 
 param last integer, > 0;
 
-set links, within {c1 in cities, c2 in cities : c1 <> c2};
+set links dimen 2, within {c1 in cities, c2 in cities : c1 <> c2};
 
 set times, := 1..last;
 

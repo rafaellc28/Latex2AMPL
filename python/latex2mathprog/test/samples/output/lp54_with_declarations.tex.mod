@@ -26,17 +26,23 @@ set cShip, within cInter;
 
 param util{u in unit, p in proc}, >= 0;
 
-param cf75{r in region, cf in cFinal}, >= 0;
+param road{r in region, c in center}, >= 0;
+
+set commod, := cFinal union cInter union cRaw;
 
 set port, within center;
 
 param fn{cf in cFinal, n in nutr}, >= 0;
 
-set commod, := cFinal union cInter union cRaw;
+param cf75{r in region, cf in cFinal}, >= 0;
 
 param impdBarg{p in plant}, >= 0;
 
 param pImp{c in commod}, >= 0;
+
+param tranFinal{pl in plant, r in region}, := if road[r,pl] > 0 then .5 + .0144 * road[r,pl] else 0;
+
+param tranImport{r in region, po in port}, := if road[r,po] > 0 then .5 + .0144 * road[r,po] else 0;
 
 param dcap{p in plant, u in unit}, >= 0;
 
@@ -46,23 +52,19 @@ param railHalf{p1 in plant, p2 in plant}, >= 0;
 
 param impdRoad{p in plant}, >= 0;
 
+param io{c in commod, p in proc};
+
 param cn75{r in region, n in nutr}, := sum{c in cFinal}cf75[r,c] * fn[c,n];
 
 set pExcept{p in plant}, within proc;
 
-param road{r in region, c in center}, >= 0;
+param pDom{pl in plant, c in cRaw}, := if pR[c] > 0 then pR[c] else pPr[pl,c];
 
 param tranRaw{pl in plant}, := (if impdBarg[pl] > 0 then 1.0 + .0030 * impdBarg[pl] else 0) + (if impdRoad[pl] > 0 then 0.5 + .0144 * impdRoad[pl] else 0);
 
-param tranFinal{pl in plant, r in region}, := if road[r,pl] > 0 then .5 + .0144 * road[r,pl] else 0;
-
 param rail{p1 in plant, p2 in plant}, := if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1];
 
-param tranImport{r in region, po in port}, := if road[r,po] > 0 then .5 + .0144 * road[r,po] else 0;
-
 param icap{u in unit, pl in plant}, := 0.33 * dcap[pl,u];
-
-param pDom{pl in plant, c in cRaw}, := if pR[c] > 0 then pR[c] else pPr[pl,c];
 
 set mPos{pl in plant}, := {u in unit : icap[u,pl] > 0};
 
@@ -71,8 +73,6 @@ param tranInter{p1 in plant, p2 in plant}, := if rail[p1,p2] > 0 then 3.5 + .03 
 set pCap{pl in plant}, := {pr in proc : forall{u in unit : util[u,pr] > 0} u in mPos[pl]};
 
 set pPos{pl in plant}, := pCap[pl] diff pExcept[pl];
-
-param io{c in commod, p in proc};
 
 set ccPos{c in commod}, := {pl in plant : sum{pr in pPos[pl]}io[c,pr] < 0};
 
@@ -150,11 +150,13 @@ set cShip :=;
 
 param util :=;
 
-param cf75 :=;
+param road :=;
 
 set port :=;
 
 param fn :=;
+
+param cf75 :=;
 
 param impdBarg :=;
 
@@ -168,11 +170,9 @@ param railHalf :=;
 
 param impdRoad :=;
 
-set pExcept[0] :=;
-
-param road :=;
-
 param io :=;
+
+set pExcept[0] :=;
 
 
 end;
