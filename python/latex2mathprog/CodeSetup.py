@@ -236,7 +236,7 @@ class CodeSetup:
         param1 = self.codeGenerator.genParameters.get(name)
         if param1 != None:
             #print(param1.getCertainty(), param1.getIsDeclaredAsParam())
-            return param1.getCertainty()
+            return param1.getCertainty() or param1.getIsDeclaredAsParam()
 
         return False
 
