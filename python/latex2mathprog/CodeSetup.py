@@ -1108,7 +1108,7 @@ class CodeSetup:
         elif node.sub_indices != None:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
-        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.varKey)) and not self.isDeclaredAsParam(node) and not node.isDeclaredAsSet:
+        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.varKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node):
 
             _genVar = self.codeGenerator.genVariables.get(self.varKey)
             if node.isDeclaredAsVar and _genVar != None:
@@ -1168,7 +1168,7 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)))) and not node.isDeclaredAsVar and not node.isDeclaredAsSet:
+        elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)))) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node):
             _genParam = self.codeGenerator.genParameters.get(self.varKey)
             if node.isDeclaredAsParam and _genParam != None:
                 _genParam.setCertainty(True)
@@ -1305,15 +1305,24 @@ class CodeSetup:
         node.attribute.setupEnvironment(self)
 
     def setupEnvironment_AttributeListPre(self, node, identifier):
+        var = self._getIdentifier(node.attribute)
+
+        if isinstance(var, str):
+            name = var
+        else:
+            name = var.getSymbolName(self.codeGenerator)
+
         if node.op == DeclarationAttribute.IN:
             self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)
 
-        elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and isinstance(node.attribute, SetExpression) and not identifier.isParam:
-            var = self._getIdentifier(node.attribute)
-            name = var.getSymbolName(self.codeGenerator)
-            
+        elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and \
+            (isinstance(var, SetExpression) or self.codeGenerator.genSets.has(name)) and not identifier.isParam:
+
             if not self.codeGenerator.genParameters.has(name):
                 self._setIsSet(identifier)
+                
+                if isinstance(var, Identifier):
+                    self._setIsSet(var)
 
     def setupEnvironment_AttributeList(self, node, identifier):
         identifier1 = self._getIdentifier(node.attribute)
@@ -1325,6 +1334,7 @@ class CodeSetup:
                 param.setCertainty(True)
 
             self._setIsParam(identifier1)
+            self._setIsParam(identifier)
         
     def setupEnvironment_DeclarationExpressionWithSet(self, attribute, identifier):
         name = identifier.getSymbolName(self.codeGenerator)
