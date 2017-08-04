@@ -617,6 +617,9 @@ class CodeGenerator:
                     if domain and domain.strip() != "":
                         logical = self._getLogicalExpressionOfDeclaration(varDecl, var.getName(), dependencies_vec, sub_indices_vec)
                         varStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+
+                    elif minVal != None and maxVal != None:
+                        varStr += "{"+str(minVal)+".."+str(maxVal)+"}"
                     
                     if not domain and varDecl != None:
                         if varDecl.getIndexingExpression() != None:
@@ -667,6 +670,8 @@ class CodeGenerator:
         if domain != None and domain.strip() != "":
             logical = self._getLogicalExpressionOfDeclaration(varDecl, param, dependencies_vec, sub_indices_vec)
             paramStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+        elif minVal != None and maxVal != None:
+            paramStr += "{"+str(minVal)+".."+str(maxVal)+"}"
 
         if not domain and varDecl != None:
             if varDecl.getIndexingExpression() != None:
@@ -735,6 +740,8 @@ class CodeGenerator:
         if domain and domain.strip() != "":
             logical = self._getLogicalExpressionOfDeclaration(varDecl, _genSet.getName(), dependencies_vec, sub_indices_vec)
             setStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+        elif minVal != None and maxVal != None:
+            setStr += "{"+str(minVal)+".."+str(maxVal)+"}"
 
         if not domain and varDecl != None:
             if varDecl.getIndexingExpression() != None:

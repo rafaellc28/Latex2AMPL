@@ -1,6 +1,6 @@
-from GenObjWithSubIndices import *
+from GenObj import *
 
-class GenSet(GenObjWithSubIndices):
+class GenSet(GenObj):
 	def __init__(self, name, dimen = 1, certainty = True, isDeclaredAsSet = False):
 		super(GenSet, self).__init__(name)
 		self.dimen = dimen

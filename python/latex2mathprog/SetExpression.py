@@ -225,7 +225,7 @@ class SetExpressionBetweenBraces(SetExpression):
         to string
         """
         setExpr = str(self.setExpression) if self.setExpression != None else ""
-        return "SE: {" + setExpr + "}"
+        return "SEB: {" + setExpr + "}"
 
     def getDependencies(self):
         if self.setExpression != None:

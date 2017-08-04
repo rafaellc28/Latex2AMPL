@@ -1,6 +1,6 @@
-from GenObjWithSubIndices import *
+from GenObj import *
 
-class GenParameter(GenObjWithSubIndices):
+class GenParameter(GenObj):
 	def __init__(self, name, isSymbolic = False, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
 		super(GenParameter, self).__init__(name)
 		self.isSymbolic = isSymbolic
