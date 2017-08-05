@@ -7,7 +7,13 @@ A MathProg code describes either a Linear Program or a System of Linear Equation
 
 Check <a href='https://latex2mathprog.herokuapp.com' target='_blank'>https://latex2mathprog.herokuapp.com</a> to see <b>latex2mathprog</b> working.
 
-Consider as an example the following LaTex code
+Consider, as an example, the following Linear Program.
+
+<p align="center"> 
+<img src="example1.png">
+</p>
+
+The LaTex code that generated it is
 
 ```latex
 \begin{equation}
@@ -20,7 +26,7 @@ Consider as an example the following LaTex code
 \end{equation}
 ```
 
-<b>latex2mathprog</b> converts it to the following MathProg code
+<b>latex2mathprog</b> converts the LaTex code above to the following MathProg code
 
 ```ampl
 set I;
@@ -65,7 +71,7 @@ param B :=;
 end;
 ```
 
-The Inference Mechanism is what defines if an identifier is a set, parameter or variable. This mechanism is explained in the <b>Inference Mechanism</b> section below.
+The Inference Mechanism is used to define if an identifier is a set, parameter or variable. This mechanism is explained in the <b>Inference Mechanism</b> section below.
 
 
 > In the rest of this article, it is used terms that are not fully explained here, like Indexing Expression, Numeric Expression and others. Please, refer to <a href="https://www3.nd.edu/~jeff/mathprog/glpk-4.47/doc/gmpl.pdf" target="_mathProgTutorial">Modeling Language GNU MathProg</a> to see their meanings.
@@ -230,6 +236,33 @@ If `L` was not of the type `param logical`, the second line in the MathProg code
 
 > Any lexer inside a `\text{ }` can have several whitespaces between the braces, to the left or to the right of the word. For instance, `\text{default}` can also be `\text{ default }`, `\text{ default}`, `\text{default }`, and so on.
 
+## Identifiers
+
+An identifier is a sequence of characters in `a-z`, `A-Z` or `0-9`. It must start with characters in `a-z` or `A-Z`, and can have size one or more.
+
+Example:
+
+```latex
+id1 := "test"
+```
+is converted to
+
+```ampl
+param id1, := "test";
+```
+
+## Numbers
+
+Numbers can be expressed using `.` as the decimal point. It is also possible to use `E`, `e`, `+` or `-` to the exponential part, like in `123.5E-10`. Furthermore, numbers can start with `+` or `-`, like in `-67.3`.
+
+## Strings
+
+| Math      | Latex   | Example   |
+|-----------|---------|-----------|
+| string    | `""` or `''` | `"Hello, wold!"` |
+| string concatenator   | `\&` | `"Hello, " \& 'wold!'` |
+
+
 ## Arithmetic Notation
 
 | Math      | Latex                         | Example      |
@@ -281,6 +314,7 @@ If `L` was not of the type `param logical`, the second line in the MathProg code
 | Set | `\mathbb{Set}` or `\mathbb{Sets}` | `a \in \mathbb{Set}` |
 | Symbolic Parameter | `\mathbb{S}` | `a \in \mathbb{S}` |
 | Logical Parameter | `\mathbb{L}` | `a \in \mathbb{L}` |
+| Empty Set    | `\{\}`   | `A \text{ default } \{\}` |
 | is member of | `\in` | `a \in \mathbb{B}` |
 | is not member of | `\notin` | `a \notin \mathbb{B}` |
 | is (proper) subset of | `\subset` or `\subseteq` | `A \subseteq B` |
@@ -322,15 +356,7 @@ If `L` was not of the type `param logical`, the second line in the MathProg code
 | Gaussian pseudo-random variable with mean mu and deviation sigma |  `Normal`  | `Normal(mu,sigma)` |
 
 
-## String Notation
-
-| Math      | Latex   | Example   |
-|-----------|---------|-----------|
-| string    | `""` | `"Hello, wold!"` |
-| string concatenator   | `\&` | `"Hello, " \& "wold!"` |
-
-
-## Range Notation
+## Ranges
 
 Consider that
 
@@ -357,7 +383,7 @@ param A{i in 1..N by 2} >= 0;
 ```
 
 
-## Tuple Notation
+## Tuples
 
 A tuple is expressed as
 
