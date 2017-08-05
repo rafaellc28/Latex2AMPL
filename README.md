@@ -318,7 +318,7 @@ If `L` was not of the type `param logical`, the second line in the MathProg code
 | pseudo-random integer in [0,2^24) |  `Irand224`  | `Irand224()` |
 | pseudo-random number in [0,1) |  `Uniform01`  | `Uniform01()` |
 | pseudo-random number in [a,b) |  `Uniform`  | `Uniform(a,b)` |
-| Gaussian pseudo-random variable with mean 0 and deviation 1 |  `Normal01`  | `Normal01</b>` |
+| Gaussian pseudo-random variable with mean 0 and deviation 1 |  `Normal01`  | `Normal01()` |
 | Gaussian pseudo-random variable with mean mu and deviation sigma |  `Normal`  | `Normal(mu,sigma)` |
 
 
@@ -644,7 +644,7 @@ s.t. C1 {i in I, j in J1} :
 
 Here, the root scope contains the identifiers `x`, `j`, `J1`, `B`, `i` and `I`.
 
-> It is important to state that <b>latex2mathprog</b> does not do semantic analysis. A MathProg solver will throw an error to the above code because the definition of index `j` is duplicated inside the constraint `C1`.
+> It is important to state that <b>latex2mathprog</b> does not perform semantic analysis. A MathProg solver will throw an error to the above code because the definition of index `j` is duplicated inside the constraint `C1`.
 
 
 ### Domains 
