@@ -2,7 +2,7 @@
 //  Use a closure to hide the local variables from the
 //  global namespace
 //
-(function () {
+var initMathjaxDisplay = function () {
 
 	var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 	var objMath = null, objectiveFunction = null;    // the element jax for the objective math output, and the objectiveFunction it's in
@@ -51,7 +51,7 @@
 	window.UpdateObjectiveMath = function (TeX) {
 		QUEUE.Push(
 		    hideObjectiveFunction,
-		    ["Text",objMath, (!TeX || !TeX.trim()) ? "" : "\\displaystyle{"+TeX+"}"],
+		    ["Text", objMath, (!TeX || !TeX.trim()) ? "" : "\\displaystyle{"+TeX+"}"],
 		    showObjectiveFunction
 		);
 
@@ -108,7 +108,7 @@
 	window.UpdateSubjectiveMathOutput = function(subjTeX) {
 		QUEUE.Push(
 	    	hideSubjectiveFunction,
-	    	["Text",subjMath, (!subjTeX || !subjTeX.trim()) ? "" : "\\displaystyle{"+subjTeX+"}"],
+	    	["Text", subjMath, (!subjTeX || !subjTeX.trim()) ? "" : "\\displaystyle{"+subjTeX+"}"],
 	    	showSubjectiveFunction
 		);
 	}
@@ -361,4 +361,4 @@
 		updateSimpleEditor(formattedLatexCode);
 	}
 
-})();
+};

@@ -32,6 +32,7 @@ var init = function() {
 	initDataEditor();
 	initSolver();
 	initExamples();
+	initMathjaxDisplay();
 
 	$("#collapse2").collapse("hide");
 }
