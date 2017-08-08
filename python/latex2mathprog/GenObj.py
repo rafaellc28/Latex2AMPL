@@ -1,5 +1,3 @@
-from GenSubIndices import *
-
 class GenObj(object):
 	def __init__(self, name):
 		self.name = name
