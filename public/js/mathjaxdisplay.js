@@ -41,7 +41,20 @@ var initMathjaxDisplay = function () {
 		showSubjectiveFunction(); // subjectiveFunction is initially hidden so the braces don't show
 	});
 
+	var getObjMath = function() {
+		if (!objMath) {
+			objMath = MathJax.Hub.getAllJax("objectiveMathOutput")[0]
+		}
+	}
 	//QUEUE.Push(initExample);
+
+	var queueObj = function(TeX) {
+		QUEUE.Push(
+		    hideObjectiveFunction,
+		    ["Text", objMath, (!TeX || !TeX.trim()) ? "" : "\\displaystyle{"+TeX+"}"],
+		    showObjectiveFunction
+		);
+	}
 
 	//
 	//  The onchange event handler that typesets the objMath entered
@@ -49,11 +62,15 @@ var initMathjaxDisplay = function () {
 	//  so we don't see a flash as the objMath is cleared and replaced.
 	//
 	window.UpdateObjectiveMath = function (TeX) {
-		QUEUE.Push(
-		    hideObjectiveFunction,
-		    ["Text", objMath, (!TeX || !TeX.trim()) ? "" : "\\displaystyle{"+TeX+"}"],
-		    showObjectiveFunction
-		);
+		if (!objMath) {
+			MathJax.Hub.Typeset(document.getElementById("objectiveMathOutput"), function() {
+				getObjMath();
+				queueObj(TeX);
+			});
+			
+		} else {
+			queueObj(TeX);
+		}
 
 		$("div.MathJax_Display").css("text-align", "left");
 		$("#objPreviewMathOutput").css("visibility", "hidden");
@@ -105,12 +122,31 @@ var initMathjaxDisplay = function () {
 	    popover.hide();
 	}
 
-	window.UpdateSubjectiveMathOutput = function(subjTeX) {
+	var getSubjMath = function() {
+		if (!subjMath) {
+			subjMath = MathJax.Hub.getAllJax("subjectiveMathOutput")[0]
+		}
+	}
+	//QUEUE.Push(initExample);
+
+	var queueSubj = function(TeX) {
 		QUEUE.Push(
 	    	hideSubjectiveFunction,
 	    	["Text", subjMath, (!subjTeX || !subjTeX.trim()) ? "" : "\\displaystyle{"+subjTeX+"}"],
 	    	showSubjectiveFunction
 		);
+	}
+
+	window.UpdateSubjectiveMathOutput = function(subjTeX) {
+		if (!subjMath) {
+			MathJax.Hub.Typeset(document.getElementById("sujectiveMathOutput"), function() {
+				getSubjMath();
+				queueSubj(TeX);
+			});
+			
+		} else {
+			queueSubj(TeX);
+		}
 	}
 
 	window.removeItemInput = function(elem) {
@@ -361,4 +397,5 @@ var initMathjaxDisplay = function () {
 		updateSimpleEditor(formattedLatexCode);
 	}
 
+	MathJax.Hub.Configured();
 };
