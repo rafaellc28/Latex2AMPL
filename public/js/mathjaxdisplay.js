@@ -129,7 +129,7 @@ var initMathjaxDisplay = function () {
 	}
 	//QUEUE.Push(initExample);
 
-	var queueSubj = function(TeX) {
+	var queueSubj = function(subjTeX) {
 		QUEUE.Push(
 	    	hideSubjectiveFunction,
 	    	["Text", subjMath, (!subjTeX || !subjTeX.trim()) ? "" : "\\displaystyle{"+subjTeX+"}"],
@@ -141,11 +141,11 @@ var initMathjaxDisplay = function () {
 		if (!subjMath) {
 			MathJax.Hub.Typeset(document.getElementById("sujectiveMathOutput"), function() {
 				getSubjMath();
-				queueSubj(TeX);
+				queueSubj(subjTeX);
 			});
 			
 		} else {
-			queueSubj(TeX);
+			queueSubj(subjTeX);
 		}
 	}
 
