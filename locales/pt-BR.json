@@ -10,6 +10,7 @@
 	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Função Objetivo precisa ser definida.",
 	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Erro!</strong> Uma ou mais restrições precisam ser definidas.",
 	"ERROR_LP_EMPTY": "<strong>Error!</strong> Não há Programação Linear definida.",
+	"ERROR_REQUEST": "Requisição falhou! Por favor, tente novamente mais tarde.",
 	"SOLVE_MATHPROG": "Resolve MathProg",
 	"MATHPROG_SOLUTION": "Solução",
 	"LATEX_EDITOR": "Editor Latex",

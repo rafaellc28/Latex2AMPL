@@ -43,7 +43,7 @@ var loadUser = function() {
 	
 	$.getJSON("/json?lang="+lang, function(result, status, xhr) {
 		if (status == "error" || status == "timeout" || status == "parsererror") {
-			alert("Error recovering labels.");
+			alert("Error getting labels.");
 			return;
 		}
 

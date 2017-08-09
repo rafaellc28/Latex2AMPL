@@ -10,6 +10,7 @@
 	"ERROR_OBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Objective Function is empty.",
 	"ERROR_SUBJ_FUNCTION_EMPTY": "<strong>Error!</strong> Constraints is empty.",
 	"ERROR_LP_EMPTY": "<strong>Error!</strong> There is no Linear Program defined.",
+	"ERROR_REQUEST": "Request failed! Please, try again later.",
 	"SOLVE_MATHPROG": "Solve MathProg",
 	"MATHPROG_SOLUTION": "Solution",
 	"LATEX_EDITOR": "Latex Editor",

@@ -3,6 +3,7 @@
 //  global namespace
 //
 var initMathjaxDisplay = function () {
+	var TIMEOUT = 120000;
 
 	var QUEUE = MathJax.Hub.queue;  // shorthand for the queue
 	var objMath = null, objectiveFunction = null;    // the element jax for the objective math output, and the objectiveFunction it's in
@@ -294,18 +295,30 @@ var initMathjaxDisplay = function () {
 	}
 
 	window.generateMathProg = function() {
-		showPleaseWait();
-
 		var data = processMathOutputLatexEditor();
-		$.post("/", {latex: data}, function(result, status) {
-			updateMathProgEditor(result);
-			hidePleaseWait();
-		});
+
+		if (data) {
+			showPleaseWait();
+
+			$.post({
+				url: "/", 
+				data: {latex: data},
+				success: function(result, status) {
+					updateMathProgEditor(result);
+				},
+				error: function() {
+					alert(dictionary["ERROR_REQUEST"])
+				},
+				complete: function() {
+					hidePleaseWait();
+				},
+				timeout: TIMEOUT
+			});
+		}
+
 	}
 
 	window.generateMathProgFromSimpleEditor = function() {
-		showPleaseWait();
-
 		var idPreview = "mathOutput";
 		var preview = document.getElementById(idPreview);
 		if (preview.style.visibility == "hidden") {
@@ -315,22 +328,35 @@ var initMathjaxDisplay = function () {
 		var data = MathJax.Hub.getAllJax(idPreview)[0];
 		if (!data["originalText"] || !data["originalText"].trim() || data["originalText"].trim() == "{}") {
 			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_LP_EMPTY"]+"</div>");
-			return;
+			data = undefined;
+		} else {
+			data = data["originalText"].substring(14, data["originalText"].length-1);
 		}
 
-		data = data["originalText"].substring(14, data["originalText"].length-1);
-		$.post("/", {latex: data}, function(result, status) {
-			updateMathProgEditor(result);
-			hidePleaseWait();
-		});
+		if (data) {
+			showPleaseWait();
+
+			$.post({
+				url: "/", 
+				data: {latex: data},
+				success: function(result, status) {
+					updateMathProgEditor(result);
+				},
+				error: function() {
+					alert(dictionary["ERROR_REQUEST"])
+				},
+				complete: function() {
+					hidePleaseWait();
+				},
+				timeout: TIMEOUT
+			});
+		}
 	}
 
 	window.copyToSimpleEditor = function() {
 		var data = processMathOutputLatexEditor();
-		//$("#mathInput").val(data);
 		$('#collapse2').collapse("show");
 		updateSimpleEditor(data);
-		//PreviewSimpleEditor.Update();
 	}
 
 	window.copyToDataSection = function() {
@@ -352,7 +378,6 @@ var initMathjaxDisplay = function () {
 		
 		$('#collapse2').collapse("show");
 		updateMathProgEditor(data);
-		//PreviewSimpleEditor.Update();
 	}
 
 	window.formatLatexCode = function() {
