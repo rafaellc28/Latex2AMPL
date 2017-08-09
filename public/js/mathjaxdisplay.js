@@ -294,13 +294,18 @@ var initMathjaxDisplay = function () {
 	}
 
 	window.generateMathProg = function() {
+		showPleaseWait();
+
 		var data = processMathOutputLatexEditor();
 		$.post("/", {latex: data}, function(result, status) {
 			updateMathProgEditor(result);
+			hidePleaseWait();
 		});
 	}
 
 	window.generateMathProgFromSimpleEditor = function() {
+		showPleaseWait();
+
 		var idPreview = "mathOutput";
 		var preview = document.getElementById(idPreview);
 		if (preview.style.visibility == "hidden") {
@@ -316,6 +321,7 @@ var initMathjaxDisplay = function () {
 		data = data["originalText"].substring(14, data["originalText"].length-1);
 		$.post("/", {latex: data}, function(result, status) {
 			updateMathProgEditor(result);
+			hidePleaseWait();
 		});
 	}
 
@@ -396,6 +402,16 @@ var initMathjaxDisplay = function () {
 
 		updateSimpleEditor(formattedLatexCode);
 	}
+
+	var pleaseWaitDiv = $("#pleaseWaitDialog");
+    
+    var showPleaseWait = function() {
+            pleaseWaitDiv.modal();
+    };
+
+    var hidePleaseWait = function () {
+            pleaseWaitDiv.modal('hide');
+    };
 
 	MathJax.Hub.Configured();
 };

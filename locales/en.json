@@ -32,5 +32,6 @@
 	"GITHUB_SOURCE": "GitHub: <a href='https://github.com/rafaellc28/Latex2MathProg' target='_github'>https://github.com/rafaellc28/Latex2MathProg</a>",
 	"EXAMPLES": "Examples",
 	"COPY_DATA_SECTION": "Copy to Data Section in MathProg Code",
-	"FORMAT": "Format"
+	"FORMAT": "Format",
+	"PROCESSING": "Processing ... It might take some seconds."
 }
