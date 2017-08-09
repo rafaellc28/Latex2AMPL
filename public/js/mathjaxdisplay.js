@@ -287,14 +287,26 @@ var initMathjaxDisplay = function () {
 		if (!objFunc && !subjFunc) {
 			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_OBJ_FUNCTION_EMPTY"]+"</div>");
 			$("#alertSubj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_SUBJ_FUNCTION_EMPTY"]+"</div>");
-			
+
 			return undefined;
 		}
 
-		objFunc = objFunc["originalText"].substring(14, objFunc["originalText"].length-1);
-		subjFunc = subjFunc["originalText"].substring(14, subjFunc["originalText"].length-1);
+		var data = "";
 
-		var data = "\\text{" + obj + " } " + objFunc + "\\\\\n" + "\\text{subject to } " + subjFunc;
+		if (objFunc) {
+			objFunc = objFunc["originalText"].substring(14, objFunc["originalText"].length-1);
+			data += "\\text{" + obj + " } " + objFunc + "\\\\\n";
+		}
+
+		if (subjFunc) {
+			subjFunc = subjFunc["originalText"].substring(14, subjFunc["originalText"].length-1);
+
+			if (objFunc) {
+				data += "\\text{subject to } ";
+			}
+
+			data += subjFunc;
+		}
 
 		return data;
 	}
