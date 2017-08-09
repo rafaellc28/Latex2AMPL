@@ -276,14 +276,19 @@ var initMathjaxDisplay = function () {
 		var obj = $("#obj").val();
 		var objFunc = MathJax.Hub.getAllJax("objectiveMathOutput")[0];
 		if (!objFunc["originalText"] || !objFunc["originalText"].trim() || objFunc["originalText"].trim() == "{}") {
-			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_OBJ_FUNCTION_EMPTY"]+"</div>");
-			return;
+			objFunc = undefined;
 		}
 		
 		var subjFunc = MathJax.Hub.getAllJax("subjectiveMathOutput")[0];
-		if (!objFunc["originalText"] || !subjFunc["originalText"].trim() || subjFunc["originalText"].trim() == "{}") {
+		if (!subjFunc["originalText"] || !subjFunc["originalText"].trim() || subjFunc["originalText"].trim() == "{}") {
+			subjFunc = undefined;
+		}
+
+		if (!objFunc && !subjFunc) {
+			$("#alertObj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_OBJ_FUNCTION_EMPTY"]+"</div>");
 			$("#alertSubj").html("<div class='alert alert-danger fade in'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+dictionary["ERROR_SUBJ_FUNCTION_EMPTY"]+"</div>");
-			return;
+			
+			return undefined;
 		}
 
 		objFunc = objFunc["originalText"].substring(14, objFunc["originalText"].length-1);
