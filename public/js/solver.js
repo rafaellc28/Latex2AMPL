@@ -44,64 +44,77 @@ window.solveMathProg = function () {
     start = new Date(); 
     logNode.innerText = "";
     
-    try {
-        var lp = glp_create_prob();
-        var tran = glp_mpl_alloc_wksp();
-        
-        glp_mpl_read_model_from_string(tran, 'MathProg Model', getValueMathProgEditor());
-        
-        log('\nGenerating ...');
-        glp_mpl_generate(tran,null,logOutput,tablecb);
-        
-        log('\nBuilding ...');
-        glp_mpl_build_prob(tran,lp);
-        
-        log('\nSolving ...');
-        var smcp = new SMCP({presolve: GLP_ON});
-        glp_simplex(lp, smcp);
-        
-        if (isMIP(lp)) {
-            log('\nInteger optimization ...')
-            glp_intopt(lp);
-        }
-        
-        log('\nPost-Processing ...');
-        if(lp) {
-            if (glp_get_status(lp)==GLP_OPT) {
-                if (!isMIP(lp) && (glp_get_num_int(lp) > 0)) {
-                   log('Linear relaxation of an MIP.');
-                } else {
-                   log(glpStatus[glp_get_status(lp)]);
-                }
-            } else {
-                log(glpStatus[glp_get_status(lp)]);
-            }
-            glp_mpl_postsolve(tran,lp,isMIP(lp)?GLP_MIP:GLP_SOL);
+    showPleaseWait();
 
-            log((glp_get_obj_dir(lp)==GLP_MIN?'Minimum ':'Maximum ') + glp_get_obj_name(lp) + ": " + (isMIP(lp)?glp_mip_obj_val(lp):glp_get_obj_val(lp)));
+    // hacking to guarantee that the modal opens before starting solving the linear progran
+    setTimeout(function() {
+        try {
 
-            log("\nVariables:");
-            for(var i = 1; i <= glp_get_num_cols(lp); i++){
-                log(glp_get_col_name(lp, i)  + " = " + (isMIP(lp)?glp_mip_col_val(lp, i): glp_get_col_prim(lp, i)));
+            var lp = glp_create_prob();
+            var tran = glp_mpl_alloc_wksp();
+            
+            glp_mpl_read_model_from_string(tran, 'MathProg Model', getValueMathProgEditor());
+            
+            log('\nGenerating ...');
+            glp_mpl_generate(tran,null,logOutput,tablecb);
+            
+            log('\nBuilding ...');
+            glp_mpl_build_prob(tran,lp);
+            
+            log('\nSolving ...');
+            
+
+            var smcp = new SMCP({presolve: GLP_ON});
+            glp_simplex(lp, smcp);
+            
+            if (isMIP(lp)) {
+                log('\nInteger optimization ...')
+                glp_intopt(lp);
             }
             
-            log("\nConstraints:");
-            for (var i = 1; i <= glp_get_num_rows(lp); i++) {
-                if (glp_get_row_stat(lp,i) == GLP_BS) {
-                    soln = isMIP(lp)? glp_mip_row_val(lp,i):glp_get_row_prim(lp,i);
-                    log(glp_get_row_name(lp,i) + ": " + soln);
+            hidePleaseWait();
+
+            log('\nPost-Processing ...');
+            if(lp) {
+                if (glp_get_status(lp)==GLP_OPT) {
+                    if (!isMIP(lp) && (glp_get_num_int(lp) > 0)) {
+                       log('Linear relaxation of an MIP.');
+                    } else {
+                       log(glpStatus[glp_get_status(lp)]);
+                    }
+                } else {
+                    log(glpStatus[glp_get_status(lp)]);
                 }
+                glp_mpl_postsolve(tran,lp,isMIP(lp)?GLP_MIP:GLP_SOL);
+
+                log((glp_get_obj_dir(lp)==GLP_MIN?'Minimum ':'Maximum ') + glp_get_obj_name(lp) + ": " + (isMIP(lp)?glp_mip_obj_val(lp):glp_get_obj_val(lp)));
+
+                log("\nVariables:");
+                for(var i = 1; i <= glp_get_num_cols(lp); i++){
+                    log(glp_get_col_name(lp, i)  + " = " + (isMIP(lp)?glp_mip_col_val(lp, i): glp_get_col_prim(lp, i)));
+                }
+                
+                log("\nConstraints:");
+                for (var i = 1; i <= glp_get_num_rows(lp); i++) {
+                    if (glp_get_row_stat(lp,i) == GLP_BS) {
+                        soln = isMIP(lp)? glp_mip_row_val(lp,i):glp_get_row_prim(lp,i);
+                        log(glp_get_row_name(lp,i) + ": " + soln);
+                    }
+                }
+                            
+            } else {
+                throw new MathProgError((isMIP()?'MILP':'LP') + " failed.");
             }
-                        
-        } else {
-            throw new MathProgError((isMIP()?'MILP':'LP') + " failed.");
+        } catch (err) {
+            hidePleaseWait();
+
+            log(err.message);
+            setCursorMathProgEditor(err.line);
+            return null;
         }
+
+    }, 0);
         
-    } catch (err) {
-        log(err.message);
-        setCursorMathProgEditor(err.line);
-        return null;
-    }
     
     log('\nElapsed time: ' + (Date.now()-start)/1000 + ' seconds');
     return null;

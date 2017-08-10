@@ -445,15 +445,5 @@ var initMathjaxDisplay = function () {
 		updateSimpleEditor(formattedLatexCode);
 	}
 
-	var pleaseWaitDiv = $("#pleaseWaitDialog");
-    
-    var showPleaseWait = function() {
-            pleaseWaitDiv.modal();
-    };
-
-    var hidePleaseWait = function () {
-            pleaseWaitDiv.modal('hide');
-    };
-
 	MathJax.Hub.Configured();
 };

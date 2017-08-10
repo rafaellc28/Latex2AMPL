@@ -3,6 +3,7 @@ var samples = {};
 var CONSTRAINT_KEY = 0;
 var CONSTRAINTS = [];
 var EDITING = null;
+var pleaseWaitDiv = null;
 
 var init = function() {
 	$('[data-toggle="popover"]').popover();
@@ -34,7 +35,9 @@ var init = function() {
 	initExamples();
 	initMathjaxDisplay();
 
+	pleaseWaitDiv = $("#pleaseWaitDialog");
 	$("#collapse2").collapse("hide");
+
 }
 
 var loadUser = function() {
@@ -59,3 +62,11 @@ var loadUser = function() {
 	});
 
 }
+
+var showPleaseWait = function() {
+        pleaseWaitDiv.modal('show');
+};
+
+var hidePleaseWait = function () {
+        pleaseWaitDiv.modal('hide');
+};
