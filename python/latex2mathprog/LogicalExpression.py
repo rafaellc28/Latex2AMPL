@@ -57,9 +57,9 @@ class LogicalExpression(Expression):
         self.entriesLogicalExpression.append({"or": entry})
         return self
     
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
-        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), entries))))
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), entries))))
 
 
     def setupEnvironment(self, codeSetup):

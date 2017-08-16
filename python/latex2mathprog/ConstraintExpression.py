@@ -33,8 +33,8 @@ class ConstraintExpression2(ConstraintExpression):
         
         return "CntExprWith2:" + str(self.linearExpression1) + " " + self.op + " " + str(self.linearExpression2)
 
-    def getDependencies(self):
-        return list(set(self.linearExpression1.getDependencies() + self.linearExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.linearExpression1.getDependencies(codeGenerator) + self.linearExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -75,8 +75,8 @@ class ConstraintExpression3(ConstraintExpression):
         
         return "CntExprWith3:" + str(self.numericExpression1) + " " + self.op + " " + str(self.linearExpression) + " " + self.op + " " + str(self.numericExpression2)
     
-    def getDependencies(self):
-        return list(set(self.linearExpression.getDependencies() + self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.linearExpression.getDependencies(codeGenerator) + self.numericExpression1.getDependencies(codeGenerator) + self.numericExpression2.getDependencies(codeGenerator)))
     
     def setupEnvironment(self, codeSetup):
         """

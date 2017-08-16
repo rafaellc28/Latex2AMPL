@@ -50,16 +50,16 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
 
         return res
 
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         deps = []
 
         if self.numericExpression1 != None:
-            deps += self.numericExpression1.getDependencies()
+            deps += self.numericExpression1.getDependencies(codeGenerator)
 
         if self.numericExpression2 != None:
-            deps += self.numericExpression2.getDependencies()
+            deps += self.numericExpression2.getDependencies(codeGenerator)
 
-        return list(set(self.symbolicExpression.getDependencies() + deps))
+        return list(set(self.symbolicExpression.getDependencies(codeGenerator) + deps))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -114,8 +114,8 @@ class StringSymbolicExpression(SymbolicExpression):
     def getSymbol(self):
         return self.value
 
-    def getDependencies(self):
-        return self.value.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.value.getDependencies(codeGenerator)
     
     def setupEnvironment(self, codeSetup):
         """
@@ -153,8 +153,8 @@ class SymbolicExpressionBetweenParenthesis(SymbolicExpression):
         
         return "SE: (" + str(self.symbolicExpression) + ")"
     
-    def getDependencies(self):
-        return self.symbolicExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.symbolicExpression.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -198,8 +198,8 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
         
         return "OpSE:" + str(self.symbolicExpression1) + " " + self.op + " " + str(self.symbolicExpression2)
 
-    def getDependencies(self):
-        return list(set(self.symbolicExpression1.getDependencies() + self.symbolicExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.symbolicExpression1.getDependencies(codeGenerator) + self.symbolicExpression2.getDependencies(codeGenerator)))
     
     def setupEnvironment(self, codeSetup):
         """
@@ -247,11 +247,11 @@ class ConditionalSymbolicExpression(SymbolicExpression):
     def addElseExpression(self, elseExpression):
         self.symbolicExpression2 = elseExpression
 
-    def getDependencies(self):
-        dep = self.logicalExpression.getDependencies() + self.symbolicExpression1.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.logicalExpression.getDependencies(codeGenerator) + self.symbolicExpression1.getDependencies(codeGenerator)
         
         if self.symbolicExpression2 != None:
-            dep += self.symbolicExpression2.getDependencies()
+            dep += self.symbolicExpression2.getDependencies(codeGenerator)
         
         return list(set(dep))    
         

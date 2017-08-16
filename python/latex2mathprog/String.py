@@ -34,7 +34,7 @@ class String(Expression):
         """
         return [self]
 
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         return []
     
     def setupEnvironment(self, codeSetup):

@@ -46,8 +46,8 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         else:
             return "EIE_S: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
     
-    def getDependencies(self):
-        return list(set(self.identifier.getDependencies() + self.setExpression.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -93,8 +93,8 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
 
         return "EIE_C: " + str(self.identifier) + " " + self.op + " " + str(self.numericExpression)
 
-    def getDependencies(self):
-        return list(set(self.identifier.getDependencies() + self.numericExpression.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.identifier.getDependencies(codeGenerator) + self.numericExpression.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -150,11 +150,11 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
     def setSupExpression(self, supExpression):
         self.supExpression = supExpression
     
-    def getDependencies(self):
-        dep = self.identifier.getDependencies() + self.value.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.identifier.getDependencies(codeGenerator) + self.value.getDependencies(codeGenerator)
 
         if self.supExpression != None:
-            dep += self.supExpression.getDependencies()
+            dep += self.supExpression.getDependencies(codeGenerator)
 
         return list(set(dep))
 

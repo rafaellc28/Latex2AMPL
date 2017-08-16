@@ -37,8 +37,8 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
 
         return str(self.numericExpression1) + " " + self.op + " " + str(self.numericExpression2)
 
-    def getDependencies(self):
-        return list(set(self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.numericExpression1.getDependencies(codeGenerator) + self.numericExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -90,8 +90,8 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
 
         return str(self.identifier) + " " + self.op + " " + str(self.setExpression)
 
-    def getDependencies(self):
-        return list(set(self.identifier.getDependencies() + self.setExpression.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -134,8 +134,8 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
 
         return str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
-    def getDependencies(self):
-        return list(set(self.setExpression1.getDependencies() + self.setExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.setExpression1.getDependencies(codeGenerator) + self.setExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -180,8 +180,8 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
 
         return self.op + "{" + str(self.indexingExpression) + "} " +  str(self.logicalExpression)
 
-    def getDependencies(self):
-        return list(set(self.indexingExpression.getDependencies() + self.logicalExpression.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.indexingExpression.getDependencies(codeGenerator) + self.logicalExpression.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -217,8 +217,8 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         
         return "LE: (" + str(self.logicalExpression) + ")"
  
-    def getDependencies(self):
-        return self.logicalExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.logicalExpression.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -253,8 +253,8 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
         
         return "LE_NSE: (" + str(self.numericOrSymbolicExpression) + ")"
 
-    def getDependencies(self):
-        return self.numericOrSymbolicExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.numericOrSymbolicExpression.getDependencies(codeGenerator)
    
     def setupEnvironment(self, codeSetup):
         """
@@ -289,8 +289,8 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
         
         return "NLE: (NOT " + str(self.logicalExpression) + ")"
 
-    def getDependencies(self):
-        return self.logicalExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.logicalExpression.getDependencies(codeGenerator)
     
     def setupEnvironment(self, codeSetup):
         """

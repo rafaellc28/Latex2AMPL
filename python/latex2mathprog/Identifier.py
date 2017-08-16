@@ -107,9 +107,9 @@ class Identifier(Expression):
     def setSubIndices(self, subIndices):
         self.sub_indices = subIndices
  
-    def getDependencies(self):
-        dep = list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.sub_indices))))
-        return list(set(self.identifier.getDependencies() + dep))
+    def getDependencies(self, codeGenerator):
+        dep = list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.sub_indices))))
+        return list(set(self.identifier.getDependencies(codeGenerator) + dep))
 
     def setupEnvironment(self, codeSetup):
         """

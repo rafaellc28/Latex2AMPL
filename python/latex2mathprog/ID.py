@@ -30,8 +30,8 @@ class ID(Expression):
 
         return [self]
     
-    def getDependencies(self):
-        return [self.value]
+    def getDependencies(self, codeGenerator):
+        return [self.getSymbolName(codeGenerator)]
     
     def setupEnvironment(self, codeSetup):
         """

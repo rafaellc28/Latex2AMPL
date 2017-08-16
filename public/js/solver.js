@@ -46,7 +46,7 @@ window.solveMathProg = function () {
     
     showPleaseWait();
 
-    // hacking to guarantee that the modal opens before starting solving the linear progran
+    // hack to guarantee that the modal opens before starting solving the linear progran
     setTimeout(function() {
         try {
 

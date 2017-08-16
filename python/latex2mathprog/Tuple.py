@@ -45,8 +45,8 @@ class Tuple(Expression):
     def getSymbolName(self, codeGenerator):
         return ",".join(map(lambda v: v.generateCode(codeGenerator), self.values))
 
-    def getDependencies(self):
-        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.values))))
+    def getDependencies(self, codeGenerator):
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.values))))
 
     def getValues(self):
         """

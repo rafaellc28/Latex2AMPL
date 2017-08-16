@@ -54,9 +54,9 @@ class SetExpressionWithValue(SetExpression):
     def getSymbol(self):
         return self.value
 
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         if not isinstance(self.value, str):
-            return self.value.getDependencies()
+            return self.value.getDependencies(codeGenerator)
 
         return [self.value]
 
@@ -109,8 +109,8 @@ class SetExpressionWithIndices(SetExpression):
     def getDimension(self):
         return self.dimension
 
-    def getDependencies(self):
-        return list(set(self.identifier.getDependencies() + self.indices.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.identifier.getDependencies(codeGenerator) + self.indices.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -153,8 +153,8 @@ class SetExpressionWithOperation(SetExpression):
 
         return "SETOP: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
-    def getDependencies(self):
-        return list(set(self.setExpression1.getDependencies() + self.setExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.setExpression1.getDependencies(codeGenerator) + self.setExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -190,8 +190,8 @@ class SetExpressionBetweenParenthesis(SetExpression):
         
         return "SE: (" + str(self.setExpression) + ")"
 
-    def getDependencies(self):
-        return self.setExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.setExpression.getDependencies(codeGenerator)
     
     def setupEnvironment(self, codeSetup):
         """
@@ -227,9 +227,9 @@ class SetExpressionBetweenBraces(SetExpression):
         setExpr = str(self.setExpression) if self.setExpression != None else ""
         return "SEB: {" + setExpr + "}"
 
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         if self.setExpression != None:
-            return self.setExpression.getDependencies()
+            return self.setExpression.getDependencies(codeGenerator)
 
         return []
     
@@ -273,8 +273,8 @@ class IteratedSetExpression(SetExpression):
 
         return "ItSetExpr: " + res
 
-    def getDependencies(self):
-        return list(set(self.indexingExpression.getDependencies() + Utils._flatten(map(lambda el: el.getDependencies(), self.integrands))))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.indexingExpression.getDependencies(codeGenerator) + Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.integrands))))
         
     def setupEnvironment(self, codeSetup):
         """
@@ -321,11 +321,11 @@ class ConditionalSetExpression(SetExpression):
     def addElseExpression(self, elseExpression):
         self.setExpression2 = elseExpression
 
-    def getDependencies(self):
-        dep = self.logicalExpression.getDependencies() + self.setExpression1.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.logicalExpression.getDependencies(codeGeneratorcodeGenerator) + self.setExpression1.getDependencies(codeGenerator)
 
         if self.setExpression2 != None:
-            dep += self.setExpression2.getDependencies()
+            dep += self.setExpression2.getDependencies(codeGenerator)
 
         return list(set(dep))
 

@@ -29,11 +29,11 @@ class Range(Expression):
         
         return res
     
-    def getDependencies(self):
-        dep = self.rangeInit.getDependencies() + self.rangeEnd.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.rangeInit.getDependencies(codeGenerator) + self.rangeEnd.getDependencies(codeGenerator)
 
         if self.by != None:
-            dep += self.by.getDependencies()
+            dep += self.by.getDependencies(codeGenerator)
 
         return list(set(dep))
 

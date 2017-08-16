@@ -47,9 +47,9 @@ class DeclarationExpression(Expression):
         elif not self.attrExists(attribute):
             self.attributeList.append(attribute)
 
-    def getDependencies(self):
-        dep = Utils._flatten(map(lambda el: el.getDependencies(), self.attributeList))
-        return list(set(self.identifiers.getDependencies() + dep))
+    def getDependencies(self, codeGenerator):
+        dep = Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.attributeList))
+        return list(set(self.identifiers.getDependencies(codeGenerator) + dep))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -95,8 +95,8 @@ class DeclarationAttribute(Expression):
         """
         return "DeclAttr:" + self.op + " " + str(self.attribute)
 
-    def getDependencies(self):
-        return self.attribute.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.attribute.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """

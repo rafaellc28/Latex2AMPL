@@ -67,14 +67,14 @@ class NumericExpressionWithFunction(NumericExpression):
         
         return res
 
-    def getDependencies(self):
+    def getDependencies(self, codeGenerator):
         dep = []
 
         if self.numericExpression1 != None:
-            dep += self.numericExpression1.getDependencies()
+            dep += self.numericExpression1.getDependencies(codeGenerator)
 
         if self.numericExpression2 != None:
-            dep += self.numericExpression2.getDependencies()
+            dep += self.numericExpression2.getDependencies(codeGenerator)
 
         return list(set(dep))
 
@@ -131,8 +131,8 @@ class ValuedNumericExpression(NumericExpression):
     def getSymbol(self):
         return self.value
 
-    def getDependencies(self):
-        return self.value.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.value.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -170,8 +170,8 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
         
         return "NEBetweenParenthesis: (" + str(self.numericExpression) + ")"
 
-    def getDependencies(self):
-        return self.numericExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.numericExpression.getDependencies(codeGenerator)
     
     def setupEnvironment(self, codeSetup):
         """
@@ -227,8 +227,8 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
 
         return res
 
-    def getDependencies(self):
-        return list(set(self.numericExpression1.getDependencies() + self.numericExpression2.getDependencies()))
+    def getDependencies(self, codeGenerator):
+        return list(set(self.numericExpression1.getDependencies(codeGenerator) + self.numericExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
@@ -266,8 +266,8 @@ class MinusNumericExpression(NumericExpression):
         
         return "MinusNE:" + "-(" + str(self.numericExpression) + ")"
 
-    def getDependencies(self):
-        return self.numericExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.numericExpression.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """
@@ -323,11 +323,11 @@ class IteratedNumericExpression(NumericExpression):
 
         return "ItNumExp:" + res + "|"
 
-    def getDependencies(self):
-        dep = self.numericExpression.getDependencies() + self.indexingExpression.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.numericExpression.getDependencies(codeGenerator) + self.indexingExpression.getDependencies(codeGenerator)
 
         if self.supNumericExpression != None:
-            dep += self.supNumericExpression.getDependencies()
+            dep += self.supNumericExpression.getDependencies(codeGenerator)
 
         return list(set(dep))
     
@@ -377,11 +377,11 @@ class ConditionalNumericExpression(NumericExpression):
     def addElseExpression(self, elseExpression):
         self.numericExpression2 = elseExpression
     
-    def getDependencies(self):
-        dep = self.logicalExpression.getDependencies() + self.numericExpression1.getDependencies()
+    def getDependencies(self, codeGenerator):
+        dep = self.logicalExpression.getDependencies(codeGenerator) + self.numericExpression1.getDependencies(codeGenerator)
 
         if self.numericExpression2 != None:
-            dep += self.numericExpression2.getDependencies()
+            dep += self.numericExpression2.getDependencies(codeGenerator)
 
         return list(set(dep))
 

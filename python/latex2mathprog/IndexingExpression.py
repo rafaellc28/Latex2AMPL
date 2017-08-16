@@ -67,11 +67,11 @@ class IndexingExpression(Expression):
     def setSupExpression(self, supExpression):
         self.supExpression = supExpression
 
-    def getDependencies(self):
-        dep = Utils._flatten(map(lambda el: el.getDependencies(), self.entriesIndexingExpression))
+    def getDependencies(self, codeGenerator):
+        dep = Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.entriesIndexingExpression))
         
         if self.logicalExpression != None:
-            dep += self.logicalExpression.getDependencies()
+            dep += self.logicalExpression.getDependencies(codeGenerator)
         
         return list(set(dep))
 

@@ -197,11 +197,11 @@ class CodeSetup:
 
         name = var.getSymbolName(self.codeGenerator)
         setExpression = self._getSetExpression(setExpressionObj)
-        dependencies = setExpressionObj.getDependencies()
+        dependencies = setExpressionObj.getDependencies(self.codeGenerator)
 
         if supExpressionObj != None:
             setExpression += ".." + supExpressionObj.getSymbolName(self.codeGenerator)
-            dependencies = list(set(dependencies + supExpressionObj.getDependencies()))
+            dependencies = list(set(dependencies + supExpressionObj.getDependencies(self.codeGenerator)))
 
         _symbolTableEntry = self.currentTable.lookup(name)
         if _symbolTableEntry == None:
@@ -1342,7 +1342,7 @@ class CodeSetup:
 
         _symbolTableEntry = self.currentTable.lookup(name)
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies())], None, None, None), 
+            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator))], None, None, None), 
                                                  None, self.level, [], True, True)
             self.currentTable.insert(name, _symbolTableEntry)
 
@@ -1350,7 +1350,7 @@ class CodeSetup:
             if _symbolTableEntry.getInferred():
                 _symbolTableEntry.setType(None)
 
-            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies()))
+            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator)))
 
         if setExpression == Constants.BINARY_0_1 or setExpression == Constants.BINARY:
             identifier.isBinary = True

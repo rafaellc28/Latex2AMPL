@@ -56,8 +56,8 @@ class ValueList(Expression):
         self.values += [value]
         return self
 
-    def getDependencies(self):
-        return list(set(Utils._flatten(map(lambda el: el.getDependencies(), self.values))))
+    def getDependencies(self, codeGenerator):
+        return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.values))))
 
     def setupEnvironment(self, codeSetup):
         """

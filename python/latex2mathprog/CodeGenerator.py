@@ -147,7 +147,7 @@ class CodeGenerator:
             return None
 
         logicalExpression = declaration.getIndexingExpression().logicalExpression
-        logicalExpressionDependencies = set(logicalExpression.getDependencies())
+        logicalExpressionDependencies = set(logicalExpression.getDependencies(self))
 
         if varName in logicalExpressionDependencies:
             return logicalExpression.generateCode(self)
@@ -288,8 +288,7 @@ class CodeGenerator:
                             idx += 1
                         
                     if len(indexes) > 0:
-                        _subIndices = _subIndicesRemaining
-                        subIdxDomains = [self._getDomainSubIndices(table, _subIndice, totalIndices) for _subIndice in _subIndices]
+                        subIdxDomains = [self._getDomainSubIndices(table, _subIndice, totalIndices) for _subIndice in _subIndicesRemaining]
                         subIdxDomains = [d for d in subIdxDomains if d[1] != None]
                         
                         if len(subIdxDomains) == len(_subIndicesRemaining):
@@ -298,9 +297,9 @@ class CodeGenerator:
                             indexes = sorted(indexes)
                             for i in range(len(subIdxDomains)):
                                 ind = indexes.pop(0)
-                                domains[ind] = (_subIndices[i] + " " + subIdxDomains[i][0] + " " if not _subIndices[i] in varNameSubIndices else "") + subIdxDomains[i][1]
+                                domains[ind] = (_subIndicesRemaining[i] + " " + subIdxDomains[i][0] + " " if not _subIndicesRemaining[i] in varNameSubIndices else "") + subIdxDomains[i][1]
                                 dependencies[ind] = subIdxDomains[i][2]
-                                varNameSubIndices.append(_subIndices[i])
+                                varNameSubIndices.append(_subIndicesRemaining[i])
 
                         else:
                             domains = {}
@@ -449,7 +448,7 @@ class CodeGenerator:
 
    
     def _addDependences(self, value, stmtIndex, dependences):
-        names = value.getDependencies()
+        names = value.getDependencies(self)
 
         if names != None and len(names) > 0:
             for name in names:
@@ -892,8 +891,8 @@ class CodeGenerator:
         if node.constraints:
             res += node.constraints.generateCode(self) + "\n\n"
         
-        if node.declarations:
-            res += node.declarations.generateCode(self) + "\n\n"
+        #if node.declarations:
+        #    res += node.declarations.generateCode(self) + "\n\n"
 
         res += self._posModel()
 

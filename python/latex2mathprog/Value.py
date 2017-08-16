@@ -24,8 +24,8 @@ class Value(Expression):
 
         return "Value: "  + str(self.value)
 
-    def getDependencies(self):
-        return self.value.getDependencies()
+    def getDependencies(self, codeGenerator):
+        return self.value.getDependencies(codeGenerator)
 
     def setupEnvironment(self, codeSetup):
         """
