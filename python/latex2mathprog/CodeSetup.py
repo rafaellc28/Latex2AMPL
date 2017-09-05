@@ -1043,12 +1043,30 @@ class CodeSetup:
         Generate the MathProg code for the declaration of identifiers used in this range expression
         """
         if not isinstance(node.rangeInit, str):
+            ident = self._getIdentifier(node.rangeInit)
+
+            if isinstance(ident, Identifier):
+                self._setIsParam(ident)
+                ident.isInt = True
+
             node.rangeInit.setupEnvironment(self)
         
         if not isinstance(node.rangeEnd, str):
+            ident = self._getIdentifier(node.rangeEnd)
+
+            if isinstance(ident, Identifier):
+                self._setIsParam(ident)
+                ident.isInt = True
+
             node.rangeEnd.setupEnvironment(self)
 
         if node.by != None:
+            ident = self._getIdentifier(node.by)
+
+            if isinstance(ident, Identifier):
+                self._setIsParam(ident)
+                ident.isInt = True
+
             node.by.setupEnvironment(self)
     
     # Value List
@@ -1179,7 +1197,7 @@ class CodeSetup:
                 self.codeGenerator.genSets.remove(self.varKey)
                 self.codeGenerator.genVariables.remove(self.varKey)
 
-                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, str(self.stmtIndex))
+                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, node.isInt or node.isInteger, str(self.stmtIndex))
                 if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
                     _genParam.setCertainty(False)
 
@@ -1195,10 +1213,14 @@ class CodeSetup:
 
                 self.codeGenerator.genParameters.add(_genParam)
 
-            elif node.isSymbolic or node.isLogical:
+            elif node.isSymbolic or node.isLogical or node.isInt or node.isInteger:
                 _genParam = self.codeGenerator.genParameters.get(self.varKey)
                 if _genParam != None:
-                    _genParam.setIsSymbolic(True)
+                    if node.isSymbolic or node.isLogical:
+                        _genParam.setIsSymbolic(True)
+
+                    if node.isInt or node.isInteger:
+                        _genParam.setIsInteger(True)
 
             self._checkSubIndices(node)
 
@@ -1251,12 +1273,12 @@ class CodeSetup:
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
 
                 if genDeclaration == None:
-                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, str(self.stmtIndex))
+                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, identifier.sub_indices, str(self.stmtIndex))
                     self.codeGenerator.genDeclarations.add(genDeclaration)
                 else:
                     genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
-                if node.indexingExpression and len(identifier.sub_indices) > 0:
+                if node.indexingExpression:
                     genDeclaration.setIndexingExpression(node.indexingExpression)
 
                 _symbolTableEntry = self.currentTable.lookup(name)

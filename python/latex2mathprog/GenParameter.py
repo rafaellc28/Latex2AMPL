@@ -1,9 +1,10 @@
 from GenObj import *
 
 class GenParameter(GenObj):
-	def __init__(self, name, isSymbolic = False, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
+	def __init__(self, name, isSymbolic = False, isInteger = False, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
 		super(GenParameter, self).__init__(name)
 		self.isSymbolic = isSymbolic
+		self.isInteger = isInteger
 		self.stmtInclusion = stmtInclusion
 		self.certainty = certainty
 		self.isDeclaredAsParam = isDeclaredAsParam
@@ -13,6 +14,12 @@ class GenParameter(GenObj):
 	
 	def setIsSymbolic(self, isSymbolic):
 		self.isSymbolic = isSymbolic
+
+	def getIsInteger(self):
+		return self.isInteger
+	
+	def setIsInteger(self, isInteger):
+		self.isInteger = isInteger
 
 	def getStmtInclusion(self):
 		return self.stmtInclusion

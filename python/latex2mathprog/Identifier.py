@@ -32,6 +32,7 @@ class Identifier(Expression):
         self.isInteger = False
         self.isNatural = False
         self.isSubIndice = False
+        self.isInt = False
         self.isDeclaredAsParam = None
         self.isDeclaredAsSet = None
         self.isDeclaredAsVar = None

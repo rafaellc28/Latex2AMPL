@@ -1,17 +1,29 @@
 from GenObj import *
 
 class GenDeclaration(GenObj):
-	def __init__(self, name, attributeList = None, indexingExpression = None, stmtIndex = None):
+	def __init__(self, name, attributeList = None, indexingExpression = None, subIndices = [], stmtIndex = None):
 		super(GenDeclaration, self).__init__(name)
 		self.attributeList = attributeList
 		self.indexingExpression = indexingExpression
 		self.stmtIndex = stmtIndex
+
+		# python bug
+		if not subIndices or len(subIndices) == 0:
+			self.subIndices = []
+		else:
+			self.subIndices = subIndices
 	
 	def getStmtIndex(self):
 		return self.stmtIndex
 	
 	def setStmtIndex(self, stmtIndex):
 		self.stmtIndex = stmtIndex
+
+	def getSubIndices(self):
+		return self.subIndices
+	
+	def setSubIndices(self, subIndices):
+		self.subIndices = subIndices
 	
 	def getAttributeList(self):
 		return self.attributeList

@@ -2,13 +2,13 @@ import setuptools
 
 if __name__ == '__main__':
 	setuptools.setup(
-		name='Latex to Mathprog2',
+		name='Latex to Mathprog',
 
 		packages=setuptools.find_packages(),
 		
 		entry_points={
 			'console_scripts': [
-				'latex2mathprog2 = latex2mathprog2.main:main',
+				'latex2mathprog = latex2mathprog.main:main',
 			],
 		},
 		

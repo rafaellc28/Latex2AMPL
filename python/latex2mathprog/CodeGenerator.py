@@ -484,7 +484,7 @@ class CodeGenerator:
                     self._addDependences(pRel.attribute, decl.getStmtIndex(), dependences)
 
             idxExpression = decl.getIndexingExpression()
-            if idxExpression != None:
+            if idxExpression != None and len(decl.getSubIndices()) > 0:
                 self._addDependences(idxExpression, decl.getStmtIndex(), dependences)
 
         return dependences
@@ -621,7 +621,7 @@ class CodeGenerator:
                         varStr += "{"+str(minVal)+".."+str(maxVal)+"}"
                     
                     if not domain and varDecl != None:
-                        if varDecl.getIndexingExpression() != None:
+                        if varDecl.getIndexingExpression() != None and len(varDecl.getSubIndices()) > 0:
                             domain = varDecl.getIndexingExpression().generateCode(self)
                             varStr += "{" + domain + "}"
 
@@ -673,7 +673,7 @@ class CodeGenerator:
             paramStr += "{"+str(minVal)+".."+str(maxVal)+"}"
 
         if not domain and varDecl != None:
-            if varDecl.getIndexingExpression() != None:
+            if varDecl.getIndexingExpression() != None and len(varDecl.getSubIndices()) > 0:
                 domain = varDecl.getIndexingExpression().generateCode(self)
                 paramStr += "{" + domain + "}"
 
@@ -743,7 +743,7 @@ class CodeGenerator:
             setStr += "{"+str(minVal)+".."+str(maxVal)+"}"
 
         if not domain and varDecl != None:
-            if varDecl.getIndexingExpression() != None:
+            if varDecl.getIndexingExpression() != None and len(varDecl.getSubIndices()) > 0:
                 domain = varDecl.getIndexingExpression().generateCode(self)
                 setStr += "{" + domain + "}"
 
