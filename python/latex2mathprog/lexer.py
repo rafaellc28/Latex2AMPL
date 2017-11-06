@@ -6,6 +6,7 @@ from Number import *
 from String import *
 import sys
 import re
+from SyntaxException import *
 
 reserved = {
    'card' : 'CARD',
@@ -32,6 +33,7 @@ tokens = [
    'EXISTS',
    'NEXISTS',
    'QUESTION_MARK',
+   'EMPTYSET',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
    'INTEGERSETNEGATIVE',
@@ -114,17 +116,31 @@ tokens = [
    'BY',
    'PARAMETERS',
    'SETS',
-   'VARIABLES'
+   'VARIABLES',
+   'SLASHES'
 ] + list(reserved.values())
 
 def t_STRING(t):
    r'"(?:[^\\]|\\.)*?(?:"|$)|\'(?:[^\\]|\\.)*?(?:\'|$)'
+
+   if t.value[0] != t.value[len(t.value)-1]:
+      raise SyntaxException(t.lexer.lineno, t.lexer.lexpos, "unclosed string "+t.value)
+
    t.value = String(t.value)
    return t
 
 def t_DOTS(t):
    r'\\cdots|\\ldots|\\dots|\.\.\.'
    return t
+
+def t_EMPTYSET(t):
+   r'\\emptyset|\\varnothing'
+   return t
+
+def t_SLASHES(t):
+   r'//'
+   return t
+
 
 def t_COMMENT(t):
     r'\%[^\n]*'
@@ -631,13 +647,13 @@ def t_CROSS(t):
    return t
 
 def t_ID(t):
-   r'[a-zA-Z][a-zA-Z0-9]*'
+   r'(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
    t.type = reserved.get(t.value, 'ID') # Check for reserved words
    return t
 
 # A regular expression rule with some action code
 def t_NUMBER(t):
-   r'[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
+   r'[0-9]*\.?[0-9]+([dDeE][-+]?[0-9]+)?'
    t.value = Number(t.value)
    return t
 

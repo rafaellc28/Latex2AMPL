@@ -80,7 +80,9 @@ def p_LinearProgram(t):
           t[0] = LinearProgram(t[1], None)
 
 def p_Objectives(t):
-    '''Objectives : Objectives Objective
+    '''Objectives : Objectives Objective SLASHES
+                  | Objectives Objective
+                  | Objective SLASHES
                   | Objective'''
 
     if not isinstance(t[1], Objectives):
@@ -143,11 +145,15 @@ def p_Constraints(t):
     t[0] = Constraints(t[2])
 
 def p_ConstraintList(t):
-    '''ConstraintList : ConstraintList Constraint
+    '''ConstraintList : ConstraintList Constraint SLASHES
+                      | ConstraintList Declarations SLASHES
+                      | ConstraintList Constraint
                       | ConstraintList Declarations
+                      | Declarations SLASHES
+                      | Constraint SLASHES
                       | Declarations
                       | Constraint'''
-    if len(t) > 2:
+    if len(t) > 2 and not isinstance(t[2], str):
       if isinstance(t[2], Declarations):
         t[0] = t[1] + t[2].declarations
       else:
@@ -971,6 +977,7 @@ def p_SetExpressionWithValue(t):
                      | LLBRACE RRBRACE
                      | LPAREN SetExpression RPAREN
                      | LPAREN Range RPAREN
+                     | EMPTYSET
                      | NATURALSET
                      | INTEGERSET
                      | INTEGERSETPOSITIVE
@@ -1005,6 +1012,8 @@ def p_SetExpressionWithValue(t):
             t[2] = SetExpressionWithValue(t[2])
 
           t[0] = SetExpressionWithValue(t[2])
+    elif t[1] == "\\emptyset" or t[1] == "\\varnothing":
+        t[0] = SetExpressionBetweenBraces(None)
     else:
         value = t[1]
         if hasattr(t.slice[1], 'value2'):
@@ -1216,14 +1225,14 @@ def p_NumericExpression_binop(t):
         op = NumericExpressionWithArithmeticOperation.MINUS
     elif re.search(r"\*|\\cdot|\\ast", t[2]):
         op = NumericExpressionWithArithmeticOperation.TIMES
+    elif re.search(r"\\big/|\\text\{\s*div\s*\}", t[2]):
+        op = NumericExpressionWithArithmeticOperation.QUOT
     elif re.search(r"/|\\div", t[2]):
         op = NumericExpressionWithArithmeticOperation.DIV
     elif re.search(r"\\text\{\s*\%\s*\}|\\mod|\\bmod", t[2]):
         op = NumericExpressionWithArithmeticOperation.MOD
     elif t[2] == "^":
         op = NumericExpressionWithArithmeticOperation.POW
-    elif re.search(r"\\big/|\\text\{\s*div\s*\}", t[2]):
-        op = NumericExpressionWithArithmeticOperation.QUOT
     elif re.search(r"\\text\{\s*less\s*\}", t[2]):
         op = NumericExpressionWithArithmeticOperation.LESS
 

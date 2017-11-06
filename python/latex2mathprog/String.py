@@ -13,6 +13,12 @@ class String(Expression):
         """
         Expression.__init__(self)
         
+        string = string.replace("\\\"", "\"\"")
+        string = string.replace("\\\'", "\'\'")
+
+        if string[len(string)-1] != string[0]:
+            string = string[0:len(string)] + string[0]
+
         self.string = string
     
     def __str__(self):
