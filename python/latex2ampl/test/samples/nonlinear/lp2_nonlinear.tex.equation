@@ -1,0 +1,3 @@
+% amplide/models/nlmodels/camel1.mod
+\text{minimize } 4*x_{1}^{2} - 2.1*x_{1}^{4} + x_{1}^{6}/3 + x_{1}*x_{2} - 4*x_{2}^{2} + 4*x_{2}^{4}\\
+x_{i} := 1, \in \mathbb{R}^{\geq -5,\leq 5}

@@ -2,13 +2,13 @@ import setuptools
 
 if __name__ == '__main__':
 	setuptools.setup(
-		name='Latex to Mathprog',
+		name='LaTeX to AMPL',
 
 		packages=setuptools.find_packages(),
 		
 		entry_points={
 			'console_scripts': [
-				'latex2mathprog = latex2mathprog.main:main',
+				'latex2ampl = latex2ampl.main:main',
 			],
 		},
 		

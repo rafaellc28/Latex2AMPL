@@ -1,0 +1,6 @@
+heroku buildpacks
+
+heroku buildpacks:add --index 1 heroku/nodejs
+
+remove submodules
+git rm --cached python

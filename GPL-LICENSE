@@ -1,5 +1,5 @@
-Latex2MathProg: convert a Linear Programming Model Latex code to a MathProg code.
-Copyright (C) 2016  Rafael Lima Curi
+Latex2AMPL: convert a Linear/Nonlinear/Constraint Programming Model Latex code to a AMPL code.
+Copyright (C) 2017  Rafael Lima Curi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

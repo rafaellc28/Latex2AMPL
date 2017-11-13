@@ -1,0 +1,5 @@
+% amplide/models/nlmodels/branin.mod
+\text{minimize } (x_{2} - 5.1*x_{1}^{2}/(4*pi*pi) + 5*x_{1}/pi - 6)^{2} + 10*(1 - 1/(8*pi))*\cos(x_{1}) + 10//\\
+-5 \leq x_{1} \leq 10\\
+0 \leq x_{2} \leq 15\\
+pi := 4*\arctan(1); x_{i} \in \mathbb{R}\\

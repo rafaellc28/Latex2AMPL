@@ -1,7 +1,7 @@
 {
-  "name": "Latex2MathProg",
+  "name": "Latex2AMPL",
   "version": "0.1.0",
-  "description": "Convert a Latex Linear Program Model to a MathProg code",
+  "description": "Convert a Latex Linear/Nonlinear/Constraint Programming Model to a AMPL code",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -23,15 +23,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rafaellc28/Latex2MathProg"
+    "url": "https://github.com/rafaellc28/Latex2AMPL"
   },
   "keywords": [
     "node",
     "heroku",
     "express",
-    "Latex",
-    "MathProg",
-    "Linear Programming"
+    "LaTeX",
+    "AMPL",
+    "Linear Programming",
+    "Noninear Programming",
+    "Constraint Programming"
   ],
   "license": "MIT"
 }

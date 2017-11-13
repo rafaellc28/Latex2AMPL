@@ -1,0 +1,5 @@
+% amplide/models/nlmodels/chi.mod
+\text{minimize } x_{1}^{2} - 12*x_{1} + 11 + 10*\cos(pi*x_{1}/2) + 8*\sin(pi*5*x_{1}) - \exp(-(x_{2} - .5)^{2}/2)/\sqrt{5}//\\
+-30 \leq x_{1} \leq 30//\\
+-10 \leq x_{2} \leq 10\\
+x \in \mathbb{R}; pi := 4 * \arctan(1)\\

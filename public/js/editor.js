@@ -1,8 +1,8 @@
-var mathProgEditor = null;
+var amplEditor = null;
 var simpleEditor = null;
 var dataEditor = null;
 
-CodeMirror.defineSimpleMode("mathprog", {
+CodeMirror.defineSimpleMode("ampl", {
   // The start state contains the rules that are intially used
   start: [
     // The regex matches the token, the token property contains the type
@@ -67,29 +67,29 @@ CodeMirror.defineSimpleMode("latex", {
   ]
 });
 
-window.initMathProgEditor = function() {
-	mathProgEditor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+window.initAMPLEditor = function() {
+	amplEditor = CodeMirror.fromTextArea(document.getElementById("editor"), {
 	    lineNumbers: true,
 	    lineWrapping: true,
-	    mode: 'mathprog'
+	    mode: 'ampl'
 	});
-	mathProgEditor.markClean();
+	amplEditor.markClean();
 }
 
-window.updateMathProgEditor = function(data) {
-	mathProgEditor.markClean();
-	mathProgEditor.setValue(data);
-	mathProgEditor.markClean();
-  mathProgEditor.focus();
+window.updateAMPLEditor = function(data) {
+	amplEditor.markClean();
+	amplEditor.setValue(data);
+	amplEditor.markClean();
+  amplEditor.focus();
 }
 
-window.getValueMathProgEditor = function() {
-  return mathProgEditor.getValue();
+window.getValueAMPLEditor = function() {
+  return amplEditor.getValue();
 }
 
-window.setCursorMathProgEditor = function(err_line) {
-  mathProgEditor.setCursor(err_line,0);
-  mathProgEditor.scrollIntoView(null);
+window.setCursorAMPLEditor = function(err_line) {
+  amplEditor.setCursor(err_line,0);
+  amplEditor.scrollIntoView(null);
 }
 
 window.initSimpleEditor = function() {
@@ -124,7 +124,7 @@ window.initDataEditor = function() {
   dataEditor = CodeMirror.fromTextArea(document.getElementById("dataEditor"), {
       lineNumbers: true,
       lineWrapping: true,
-      mode: 'mathprog'
+      mode: 'ampl'
   });
   dataEditor.markClean();
 }

@@ -1,0 +1,7 @@
+% amplide/models/nlmodels/blend.mod
+\text{minimize } \sum_{i \in I}a_{i} * x_{i}\\
+x_{i+neq} / (b_{i+neq} * \sum_{j \in J}x_{j+neq} / b_{j+neq}) = c_{i} * x_{i} / (40 * b_{i} * \sum_{j \in J} x_{j} / b_{j}): i \in J\\
+\sum_{i \in I} x_{i} = 1\\
+\sum_{i \in J} x_{i} / d_{i} + f * \sum_{i \in J} x_{i+neq} / b_{i+neq} = 1.671\\
+a_{i}, b_{i}, c_{i}, d_{i}, f1, f2, f3, f4 > 0: i \in I; ncomp, neq \in \mathbb{Z}^{> 0}, \in \mathbb{P}; f := f1*f2*f3/f4\\
+I := \{1 \cdots ncomp\}; J := \{1 \cdots neq\}; x_{i} \in \mathbb{R}^{+}: i \in I\\

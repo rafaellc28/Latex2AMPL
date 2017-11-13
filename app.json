@@ -1,6 +1,6 @@
 {
-  "name": "Latex2mathprog",
-  "description": "Latex to Mathprog",
-  "repository": "https://github.com/rafaellc28/Latex2MathProg",
-  "keywords": ["node", "Latex", "Mathprog", "Linear Programming"]
+  "name": "Latex2AMPL",
+  "description": "LaTeX to AMPL",
+  "repository": "https://github.com/rafaellc28/Latex2AMPL",
+  "keywords": ["node", "LaTeX", "AMPL", "Linear Programming", "Nonlinear Programming", "Constraint Programming"]
 }

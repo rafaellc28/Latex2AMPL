@@ -62,13 +62,17 @@ app.get('/samples', function(req, res) {
 	if (req.query.number) {
 		var number = req.query.number;
 		var decl = req.query.decl;
+		var nonlinear = req.query.nonlinear;
 		result = {}
 
-		var name;
+		var name = number
+
+		if (nonlinear == "true") {
+			name += "_nonlinear";
+		}
+
 		if (decl == "true") {
-			name = number + "_with_declarations";
-		} else {
-			name = number;
+			name += "_with_declarations";
 		}
 
 		var sample = baseSamples+"/lp"+name+".tex.equation";
@@ -102,7 +106,7 @@ app.post('/', function(req, res) {
 
     var str = req.body.latex;
 
-	var pyshell = new PythonShell('python/latex2mathprog/compiler.py');
+	var pyshell = new PythonShell('python/latex2ampl/compiler.py');
 	
 	// sends a message to the Python script via stdin 
 	pyshell.send(str);

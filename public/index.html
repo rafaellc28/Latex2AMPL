@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
 	<head>
-		<title>Latex2MathProg</title>
+		<title>LaTeX2AMPL</title>
 
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="css/lib/bootstrap.min.css">
 		<!--<link rel="stylesheet" href="css/lib/jquery-ui.min.css">-->
-		<link rel="stylesheet" href="css/latex2mathprog.css">
+		<link rel="stylesheet" href="css/latex2ampl.css">
 		<link rel="stylesheet" href="css/lib/codemirror.css">
 
 		<script type="text/javascript" src="js/lib/jquery-3.1.0.min.js"></script>
@@ -47,7 +47,7 @@
 	  	<script src="js/examples.js"></script>
 	  	<script src="js/mathjaxpreview.js"></script>
 	  	<script src="js/mathjaxdisplay.js"></script>
-		<script src="js/latex2mathprog.js"></script>
+		<script src="js/latex2ampl.js"></script>
 
 	</head>
 	<body onload="loadUser();">
@@ -55,7 +55,11 @@
 		
 		<script id="template" type="x-tmpl-mustache">
 			<div class="container-fluid">
-				<h1>{{LATEX2MATHPROG}}</h1>
+				<h1>{{LATEX2AMPL}}</h1>
+
+				<p>
+					{{{DESCRIPTION}}}
+				</p>
 
 	        	<p class="text-muted">
 	        		<ul>
@@ -67,7 +71,6 @@
 	        			<li>{{{TIP7}}}</li>
 	        			<li>{{{TIP8}}}</li>
 	        			<li>{{{TIP9}}}</li>
-	        			<li>{{{TIP10}}}</li>
 	        		</ul>
 	        	</p>
 
@@ -186,7 +189,7 @@
 
 									<div class="row">
 										<div class="col-xs-12">
-											<button type="button" class="btn btn-default pull-left" onClick="generateMathProg()">{{GENERATE_MATHPROG}}</button>&nbsp;
+											<button type="button" class="btn btn-default pull-left" onClick="generateAMPL()">{{GENERATE_AMPL}}</button>&nbsp;
 											<button type="button" class="btn btn-default pull-left" onClick="copyToSimpleEditor()">{{COPY_TO_SIMPLE_EDITOR}}</button>
 										</div>
 									</div>
@@ -236,7 +239,7 @@
 
 									<div class="row">
 										<div class="col-xs-12">
-											<button type="button" class="btn btn-default pull-left" onClick="generateMathProgFromSimpleEditor()">{{GENERATE_MATHPROG}}</button>
+											<button type="button" class="btn btn-default pull-left" onClick="generateAMPLFromSimpleEditor()">{{GENERATE_AMPL}}</button>
 										</div>
 									</div>
 								</div>
@@ -245,10 +248,10 @@
 					</div>
 				</div>
 
-				<h2>{{MATHPROG_CODE}}</h2>
+				<h2>{{AMPL_CODE}}</h2>
 
 				<div class="row">
-					<div id="mathProg" class="col-xs-12">
+					<div id="ampl" class="col-xs-12">
 					    <textarea id="editor"></textarea>
 					</div>
 				</div>
@@ -265,7 +268,7 @@
 
 				<div class="row">&nbsp;</div>
 
-				<div class="row">
+				<!--<div class="row">
 					<div class="col-xs-12">
 						<button type="button" class="btn btn-default" onClick="copyToDataSection()">{{COPY_DATA_SECTION}}</button>
     				</div>
@@ -275,15 +278,15 @@
 
 				<div class="row">
 					<div class="col-xs-12">
-						<button type="button" class="btn btn-default" onClick="solveMathProg()">{{SOLVE_MATHPROG}}</button>
+						<button type="button" class="btn btn-default" onClick="solveAMPL()">{{SOLVE_AMPL}}</button>
     				</div>
 				</div>
 
 				<div class="row">&nbsp;</div>
 								
-				<h2>{{MATHPROG_SOLUTION}}</h2>
+				<h2>{{AMPL_SOLUTION}}</h2>
 
-				<pre id="log"/>
+				<pre id="log"/>-->
 			</div>
 
 			<div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="pleaseWaitDialog">

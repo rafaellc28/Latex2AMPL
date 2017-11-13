@@ -1,0 +1,5 @@
+% amplide/models/nlmodels/chemeq.mod
+\text{minimize } \sum_{(j,k) \in PAIRS} x_{j,k} * (c_{j,k} + \ln(x_{j,k} / \sum_{m \in J \mid (m,k) \in PAIRS}x_{m,k}))\\
+\sum_{(j,k) \in PAIRS} E_{j,k,i} * x_{j,k} - b_{i} = 0: i \in I\\
+J := 1 \cdots 18; K := 1 \cdots 17; PAIRS \in \{J,K\}; I := 1 \cdots 16\\
+xlb, b_{i} \text{ default } 0, \geq 0; x_{j,k} \in \mathbb{R}, \text{ default } 0.1, \geq xlb\\

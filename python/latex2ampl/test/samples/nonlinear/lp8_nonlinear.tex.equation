@@ -1,0 +1,13 @@
+% amplide/models/nlmodels/hs106.mod
+\text{minimize } x_{1} + x_{2} + x_{3}\\
+1 - a * (x_{4} + x_{6}) \geq 0\\
+1 - a * (x_{5} + x_{7} - x_{4}) \geq 0\\
+1 - b * (x_{8} - x_{5}) \geq 0\\
+x_{1} * x_{6} - c * x_{4} - d * x_{1} + e \geq 0\\
+x_{2} * x_{7} - f * x_{5} - x_{2} * x_{4} + f * x_{4} \geq 0\\
+x_{3} * x_{8} - g - x_{3} * x_{5} + h * x_{5} \geq 0\\
+100 \leq x_{1} \leq 10000\\
+1000 \leq x_{i} \leq 10000: i \in \{2,3\}\\
+10 \leq x_{i} \leq 1000: i \in 4 \dots 8\\
+a, b, c, d, e, f, g, h, \geq 0; x_{i} \in \mathbb{R}: i \in I\\
+N \in \mathbb{Z}, \in \mathbb{P}, := 8; I := 1 \dots N\\

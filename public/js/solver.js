@@ -40,7 +40,7 @@ function tablecb(arg, mode, data) {
     log(data);
 }
 
-window.solveMathProg = function () {
+window.solveAMPL = function () {
     start = new Date(); 
     logNode.innerText = "";
     
@@ -53,7 +53,7 @@ window.solveMathProg = function () {
             var lp = glp_create_prob();
             var tran = glp_mpl_alloc_wksp();
             
-            glp_mpl_read_model_from_string(tran, 'MathProg Model', getValueMathProgEditor());
+            glp_mpl_read_model_from_string(tran, 'AMPL Model', getValueAMPLEditor());
             
             log('\nGenerating ...');
             glp_mpl_generate(tran,null,logOutput,tablecb);
@@ -103,13 +103,13 @@ window.solveMathProg = function () {
                 }
                             
             } else {
-                throw new MathProgError((isMIP()?'MILP':'LP') + " failed.");
+                throw new AMPLError((isMIP()?'MILP':'LP') + " failed.");
             }
         } catch (err) {
             hidePleaseWait();
 
             log(err.message);
-            setCursorMathProgEditor(err.line);
+            setCursorAMPLEditor(err.line);
             return null;
         }
 

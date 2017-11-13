@@ -311,7 +311,7 @@ var initMathjaxDisplay = function () {
 		return data;
 	}
 
-	window.generateMathProg = function() {
+	window.generateAMPL = function() {
 		var data = processMathOutputLatexEditor();
 
 		if (data) {
@@ -321,7 +321,7 @@ var initMathjaxDisplay = function () {
 				url: "/", 
 				data: {latex: data},
 				success: function(result, status) {
-					updateMathProgEditor(result);
+					updateAMPLEditor(result);
 				},
 				error: function() {
 					alert(dictionary["ERROR_REQUEST"])
@@ -335,7 +335,7 @@ var initMathjaxDisplay = function () {
 
 	}
 
-	window.generateMathProgFromSimpleEditor = function() {
+	window.generateAMPLFromSimpleEditor = function() {
 		var idPreview = "mathOutput";
 		var preview = document.getElementById(idPreview);
 		if (preview.style.visibility == "hidden") {
@@ -357,7 +357,7 @@ var initMathjaxDisplay = function () {
 				url: "/", 
 				data: {latex: data},
 				success: function(result, status) {
-					updateMathProgEditor(result);
+					updateAMPLEditor(result);
 				},
 				error: function() {
 					alert(dictionary["ERROR_REQUEST"])
@@ -378,23 +378,23 @@ var initMathjaxDisplay = function () {
 
 	window.copyToDataSection = function() {
 		var data;
-		var mathProgCode = getValueMathProgEditor();
+		var amplCode = getValueAMPLEditor();
 		var dataCode = getValueDataEditor();
 
-		var idx = mathProgCode.indexOf("data;\n");
+		var idx = amplCode.indexOf("data;\n");
 		if (idx == -1) {
-			idx = mathProgCode.indexOf("end;\n");
+			idx = amplCode.indexOf("end;\n");
 		}
 
 		if (idx == -1) {
 			data = dataCode;
 		} else {
-			data = mathProgCode.substring(0, idx);
+			data = amplCode.substring(0, idx);
 			data += "data;\n\n" + dataCode + "\n\nend;\n";
 		}
 		
 		$('#collapse2').collapse("show");
-		updateMathProgEditor(data);
+		updateAMPLEditor(data);
 	}
 
 	window.formatLatexCode = function() {

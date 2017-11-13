@@ -1,0 +1,3 @@
+% amplide/models/nlmodels/griewank.mod
+\text{minimize } (x_{1}^{2} + x_{2}^{2}) / 200 - \cos(x_{1}) * \cos(x_{2} / \sqrt{2}) + 1\\
+x \in \mathbb{R}^{\geq -100, \leq 100}, := 1

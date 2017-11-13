@@ -1,5 +1,15 @@
 {
 	"samples": [
+		{"name": "AMPL/blend.mod", "number": 0, "decl": false, "nonlinear": true},
+		{"name": "AMPL/branin.mod", "number": 1, "decl": false, "nonlinear": true},
+		{"name": "AMPL/camel1.mod", "number": 2, "decl": false, "nonlinear": true},
+		{"name": "AMPL/chemeq.mod", "number": 3, "decl": false, "nonlinear": true},
+		{"name": "AMPL/chi.mod", "number": 4, "decl": false, "nonlinear": true},
+		{"name": "AMPL/gold.mod", "number": 5, "decl": false, "nonlinear": true},
+		{"name": "AMPL/griewank.mod", "number": 6, "decl": false, "nonlinear": true},
+		{"name": "AMPL/hs105.mod", "number": 7, "decl": false, "nonlinear": true},
+		{"name": "AMPL/hs106.mod", "number": 8, "decl": false, "nonlinear": true},
+		{"name": "AMPL/hs109.mod", "number": 9, "decl": false, "nonlinear": true},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},
