@@ -169,6 +169,7 @@ class CodeGenerator:
         return None, [], [], []
 
     def _getProperties(self, var):
+        
         if var in self.identifiers:
             res = self.identifiers[var]
             return res["types"], res["dim"], res["minVal"], res["maxVal"]
