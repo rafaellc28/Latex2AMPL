@@ -1,0 +1,6 @@
+% amplide/models/nlmodels/hs111.mod
+\text{minimize } \sum_{i \in I} \exp(x_{i}) * \left(c_{i} + x_{i} - \ln\left(\sum_{k \in I} \exp(x_{k})\right)\right)\\
+\exp(x_{1}) + 2 * \exp(x_{2}) + 2 * \exp(x_{3}) + \exp(x_{6}) + \exp(x_{10}) = 2\\
+\exp(x_{4}) + 2 * \exp(x_{5}) + \exp(x_{6}) + \exp(x_{7}) = 1\\
+\exp(x_{3}) + \exp(x_{7}) + \exp(x_{8}) + 2 * \exp(x_{9}) + \exp(x_{10}) = 1\\
+I := 1 \dots 10; x \in \mathbb{R}^{\leq 100, \geq -100}, := -2.3\\

@@ -1,0 +1,8 @@
+% amplide/models/nlmodels/hs23.mod
+\text{minimize } x_{1} * x_{1} + x_{2} * x_{2}\\
+x_{1} + x_{2} - 1 \geq 0\\
+x_{1} * x_{1} + x_{2} * x_{2} - 1 \geq 0\\
+9 * x_{1} * x_{1} + x_{2} * x_{2} - 9 \geq 0\\
+x_{1} * x_{1} - x_{2} \geq 0\\
+x_{2} * x_{2} - x_{1} \geq 0\\
+x \in \mathbb{R}^{\geq -50, \leq 50}\\

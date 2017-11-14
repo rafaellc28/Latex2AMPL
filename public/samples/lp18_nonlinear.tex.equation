@@ -1,0 +1,5 @@
+% amplide/models/nlmodels/hs5.mod
+\text{minimize } \sin(x_{1} + x_{2}) + (x_{1} - x_{2})^{2} - 1.5 * x_{1} + 2.5 * x_{2} + 1//\\
+-1.5 \leq x_{1} \leq 4//\\
+-3 \leq x_{2} \leq 3\\
+x \in \mathbb{R}\\

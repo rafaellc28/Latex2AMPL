@@ -1,0 +1,6 @@
+% amplide/models/nlmodels/hs112.mod
+\text{minimize } \sum_{i \in I} x_{i} * (c_{i} + \ln(x_{i} / (\sum_{k \in I} x_{k})))\\
+x_{1} + 2 * x_{2} + 2 * x_{3} + x_{6} + x_{10} = 2\\
+x_{4} + 2 * x_{5} + x_{6} + x_{7} = 1\\
+x_{3} + x_{7} + x_{8} + 2 * x_{9} + x_{10} = 1.5\\
+I := 1 \dots 10; x \in \mathbb{R}^{\geq 1e-6}, := .1\\

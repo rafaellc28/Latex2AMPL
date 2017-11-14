@@ -1,0 +1,6 @@
+% amplide/models/nlmodels/hs15.mod
+\text{minimize } 100 * (x_{2} - x_{1}^{2})^{2} + (1 - x_{1})^{2}\\
+x_{1} * x_{2} - 1 \geq 0\\
+x_{1} + x_{2} * x_{2} \geq 0\\
+x_{1} \leq .5\\
+x \in \mathbb{R}

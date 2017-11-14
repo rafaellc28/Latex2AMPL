@@ -538,3 +538,33 @@ def test_lp8_nonlinear():
 
 def test_lp9_nonlinear():
 	check_test_nonlinear_num(9)
+
+def test_lp10_nonlinear():
+	check_test_nonlinear_num(10)
+
+def test_lp11_nonlinear():
+	check_test_nonlinear_num(11)
+
+def test_lp12_nonlinear():
+	check_test_nonlinear_num(12)
+
+def test_lp13_nonlinear():
+	check_test_nonlinear_num(13)
+
+def test_lp14_nonlinear():
+	check_test_nonlinear_num(14)
+
+def test_lp15_nonlinear():
+	check_test_nonlinear_num(15)
+
+def test_lp16_nonlinear():
+	check_test_nonlinear_num(16)
+
+def test_lp17_nonlinear():
+	check_test_nonlinear_num(17)
+
+def test_lp18_nonlinear():
+	check_test_nonlinear_num(18)
+
+def test_lp19_nonlinear():
+	check_test_nonlinear_num(19)

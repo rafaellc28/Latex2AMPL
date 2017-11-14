@@ -1,0 +1,9 @@
+% amplide/models/nlmodels/hs44.mod
+\text{minimize } x_{1} - x_{2} - x_{3} - x_{1} * x_{3} + x_{1} * x_{4} + x_{2} * x_{3} - x_{2} * x_{4}\\
+8 - x_{1} - 2 * x_{2} \geq 0\\
+12 - 4 * x_{1} - x_{2} \geq 0\\
+12 - 3 * x_{1} - 4 * x_{2} \geq 0\\
+8 - 2 * x_{3} - x_{4} \geq 0\\
+8 - x_{3} - 2 * x_{4} \geq 0\\
+5 - x_{3} - x_{4} \geq 0\\
+x \in \mathbb{R}^{+}\\
