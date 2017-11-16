@@ -15,7 +15,7 @@ def check_test(name1, name2):
 	expected = expected[:-1] # remove last \n
 
 	doc = f1.read()
-	#compiler = Compiler()
+	
 	actual = compiler.compile(doc)
 
 	expected=expected.splitlines(True)

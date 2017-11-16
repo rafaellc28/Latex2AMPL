@@ -7,7 +7,7 @@
 170 \leq x_{5} \leq 240\\
 5 \leq x_{i} \leq 25: i \in 6 \dots 8\\
 I := 1 \dots 235; PI := 4*\arctan(1)\\
-y_{i}, a_{i}, b_{i}, c_{i}: i \in I; a, b, c \in \mathbb{R}; x_{i} \in \mathbb{R}: i \in 1 \dots 8\\
-a_{i}, = x_{1} / x_{6} * \exp(-(y_{i} - x_{3})^{2} / (2 * x_{6}^{2}))\\
-b_{i}, = x_{2} / x_{7} * \exp(-(y_{i} - x_{4})^{2} / (2 * x_{7}^{2}))\\
-c_{i}, = (1 - x_{2} - x_{1}) / x_{8} * \exp(-(y_{i} - x_{5})^{2} / (2 * x_{8}^{2}))
+y_{i}, a_{i}, b_{i}, c_{i}: i \in I; x_{i} \in \mathbb{R}: i \in 1 \dots 8\\
+a_{i} = x_{1} / x_{6} * \exp(-(y_{i} - x_{3})^{2} / (2 * x_{6}^{2})), \in \mathbb{R}\\
+b_{i} = x_{2} / x_{7} * \exp(-(y_{i} - x_{4})^{2} / (2 * x_{7}^{2})), \in \mathbb{R}\\
+c_{i} = (1 - x_{2} - x_{1}) / x_{8} * \exp(-(y_{i} - x_{5})^{2} / (2 * x_{8}^{2})), \in \mathbb{R}

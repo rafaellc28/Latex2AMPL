@@ -1,25 +1,19 @@
 #!/usr/bin/python -tt
 
-import ply.lex as lex
-import ply.yacc as yacc
-import lexer as lexer
-import parser as parser
 import re
 import logging
 
 from SyntaxException import *
 from CodeSetup import *
 from CodeGenerator import *
+from Identifier import *
+
+from objects import *
 
 class Compiler:
 
 	def __init__(self, DEBUG = False):
 		self.DEBUG = DEBUG
-
-		#self.lexer = Lexer()
-		self.lexer = lex.lex(module=lexer)
-		self.parser = yacc.yacc(module=parser)
-		self.parser.defaulted_states = {}
 
 		# Set up a logging object
 		logging.basicConfig(
@@ -32,15 +26,54 @@ class Compiler:
 
 	def compile(self, doc):
 
-		self.lexer.lineno = 1
 		res = ""
 		doc = re.sub(',\s*\\\\\\\\', ', ', doc)
 		lines = doc.split("\n")
 		result = None
+		parsing = True
+		msg = None
+		new_comma = []
 
-		try:
-			result = self.parser.parse(doc, debug=self.log)
-		except SyntaxException as msg:
+		# Parser parses 'Identifier GE|LE|EQ Expression' as a Constraint, but sometimes it is part of a Declaration, like in 'Identifier GE Number, := 1 ...'.
+		# This causes a syntax error to be thrown for such Declarations. In order to solve this, a Declaration must instead be declared as in 
+		# 'Identifier, GE Number, := 1 ...' (with a COMMA after Identifier). 
+		# This loop tries to recover a parser error thrown by such situation: 
+		# first check whether this is the reason for the error, if so, then automatically insert a COMMA after the Identifier and rerun the parser.
+		while parsing:
+			parsing = False
+			lexer.lineno = 1
+			
+			try:
+				result = parser.parse(doc, debug=self.log)
+			except SyntaxException as msg:
+				stack = parser.symstack # stack of the parser when the error was thrown
+				
+				for i in range(len(stack)-1, 0, -1):
+					if (isinstance(stack[i-1], Identifier) or str(stack[i-1]) == "Identifier") and isinstance(stack[i], lex.LexToken) and stack[i].type in ['EQ', 'GE', 'LE']:
+						pos = stack[i].lexpos
+						data = doc[:pos]
+						data += "," + doc[pos:]
+						new_comma.append(pos)
+
+						doc = data
+						parsing = True
+
+						break
+
+
+				lex_token = msg[-1] # the token that caused the error
+				if isinstance(lex_token, lex.LexToken) and lex_token.type in ['EQ', 'GE', 'LE'] and (isinstance(stack[-1], Identifier) or str(stack[-1]) == "Identifier"):
+					pos = lex_token.lexpos
+					data = doc[:pos]
+					data += "," + doc[pos:]
+					new_comma.append(pos)
+
+					doc = data
+					parsing = True
+					
+
+		if not result:
+
 			if msg[0] == "EOF":
 				res += "Syntax error at EOF."
 			else:
@@ -53,13 +86,22 @@ class Compiler:
 					totalCharLinesAbove += len(lines[lineNum])+1
 					lineNum -= 1
 				
-				pos = msg[1]-totalCharLinesAbove
+				# If a COMMA was inserted after an Identifier (see above), 
+				# then the real position of the character that resulted in the error must be discounted by this COMMA
+				# (the original document parsed does not have this automatically inserted COMMA)
+				pos_aux = msg[1]
+				less_pos = 0
+				for p in new_comma:
+					if pos_aux > p:
+						less_pos += 1
+
+				pos = pos_aux-less_pos-totalCharLinesAbove
 				if totalCharLinesAbove > 0:
 					pos += 1
 
 				res += "Syntax error at line %d, position %d: '%s'.\nContext: %s." % (msg[0], pos, msg[2], line)
 
-		if result:
+		else:
 			if not self.DEBUG:
 				try:
 					codeGenerator = CodeGenerator()

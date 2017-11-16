@@ -9,5 +9,5 @@ x_{3} * x_{8} - g - x_{3} * x_{5} + h * x_{5} \geq 0\\
 100 \leq x_{1} \leq 10000\\
 1000 \leq x_{i} \leq 10000: i \in \{2,3\}\\
 10 \leq x_{i} \leq 1000: i \in 4 \dots 8\\
-a, b, c, d, e, f, g, h, \geq 0; x_{i} \in \mathbb{R}: i \in I\\
+a, b, c, d, e, f, g, h \geq 0; x_{i} \in \mathbb{R}: i \in I\\
 N \in \mathbb{Z}, \in \mathbb{P}, := 8; I := 1 \dots N\\

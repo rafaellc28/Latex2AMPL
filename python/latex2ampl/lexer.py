@@ -4,7 +4,7 @@
 
 from Number import *
 from String import *
-#from Infinity import *
+
 import sys
 import re
 from SyntaxException import *
