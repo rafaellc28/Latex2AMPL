@@ -323,7 +323,7 @@ var initMathjaxDisplay = function () {
 				success: function(result, status) {
 					updateAMPLEditor(result);
 				},
-				error: function() {
+				error: function(event, jqxhr, settings, thrownError) {
 					alert(dictionary["ERROR_REQUEST"])
 				},
 				complete: function() {
@@ -359,7 +359,7 @@ var initMathjaxDisplay = function () {
 				success: function(result, status) {
 					updateAMPLEditor(result);
 				},
-				error: function() {
+				error: function(event, jqxhr, settings, thrownError) {
 					alert(dictionary["ERROR_REQUEST"])
 				},
 				complete: function() {
