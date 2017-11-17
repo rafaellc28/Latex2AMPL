@@ -100,19 +100,17 @@ var initMathjaxDisplay = function () {
 	//  so we don't see a flash as the subjMath is cleared and replaced.
 	//
 	window.UpdateSubjectiveMath = function (event) {
-		event.preventDefault();
-
+		if (event) {
+			event.preventDefault();
+		}
+		
 		var TeX = prepareTex();
 
 		if (!TeX || !TeX.trim()) { return; }
 
 		var keyTeX = getConstraintKey();
 		addConstraint(keyTeX, TeX);
-
-		$("#subjectiveMathInput ol").html(mountConstraintsInput());
-		$("#subjMathInput").val("");
-
-		UpdateSubjectiveMathOutput(mountConstraintsOutput());
+		mountConstraints();
 
 		$("div.MathJax_Display").css("text-align", "left");
 
@@ -244,6 +242,16 @@ var initMathjaxDisplay = function () {
 	    EDITING = key;
 	}
 
+	window.mountConstraints = function() {
+		$("#subjectiveMathInput ol").html(mountConstraintsInput());
+		$("#subjMathInput").val("");
+		
+		UpdateSubjectiveMathOutput(mountConstraintsOutput());
+		
+	    $("#icon-add-constraint").show();
+	    $("#icon-update-constraint").hide();
+	}
+
 	window.updateConstraintMath = function(event) {
 		event.preventDefault();
 		
@@ -252,15 +260,8 @@ var initMathjaxDisplay = function () {
 		if (!TeX || !TeX.trim()) { return; }
 
 		updateConstraint(EDITING, TeX);
-
-		$("#subjectiveMathInput ol").html(mountConstraintsInput());
-		$("#subjMathInput").val("");
+		mountConstraints();
 		
-		UpdateSubjectiveMathOutput(mountConstraintsOutput());
-		
-	    $("#icon-add-constraint").show();
-	    $("#icon-update-constraint").hide();
-	    
 	    EDITING = null;
 	}
 

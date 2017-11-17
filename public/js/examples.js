@@ -42,6 +42,7 @@ var initExample = function(sample) {
 	CONSTRAINTS = [];
 	$("#objMathInput").val("");
 	$("#objMathInput").blur();
+	mountConstraints();
 
 	for (i = c; i < lines.length; i++) {
 		
