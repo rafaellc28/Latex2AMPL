@@ -1,0 +1,4 @@
+% amplide/models/nlmodels/shekel.mod
+\text{minimize } -\sum_{i \in I} 1 / (\sum_{j \in J} (x_{j} - a_{i,j})^{2} + c_{i})\\
+x_{j} := j, \in \mathbb{R}^{\leq 10, \geq 0}: j \in J\\
+I := 1 \dots 5; J := 1 \dots 4\\

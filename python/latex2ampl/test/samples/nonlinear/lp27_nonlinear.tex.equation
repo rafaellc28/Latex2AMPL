@@ -1,0 +1,6 @@
+% amplide/models/nlmodels/osborne1.mod
+\text{minimize } \sum_{j \in J} (y_{j} - (x_{1} + x_{2}*\exp(-t_{j}*x_{4}) + x_{3}*\exp(-t_{j}*x_{5})))^{2}\\
+N, M > 0, \in \mathbb{Z}, \in \mathbb{P}\\
+I := 1 \dots N; J := 1 \dots M\\
+t_{j} := 10 * (j - 1): j \in J\\
+x_{i} \in \mathbb{R}^{\geq -10, \leq 10}: i \in I\\

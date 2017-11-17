@@ -1,0 +1,4 @@
+% amplide/models/nlmodels/hs6.mod
+\text{minimize } (1 - x_{1})^{2}\\
+10 * (x_{2} - x_{1}^{2}) = 0\\
+x \in \mathbb{R}

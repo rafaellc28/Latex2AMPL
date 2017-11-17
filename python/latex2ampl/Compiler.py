@@ -35,10 +35,10 @@ class Compiler:
 		new_comma = []
 
 		# Parser parses 'Identifier GE|LE|EQ Expression' as a Constraint, but sometimes it is part of a Declaration, like in 'Identifier GE Number, := 1 ...'.
-		# This causes a syntax error to be thrown for such Declarations. In order to solve this, a Declaration must instead be declared as in 
-		# 'Identifier, GE Number, := 1 ...' (with a COMMA after Identifier). 
-		# This loop tries to recover a parser error thrown by such situation: 
-		# first check whether this is the reason for the error, if so, then automatically insert a COMMA after the Identifier and rerun the parser.
+		# This kind of Declaration causes a syntax error to be thrown. If, instead, this kind of Declaration is declared as in 
+		# 'Identifier, GE Number, := 1 ...' (with a COMMA after Identifier), then no error occur. 
+		# This loop tries to recover from a parser error thrown by such situation: 
+		# first check whether this is the cause of the error, if so, then automatically insert a COMMA after the Identifier and rerun the parser.
 		while parsing:
 			parsing = False
 			lexer.lineno = 1
@@ -59,8 +59,7 @@ class Compiler:
 						parsing = True
 
 						break
-
-
+						
 				lex_token = msg[-1] # the token that caused the error
 				if isinstance(lex_token, lex.LexToken) and lex_token.type in ['EQ', 'GE', 'LE'] and (isinstance(stack[-1], Identifier) or str(stack[-1]) == "Identifier"):
 					pos = lex_token.lexpos
@@ -70,7 +69,6 @@ class Compiler:
 
 					doc = data
 					parsing = True
-					
 
 		if not result:
 
@@ -87,8 +85,8 @@ class Compiler:
 					lineNum -= 1
 				
 				# If a COMMA was inserted after an Identifier (see above), 
-				# then the real position of the character that resulted in the error must be discounted by this COMMA
-				# (the original document parsed does not have this automatically inserted COMMA)
+				# then the real position of the character that caused the error must be discounted by this COMMA
+				# (the original document has not this automatically inserted COMMA)
 				pos_aux = msg[1]
 				less_pos = 0
 				for p in new_comma:

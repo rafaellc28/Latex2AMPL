@@ -53,7 +53,6 @@ def check_test_nonlinear_num(num, with_declarations = False):
 
 	check_test(name1, name2)
 
-
 # Linear Programming
 def test_lp0():
 	check_test_num(0)
@@ -568,3 +567,54 @@ def test_lp18_nonlinear():
 
 def test_lp19_nonlinear():
 	check_test_nonlinear_num(19)
+
+def test_lp20_nonlinear():
+	check_test_nonlinear_num(20)
+
+def test_lp21_nonlinear():
+	check_test_nonlinear_num(21)
+
+def test_lp22_nonlinear():
+	check_test_nonlinear_num(22)
+
+def test_lp23_nonlinear():
+	check_test_nonlinear_num(23)
+
+def test_lp24_nonlinear():
+	check_test_nonlinear_num(24)
+
+def test_lp25_nonlinear():
+	check_test_nonlinear_num(25)
+
+def test_lp26_nonlinear():
+	check_test_nonlinear_num(26)
+
+def test_lp27_nonlinear():
+	check_test_nonlinear_num(27)
+
+def test_lp28_nonlinear():
+	check_test_nonlinear_num(28)
+
+def test_lp29_nonlinear():
+	check_test_nonlinear_num(29)
+
+def test_lp30_nonlinear():
+	check_test_nonlinear_num(30)
+
+def test_lp31_nonlinear():
+	check_test_nonlinear_num(31)
+
+def test_lp32_nonlinear():
+	check_test_nonlinear_num(32)
+
+def test_lp33_nonlinear():
+	check_test_nonlinear_num(33)
+
+def test_lp34_nonlinear():
+	check_test_nonlinear_num(34)
+
+def test_lp35_nonlinear():
+	check_test_nonlinear_num(35)
+
+def test_lp36_nonlinear():
+	check_test_nonlinear_num(36)

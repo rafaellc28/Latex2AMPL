@@ -1,0 +1,7 @@
+% amplide/models/nlmodels/s383.mod
+\text{minimize } \sum_{i \in I} a_{i} / x_{i}\\
+\sum_{i \in I} c_{i} * x_{i} = 1\\
+x_{i} \leq 0.04: i \in \{1 \dots 5\}\\
+x_{i} \leq 0.03: i \in \{6 \dots 14\}\\
+x_{i} := 0.01, \in \mathbb{R}^{+}: i \in I\\
+I := 1 \dots 14\\

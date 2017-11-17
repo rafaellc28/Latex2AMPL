@@ -1,0 +1,2 @@
+% amplide/models/nlmodels/price.mod
+\text{minimize } (2 * x_{1}^{3} * x_{2} - x_{2}^{3})^{2} + (6*x_{1} - x_{2}^{2} + x_{2})^{2}: x \in \mathbb{R}^{\geq -10, \leq 10}\\

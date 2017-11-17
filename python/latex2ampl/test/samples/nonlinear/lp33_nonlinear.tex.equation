@@ -1,0 +1,4 @@
+% amplide/models/nlmodels/schwefel.mod
+\text{minimize } \sum_{i \in I} x_{i}^{10}\\
+x := .4, \in \mathbb{R}^{\leq 0.4, \geq -0.5}\\
+I := 1 \dots 5\\

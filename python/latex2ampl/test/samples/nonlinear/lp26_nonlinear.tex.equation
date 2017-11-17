@@ -1,0 +1,8 @@
+% amplide/models/nlmodels/ljcluster.mod
+\text{minimize } \sum_{(i,j) \in P} (r_{i,j}^{-12} - 2*r_{i,j}^{-6})\\
+d > 0, \in \mathbb{Z}, \in \mathbb{P}, \text{ default } 2\\
+N > 0, \in \mathbb{Z}, \in \mathbb{P}, \text{ default } 10\\
+P := \{i \in I, j \in 1 \dots i-1\}\\
+D := 1 \dots d; I := \{1 \dots N\}\\
+x_{i,d} \in \mathbb{R}, \text{ default } i: i \in I, k \in D;\\
+r = \sqrt{\sum_{k \in D} (x_{i,k} - x_{j,k})^{2}}, \in \mathbb{R}\\

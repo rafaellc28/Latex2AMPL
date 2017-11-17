@@ -1,0 +1,3 @@
+% amplide/models/nlmodels/levy3.mod
+\text{minimize } - \prod_{i \in I} \sum_{j \in 1 \dots 5} (j*\cos((j + 1)*x_{i} + j))\\
+x \in \mathbb{R}^{\leq 10, \geq -10}; I := 1 \dots 2\\

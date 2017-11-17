@@ -1,0 +1,6 @@
+% amplide/models/nlmodels/s324.mod
+\text{minimize } 0.01 * x_{1}^{2} + x_{2}^{2}\\
+x_{1} * x_{2} - 25 \geq 0\\
+x_{1}^{2} + x_{2}^{2} - 25 \geq 0\\
+x_{1} \geq 2\\
+x := 2, \in \mathbb{R}

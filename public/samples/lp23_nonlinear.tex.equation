@@ -1,0 +1,5 @@
+% amplide/models/nlmodels/hs8.mod
+\text{minimize } -1\\
+x_{1}*x_{1} + x_{2}*x_{2} = 25\\
+x_{1}*x_{2} = 9\\
+x \in \mathbb{R}\\

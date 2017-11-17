@@ -1,0 +1,4 @@
+% amplide/models/nlmodels/kowalik.mod
+\text{minimize } \sum_{i \in I} (a_{i} - x_{1} * (b_{i}^{2} + b_{i}*x_{2}) / (b_{i}^{2} + b_{i}*x_{3} + x_{4}))^{2}\\
+I := \{1 \dots 11\}; b_{i} := 1/c_{i}: i \in I\\
+x \in \mathbb{R}^{\leq 0.42, \geq 0}, := .42\\
