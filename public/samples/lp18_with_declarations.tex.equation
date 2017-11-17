@@ -5,4 +5,4 @@
 x_{i,j} \leq \min(supply_{i}, demand_{j}) * y_{i,j}: i \in I, j \in J\\
 y_{i,j} \in \mathbb{B}; x_{i,j} \in \mathbb{R}^{+}\\
 m, n \in \mathbb{Z}, \in \mathbb{P}, > 0; I := 1 \ldots m; J := 1 \ldots n\\
-supply_{i}, demand_{j}, varcost_{i,j}, fixcost_{i,j}, \geq 0\\
+supply_{i}, demand_{j}, varcost_{i,j}, fixcost_{i,j} \geq 0\\
