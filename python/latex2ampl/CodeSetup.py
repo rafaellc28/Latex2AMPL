@@ -470,6 +470,13 @@ class CodeSetup:
         """
         node.value.setupEnvironment(self)
 
+    def setupEnvironment_FractionalNumericExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this numeric expression
+        """
+        node.numerator.setupEnvironment(self)
+        node.denominator.setupEnvironment(self)
+
     def setupEnvironment_NumericExpressionBetweenParenthesis(self, node):
         """
         Generate the AMPL code for the identifiers and sets used in this numeric expression
