@@ -1,15 +1,15 @@
 from GenObj import *
 
 class GenProperties(GenObj):
-    def __init__(self, name, domains = [], dimension = None, minVal = None, maxVal = None, default = None, attributes = None):
+    def __init__(self, name, domains = [], dimension = None, minVal = {}, maxVal = {}, default = None, attributes = None):
         """
         Constructor
         
         :param name       : string
         :param domains    : [GenItemDomain]
         :param dimension  : int
-        :param minVal     : float
-        :param maxVal     : float
+        :param minVal     : {int: int} - {index: minVal}
+        :param maxVal     : {int: int} - {index: maxVal}
         :param default    : default
         :param attributes : attributes
         """
@@ -22,9 +22,17 @@ class GenProperties(GenObj):
         else:
             self.domains = domains
 
+        if minVal == None or len(minVal) == 0:
+            self.minVal = {}
+        else:
+            self.minVal = minVal
+
+        if maxVal == None or len(maxVal) == 0:
+            self.maxVal = {}
+        else:
+            self.maxVal = maxVal
+
         self.dimension = dimension
-        self.minVal = minVal
-        self.maxVal = maxVal
         self.default = default
         self.attributes = attributes
 
@@ -60,11 +68,31 @@ class GenProperties(GenObj):
     def getMinVal(self):
         return self.minVal
 
+    def setMinValByIndex(self, index, val):
+        if not index in self.minVal or val < self.minVal[index]:
+            self.minVal[index] = val
+
+    def getMinValByIndex(self, index):
+        if index in self.minVal:
+            return self.minVal[index]
+
+        return None
+
     def setMaxVal(self, maxVal):
         self.maxVal = maxVal
 
     def getMaxVal(self):
         return self.maxVal
+
+    def setMaxValByIndex(self, index, val):
+        if not index in self.maxVal or val > self.maxVal[index]:
+            self.maxVal[index] = val
+            
+    def getMaxValByIndex(self, index):
+        if index in self.maxVal:
+            return self.maxVal[index]
+
+        return None
 
     def getDefault(self):
         return self.default
@@ -77,14 +105,3 @@ class GenProperties(GenObj):
 
     def setAttributes(self, attributes):
         self.attributes = attributes
-
-    '''
-    def addAttributes(self, attributes):
-        if self.attributes == None:
-            self.attributes = []
-
-        if isinstance(attributes, list):
-            self.attributes += attributes
-        else:
-            self.attributes.append(attributes)
-    '''

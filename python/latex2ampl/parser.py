@@ -37,8 +37,8 @@ precedence = (
     ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE'),
     ('left', 'NUMBER', 'INFINITY'),
     ('left', 'OR', 'AND', 'NOT'),
-    ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF'),
+    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF', 'ASSIGN'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
     ('left', 'UNDERLINE'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
@@ -349,15 +349,6 @@ def p_Declaration(t):
                    | SymbolicExpression COLON IndexingExpression
                    | DeclarationExpression'''
 
-    #if len(t) > 4:
-    #    t[4].setStmtIndexing(True)
-    #    if isinstance(t[1], ValueList):
-    #      t[1] = DeclarationExpression(t[1], [])
-    #    elif isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
-    #      t[1] = DeclarationExpression(ValueList([t[1]]), [])
-    #
-    #    t[0] = Declaration(t[1], t[4])
-
     if len(t) > 3:
         t[3].setStmtIndexing(True)
         if isinstance(t[1], ValueList):
@@ -426,26 +417,26 @@ def p_DeclarationExpression(t):
                              | NumericExpression DIMEN SymbolicExpression
                              | Identifier DIMEN SymbolicExpression
                              | SymbolicExpression DIMEN SymbolicExpression
-                             | ValueList COLON EQ NumericExpression
-                             | ValueList COLON EQ Identifier
-                             | NumericExpression COLON EQ NumericExpression
-                             | NumericExpression COLON EQ Identifier
-                             | Identifier COLON EQ NumericExpression
-                             | Identifier COLON EQ Identifier
-                             | SymbolicExpression COLON EQ NumericExpression
-                             | SymbolicExpression COLON EQ Identifier
-                             | ValueList COLON EQ SymbolicExpression
-                             | NumericExpression COLON EQ SymbolicExpression
-                             | Identifier COLON EQ SymbolicExpression
-                             | SymbolicExpression COLON EQ SymbolicExpression
-                             | ValueList COLON EQ SetExpression
-                             | ValueList COLON EQ Range
-                             | NumericExpression COLON EQ SetExpression
-                             | NumericExpression COLON EQ Range
-                             | Identifier COLON EQ SetExpression
-                             | Identifier COLON EQ Range
-                             | SymbolicExpression COLON EQ SetExpression
-                             | SymbolicExpression COLON EQ Range
+                             | ValueList ASSIGN NumericExpression
+                             | ValueList ASSIGN Identifier
+                             | NumericExpression ASSIGN NumericExpression
+                             | NumericExpression ASSIGN Identifier
+                             | Identifier ASSIGN NumericExpression
+                             | Identifier ASSIGN Identifier
+                             | SymbolicExpression ASSIGN NumericExpression
+                             | SymbolicExpression ASSIGN Identifier
+                             | ValueList ASSIGN SymbolicExpression
+                             | NumericExpression ASSIGN SymbolicExpression
+                             | Identifier ASSIGN SymbolicExpression
+                             | SymbolicExpression ASSIGN SymbolicExpression
+                             | ValueList ASSIGN SetExpression
+                             | ValueList ASSIGN Range
+                             | NumericExpression ASSIGN SetExpression
+                             | NumericExpression ASSIGN Range
+                             | Identifier ASSIGN SetExpression
+                             | Identifier ASSIGN Range
+                             | SymbolicExpression ASSIGN SetExpression
+                             | SymbolicExpression ASSIGN Range
                              | ValueList LT NumericExpression
                              | ValueList LT Identifier
                              | NumericExpression LT NumericExpression
@@ -488,9 +479,6 @@ def p_DeclarationExpression(t):
                              | SymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList'''
 
-    if len(t) > 3 and isinstance(t[3], Identifier):
-      t[3] = SetExpressionWithValue(t[3])    
-
     if isinstance(t[1], DeclarationExpression):
       if t[2] == ",":
         t[1].addAttribute(t[3])
@@ -504,15 +492,21 @@ def p_DeclarationExpression(t):
       if t[2] == ",":
         attr = t[3]
       elif t[2] == "\\in":
+        if isinstance(t[3], Identifier):
+          t[3] = SetExpressionWithValue(t[3])
+
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
       elif re.search(r"\\subseteq|\\subset", t[2]):
+        if isinstance(t[3], Identifier):
+          t[3] = SetExpressionWithValue(t[3])
+
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
       elif re.search(r"\\text\{\s*default\s*\}", t[2]):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DF)
       elif re.search(r"\\text\{\s*dimen\s*\}", t[2]):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
-      elif t[2] == ":":
-        attr = DeclarationAttribute(t[4], DeclarationAttribute.ST)
+      elif t[2] == ":=":
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
       elif t[2] == "<":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.LT)
       elif t[2] == ">":
@@ -549,11 +543,11 @@ def p_DeclarationAttribute(t):
                           | DIMEN NumericExpression
                           | DIMEN Identifier
                           | DIMEN SymbolicExpression
-                          | COLON EQ NumericExpression
-                          | COLON EQ Identifier
-                          | COLON EQ SymbolicExpression
-                          | COLON EQ SetExpression
-                          | COLON EQ Range
+                          | ASSIGN NumericExpression
+                          | ASSIGN Identifier
+                          | ASSIGN SymbolicExpression
+                          | ASSIGN SetExpression
+                          | ASSIGN Range
                           | LT NumericExpression
                           | LT Identifier
                           | LT SymbolicExpression
@@ -583,12 +577,13 @@ def p_DeclarationAttribute(t):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
+
   elif re.search(r"\\text\{\s*default\s*\}", t[1]):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DF)
   elif re.search(r"\\text\{\s*dimen\s*\}", t[1]):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
-  elif t[1] == ":":
-    t[0] = DeclarationAttribute(t[3], DeclarationAttribute.ST)
+  elif t[1] == ":=":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
   elif t[1] == "<":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LT)
   elif t[1] == "\\leq":
@@ -1373,6 +1368,13 @@ def p_NumericExpression(t):
     else:
       t[0] = ValuedNumericExpression(t[1])
 
+def p_FractionalNumericExpression(t):
+    '''NumericExpression : FRAC LBRACE Identifier RBRACE LBRACE Identifier RBRACE
+                         | FRAC LBRACE Identifier RBRACE LBRACE NumericExpression RBRACE
+                         | FRAC LBRACE NumericExpression RBRACE LBRACE Identifier RBRACE
+                         | FRAC LBRACE NumericExpression RBRACE LBRACE NumericExpression RBRACE'''
+    t[0] = FractionalNumericExpression(t[3], t[6])
+
 def p_FunctionNumericExpression(t):
     '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
                          | SQRT LBRACE Identifier RBRACE
@@ -1476,9 +1478,17 @@ def p_FunctionNumericExpression(t):
                          | NORMAL01 LPAREN RPAREN
                          | CAUCHY LPAREN RPAREN
                          | EXPONENTIAL LPAREN RPAREN
-                         | TIME LPAREN RPAREN'''
+                         | TIME LPAREN RPAREN
+                         | ID LPAREN Identifier RPAREN
+                         | ID LPAREN SymbolicExpression RPAREN
+                         | ID LPAREN NumericExpression RPAREN
+                         | ID LPAREN ValueList RPAREN
+                         | ID LPAREN RPAREN'''
 
-    if t[1] == "card":
+    if t.slice[1].type == "ID":
+        op = ID(t[1])
+
+    elif t[1] == "card":
         op = NumericExpressionWithFunction.CARD
 
         if not isinstance(t[3], SetExpression):
@@ -1609,12 +1619,6 @@ def p_ConditionalNumericExpression(t):
     t[0] = ConditionalNumericExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
 
-#def p_NumericOrSymbolicExpression(t):
-#    '''NumericOrSymbolicExpression : NumericExpression
-#                                   | SymbolicExpression'''
-#    t[0] = t[1]
-
-
 def p_Range(t):
     '''Range : NumericExpression DOTS NumericExpression BY NumericExpression
              | NumericExpression DOTS NumericExpression BY Identifier
@@ -1636,14 +1640,14 @@ def p_Range(t):
 
 def p_Identifier(t):
     '''Identifier : ID UNDERLINE LBRACE ValueList RBRACE
-                | ID UNDERLINE LBRACE NumericExpression RBRACE
-                | ID UNDERLINE LBRACE Identifier RBRACE
-                | ID UNDERLINE LBRACE SymbolicExpression RBRACE
-                | ID LBRACKET ValueList RBRACKET
-                | ID LBRACKET NumericExpression RBRACKET
-                | ID LBRACKET Identifier RBRACKET
-                | ID LBRACKET SymbolicExpression RBRACKET
-                | ID'''
+                  | ID UNDERLINE LBRACE NumericExpression RBRACE
+                  | ID UNDERLINE LBRACE Identifier RBRACE
+                  | ID UNDERLINE LBRACE SymbolicExpression RBRACE
+                  | ID LBRACKET ValueList RBRACKET
+                  | ID LBRACKET NumericExpression RBRACKET
+                  | ID LBRACKET Identifier RBRACKET
+                  | ID LBRACKET SymbolicExpression RBRACKET
+                  | ID'''
 
     if len(t) > 5:
         if isinstance(t[4], ValueList):

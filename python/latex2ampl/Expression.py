@@ -3,9 +3,10 @@ class Expression:
     Class representing a expression node in the AST of a MLP
     """
     def __init__(self):
-	    self.indice = -1
-	    self.varName = None
-	    self.varList = None
+        self.indice = -1
+        self.identifier = None
+        self.identifierName = None
+        self.identifierList = None
 
     def getSymbol(self):
         return self
@@ -17,19 +18,25 @@ class Expression:
         return 1
 
     def getIndice(self):
-    	return self.indice
+        return self.indice
 
     def setIndice(self, indice):
-    	self.indice = indice
+        self.indice = indice
 
-    def getVarName(self):
-    	return self.varName
+    def getIdentifier(self):
+        return self.identifier
 
-    def setVarName(self, varName):
-    	self.varName = varName
+    def setIdentifier(self, identifier):
+        self.identifier = identifier
 
-    def getVarList(self):
-    	return self.varList
+    def getIdentifierName(self):
+        return self.identifierName
 
-    def setVarList(self, varList):
-    	self.varList = varList
+    def setIdentifierName(self, identifierName):
+        self.identifierName = identifierName
+
+    def getIdentifierList(self):
+        return self.identifierList
+
+    def setIdentifierList(self, identifierList):
+        self.identifierList = identifierList

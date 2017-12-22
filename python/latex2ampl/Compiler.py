@@ -27,7 +27,7 @@ class Compiler:
 	def compile(self, doc):
 
 		res = ""
-		doc = re.sub(',\s*\\\\\\\\', ', ', doc)
+		#doc = re.sub(',\s*\\\\\\\\', ', ', doc)
 		lines = doc.split("\n")
 		result = None
 		parsing = True

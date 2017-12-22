@@ -5,6 +5,15 @@
 from Number import *
 from String import *
 
+from IntegerSet import *
+from RealSet import *
+from SymbolicSet import *
+from LogicalSet import *
+from BinarySet import *
+from ParameterSet import *
+from VariableSet import *
+from SetSet import *
+
 import sys
 import re
 from SyntaxException import *
@@ -63,6 +72,7 @@ tokens = [
    'NATURALSET',
    'NATURALSETWITHONELIMIT',
    'NATURALSETWITHTWOLIMITS',
+   'FRAC',
    'DEFAULT',
    'SETOF',
    'DIMEN',
@@ -79,7 +89,6 @@ tokens = [
    'LESS',
    'MAXIMIZE',
    'MINIMIZE',
-   #'SUBJECTTO',
    'LPAREN',
    'RPAREN',
    'LBRACE',
@@ -109,6 +118,7 @@ tokens = [
    'LN',
    'EXP',
    'MOD',
+   'ASSIGN',
    'EQ',
    'NEQ',
    'LE',
@@ -128,7 +138,6 @@ tokens = [
    'COLON',
    'DOTS',
    'AMPERSAND',
-   #'BACKSLASHES',
    'FOR',
    'WHERE',
    'ID',
@@ -146,6 +155,25 @@ tokens = [
    'SLASHES',
    'INFINITY'
 ] + list(reserved.values())
+
+def _getBound(num, exp):
+   bound = num
+   if exp != None and exp != 0:
+      bound += exp
+
+   return Number(bound)
+
+def _getOp(op):
+   if op == "\\geq":
+      op = ">="
+   elif op == "\\leq":
+      op = "<="
+
+   return op
+
+def t_ASSIGN(t):
+   r':='
+   return t
 
 def t_STRING(t):
    r'"(?:[^\\]|\\.)*?(?:"|$)|\'(?:[^\\]|\\.)*?(?:\'|$)'
@@ -241,6 +269,10 @@ def t_NEXISTS(t):
    r'\\nexists|\\not\\exists'
    return t
 
+def t_FRAC(t):
+   r'\\frac'
+   return t
+
 def t_DEFAULT(t):
    r'\\text\{\s*default\s*\}'
    return t
@@ -255,56 +287,41 @@ def t_SETOF(t):
 
 def t_PARAMETERS(t):
    r'\\mathbb{P}|\\mathbb{Param}|\\mathbb{Params}|\\mathbb{Parameter}|\\mathbb{Parameters}'
-   t.value2 = "parameters"
+   t.value2 = ParameterSet()
    return t
 
 def t_SETS(t):
    r'\\mathbb{Set}|\\mathbb{Sets}'
-   t.value2 = "sets"
+   t.value2 = SetSet()
    return t
 
 def t_VARIABLES(t):
    r'\\mathbb{V}|\\mathbb{Var}|\\mathbb{Variable}|\\mathbb{Vars}|\\mathbb{Variables}'
-   t.value2 = "variables"
+   t.value2 = VariableSet()
    return t
 
 def t_BINARYSET(t):
    r'\\mathbb{B}'
-   t.value2 = "binary"
+   t.value2 = BinarySet()
    return t
 
 def t_INTEGERSETWITHTWOLIMITS(t):
    r'\\mathbb{Z}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
 
-   domain = ""
    if m:
+
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " , >="
-      elif groups[0] == "\\leq":
-         domain += " , <="
-      else:
-         domain += " , " + groups[0]
+      firstBound  = _getBound(groups[1], groups[2])
+      secondBound = _getBound(groups[4], groups[5])
 
-      domain += " " + groups[1]
+      firstOp  = _getOp(groups[0])
+      secondOp = _getOp(groups[3])
 
-      if groups[2] != None and groups[2] != 0:
-         domain += groups[2]
-
-      if groups[3] == "\\geq":
-         domain += ", >="
-      elif groups[3] == "\\leq":
-         domain += ", <="
-      else:
-         domain += ", " + groups[3]
-      
-      domain += " " + groups[4]
-
-      if groups[5] != None and groups[5] != 0:
-         domain += groups[5]
-
-   t.value2 = "integer" + domain
+      t.value2 = IntegerSet(firstBound, firstOp, secondBound, secondOp)
 
    return t
 
@@ -312,72 +329,51 @@ def t_INTEGERSETWITHONELIMIT(t):
    r'\\mathbb{Z}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
 
-   domain = ""
    if m:
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " >="
-      elif groups[0] == "\\leq":
-         domain += " <="
-      else:
-         domain += " " + groups[0]
+      firstBound = _getBound(groups[1], groups[2])
+      firstOp = _getOp(groups[0])
 
-      domain += " " + groups[1]
-
-      if groups[2] != None and groups[2] != 0:
-         domain += groups[2]
-
-   t.value2 = "integer" + domain
+      t.value2 = IntegerSet(firstBound, firstOp, secondBound, None)
 
    return t
 
 def t_INTEGERSETPOSITIVE(t):
    r'\\mathbb{Z}[_\^]{\+}'
-   t.value2 = "integer >= 0"
+   t.value2 = IntegerSet(Number("0"), ">=", Number("Infinity"), "<=")
+
    return t
 
 def t_INTEGERSETNEGATIVE(t):
    r'\\mathbb{Z}[_\^]{-}'
-   t.value2 = "integer <= 0"
+   t.value2 = IntegerSet(Number("-Infinity"), ">=", Number("0"), "<=")
    return t
 
 def t_INTEGERSET(t):
    r'\\mathbb{Z}'
-   t.value2 = "integer"
+   t.value2 = IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<=")
    return t
 
 def t_REALSETWITHTWOLIMITS(t):
    r'\\mathbb{R}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
 
-   domain = ""
    if m:
+
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " , >="
-      elif groups[0] == "\\leq":
-         domain += " , <="
-      else:
-         domain += " , " + groups[0]
+      firstBound  = _getBound(groups[1], groups[2])
+      secondBound = _getBound(groups[4], groups[5])
 
-      domain += " " + groups[1]
+      firstOp  = _getOp(groups[0])
+      secondOp = _getOp(groups[3])
 
-      if groups[2] != None and groups[2] != 0:
-         domain += groups[2]
-
-      if groups[3] == "\\geq":
-         domain += ", >="
-      elif groups[3] == "\\leq":
-         domain += ", <="
-      else:
-         domain += ", " + groups[3]
-      
-      domain += " " + groups[4]
-
-      if groups[5] != None and groups[5] != 0:
-         domain += groups[5]
-
-   t.value2 = "realset" + domain
+      t.value2 = RealSet(firstBound, firstOp, secondBound, secondOp)
 
    return t
 
@@ -385,81 +381,50 @@ def t_REALSETWITHONELIMIT(t):
    r'\\mathbb{R}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
 
-   domain = ""
    if m:
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " >="
-      elif groups[0] == "\\leq":
-         domain += " <="
-      else:
-         domain += " " + groups[0]
+      firstBound = _getBound(groups[1], groups[2])
+      firstOp = _getOp(groups[0])
 
-      domain += " " + groups[1]
+      t.value2 = RealSet(firstBound, firstOp, secondBound, None)
 
-      if groups[2] != None and groups[2] != 0:
-         domain += groups[2]
-
-   t.value2 = "realset" + domain
    return t
 
 def t_REALSETPOSITIVE(t):
    r'\\mathbb{R}[_\^]{\+}'
-   t.value2 = "realset >= 0"
+   t.value2 = RealSet(Number("0"), ">=", Number("Infinity"), "<=")
    return t
 
 def t_REALSETNEGATIVE(t):
    r'\\mathbb{R}[_\^]{-}'
-   t.value2 = "realset <= 0"
+   t.value2 = RealSet(Number("-Infinity"), ">=", Number("0"), "<=")
    return t
 
 def t_REALSET(t):
    r'\\mathbb{R}'
-   t.value2 = "realset"
+   t.value2 = RealSet(Number("-Infinity"), ">=", Number("Infinity"), "<=")
    return t
 
 def t_NATURALSETWITHTWOLIMITS(t):
    r'\\mathbb{N}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?\s*,\s*([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
    
-   domain = ""
    if m:
+
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " , >="
-      elif groups[0] == "\\leq":
-         domain += " , <="
-      else:
-         domain += " , " + groups[0]
+      firstBound  = _getBound(groups[1], groups[2])
+      secondBound = _getBound(groups[4], groups[5])
 
-      limit = float(groups[1])
-      if limit < 0:
-         limit = 0
+      firstOp  = _getOp(groups[0])
+      secondOp = _getOp(groups[3])
 
-      domain += " " + str(limit)
-
-      if limit > 0:
-         if groups[2] != None and groups[2] != 0:
-            domain += groups[2]
-
-      if groups[3] == "\\geq":
-         domain += ", >="
-      elif groups[3] == "\\leq":
-         domain += ", <="
-      else:
-         domain += ", " + groups[3]
-      
-      limit = float(groups[4])
-      if limit < 0:
-         limit = 0
-
-      domain += " " + str(limit)
-
-      if limit > 0:
-         if groups[5] != None and groups[5] != 0:
-            domain += groups[5]
-
-   t.value2 = "integer" + domain
+      t.value2 = IntegerSet(Number("0") if firstBound.lessThanZero() else firstBound, firstOp, secondBound, secondOp)
 
    return t
 
@@ -467,42 +432,31 @@ def t_NATURALSETWITHONELIMIT(t):
    r'\\mathbb{N}[_\^]{([><]|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}'
    m = re.search(r"[_\^]{(>|<|\\geq|\\leq)\s*([-+]?[0-9]*\.?[0-9]+)([dDeE][-+]?[0-9]+)?}", t.value)
 
-   domain = ""
    if m:
+      firstBound  = Number("-Infinity")
+      secondBound = Number("Infinity")
+
       groups = m.groups(0)
-      if groups[0] == "\\geq":
-         domain += " >="
-      elif groups[0] == "\\leq":
-         domain += " <="
-      else:
-         domain += " " + groups[0]
+      firstBound = _getBound(groups[1], groups[2])
+      firstOp = _getOp(groups[0])
 
-      limit = float(groups[1])
-      if limit < 0:
-         limit = 0
+      t.value2 = IntegerSet(Number("0") if firstBound.lessThanZero() else firstBound, firstOp, secondBound, None)
 
-      domain += " " + str(limit)
-
-      if limit > 0:
-         if groups[2] != None and groups[2] != 0:
-            domain += groups[2]
-
-   t.value2 = "integer" + domain
    return t
 
 def t_NATURALSET(t):
    r'\\mathbb{N}'
-   t.value2 = "integer >= 0"
+   t.value2 = IntegerSet(Number("0"), ">=", Number("Infinity"), "<=")
    return t
 
 def t_SYMBOLIC(t):
    r'\\mathbb{S}'
-   t.value2 = "symbolic"
+   t.value2 = SymbolicSet()
    return t
 
 def t_LOGICAL(t):
    r'\\mathbb{L}'
-   t.value2 = "logical"
+   t.value2 = LogicalSet()
    return t
 
 def t_SUBSET(t):

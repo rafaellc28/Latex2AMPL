@@ -112,6 +112,69 @@ class NumericExpressionWithFunction(NumericExpression):
         return codeGenerator.generateCode(self)
     
 
+
+class FractionalNumericExpression(NumericExpression):
+    """
+    Class representing a fractional numeric expression node in the AST of a MLP
+    """
+
+    def __init__(self, numerator, denominator):
+        """
+        Set the single value of this numeric expression
+
+        :param numerator   : Identifier | NumericExpression
+        :param denominator : Identifier | NumericExpression
+        """
+
+        NumericExpression.__init__(self)
+
+        self.numerator   = numerator
+        self.denominator = denominator
+
+    def __str__(self):
+        """
+        to string
+        """
+        return "FractionalNumericExpression: " + str(self.numerator) + "/"+str(self.denominator)
+
+    def __len__(self):
+        """
+        length method
+        """
+
+        return 1
+
+    def __iter__(self):
+        """
+        Get the iterator of the class
+        """
+
+        return [self]
+
+    def getDependencies(self, codeGenerator):
+        dep = []
+
+        if self.numerator != None:
+            dep += self.numerator.getDependencies(codeGenerator)
+
+        if self.denominator != None:
+            dep += self.denominator.getDependencies(codeGenerator)
+
+        return list(set(dep))
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for the identifiers and sets used in this fractional numeric expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this fractional numeric expression
+        """
+        return codeGenerator.generateCode(self)
+
+
 class ValuedNumericExpression(NumericExpression):
     """
     Class representing a valued numeric expression node in the AST of a MLP
@@ -149,6 +212,9 @@ class ValuedNumericExpression(NumericExpression):
 
         return [self]
 
+    def getValue(self):
+        return self.value
+
     def getSymbol(self):
         return self.value
 
@@ -157,13 +223,13 @@ class ValuedNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the AMPL code for the identifiers and sets used in this numeric expression
+        Generate the AMPL code for the identifiers and sets used in this valued numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the AMPL code for this valued linear expression
+        Generate the AMPL code for this valued numeric expression
         """
         return codeGenerator.generateCode(self)
 

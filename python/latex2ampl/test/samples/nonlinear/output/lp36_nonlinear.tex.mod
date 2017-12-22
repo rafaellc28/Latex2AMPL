@@ -10,7 +10,7 @@ set J, := 1..M;
 
 param b{j in K}, >= 0;
 
-param a{i in I, j in J}, <= 1,>= 0;
+param a{i in I, j in J}, <= 1, >= 0;
 
 param c{i in I}, <= 0;
 

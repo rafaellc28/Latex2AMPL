@@ -1,6 +1,6 @@
 % Table Seating: TableSeating.mod in https://www3.nd.edu/~jeff/mathprog/#
 \text{maximize } \sum_{(p,q) \in PAIRS} y_{p,q}\\
-\text{subject to } \sum_{t \in TABLES} x_{p,t} = 1: p \in PEOPLE\\
+\text{subject to } \sum_{t \in TABLES} x_{p,t} = 1: p \in PEOPLE//\\
 (\sum_{q \in 1 \dots (p-1)} y_{q,p}) + (\sum_{q \in (p+1) \dots card(PEOPLE)} y_{p,q}) = TABLESIZE - 1: p \in PEOPLE\\
 y_{p,q} \geq x_{p,t} + x_{q,t} - 1: t \in TABLES, (p,q) \in PAIRS, y_{p,q} \in \mathbb{B}\\
 \sum_{p \in PEOPLE} x_{p,t} = 3: t \in TABLES, x_{p,t} \in \{0,1\}\\

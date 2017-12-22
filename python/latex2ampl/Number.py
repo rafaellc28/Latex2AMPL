@@ -36,6 +36,12 @@ class Number(Expression):
 
         return [self]
 
+    def lessThanZero(self):
+        return self.number[0] == "-"
+
+    def getNumber(self):
+        return self.number
+
     def getDependencies(self, codeGenerator):
         return []
     

@@ -78,6 +78,9 @@ class Identifier(Expression):
     def getSymbolName(self, codeGenerator):
         return self.generateCodeWithoutIndices(codeGenerator)
 
+    def getSymbolNameWithIndices(self, codeGenerator):
+        return self.generateCode(codeGenerator)
+
     def addSet(self, inSet):
         self.inSets += [inSet]
 

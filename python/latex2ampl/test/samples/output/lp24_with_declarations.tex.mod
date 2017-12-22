@@ -14,7 +14,7 @@ param F1{(p,sLoc,fLoc) in PLANES};
 
 set FINISH dimen 2, := setof {(p,sLoc,fLoc) in PLANES} (p,fLoc);
 
-param minspeed, <= maxspeed,> 0;
+param minspeed, <= maxspeed, > 0;
 
 set P, := setof {(p,sLoc,fLoc) in PLANES} p;
 

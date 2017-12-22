@@ -1,11 +1,12 @@
 class SymbolTableEntry(object):
-    def __init__(self, key, properties, _type, scope, sub_indices = [], inferred = True, isDefined = False):
+    def __init__(self, key, obj, properties, _type, scope, sub_indices = [], inferred = True, isDefined = False):
         """
         Constructor
         
         :param key         : string
+        :param obj         : object
         :param properties  : GenProperties
-        :param _type       : CONSTANTS.VARIABLES | CONSTANTS.PARAMETERS | CONSTANTS.SETS
+        :param _type       : VariableSet | ParameterSet | SetSet
         :param scope       : int
         :param sub_indices : [string]
         :param inferred    : boolean
@@ -14,6 +15,7 @@ class SymbolTableEntry(object):
         """
 
         self.key = key
+        self.obj = obj
         self.properties = properties
         self.type = _type
         self.scope = scope
@@ -34,6 +36,12 @@ class SymbolTableEntry(object):
 
     def getKey(self):
         return self.key
+
+    def setObj(self, obj):
+        self.obj = obj
+
+    def getObj(self):
+        return self.obj
 
     def setProperties(self, properties):
         self.properties = properties

@@ -18,10 +18,10 @@ smoke_{h,"Old_Gold"} = pet_{h,"snails"}: h \in HOUSE\\
 smoke_{h,"Kools"} = color_{h,"yellow"}: h \in HOUSE\\
 drink_{3,"milk"} = 1\\
 nationality_{1,"Norwegian"} = 1\\
-(1 - smoke_{h,"Chesterfield"}) + ((h = 1)?0:pet_{h-1,"fox"}) + ((h = 5)? 0:pet_{h+1,"fox"}) \geq 1: h \in HOUSE\\
+(1 - smoke_{h,"Chesterfield"}) + ((h = 1)?0:pet_{h-1,"fox"}) + ((h = 5)? 0:pet_{h+1,"fox"}) \geq 1: h \in HOUSE//\\
 (1 - smoke_{h,"Kools"}) + ((h = 1)?0:pet_{h-1,"horse"}) + ((h = 5)?0:pet_{h+1,"horse"}) \geq 1: h \in HOUSE\\
 smoke_{h,"Lucky_Strike"} = drink_{h,"orange_juice"}: h \in HOUSE\\
-nationality_{h,"Japanese"} = smoke_{h,"Parliament"}: h \in HOUSE\\
+nationality_{h,"Japanese"} = smoke_{h,"Parliament"}: h \in HOUSE//\\
 (1 - nationality_{h,"Norwegian"}) + ((h = 1)?0:color_{h-1,"blue"}) + ((h = 5)?0:color_{h+1,"blue"}) \geq 1: h \in HOUSE\\
 color_{h,p}, nationality_{h,n}, drink_{h,d}, smoke_{h,s}, pet_{h,p} \in \mathbb{B}\\
 HOUSE := \{1 \ldots 5\}; COLOR := \{"blue", "green", "ivory", "red", "yellow"\}\\

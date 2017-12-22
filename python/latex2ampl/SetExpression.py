@@ -54,6 +54,14 @@ class SetExpressionWithValue(SetExpression):
     def getSymbol(self):
         return self.value
 
+    def getSymbolName(self, codeGenerator):
+        if isinstance(self.value, Identifier):
+            res = self.value.getSymbolNameWithIndices(codeGenerator)
+        else:
+            res = self.value.getSymbolName(codeGenerator)
+
+        return res
+
     def getDependencies(self, codeGenerator):
         if not isinstance(self.value, str):
             return self.value.getDependencies(codeGenerator)

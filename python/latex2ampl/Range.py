@@ -28,15 +28,24 @@ class Range(Expression):
         res += "]"
         
         return res
-    
+        
+    def getRangeInit(self):
+        return self.rangeInit
+        
+    def getRangeEnd(self):
+        return self.rangeEnd
+        
+    def getBy(self):
+        return self.by
+        
     def getDependencies(self, codeGenerator):
         dep = self.rangeInit.getDependencies(codeGenerator) + self.rangeEnd.getDependencies(codeGenerator)
-
+        
         if self.by != None:
             dep += self.by.getDependencies(codeGenerator)
-
+            
         return list(set(dep))
-
+        
     def setupEnvironment(self, codeSetup):
         """
         Generate the AMPL code for the declaration of identifiers used in this range expression

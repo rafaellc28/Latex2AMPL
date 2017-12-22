@@ -18,6 +18,15 @@ from Constants import *
 from DeclarationExpression import *
 from Declarations import *
 
+from IntegerSet import *
+from RealSet import *
+from SymbolicSet import *
+from LogicalSet import *
+from BinarySet import *
+from ParameterSet import *
+from VariableSet import *
+from SetSet import *
+
 from SymbolTable import *
 from SymbolTableEntry import *
 
@@ -26,7 +35,8 @@ class CodeSetup:
 
     def __init__(self, codeGenerator = None):
         self.codeGenerator = codeGenerator
-        self.varKey = None
+        self.identifier = None
+        self.identifierKey = None
         self.stmtIndex = 0
         self.level = 0
         self.currentTable = None
@@ -61,7 +71,7 @@ class CodeSetup:
     def _addTypeAux(self, identifier, _type):
         name = identifier.getSymbolName(self.codeGenerator)
 
-        if not self._checkIsParamType(_type):
+        if not self._checkIsModifierSet(_type):
             self._setIsVar(identifier)
 
             # if the parameter was included in the current statement, remove because it is not a parameter but an index
@@ -80,16 +90,21 @@ class CodeSetup:
             var = self._getIdentifier(identifier)
             self._addTypeAux(var, _type)
 
-    def _checkIsParamType(self, _type):
-        return _type.startswith(Constants.SYMBOLIC) or _type.startswith(Constants.LOGICAL)
+    def _checkIsModifierSet(self, _type):
+        return isinstance(_type, SymbolicSet) or isinstance(_type, LogicalSet)
 
-    # Get the AMPL code for a given sub-indice
-    def _getCodeID(self, id_):
-        val = id_.getSymbolName(self.codeGenerator)
-        if val.replace('.','',1).isdigit():
-            val = str(int(float(val)))
+    def _getSetExpressionObj(self, value):
+        setExpressionObj = value
+        if isinstance(value, SetExpressionWithValue):
+            setExpressionObj = value.value
 
-        return val
+        setExpression = setExpressionObj.getSymbolName(self.codeGenerator)
+        setCode = setExpression.replace(" ", "")
+
+        if setCode == Constants.BINARY_0_1 and not isinstance(setExpressionObj, BinarySet):
+            setExpressionObj = BinarySet()
+
+        return setExpressionObj
 
     def _getSetExpression(self, value):
         setExpression = value.getSymbolName(self.codeGenerator)
@@ -136,7 +151,7 @@ class CodeSetup:
 
     def _setIndices(self, var, i, varKey):
         var.setIndice(i)
-        var.setVarName(varKey)
+        var.setIdentifierName(varKey)
 
     def _checkSubIndices(self, node):
         if isinstance(node.sub_indices, str):
@@ -149,7 +164,7 @@ class CodeSetup:
                     var = node.sub_indices[i]
                     var = self._getIdentifier(var)
 
-                    self._setIndices(var, i, self.varKey)
+                    self._setIndices(var, i, self.identifierKey)
 
                 for i in indices:
                     var = node.sub_indices[i]
@@ -159,7 +174,7 @@ class CodeSetup:
 
             else:
                 var = self._getIdentifier(node.sub_indices)
-                self._setIndices(var, 0, self.varKey)
+                self._setIndices(var, 0, self.identifierKey)
                 var.setupEnvironment(self)
 
     def _setDimension(self, setExpression, dimen):
@@ -182,8 +197,8 @@ class CodeSetup:
                 if not self.isDeclaredAsParam(var):
                     self.codeGenerator.genParameters.remove(name)
 
-    def _addBelongsTo(self, var, setExpressionObj, op = None, supExpressionObj = None):
-        self._addDomainExpression(var, setExpressionObj, op, supExpressionObj)
+    def _addBelongsTo(self, var, setExpressionNode, op = None, supExpressionObj = None):
+        self._addDomainExpression(var, setExpressionNode, op, supExpressionObj)
 
         if isinstance(var, Tuple):
             for var1 in var.getValues():
@@ -194,11 +209,12 @@ class CodeSetup:
             name = var.getSymbolName(self.codeGenerator)
             self._addItemBelongsTo(var, name)
 
-    def _addDomainExpression(self, var, setExpressionObj, op = None, supExpressionObj = None):
+    def _addDomainExpression(self, var, setExpressionNode, op = None, supExpressionObj = None):
 
         name = var.getSymbolName(self.codeGenerator)
-        setExpression = self._getSetExpression(setExpressionObj)
-        dependencies = setExpressionObj.getDependencies(self.codeGenerator)
+        setExpression = self._getSetExpression(setExpressionNode)
+        setExpressionObj = self._getSetExpressionObj(setExpressionNode)
+        dependencies = setExpressionNode.getDependencies(self.codeGenerator)
 
         if supExpressionObj != None:
             setExpression += ".." + supExpressionObj.getSymbolName(self.codeGenerator)
@@ -206,7 +222,7 @@ class CodeSetup:
 
         _symbolTableEntry = self.currentTable.lookup(name)
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, op, dependencies)], setExpressionObj.getDimension(), None, None), 
+            _symbolTableEntry = SymbolTableEntry(name, var, GenProperties(name, [GenItemDomain(setExpression, op, dependencies, setExpressionObj)], setExpressionNode.getDimension(), None, None), 
                                                  None, self.level, [])
             self.currentTable.insert(name, _symbolTableEntry)
 
@@ -214,12 +230,12 @@ class CodeSetup:
             if _symbolTableEntry.getInferred():
                 _symbolTableEntry.setType(None)
 
-            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, op, dependencies))
-            _symbolTableEntry.getProperties().setDimension(setExpressionObj.getDimension())
+            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, op, dependencies, setExpressionObj))
+            _symbolTableEntry.getProperties().setDimension(setExpressionNode.getDimension())
 
         _symbolTableEntry = self.currentTable.lookup(setExpression)
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(setExpression, GenProperties(setExpression, [], setExpressionObj.getDimension(), None, None), 
+            _symbolTableEntry = SymbolTableEntry(setExpression, setExpressionNode, GenProperties(setExpression, [], setExpressionNode.getDimension(), None, None), 
                                                  None, self.level, [])
             self.currentTable.insert(setExpression, _symbolTableEntry)
 
@@ -227,7 +243,7 @@ class CodeSetup:
             if _symbolTableEntry.getInferred():
                 _symbolTableEntry.setType(None)
 
-            _symbolTableEntry.getProperties().setDimension(setExpressionObj.getDimension())
+            _symbolTableEntry.getProperties().setDimension(setExpressionNode.getDimension())
 
     def isParamForSure(self, identifier):
         if identifier.isDeclaredAsParam:
@@ -647,27 +663,29 @@ class CodeSetup:
         else:
             var = self._getIdentifier(identifier)
 
+        setExpressionObj = self._getSetExpressionObj(node.setExpression)
         setExpression = self._getSetExpression(node.setExpression)
 
-        if setExpression == Constants.BINARY_0_1 or setExpression == Constants.BINARY:
+        if isinstance(setExpressionObj, BinarySet):
+
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isBinary = True
             else:
                 var.isBinary = True
 
-            self._addType(identifier, Constants.BINARY)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.INTEGER):
+        elif isinstance(setExpressionObj, IntegerSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isInteger = True
             else:
                 var.isInteger = True
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.REALSET):
+        elif isinstance(setExpressionObj, RealSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isReal = True
@@ -676,9 +694,9 @@ class CodeSetup:
                 var.isReal = True
                 var.isDeclaredAsVar = True
 
-            self._addType(identifier, setExpression[8:])
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.SYMBOLIC):
+        elif isinstance(setExpressionObj, SymbolicSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isSymbolic = True
@@ -687,9 +705,9 @@ class CodeSetup:
                 self._setIsParam(var)
                 var.isSymbolic = True
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.LOGICAL):
+        elif isinstance(setExpressionObj, LogicalSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isLogical = True
@@ -698,9 +716,9 @@ class CodeSetup:
                 var.isLogical = True
                 self._setIsParam(var)
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.PARAMETERS):
+        elif isinstance(setExpressionObj, ParameterSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     self._setIsParam(var[i])
@@ -709,9 +727,9 @@ class CodeSetup:
                 self._setIsParam(var)
                 var.isDeclaredAsParam = True
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.VARIABLES):
+        elif isinstance(setExpressionObj, VariableSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     self._setIsVar(var[i])
@@ -720,9 +738,9 @@ class CodeSetup:
                 self._setIsVar(var)
                 var.isDeclaredAsVar = True
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.SETS):
+        elif isinstance(setExpressionObj, SetSet):
             if isinstance(var, list):
                 for i in range(len(var)):
                     self._setIsSet(var[i])
@@ -731,7 +749,7 @@ class CodeSetup:
                 self._setIsSet(var)
                 var.isDeclaredAsSet = True
 
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
         if isinstance(var, list):
             for i in range(len(var)):
@@ -748,6 +766,7 @@ class CodeSetup:
         if isinstance(node.identifier, str):
             return
 
+        setExpressionObj = self._getSetExpressionObj(node.setExpression)
         setExpression = self._getSetExpression(node.setExpression)
 
         if isinstance(node.identifier, Tuple):
@@ -757,7 +776,7 @@ class CodeSetup:
             if dimen > 1:
                 self._setDimension(node.setExpression, dimen)
 
-        if not self._checkIsParamType(setExpression):
+        if not self._checkIsModifierSet(setExpressionObj):
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
@@ -797,11 +816,6 @@ class CodeSetup:
         """
         Generate the AMPL code for declaration of identifiers and sets used in this entry for indexing expressions
         """
-        setExpression = node.value.getSymbolName(self.codeGenerator)
-
-        if node.hasSup:
-            setExpression += ".." + node.supExpression.getSymbolName(self.codeGenerator)
-
         self._addBelongsTo(node.identifier, node.value, DeclarationAttribute.IN, node.supExpression if node.hasSup else None)
 
         node.identifier.setupEnvironment(self)
@@ -841,6 +855,7 @@ class CodeSetup:
         if isinstance(node.identifier, str):
             return
 
+        setExpressionObj = self._getSetExpressionObj(node.setExpression)
         setExpression = self._getSetExpression(node.setExpression)
 
         if isinstance(node.identifier, Tuple):
@@ -850,7 +865,7 @@ class CodeSetup:
             if dimen > 1:
                 self._setDimension(node.setExpression, dimen)
 
-        if not self._checkIsParamType(setExpression):
+        if not self._checkIsModifierSet(setExpressionObj):
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
@@ -1124,31 +1139,32 @@ class CodeSetup:
             if len(node.sub_indices) == 0:
                 return
         
-        self.varKey = node.getSymbolName(self.codeGenerator)
+        self.identifier = node
+        self.identifierKey = node.getSymbolName(self.codeGenerator)
         
-        _symbolTableEntry = self.currentTable.lookup(self.varKey)
+        _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
         if _symbolTableEntry == None:
             justInserted = True
-            _symbolTableEntry = SymbolTableEntry(self.varKey, GenProperties(self.varKey), None, self.level, 
+            _symbolTableEntry = SymbolTableEntry(self.identifierKey, node, GenProperties(self.identifierKey), None, self.level, 
                                                  [map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices)] if node.sub_indices != None else [])
-            self.currentTable.insert(self.varKey, _symbolTableEntry)
+            self.currentTable.insert(self.identifierKey, _symbolTableEntry)
             
         elif node.sub_indices != None:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
-        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.varKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node):
+        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node):
 
-            _genVar = self.codeGenerator.genVariables.get(self.varKey)
+            _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
             if node.isDeclaredAsVar and _genVar != None:
                 _genVar.setCertainty(True)
                 _genVar.setIsDeclaredAsVar(True)
 
             elif node.isDeclaredAsVar or (not _genVar and not self.isDeclaredAsSet(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                self.codeGenerator.genParameters.remove(self.varKey)
-                self.codeGenerator.genSets.remove(self.varKey)
+                self.codeGenerator.genParameters.remove(self.identifierKey)
+                self.codeGenerator.genSets.remove(self.identifierKey)
 
-                _genVar = GenVariable(self.varKey, None)
+                _genVar = GenVariable(self.identifierKey, None)
                 if (node.isVar != None and not node.isVar) or (node.isDeclaredAsVar != None and not node.isDeclaredAsVar):
                     _genVar.setCertainty(False)
 
@@ -1156,7 +1172,7 @@ class CodeSetup:
                     _genVar.setCertainty(True)
                     _genVar.setIsDeclaredAsVar(True)
 
-                _symbolTableEntry = self.currentTable.lookup(self.varKey)
+                _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
                 if _symbolTableEntry.getInferred() or node.isDeclaredAsVar:
                     _symbolTableEntry.setType(Constants.VARIABLES)
 
@@ -1168,17 +1184,17 @@ class CodeSetup:
             self._checkSubIndices(node)
 
         elif (node.isSet or node.isDeclaredAsSet) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node):
-            _genSet = self.codeGenerator.genSets.get(self.varKey)
+            _genSet = self.codeGenerator.genSets.get(self.identifierKey)
             if node.isDeclaredAsSet and _genSet != None:
                 _genSet.setCertainty(True)
                 _genSet.setIsDeclaredAsSet(True)
             
             elif node.isDeclaredAsSet or (not _genSet and not self.isDeclaredAsVar(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                self.codeGenerator.genParameters.remove(self.varKey)
-                self.codeGenerator.genVariables.remove(self.varKey)
+                self.codeGenerator.genParameters.remove(self.identifierKey)
+                self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                _genSet = GenSet(self.varKey, node.dimenSet)
+                _genSet = GenSet(self.identifierKey, node.dimenSet)
                 if (node.isSet != None and not node.isSet) or (node.isDeclaredAsSet != None and not node.isDeclaredAsSet):
                     _genSet.setCertainty(False)
 
@@ -1196,18 +1212,18 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.varKey, self.stmtIndex)))) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node):
-            _genParam = self.codeGenerator.genParameters.get(self.varKey)
+        elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)))) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node):
+            _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
             if node.isDeclaredAsParam and _genParam != None:
                 _genParam.setCertainty(True)
                 _genParam.setIsDeclaredAsParam(True)
             
             elif node.isDeclaredAsParam or (not _genParam and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)): # check if this param was not seen yet
 
-                self.codeGenerator.genSets.remove(self.varKey)
-                self.codeGenerator.genVariables.remove(self.varKey)
+                self.codeGenerator.genSets.remove(self.identifierKey)
+                self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                _genParam = GenParameter(self.varKey, node.isSymbolic or node.isLogical, node.isInt or node.isInteger, str(self.stmtIndex))
+                _genParam = GenParameter(self.identifierKey, node.isSymbolic or node.isLogical, node.isInt or node.isInteger, str(self.stmtIndex))
                 if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
                     _genParam.setCertainty(False)
 
@@ -1224,7 +1240,7 @@ class CodeSetup:
                 self.codeGenerator.genParameters.add(_genParam)
 
             elif node.isSymbolic or node.isLogical or node.isInt or node.isInteger:
-                _genParam = self.codeGenerator.genParameters.get(self.varKey)
+                _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
                 if _genParam != None:
                     if node.isSymbolic or node.isLogical:
                         _genParam.setIsSymbolic(True)
@@ -1237,29 +1253,51 @@ class CodeSetup:
         else:
             self._checkSubIndices(node)
 
-        self.varKey = None
+        self.identifier = None
+        self.identifierKey = None
 
     def setupEnvironment_Number(self, node):
 
         if node.getIndice() == -1:
             return
 
-        num = int(self._getCodeID(node))
+        num = int(node.getSymbolName(self.codeGenerator))
 
-        _symbolTableEntry = self.currentTable.lookup(node.getVarName())
+        _symbolTableEntry = self.currentTable.lookup(node.getIdentifierName())
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(self.varKey, GenProperties(self.varKey, [], None, num, num), 
-                                                 None, self.level, [])
-            self.currentTable.insert(self.varKey, _symbolTableEntry)
+            _symbolTableEntry = SymbolTableEntry(self.identifierKey, self.identifier, GenProperties(self.identifierKey, [], None, 
+                                                {node.getIndice(), num}, {node.getIndice(), num}), None, self.level, [])
+            self.currentTable.insert(self.identifierKey, _symbolTableEntry)
 
         else:
-            if _symbolTableEntry.getProperties().getMinVal() == None or num < _symbolTableEntry.getProperties().getMinVal():
-                _symbolTableEntry.getProperties().setMinVal(num)
-
-            if _symbolTableEntry.getProperties().getMaxVal() == None or num > _symbolTableEntry.getProperties().getMaxVal():
-                _symbolTableEntry.getProperties().setMaxVal(num)
+            _symbolTableEntry.getProperties().setMinValByIndex(node.getIndice(), num)
+            _symbolTableEntry.getProperties().setMaxValByIndex(node.getIndice(), num)
 
     def setupEnvironment_ID(self, node):
+        pass
+
+    def setupEnvironment_IntegerSet(self, node):
+        pass
+
+    def setupEnvironment_RealSet(self, node):
+        pass
+
+    def setupEnvironment_BinarySet(self, node):
+        pass
+
+    def setupEnvironment_LogicalSet(self, node):
+        pass
+
+    def setupEnvironment_SymbolicSet(self, node):
+        pass
+
+    def setupEnvironment_ParameterSet(self, node):
+        pass
+
+    def setupEnvironment_SetSet(self, node):
+        pass
+
+    def setupEnvironment_VariableSet(self, node):
         pass
 
     def setupEnvironment_String(self, node):
@@ -1286,17 +1324,25 @@ class CodeSetup:
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
 
                 if genDeclaration == None:
-                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, identifier.sub_indices, str(self.stmtIndex))
+                    _sub_indices = {}
+                    if identifier.sub_indices:
+                        _sub_indices = {self.stmtIndex: identifier.sub_indices}
+
+                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, _sub_indices, self.stmtIndex)
                     self.codeGenerator.genDeclarations.add(genDeclaration)
+
                 else:
                     genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
+                    if identifier.sub_indices:
+                        genDeclaration.addSubIndices({self.stmtIndex: identifier.sub_indices})
+                    
                 if node.indexingExpression:
-                    genDeclaration.setIndexingExpression(node.indexingExpression)
+                    genDeclaration.addIndexingExpression({self.stmtIndex: node.indexingExpression})
 
                 _symbolTableEntry = self.currentTable.lookup(name)
                 if _symbolTableEntry == None:
-                    _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [], None, None, None, None, genDeclaration), 
+                    _symbolTableEntry = SymbolTableEntry(name, identifier, GenProperties(name, [], None, None, None, None, genDeclaration), 
                                                          None, self.level, [], True, True)
                     self.currentTable.insert(name, _symbolTableEntry)
                     
@@ -1373,53 +1419,56 @@ class CodeSetup:
         
     def setupEnvironment_DeclarationExpressionWithSet(self, attribute, identifier):
         name = identifier.getSymbolName(self.codeGenerator)
+        setExpressionObj = self._getSetExpressionObj(attribute)
         setExpression = self._getSetExpression(attribute)
 
         _symbolTableEntry = self.currentTable.lookup(name)
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator))], None, None, None), 
-                                                 None, self.level, [], True, True)
+            _symbolTableEntry = SymbolTableEntry(name, identifier, GenProperties(name, 
+                                                 [GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator), 
+                                                 setExpressionObj)], None, None, None), None, self.level, [], True, True)
             self.currentTable.insert(name, _symbolTableEntry)
 
         else:
             if _symbolTableEntry.getInferred():
                 _symbolTableEntry.setType(None)
 
-            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator)))
+            _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, 
+                                                        attribute.getDependencies(self.codeGenerator), setExpressionObj))
 
-        if setExpression == Constants.BINARY_0_1 or setExpression == Constants.BINARY:
+        if isinstance(setExpressionObj, BinarySet):
             identifier.isBinary = True
-            self._addType(identifier, Constants.BINARY)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.INTEGER):
+        elif isinstance(setExpressionObj, IntegerSet):
             identifier.isInteger = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.REALSET):
+        elif isinstance(setExpressionObj, RealSet):
             identifier.isReal = True
-            self._addType(identifier, setExpression[8:])
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.SYMBOLIC):
+        elif isinstance(setExpressionObj, SymbolicSet):
             self._setIsParam(identifier)
             identifier.isSymbolic = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
             
-        elif setExpression.startswith(Constants.LOGICAL):
+        elif isinstance(setExpressionObj, LogicalSet):
             self._setIsParam(identifier)
             identifier.isLogical = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.PARAMETERS):
+        elif isinstance(setExpressionObj, ParameterSet):
             self._setIsParam(identifier)
             identifier.isDeclaredAsParam = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.VARIABLES):
+        elif isinstance(setExpressionObj, VariableSet):
             self._setIsVar(identifier)
             identifier.isDeclaredAsVar = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
 
-        elif setExpression.startswith(Constants.SETS):
+        elif isinstance(setExpressionObj, SetSet):
             self._setIsSet(identifier)
             identifier.isDeclaredAsSet = True
-            self._addType(identifier, setExpression)
+            self._addType(identifier, setExpressionObj)
