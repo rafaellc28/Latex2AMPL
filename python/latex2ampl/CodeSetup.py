@@ -2,6 +2,7 @@ from Tuple import *
 from ValueList import *
 from Identifier import *
 from SetExpression import *
+from Range import *
 from EntryIndexingExpression import *
 from GenSet import *
 from GenVariable import *
@@ -464,18 +465,18 @@ class CodeSetup:
         if node.numericExpression2 != None:
             node.numericExpression2.setupEnvironment(self)
 
-    def setupEnvironment_ValuedNumericExpression(self, node):
-        """
-        Generate the AMPL code for the identifiers and sets used in this numeric expression
-        """
-        node.value.setupEnvironment(self)
-
     def setupEnvironment_FractionalNumericExpression(self, node):
         """
         Generate the AMPL code for the identifiers and sets used in this numeric expression
         """
         node.numerator.setupEnvironment(self)
         node.denominator.setupEnvironment(self)
+
+    def setupEnvironment_ValuedNumericExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this numeric expression
+        """
+        node.value.setupEnvironment(self)
 
     def setupEnvironment_NumericExpressionBetweenParenthesis(self, node):
         """
@@ -1404,7 +1405,7 @@ class CodeSetup:
             self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)
 
         elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and \
-            (isinstance(var, SetExpression) or self.codeGenerator.genSets.has(name)) and not identifier.isParam:
+            (isinstance(node.attribute, SetExpression) or isinstance(var, SetExpression) or isinstance(var, Range) or self.codeGenerator.genSets.has(name)) and not identifier.isParam:
 
             if not self.codeGenerator.genParameters.has(name):
                 self._setIsSet(identifier)

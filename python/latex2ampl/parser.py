@@ -492,12 +492,12 @@ def p_DeclarationExpression(t):
       if t[2] == ",":
         attr = t[3]
       elif t[2] == "\\in":
-        if isinstance(t[3], Identifier):
+        if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
       elif re.search(r"\\subseteq|\\subset", t[2]):
-        if isinstance(t[3], Identifier):
+        if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
@@ -506,6 +506,9 @@ def p_DeclarationExpression(t):
       elif re.search(r"\\text\{\s*dimen\s*\}", t[2]):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
       elif t[2] == ":=":
+        if isinstance(t[3], Range):
+          t[3] = SetExpressionWithValue(t[3])
+
         attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
       elif t[2] == "<":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.LT)
@@ -568,12 +571,12 @@ def p_DeclarationAttribute(t):
                           | NEQ SymbolicExpression'''
 
   if t[1] == "\\in":
-    if isinstance(t[2], Identifier):
+    if not isinstance(t[2], SetExpression):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
   elif re.search(r"\\subseteq|\\subset", t[1]):
-    if isinstance(t[2], Identifier):
+    if not isinstance(t[2], SetExpression):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
@@ -583,6 +586,9 @@ def p_DeclarationAttribute(t):
   elif re.search(r"\\text\{\s*dimen\s*\}", t[1]):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
   elif t[1] == ":=":
+    if isinstance(t[2], Range):
+      t[2] = SetExpressionWithValue(t[2])
+
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
   elif t[1] == "<":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LT)
