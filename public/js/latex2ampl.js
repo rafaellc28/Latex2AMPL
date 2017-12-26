@@ -64,9 +64,9 @@ var loadUser = function() {
 }
 
 var showPleaseWait = function() {
-        //pleaseWaitDiv.modal('show');
+        pleaseWaitDiv.modal('show');
 };
 
 var hidePleaseWait = function () {
-        //pleaseWaitDiv.modal('hide');
+        pleaseWaitDiv.modal('hide');
 };
