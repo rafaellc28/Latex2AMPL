@@ -56,7 +56,7 @@
 		<script id="template" type="x-tmpl-mustache">
 			<div class="container-fluid">
 
-				<div class="col-xs-8 col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<h1>{{LATEX2AMPL}}</h1>
 
 					<p>
@@ -110,28 +110,28 @@
 									<div class="row">
 										<div class="col-xs-12">
 											<h3>{{LATEX_CODE}}</h3>
-											<div class="input-group" style="width: 100%;">
-												<span class="input-group-addon" style="width:25%">
+											<div class="input-group col-xs-12">
+												<span class="input-group-addon" style="width: 25%;">
 													<select id="obj" onchange="changeObjective(this.value)">
 														<option value="minimize" selected>{{MINIMIZE}}</option>
 														<option value="maximize">{{MAXIMIZE}}</option>
 													</select>
 												</span>
-												<input id="objMathInput" class="form-control" style="width:75%" onblur="UpdateObjectiveMath(this.value)" onkeyup="PreviewObjctiveFunction.Update()" data-toggle="popover" data-trigger="focus"/>
-												<div id="objPreviewMathOutput" style="width:75%; visibility:hidden; position:absolute;" class="mathOutputBox">$${}$$</div>
-												<div id="objPreviewMathBuffer" style="width:75%; visibility:hidden; position:absolute;" class="mathOutputBox"></div>
+												<input id="objMathInput" class="form-control" onblur="UpdateObjectiveMath(this.value)" onkeyup="PreviewObjctiveFunction.Update()" data-toggle="popover" data-trigger="focus"/>
+												<div id="objPreviewMathOutput" style="visibility:hidden; position:absolute;" class="mathOutputBox">$${}$$</div>
+												<div id="objPreviewMathBuffer" style="visibility:hidden; position:absolute;" class="mathOutputBox"></div>
 											</div>
 										</div>
 
 										<div class="col-xs-12">
-											<div class="input-group" style="width: 100%;">
-												<span class="input-group-addon" style="width:25%;">
+											<div class="input-group col-xs-12">
+												<span class="input-group-addon" style="width: 25%;">
 													{{SUBJECT_TO}}
 												</span>
-												<div id="subjectiveMathInputBox" class="mathInputBox" style="width:75%">
+												<div id="subjectiveMathInputBox" class="mathInputBox">
 													<div class="row">
 														<div class="col-xs-12">
-															<div id="subjectiveMathInput" style="width:100%">
+															<div id="subjectiveMathInput">
 																<ol class="list-group list-constraints">
 																</ol>
 															</div>
@@ -139,9 +139,9 @@
 													</div>
 													<div class="row">
 														<div class="col-xs-10">
-															<input id="subjMathInput" class="form-control" style="width:100%" onkeyup="PreviewSubjctiveFunction.Update()" data-toggle="popover" data-trigger="focus"/>
-															<div id="subjPreviewMathOutput" style="width:100%; visibility:hidden; position:absolute;" class="mathOutputBox">$${}$$</div>
-															<div id="subjPreviewMathBuffer" style="width:100%; visibility:hidden; position:absolute;" class="mathOutputBox"></div>
+															<input id="subjMathInput" class="form-control" onkeyup="PreviewSubjctiveFunction.Update()" data-toggle="popover" data-trigger="focus"/>
+															<div id="subjPreviewMathOutput" style="visibility:hidden; position:absolute;" class="mathOutputBox">$${}$$</div>
+															<div id="subjPreviewMathBuffer" style="visibility:hidden; position:absolute;" class="mathOutputBox"></div>
 														</div>
 														<div class="col-xs-2" style="min-height: 34px;">
 															<a id="icon-add-constraint" href="#" onclick="UpdateSubjectiveMath(event)">
@@ -165,20 +165,20 @@
 									<div class="row">
 										<div class="col-xs-12">
 											<h3>{{MATHJAX_PREVIEW}}</h3>
-											<div class="input-group" style="width: 100%;">
-												<span class="input-group-addon" style="width:25%">
+											<div class="input-group col-xs-12">
+												<span class="input-group-addon" style="width: 25%;">
 													<div id="objective">{{MINIMIZE}}</div>
 												</span>
-												<div id="objectiveMathOutput" style="width:75%;" class="mathOutputBox">$${}$$</div>
+												<div id="objectiveMathOutput" class="mathOutputBox">$${}$$</div>
 											</div>
 										</div>
 
 										<div class="col-xs-12">
-											<div class="input-group" style="width: 100%;">
-												<span class="input-group-addon" style="width:25%">
+											<div class="input-group col-xs-12">
+												<span class="input-group-addon" style="width: 25%;">
 													<div id="subject">{{SUBJECT_TO}}</div>
 												</span>
-												<div id="subjectiveMathOutput" class="mathOutputBox" style="width:75%">$${}$$</div>
+												<div id="subjectiveMathOutput" class="mathOutputBox">$${}$$</div>
 											</div>
 										</div>
 									</div>
@@ -212,7 +212,7 @@
 									<h3>{{LATEX_CODE}}</h3>
 									<div class="row">
 										<div id="latexEditor" class="col-xs-12">
-											<textarea id="simpleEditor" onkeyup="PreviewSimpleEditor.Update()" onchange="PreviewSimpleEditor.Update()"></textarea>
+											<textarea class="col-xs-12" id="simpleEditor" onkeyup="PreviewSimpleEditor.Update()" onchange="PreviewSimpleEditor.Update()"></textarea>
 										</div>
 									</div>
 
@@ -228,8 +228,8 @@
 									<div class="row">
 										<div class="col-xs-12">
 											<h3>{{MATHJAX_PREVIEW}}</h3>
-											<div id="mathOutput" style="width:75%;" class="mathOutputBox">$${}$$</div>
-											<div id="mathOutputBuffer" style="width:75%; visibility:hidden; position:absolute;" class="mathOutputBox"></div>
+											<div id="mathOutput" class="mathOutputBox col-xs-12">$${}$$</div>
+											<div id="mathOutputBuffer" style="visibility:hidden; position:absolute;" class="mathOutputBox"></div>
 										</div>
 									</div>
 
@@ -251,7 +251,7 @@
 
 					<div class="row">
 						<div id="ampl" class="col-xs-12">
-						    <textarea id="editor"></textarea>
+						    <textarea id="editor" class="col-xs-12"></textarea>
 						</div>
 					</div>
 
@@ -261,7 +261,7 @@
 
 					<div class="row">
 						<div id="dataEditorDiv" class="col-xs-12">
-						    <textarea id="dataEditor"></textarea>
+						    <textarea id="dataEditor" class="col-xs-12"></textarea>
 						</div>
 					</div>
 
