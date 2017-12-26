@@ -55,48 +55,44 @@
 		
 		<script id="template" type="x-tmpl-mustache">
 			<div class="container-fluid">
-				<h1>{{LATEX2AMPL}}</h1>
 
-				<p>
-					{{{DESCRIPTION}}}
-				</p>
+				<div class="col-xs-12 col-md-6">
+					<h1>{{LATEX2AMPL}}</h1>
 
-	        	<p class="text-muted">
-	        		<ul>
-	        			<li>{{{TIP1}}}</li>
-	        			<li>{{{TIP3}}}</li>
-	        			<li>{{{TIP4}}}</li>
-	        			<li>{{{TIP5}}}</li>
-	        			<li>{{{TIP6}}}</li>
-	        			<li>{{{TIP7}}}</li>
-	        			<li>{{{TIP8}}}</li>
-	        			<li>{{{TIP9}}}</li>
-	        		</ul>
-	        	</p>
+					<p>
+						{{{DESCRIPTION}}}
+					</p>
 
-	        	<p>
-	        		{{{GITHUB_SOURCE}}}
-	        	</p>
+		        	<p class="text-muted">
+		        		<ul>
+		        			<li>{{{TIP1}}}</li>
+		        			<li>{{{TIP3}}}</li>
+		        			<li>{{{TIP4}}}</li>
+		        			<li>{{{TIP5}}}</li>
+		        			<li>{{{TIP6}}}</li>
+		        			<li>{{{TIP7}}}</li>
+		        			<li>{{{TIP8}}}</li>
+		        			<li>{{{TIP9}}}</li>
+		        		</ul>
+		        	</p>
 
-	        	<p>
-	        		<div class="dropdown">
-  						<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{EXAMPLES}}
-  						<span class="caret"></span></button>
-	        			<ul id="examples" class="dropdown-menu scrollable-menu" role="menu">
-	        			</ul>
-	        		</div>
-	        	</p>
+		        	<p>
+		        		{{{GITHUB_SOURCE}}}
+		        	</p>
 
-				<!--<p class="text-muted">
-					{{{SIMPLE_EXAMPLE}}}
-				</p>
-				
-				<p class="text-muted">
-					{{{DATA_SECTION}}}<a href="#" data-html="true" data-toggle="popover" data-content="{{DATA_SECTION_DATA}}">data</a>.
-				</p>-->
-				
-				<div id="alertObj"></div>
-				<div id="alertSubj"></div>
+		        	<p>
+		        		<div class="dropdown">
+	  						<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{EXAMPLES}}
+	  						<span class="caret"></span></button>
+		        			<ul id="examples" class="dropdown-menu scrollable-menu" role="menu">
+		        			</ul>
+		        		</div>
+		        	</p>
+
+					
+					<div id="alertObj"></div>
+					<div id="alertSubj"></div>
+				</div>
 				
 				<div class="panel-group">
 					<div class="panel panel-default">
