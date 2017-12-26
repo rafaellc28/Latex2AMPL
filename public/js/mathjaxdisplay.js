@@ -99,7 +99,7 @@ var initMathjaxDisplay = function () {
 	//  by the user.  Hide the subjectiveFunction, then typeset, then show it again
 	//  so we don't see a flash as the subjMath is cleared and replaced.
 	//
-	window.UpdateSubjectiveMath = function (event) {
+	window.UpdateSubjectiveMath = function (event, updateOutput = true) {
 		if (event) {
 			event.preventDefault();
 		}
@@ -110,7 +110,7 @@ var initMathjaxDisplay = function () {
 
 		var keyTeX = getConstraintKey();
 		addConstraint(keyTeX, TeX);
-		mountConstraints();
+		mountConstraints(updateOutput);
 
 		$("div.MathJax_Display").css("text-align", "left");
 
@@ -242,11 +242,14 @@ var initMathjaxDisplay = function () {
 	    EDITING = key;
 	}
 
-	window.mountConstraints = function() {
+	window.mountConstraints = function(updateOutput = true) {
 		$("#subjectiveMathInput ol").html(mountConstraintsInput());
 		$("#subjMathInput").val("");
 		
-		UpdateSubjectiveMathOutput(mountConstraintsOutput());
+		if (updateOutput) {
+			UpdateSubjectiveMathOutput(mountConstraintsOutput());
+		}
+		
 		
 	    $("#icon-add-constraint").show();
 	    $("#icon-update-constraint").hide();
