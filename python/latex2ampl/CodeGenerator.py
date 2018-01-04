@@ -535,6 +535,14 @@ class CodeGenerator:
         domains_ret = []
         dependencies_ret = []
         sub_indices_ret = []
+        max_length_domain = 0
+
+        countAlreadyComputed = {}
+        dependenciesAlreadyComputed = {}
+        subIndicesAlreadyComputed = {}
+
+        if not domainsAlreadyComputed:
+            domainsAlreadyComputed = {}
 
         for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
 
@@ -561,10 +569,15 @@ class CodeGenerator:
                 sub_indices_list = list(t.getSubIndices())
                 sub_indices_list.reverse()
 
+                domain = ""
                 domains = {}
                 dependencies = {}
+                count = {}
                 
                 for _subIndices in sub_indices_list:
+
+                    max_length_domain = max(max_length_domain, len(_subIndices))
+
                     totalIndices = list(_subIndices)
                     idx = 0
                     totalSubIndices = len(_subIndices)
@@ -593,6 +606,7 @@ class CodeGenerator:
                         if _tuple != None:
                             domains[idx] = "(" + ",".join(_combIndices) + ") " + op + " " + _tuple
                             dependencies[idx] = deps
+                            count[idx] = len(_combIndices)
                             
                             for i in range(idx, idx+len(_combIndices)):
                                 indices.remove(i)
@@ -620,55 +634,53 @@ class CodeGenerator:
                             if subIdxDomains[i][1] != None:
                                 domains[ind] = (_subIndicesRemaining[i] + " " + subIdxDomains[i][0] + " " if not _subIndicesRemaining[i] in varNameSubIndices else "") + subIdxDomains[i][1]
                                 dependencies[ind] = subIdxDomains[i][3]
+                                count[ind] = 1
                                 varNameSubIndices.append(_subIndicesRemaining[i])
 
                             else:
                                 subIdxDomainsRemaining.append(ind)
+
+                    for idx in domains:
+                        if not idx in domainsAlreadyComputed or ".." in domainsAlreadyComputed[idx]:
+                            domainsAlreadyComputed[idx]      = domains[idx]
+                            dependenciesAlreadyComputed[idx] = dependencies[idx]
+                            subIndicesAlreadyComputed[idx]   = _subIndices[idx]
+                            countAlreadyComputed[idx]   = count[idx]
                             
-                        if len(subIdxDomainsRemaining) != 0 and len(subIdxDomainsRemaining) < len(totalIndices):
-                            completed = False
-
-                            if domainsAlreadyComputed:
-                                completed = True
-
-                                for idx in subIdxDomainsRemaining:
-                                    
-                                    if not idx in domainsAlreadyComputed:
-                                        completed = False
-                                        break
-
-                                    else:
-                                        domains[idx] = domainsAlreadyComputed[idx]
-                                        dependencies[idx] = []
-
-                            if not completed:
-                                domains = {}
-                                dependencies = {}
-
-                    if domains:
-                        break 
-                    
-                if len(domains) > 0:
-                    domains_str = []
-                    domains_ret = []
-                    dependencies_ret = []
-                    sub_indices_ret = _subIndices
-
-                    for key in sorted(domains.iterkeys()):
-                        if domains[key] != None:
-                            domains_str.append(domains[key])
-                            domains_ret.append(domains[key])
-                            dependencies_ret += dependencies[key]
-
-                    domain += ", ".join(domains_str)
-
-                if domain != "":
-                    break
-
                 table = table.getParent()
+        
+        totalCountAlreadyComputed = 0
+        for idx in countAlreadyComputed:
+            totalCountAlreadyComputed += countAlreadyComputed[idx]
 
-            if domain != "":
-                break
+        if totalCountAlreadyComputed == max_length_domain:
+            domains_str = []
+            domains_ret = []
+            dependencies_ret = []
+            sub_indices_ret = []
+
+            for key in sorted(domainsAlreadyComputed.iterkeys()):
+                if domainsAlreadyComputed[key] != None:
+                    domains_str.append(domainsAlreadyComputed[key])
+                    domains_ret.append(domainsAlreadyComputed[key])
+
+                    if key in dependenciesAlreadyComputed:
+                        if isinstance(dependenciesAlreadyComputed[key], list):
+                            for dep in dependenciesAlreadyComputed[key]:
+                                dependencies_ret.append(dep)
+
+                        else:
+                            dependencies_ret.append(dependenciesAlreadyComputed[key])
+
+                    if key in subIndicesAlreadyComputed:
+                        if isinstance(subIndicesAlreadyComputed[key], list):
+                            for dep in subIndicesAlreadyComputed[key]:
+                                sub_indices_ret.append(dep)
+
+                        else:
+                            sub_indices_ret.append(subIndicesAlreadyComputed[key])
+
+            domain += ", ".join(domains_str)
 
         return domain, domains_ret, list(set(dependencies_ret)), sub_indices_ret, minVal, maxVal
 
@@ -678,22 +690,27 @@ class CodeGenerator:
         dependencies = []
         sub_indices = []
         stmtIndex = None
+        currStmt = None
         
         for stmt in sorted(statements, reverse=True):
-            
+            currStmt = stmt
+
             scopes = self.symbolTables.getFirstScopeByKey(name, stmt)
             domain, domains, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
 
-            if domain != "":
+            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
             
             leafs = self.symbolTables.getLeafs(stmt)
             domain, domains, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, isDeclaration, domainsAlreadyComputed, True)
 
-            if domain != "":
+            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
+
+        if not stmtIndex:
+            stmtIndex = currStmt
 
         return domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal
 
@@ -713,7 +730,7 @@ class CodeGenerator:
                 minMaxVals = self._zipMinMaxVals(minVal, maxVal)
                 domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True, minMaxVals)
 
-                if domain == "":
+                if domain == "" or domains == minMaxVals.values():
                     statements = self.symbolTables.getStatementsByKey(name)
                     domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False, minMaxVals)
 
