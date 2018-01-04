@@ -1,0 +1,8 @@
+% Test for inference of ranges in domains
+\text{maximize } 3*x[1,1]+2*x[2,2]\\
+
+x[1,3] + x[1,6] \leq 80\\
+
+x[3,2] + x[3,2] \leq 100\\
+
+x \in \mathbb{N}

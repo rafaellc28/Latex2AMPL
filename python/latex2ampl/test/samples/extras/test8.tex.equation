@@ -1,0 +1,2 @@
+% Test for inference of parameters and sets
+m, n \in \mathbb{Z}, \in \mathbb{P}, > 0; J := 1 \ldots n; M := 1 \ldots m\\

@@ -1,0 +1,8 @@
+% Test for inference of ranges in domains
+\text{maximize } 3*x[1]+2*x[10]\\
+
+x[i] + x[i+1] \leq 80: i \in 2 \cdots 5\\
+
+x[i] + x[i+1] \leq 100: i \in M \cdots 9 \text{ by } P\\
+
+x[i] \in \mathbb{N}

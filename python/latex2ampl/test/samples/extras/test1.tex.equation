@@ -1,0 +1,10 @@
+% Test for inference of ranges in domains
+\text{maximize } 3*x[1,1,c]+2*x[2,2,c]: c \in C\\
+
+\text{subject to } 1.85*x[1] + x[2] \leq 100\\
+
+x[1] + x[2] \leq 80\\
+
+x[1] \leq 40\\
+
+x[1], x[2] \in \mathbb{N}
