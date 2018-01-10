@@ -1,0 +1,2 @@
+% Test fractional expression
+a := \frac{b}{c+1}

@@ -125,6 +125,10 @@ class CodeSetup:
         self.stmtIndex += 1
         self.currentTable = None
 
+    # Get the AMPL code for a given declaration
+    def _setupDeclaration(self, declaration):
+        declaration.setupEnvironment(self)
+
     # Get the AMPL code for a given constraint
     def _setupConstraint(self, constraint):
         self.level = 0
@@ -1144,6 +1148,7 @@ class CodeSetup:
         """
 
         if node.getIndice() > -1:
+            node.isInt = True
             if len(node.sub_indices) == 0:
                 return
         

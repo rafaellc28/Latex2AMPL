@@ -51,7 +51,7 @@ precedence = (
     ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
     ('right', 'CARET'),
     ('right', 'UPLUS', 'UMINUS'),
-    ('right', 'AMPERSAND', 'SLASHES'),
+    ('right', 'AMPERSAND', 'SLASHES', 'SEMICOLON'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
       'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
@@ -128,13 +128,7 @@ def p_ConstraintList(t):
                       | Declarations'''
 
     if len(t) > 2 and not isinstance(t[2], str):
-      if isinstance(t[2], Declarations):
-        t[0] = t[1] + t[2].declarations
-      else:
         t[0] = t[1] + [t[2]]
-
-    elif isinstance(t[1], Declarations):
-        t[0] = t[1].declarations
 
     else:
         t[0] = [t[1]]
@@ -317,8 +311,8 @@ def p_Declarations(t):
   t[0] = Declarations(t[1])
 
 def p_DeclarationList(t):
-    '''DeclarationList : Declaration
-                       | DeclarationList SEMICOLON Declaration'''
+    '''DeclarationList : DeclarationList SEMICOLON Declaration
+                       | Declaration'''
     if len(t) > 4:
       t[0] = t[1] + [t[4]]
     elif len(t) > 3:
