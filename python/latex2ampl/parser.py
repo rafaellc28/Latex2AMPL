@@ -994,11 +994,7 @@ def p_SetExpressionWithValue(t):
         t[0] = SetExpressionWithValue(value)
 
 def p_SetExpressionWithIndices(t):
-    '''SetExpression : Identifier LPAREN ValueList RPAREN
-                     | Identifier LPAREN NumericExpression RPAREN
-                     | Identifier LPAREN Identifier RPAREN
-                     | Identifier LPAREN SymbolicExpression RPAREN
-                     | Identifier LBRACKET ValueList RBRACKET
+    '''SetExpression : Identifier LBRACKET ValueList RBRACKET
                      | Identifier LBRACKET NumericExpression RBRACKET
                      | Identifier LBRACKET Identifier RBRACKET
                      | Identifier LBRACKET SymbolicExpression RBRACKET'''
