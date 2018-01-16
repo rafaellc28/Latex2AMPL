@@ -99,16 +99,21 @@ def p_Objective(t):
                  | MINIMIZE NumericExpression COLON IndexingExpression
                  | MINIMIZE Identifier COLON IndexingExpression'''
 
+    _type = t.slice[1].type
+
     if len(t) > 3:
         t[4].setStmtIndexing(True)
 
         obj = Objective.MINIMIZE
-        if re.search(r"\\text\{\s*maximize\s*\}|maximize|\\text\{\s*maximize:\s*\}|maximize:", t[1]):
+        
+        if _type == "MAXIMIZE":
             obj = Objective.MAXIMIZE
 
         t[0] = Objective(t[2], obj, t[4])
+
     else:
-        if re.search(r"\\text\{\s*minimize\s*\}|minimize|\\text\{\s*minimize:\s*\}|minimize:", t[1]):
+
+        if _type == "MINIMIZE":
             t[0] = Objective(t[2])
         else:
             t[0] = Objective(t[2], Objective.MAXIMIZE)
@@ -281,15 +286,19 @@ def p_ConstraintExpression(t):
                             | Identifier GE Identifier GE Identifier'''
     
     if len(t) > 4:
-        if t[4] == "\\leq":
+        if t.slice[4].type == "LE":
             t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.LE)
-        elif t[4] == "\\geq":
+
+        elif t.slice[4].type == "GE":
             t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.GE)
-    elif t[2] == "=":
+
+    elif t.slice[2].type == "EQ":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.EQ)
-    elif t[2] == "\\leq":
+
+    elif t.slice[2].type == "LE":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.LE)
-    elif t[2] == "\\geq":
+
+    elif t.slice[2].type == "GE":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
 
 def p_Declarations(t):
@@ -473,8 +482,9 @@ def p_DeclarationExpression(t):
                              | SymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList'''
 
+    _type = t.slice[2].type
     if isinstance(t[1], DeclarationExpression):
-      if t[2] == ",":
+      if _type == "COMMA":
         t[1].addAttribute(t[3])
       else:
         t[1].addAttribute(t[2])
@@ -483,32 +493,40 @@ def p_DeclarationExpression(t):
 
     else:
       attr = None
-      if t[2] == ",":
+      if _type == "COMMA":
         attr = t[3]
-      elif t[2] == "\\in":
+
+      elif _type == "IN":
         if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
-      elif re.search(r"\\subseteq|\\subset", t[2]):
+
+      elif _type == "SUBSET":
         if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
-      elif re.search(r"\\text\{\s*default\s*\}", t[2]):
+
+      elif _type == "DEFAULT":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DF)
-      elif re.search(r"\\text\{\s*dimen\s*\}", t[2]):
+
+      elif _type == "DIMEN":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
-      elif t[2] == ":=":
+
+      elif _type == "ASSIGN":
         if isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
-      elif t[2] == "<":
+
+      elif _type == "LT":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.LT)
-      elif t[2] == ">":
+
+      elif _type == "GT":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.GT)
-      elif t[2] == "\\neq":
+
+      elif _type == "NEQ":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.NEQ)
 
       if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
@@ -564,37 +582,47 @@ def p_DeclarationAttribute(t):
                           | NEQ Identifier
                           | NEQ SymbolicExpression'''
 
-  if t[1] == "\\in":
+  _type = t.slice[1].type
+  if _type == "IN":
     if not isinstance(t[2], SetExpression):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
-  elif re.search(r"\\subseteq|\\subset", t[1]):
+
+  elif _type == "SUBSET":
     if not isinstance(t[2], SetExpression):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
 
-  elif re.search(r"\\text\{\s*default\s*\}", t[1]):
+  elif _type == "DEFAULT":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DF)
-  elif re.search(r"\\text\{\s*dimen\s*\}", t[1]):
+
+  elif _type == "DIMEN":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
-  elif t[1] == ":=":
+
+  elif _type == "ASSIGN":
     if isinstance(t[2], Range):
       t[2] = SetExpressionWithValue(t[2])
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
-  elif t[1] == "<":
+
+  elif _type == "LT":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LT)
-  elif t[1] == "\\leq":
+
+  elif _type == "LE":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LE)
-  elif t[1] == ">":
+
+  elif _type == "GT":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.GT)
-  elif t[1] == "\\geq":
+
+  elif _type == "GE":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.GE)
-  elif t[1] == "\\neq":
+
+  elif _type == "NEQ":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.NEQ)
-  elif t[1] == "=":
+
+  elif _type == "EQ":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.EQ)
 
 def p_LinearExpression(t):
@@ -638,13 +666,17 @@ def p_LinearExpression_binop(t):
                         | LinearExpression DIVIDE Identifier
                         | SymbolicExpression DIVIDE Identifier'''
 
-    if t[2] == "+":
+    _type = t.slice[2].type
+    if _type == "PLUS":
         op = LinearExpressionWithArithmeticOperation.PLUS
-    elif t[2] == "-":
+
+    elif _type == "MINUS":
         op = LinearExpressionWithArithmeticOperation.MINUS
-    elif re.search(r"\*|\\cdot|\\ast", t[2]):
+
+    elif _type == "TIMES":
         op = LinearExpressionWithArithmeticOperation.TIMES
-    elif re.search(r"/|\\div", t[2]):
+
+    elif _type == "DIVIDE":
         op = LinearExpressionWithArithmeticOperation.DIV
 
     t[0] = LinearExpressionWithArithmeticOperation(op, t[1], t[3])
@@ -709,10 +741,11 @@ def p_LogicalExpression(t):
       if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
         t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
 
-      if re.search(r"\\wedge|\\text\{\s*and\s*\}", t[2]):
+      if t.slice[2].type == "AND":
         t[0] = t[1].addAnd(t[3])
       else:
         t[0] = t[1].addOr(t[3])
+
     else:
         t[0] = LogicalExpression([t[1]])
 
@@ -721,13 +754,16 @@ def p_EntryLogicalExpression(t):
                               | NOT NumericExpression
                               | NOT Identifier
                               | LPAREN LogicalExpression RPAREN'''
+                              
     if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
       t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
 
-    if isinstance(t[1], str) and re.search(r"!|\\text\{\s*not\s*}", t[1]):
+    if isinstance(t[1], str) and t.slice[1].type == "NOT":
       t[0] = EntryLogicalExpressionNot(t[2])
-    elif t[1] == "(":
+
+    elif t.slice[1].type == "LPAREN":
       t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
+
     else:
       t[0] = t[2]
 
@@ -787,17 +823,23 @@ def p_EntryRelationalLogicalExpression(t):
                               | SymbolicExpression NEQ Identifier
                               | SymbolicExpression NEQ SymbolicExpression'''
 
-    if t[2] == "<":
+    _type = t.slice[2].type
+    if _type == "LT":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
-    elif t[2] == "\\leq":
+
+    elif _type == "LE":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
-    elif t[2] == "=":
+
+    elif _type == "EQ":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
-    elif t[2] == ">":
+
+    elif _type == "GT":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
-    elif t[2] == "\\geq":
+
+    elif _type == "GE":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
-    elif t[2] == "\\neq":
+
+    elif _type == "NEQ":
         t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
 def p_EntryLogicalExpressionWithSet(t):
@@ -843,19 +885,24 @@ def p_EntryLogicalExpressionWithSet(t):
                               | Identifier NOTSUBSET Range
                               | SetExpression NOTSUBSET Identifier
                               | Range NOTSUBSET Identifier'''
+
     if not isinstance(t[3], SetExpression):
       t[3] = SetExpressionWithValue(t[3])
 
     if isinstance(t[1], ValueList):
       t[1] = ValueList([t[1]])
 
-    if t[2] == "\\in":
+    _type = t.slice[2].type
+    if _type == "IN":
         t[0] = EntryLogicalExpressionWithSet(EntryLogicalExpressionWithSet.IN, t[1], t[3])
-    elif t[2] == "\\notin":
+
+    elif _type == "NOTIN":
         t[0] = EntryLogicalExpressionWithSet(EntryLogicalExpressionWithSet.NOTIN, t[1], t[3])
-    elif re.search(r"\\subseteq|\\subset", t[2]):
+
+    elif _type == "SUBSET":
         t[0] = EntryLogicalExpressionWithSetOperation(EntryLogicalExpressionWithSetOperation.SUBSET, t[1], t[3])
-    elif re.search(r"\\not\\subseteq|\\not\\subset", t[2]):
+
+    elif _type == "NOTSUBSET":
         t[0] = EntryLogicalExpressionWithSetOperation(EntryLogicalExpressionWithSetOperation.NOTSUBSET, t[1], t[3])
 
 def p_EntryIteratedLogicalExpression(t):
@@ -870,13 +917,17 @@ def p_EntryIteratedLogicalExpression(t):
     if not isinstance(t[5], LogicalExpression):
       t[5] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[5])])
 
-    if t[1] == "\\forall":
+    _type = t.slice[1].type
+    if _type == "FORALL":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
-    elif t[1] == "\\not\\forall":
+
+    elif _type == "NFORALL":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
-    elif t[1] == "\\exists":
+
+    elif _type == "EXISTS":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
-    elif t[1] == "\\nexists" or t[1] == "\\not\\exists":
+
+    elif _type == "NEXISTS":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
 
 def p_SetExpressionWithOperation(t):
@@ -916,15 +967,20 @@ def p_SetExpressionWithOperation(t):
                      | SetExpression CROSS Identifier
                      | Range CROSS Identifier'''
 
-    if re.search(r"\\setminus", t[2]):
+    _type = t.slice[2].type
+    if _type == "DIFF":
         op = SetExpressionWithOperation.DIFF
-    elif re.search(r"\\triangle|\\ominus", t[2]):
+
+    elif _type == "SYMDIFF":
         op = SetExpressionWithOperation.SYMDIFF
-    elif re.search(r"\\cup|\\bigcup", t[2]):
+
+    elif _type == "UNION":
         op = SetExpressionWithOperation.UNION
-    elif re.search(r"\\cap|\\bigcap", t[2]):
+
+    elif _type == "INTER":
         op = SetExpressionWithOperation.INTER
-    elif re.search(r"\\times", t[2]):
+
+    elif _type == "CROSS":
         op = SetExpressionWithOperation.CROSS
 
     if not isinstance(t[1], SetExpression):
@@ -968,24 +1024,32 @@ def p_SetExpressionWithValue(t):
                      | SETS
                      | VARIABLES'''
 
+    _type = t.slice[1].type
     if len(t) > 2:
-        if isinstance(t[1], str) and re.search(r"\\\{", t[1]):
-          if not (isinstance(t[2], str) and re.search(r"\\\}", t[2])):
+
+        if isinstance(t[1], str) and _type == "LLBRACE":
+
+          if not (isinstance(t[2], str) and t.slice[2].type == "RRBRACE"):
             if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
               t[2] = ValueList([t[2]])
 
             t[0] = SetExpressionBetweenBraces(SetExpressionWithValue(t[2]))
+
           else:
             t[0] = SetExpressionBetweenBraces(None)
-        elif t[1] == "(":
+
+        elif _type == "LPAREN":
           t[0] = SetExpressionBetweenParenthesis(t[2])
+
         else:
           if not isinstance(t[2], SetExpression):
             t[2] = SetExpressionWithValue(t[2])
 
           t[0] = SetExpressionWithValue(t[2])
-    elif t[1] == "\\emptyset" or t[1] == "\\varnothing":
+
+    elif _type == "EMPTYSET":
         t[0] = SetExpressionBetweenBraces(None)
+
     else:
         value = t[1]
         if hasattr(t.slice[1], 'value2'):
@@ -1039,16 +1103,21 @@ def p_IteratedSetExpression(t):
                      | INTER UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
                      | INTER UNDERLINE LBRACE IndexingExpression RBRACE SymbolicExpression'''
     
-    if t[1] == "\\cup" or t[1] == "\\bigcup":
+    _type = t.slice[1].type
+    if _type == "UNION":
+
       if len(t) > 7:
         t[0] = IteratedSetExpression(IteratedSetExpression.UNION, t[4], t[10], t[8])
       else:
         t[0] = IteratedSetExpression(IteratedSetExpression.UNION, t[4], t[6])
-    elif t[1] == "\\cap" or t[1] == "\\bigcap":
+
+    elif _type == "INTER":
+
       if len(t) > 7:
         t[0] = IteratedSetExpression(IteratedSetExpression.INTER, t[4], t[10], t[8])
       else:
         t[0] = IteratedSetExpression(IteratedSetExpression.INTER, t[4], t[6])
+
     else:
       t[0] = IteratedSetExpression(IteratedSetExpression.SETOF, t[3], t[5])
 
@@ -1060,13 +1129,17 @@ def p_IndexingExpression(t):
                           | IndexingExpression COMMA EntryIndexingExpression'''
 
     if len(t) > 3:
-        if re.search(r"\\mid|\\vert|\|", t[2]):
+
+        if t.slice[2].type == "PIPE":
+
             if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
               t[3] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[3])])
 
             t[0] = t[1].setLogicalExpression(t[3])
+
         else:
             t[0] = t[1].add(t[3])
+
     else:
         t[0] = IndexingExpression([t[1]])
 
@@ -1109,17 +1182,24 @@ def p_EntryIndexingExpressionEq(t):
                                | Identifier LT Identifier
                                | Identifier GT NumericExpression
                                | Identifier GT Identifier'''
-    if t[2] == "=":
+
+    _type = t.slice[2].type
+    if _type == "EQ":
         t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.EQ, t[1], t[3])
-    elif t[2] == "\\neq":
+
+    elif _type == "NEQ":
         t[0] = EntryIndexingExpressionEq(EntryIndexingExpressionEq.NEQ, t[1], t[3])
-    elif t[2] == "\\leq":
+
+    elif _type == "LE":
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LE, t[1], t[3])
-    elif t[2] == "\\geq":
+
+    elif _type == "GE":
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GE, t[1], t[3])
-    elif t[2] == "<":
+
+    elif _type == "LT":
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.LT, t[1], t[3])
-    elif t[2] == ">":
+
+    elif _type == "GT":
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
 
 
@@ -1142,7 +1222,8 @@ def p_SymbolicExpression_binop(t):
                           | SymbolicExpression AMPERSAND NumericExpression
                           | SymbolicExpression AMPERSAND Identifier
                           | SymbolicExpression AMPERSAND SymbolicExpression'''
-    if re.search(r"\\&", t[2]):
+
+    if t.slice[2].type == "AMPERSAND":
         op = SymbolicExpressionWithOperation.CONCAT
 
     t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
@@ -1197,21 +1278,29 @@ def p_FunctionSymbolicExpression(t):
                           | CTIME LPAREN NumericExpression RPAREN
                           | CTIME LPAREN RPAREN'''
 
-    if t[1] == "substr":
+    _type = t.slice[1].type
+    if _type == "SUBSTR":
         op = SymbolicExpressionWithFunction.SUBSTR
-    elif t[1] == "time2str":
+
+    elif _type == "TIME2STR":
         op = SymbolicExpressionWithFunction.TIME2STR
-    elif t[1] == "alias":
+
+    elif _type == "ALIAS":
         op = SymbolicExpressionWithFunction.ALIAS
-    elif t[1] == "ctime":
+
+    elif _type == "CTIME":
         op = SymbolicExpressionWithFunction.CTIME
-    elif t[1] == "char":
+
+    elif _type == "CHAR":
         op = SymbolicExpressionWithFunction.CHAR
-    elif t[1] == "sprintf":
+
+    elif _type == "SPRINTF":
         op = SymbolicExpressionWithFunction.SPRINTF
-    elif t[1] == "sub":
+
+    elif _type == "SUB":
         op = SymbolicExpressionWithFunction.SUB
-    elif t[1] == "gsub":
+
+    elif _type == "GSUB":
         op = SymbolicExpressionWithFunction.GSUB
 
     if len(t) > 7:
@@ -1222,7 +1311,7 @@ def p_FunctionSymbolicExpression(t):
 
     else:
 
-        if isinstance(t[3], str) and t[3] == ")":
+        if isinstance(t[3], str) and t.slice[3].type == "RPAREN":
           t[0] = SymbolicExpressionWithFunction(op)
         else:
           t[0] = SymbolicExpressionWithFunction(op, t[3])
@@ -1261,31 +1350,41 @@ def p_NumericExpression_binop(t):
                          | Identifier CARET LBRACE NumericExpression RBRACE
                          | Identifier CARET LBRACE Identifier RBRACE'''
 
-    if t[2] == "+":
+    _type = t.slice[2].type
+    if _type == "PLUS":
         op = NumericExpressionWithArithmeticOperation.PLUS
-    elif t[2] == "-":
+
+    elif _type == "MINUS":
         op = NumericExpressionWithArithmeticOperation.MINUS
-    elif re.search(r"\*|\\cdot|\\ast", t[2]):
+
+    elif _type == "TIMES":
         op = NumericExpressionWithArithmeticOperation.TIMES
-    elif re.search(r"\\big/|\\text\{\s*div\s*\}", t[2]):
+
+    elif _type == "QUOTIENT":
         op = NumericExpressionWithArithmeticOperation.QUOT
-    elif re.search(r"/|\\div", t[2]):
+
+    elif _type == "DIVIDE":
         op = NumericExpressionWithArithmeticOperation.DIV
-    elif re.search(r"\\text\{\s*\%\s*\}|\\mod|\\bmod", t[2]):
+
+    elif _type == "MOD":
         op = NumericExpressionWithArithmeticOperation.MOD
-    elif t[2] == "^":
+
+    elif _type == "CARET":
         op = NumericExpressionWithArithmeticOperation.POW
-    elif re.search(r"\\text\{\s*less\s*\}", t[2]):
+
+    elif _type == "LESS":
         op = NumericExpressionWithArithmeticOperation.LESS
 
     if len(t) > 4 and isinstance(t[4], Identifier):
       t[4] = ValuedNumericExpression(t[4])
+
     elif len(t) > 3 and isinstance(t[3], Identifier):
       t[3] = ValuedNumericExpression(t[3])
+
     elif isinstance(t[1], Identifier):
       t[1] = ValuedNumericExpression(t[1])
 
-    if t[2] == "^":
+    if _type == "CARET":
       t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[4])
     else:
       t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
@@ -1316,13 +1415,14 @@ def p_IteratedNumericExpression(t):
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE Identifier'''
 
-    if t[1] == "\\sum":
+    _type = t.slice[1].type
+    if _type == "SUM":
         op = IteratedNumericExpression.SUM
-    elif t[1] == "\\prod":
+    elif _type == "PROD":
         op = IteratedNumericExpression.PROD
-    elif t[1] == "\\max":
+    elif _type == "MAX":
         op = IteratedNumericExpression.MAX
-    elif t[1] == "\\min":
+    elif _type == "MIN":
         op = IteratedNumericExpression.MIN
 
     if len(t) > 7:
@@ -1355,12 +1455,16 @@ def p_NumericExpression(t):
 
     if len(t) > 3:
       t[0] = NumericExpressionBetweenParenthesis(t[2])
-    elif t[1] == "+":
+
+    elif t.slice[1].type == "PLUS":
       t[0] = t[2]
-    elif t[1] == "-":
+
+    elif t.slice[1].type == "MINUS":
       t[0] = MinusNumericExpression(t[2])
+
     elif isinstance(t[1], ConditionalNumericExpression):
       t[0] = t[1]
+
     else:
       t[0] = ValuedNumericExpression(t[1])
 
@@ -1481,101 +1585,143 @@ def p_FunctionNumericExpression(t):
                          | ID LPAREN ValueList RPAREN
                          | ID LPAREN RPAREN'''
 
-    if t.slice[1].type == "ID":
+    _type = t.slice[1].type
+    if _type == "ID":
         op = ID(t[1])
 
-    elif t[1] == "card":
+    elif _type == "CARD":
         op = NumericExpressionWithFunction.CARD
 
         if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
 
-    elif t[1] == "length":
+    elif _type == "LENGTH":
         op = NumericExpressionWithFunction.LENGTH
-    elif t[1] == "round":
+
+    elif _type == "ROUND":
         op = NumericExpressionWithFunction.ROUND
-    elif t[1] == "precision":
+
+    elif _type == "PRECISION":
         op = NumericExpressionWithFunction.PRECISION
-    elif t[1] == "trunc":
+
+    elif _type == "TRUNC":
         op = NumericExpressionWithFunction.TRUNC
-    elif t[1] == "\\sqrt":
+
+    elif _type == "SQRT":
         op = NumericExpressionWithFunction.SQRT
-    elif t[1] == "\\lfloor":
+
+    elif _type == "LFLOOR":
         op = NumericExpressionWithFunction.FLOOR
-    elif t[1] == "\\lceil":
+
+    elif _type == "LCEIL":
         op = NumericExpressionWithFunction.CEIL
-    elif re.search(r"\\mid|\\vert|\|", t[1]):
+
+    elif _type == "PIPE":
         op = NumericExpressionWithFunction.ABS
-    elif t[1] == "\\max":
+
+    elif _type == "MAX":
         op = NumericExpressionWithFunction.MAX
-    elif t[1] == "\\min":
+
+    elif _type == "MIN":
         op = NumericExpressionWithFunction.MIN
-    elif t[1] == "\\sinh^{-1}":
+
+    elif _type == "ASINH":
         op = NumericExpressionWithFunction.ASINH
-    elif t[1] == "\\sinh":
+
+    elif _type == "SINH":
         op = NumericExpressionWithFunction.SINH
-    elif t[1] == "\\sin^{-1}" or t[1] == "\\arcsin":
+
+    elif _type == "ASIN":
         op = NumericExpressionWithFunction.ASIN
-    elif t[1] == "\\sin":
+
+    elif _type == "SIN":
         op = NumericExpressionWithFunction.SIN
-    elif t[1] == "\\cosh^{-1}":
+
+    elif _type == "ACOSH":
         op = NumericExpressionWithFunction.ACOSH
-    elif t[1] == "\\cosh":
+
+    elif _type == "COSH":
         op = NumericExpressionWithFunction.COSH
-    elif t[1] == "\\cos^{-1}" or t[1] == "\\arccos":
+
+    elif _type == "ACOS":
         op = NumericExpressionWithFunction.ACOS
-    elif t[1] == "\\cos":
+
+    elif _type == "COS":
         op = NumericExpressionWithFunction.COS
-    elif t[1] == "\\log":
+
+    elif _type == "LOG":
         op = NumericExpressionWithFunction.LOG10
-    elif t[1] == "\\ln":
+
+    elif _type == "LN":
         op = NumericExpressionWithFunction.LOG
-    elif t[1] == "\\exp":
+
+    elif _type == "EXP":
         op = NumericExpressionWithFunction.EXP
-    elif t[1] == "\\tanh^{-1}":
+
+    elif _type == "ARCTANH":
         op = NumericExpressionWithFunction.ATANH
-    elif t[1] == "\\tanh":
+
+    elif _type == "TANH":
         op = NumericExpressionWithFunction.TANH
-    elif t[1] == "\\tan^{-1}" or t[1] == "\\arctan":
+
+    elif _type == "ARCTAN":
         if len(t) > 5:
           op = NumericExpressionWithFunction.ATAN2
         else:
           op = NumericExpressionWithFunction.ATAN
-    elif t[1] == "\\tan":
+
+    elif _type == "TAN":
         op = NumericExpressionWithFunction.TAN
-    elif t[1] == "Uniform01":
+
+    elif _type == "UNIFORM01":
         op = NumericExpressionWithFunction.UNIFORM01
-    elif t[1] == "Uniform":
+
+    elif _type == "UNIFORM":
         op = NumericExpressionWithFunction.UNIFORM
-    elif t[1] == "Normal01":
+
+    elif _type == "NORMAL01":
         op = NumericExpressionWithFunction.NORMAL01
-    elif t[1] == "Normal":
+
+    elif _type == "NORMAL":
         op = NumericExpressionWithFunction.NORMAL
-    elif t[1] == "Cauchy":
+
+    elif _type == "CAUCHY":
         op = NumericExpressionWithFunction.CAUCHY
-    elif t[1] == "Exponential":
+
+    elif _type == "EXPONENTIAL":
         op = NumericExpressionWithFunction.EXPONENTIAL
-    elif t[1] == "Beta":
+
+    elif _type == "BETA":
         op = NumericExpressionWithFunction.BETA
-    elif t[1] == "Gamma":
+
+    elif _type == "GAMMA":
         op = NumericExpressionWithFunction.GAMMA
-    elif t[1] == "Poisson":
+
+    elif _type == "POISSON":
         op = NumericExpressionWithFunction.POISSON
-    elif t[1] == "gmtime":
+
+    elif _type == "GMTIME":
         op = NumericExpressionWithFunction.GMTIME
-    elif t[1] == "time":
+
+    elif _type == "TIME":
         op = NumericExpressionWithFunction.TIME
-    elif t[1] == "Irand224":
+
+    elif _type == "IRAND224":
         op = NumericExpressionWithFunction.IRAND224
-    elif t[1] == "str2time":
+
+    elif _type == "STR2TIME":
         op = NumericExpressionWithFunction.STR2TIME
-    elif t[1] == "num0":
+
+    elif _type == "NUM0":
         op = NumericExpressionWithFunction.NUM0
-    elif t[1] == "num":
+
+    elif _type == "NUM":
         op = NumericExpressionWithFunction.NUM
-    elif t[1] == "ichar":
+
+    elif _type == "ICHAR":
         op = NumericExpressionWithFunction.ICHAR
-    elif t[1] == "match":
+
+    elif _type == "MATCH":
         op = NumericExpressionWithFunction.MATCH
 
     if len(t) > 5:
@@ -1585,7 +1731,7 @@ def p_FunctionNumericExpression(t):
         t[0] = NumericExpressionWithFunction(op, t[3])
 
     else:
-        if t[2] == "(":
+        if t.slice[2].type == "LPAREN":
           t[0] = NumericExpressionWithFunction(op)
         else:
           t[0] = NumericExpressionWithFunction(op, t[2])
