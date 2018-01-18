@@ -216,10 +216,12 @@ class ConditionalLinearExpression(LinearExpression):
         """
         to string
         """
-        res = "CondLinearExpr: " + "("+str(self.logicalExpression)+")?" + str(self.linearExpression1)
+        res = "CondLinearExpr: " + " IF "+str(self.logicalExpression)+" THEN " + str(self.linearExpression1)
 
         if self.linearExpression2 != None:
-            res += ": " + str(self.linearExpression2)
+            res += " ELSE " + str(self.linearExpression2)
+
+        res += " ENDIF "
 
         return res
     

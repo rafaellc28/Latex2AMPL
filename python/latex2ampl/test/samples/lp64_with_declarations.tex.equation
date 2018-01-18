@@ -19,4 +19,4 @@ dem_{p,i}, \geq 0: p \in prd, i \in first \ldots last+1\\
 pro_{p,i}, \in \mathbb{L}: p \in prd, i \in first \ldots last+1\\
 rir, pir, iinv_{p}, \geq 0; cri_{p}, crs_{p} > 0: p \in prd; life \in \mathbb{Z}, \in \mathbb{P}, > 0\\
 iil_{p,t} := iinv_{p} \text{ less } \sum_{v \in first \ldots t} dem_{p,v}: p \in prd, t \in time2\\
-minv_{p,t} := dem_{p,t+1} * ((pro_{p,t+1})? pir : rir): p \in prd, t \in time2\\
+minv_{p,t} := dem_{p,t+1} * (\text{ if } pro_{p,t+1} \text{ then } pir \text{ else } rir): p \in prd, t \in time2\\

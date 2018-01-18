@@ -40,9 +40,9 @@ param impdBarg{p in plant}, >= 0;
 
 param pImp{c in commod}, >= 0;
 
-param tranFinal{pl in plant, r in region}, := if road[r,pl] > 0 then .5 + .0144 * road[r,pl] else 0;
+param tranFinal{pl in plant, r in region}, := if road[r,pl] > 0 then .5 + .0144 * road[r,pl];
 
-param tranImport{r in region, po in port}, := if road[r,po] > 0 then .5 + .0144 * road[r,po] else 0;
+param tranImport{r in region, po in port}, := if road[r,po] > 0 then .5 + .0144 * road[r,po];
 
 param dcap{p in plant, u in unit}, >= 0;
 
@@ -60,7 +60,7 @@ set pExcept{p in plant}, within proc;
 
 param pDom{pl in plant, c in cRaw}, := if pR[c] > 0 then pR[c] else pPr[pl,c];
 
-param tranRaw{pl in plant}, := (if impdBarg[pl] > 0 then 1.0 + .0030 * impdBarg[pl] else 0) + (if impdRoad[pl] > 0 then 0.5 + .0144 * impdRoad[pl] else 0);
+param tranRaw{pl in plant}, := (if impdBarg[pl] > 0 then 1.0 + .0030 * impdBarg[pl]) + (if impdRoad[pl] > 0 then 0.5 + .0144 * impdRoad[pl]);
 
 param rail{p1 in plant, p2 in plant}, := if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1];
 
@@ -68,7 +68,7 @@ param icap{u in unit, pl in plant}, := 0.33 * dcap[pl,u];
 
 set mPos{pl in plant}, := {u in unit : icap[u,pl] > 0};
 
-param tranInter{p1 in plant, p2 in plant}, := if rail[p1,p2] > 0 then 3.5 + .03 * rail[p1,p2] else 0;
+param tranInter{p1 in plant, p2 in plant}, := if rail[p1,p2] > 0 then 3.5 + .03 * rail[p1,p2];
 
 set pCap{pl in plant}, := {pr in proc : forall{u in unit : util[u,pr] > 0} u in mPos[pl]};
 
@@ -109,7 +109,7 @@ s.t. C2 {c in cFinal, r in region : cf75[r,c] > 0} :
 	sum{po in port}Vf[c,r,po] + sum{pl in cpPos[c]}Xf[c,pl,r] >= cf75[r,c];
 
 s.t. C3 {c in commod, pl in plant} :
-	sum{pr in pPos[pl]}io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum{p2 in ccPos[c]}Xi[c,pl,p2] else 0) - (if pl in ccPos[c] then sum{p2 in cpPos[c]}Xi[c,p2,pl] else 0) else 0) + (if c in cRaw and pl in ccPos[c] then ((if pImp[c] > 0 then Vr[c,pl] else 0) + (if pDom[pl,c] > 0 then U[c,pl] else 0)) else 0) >= if c in cFinal and pl in cpPos[c] then sum{r in region}Xf[c,pl,r] else 0;
+	sum{pr in pPos[pl]}io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum{p2 in ccPos[c]}Xi[c,pl,p2]) - (if pl in ccPos[c] then sum{p2 in cpPos[c]}Xi[c,p2,pl])) + (if c in cRaw and pl in ccPos[c] then ((if pImp[c] > 0 then Vr[c,pl]) + (if pDom[pl,c] > 0 then U[c,pl]))) >= if c in cFinal and pl in cpPos[c] then sum{r in region}Xf[c,pl,r];
 
 s.t. C4 {pl in plant, u in mPos[pl]} :
 	sum{pr in pPos[pl]}util[u,pr] * Z[pl,pr] <= utilPct * icap[u,pl];

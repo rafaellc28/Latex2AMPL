@@ -32,8 +32,7 @@ import objects as obj
 precedence = (
     ('left', 'ID'),
     ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE'),
-    ('left', 'IF', 'THEN'),
-    ('right', 'ELSE'),
+    ('left', 'IF', 'THEN', 'ELSE'),
     ('left', 'NUMBER', 'INFINITY'),
     ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS'),
     ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF', 'ASSIGN'),
@@ -149,6 +148,51 @@ def p_Constraint(t):
     else:
         t[0] = Constraint(t[1])
 
+def p_ConstraintExpressionLogical(t):
+    '''ConstraintExpression : ConstraintExpression AND ConstraintExpression
+                            | ConstraintExpression OR ConstraintExpression
+                            | FORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NFORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | EXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NEXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NOT ConstraintExpression
+                            | LPAREN ConstraintExpression RPAREN'''
+
+    if t.slice[1].type == "LPAREN":
+        entry = LogicalExpression([t[2]])
+        t[0] = EntryLogicalExpressionBetweenParenthesis(entry)
+
+    elif t.slice[2].type == "AND" or t.slice[2].type == "OR":
+
+        entry = EntryLogicalExpressionNumericOrSymbolic(t[1])
+        entry = LogicalExpression([entry])
+
+        if t.slice[2].type == "AND":
+          entry = entry.addAnd(t[3])
+        else:
+          entry = entry.addOr(t[3])
+
+        t[0] = entry
+
+    elif isinstance(t[1], str) and t.slice[1].type == "NOT":
+        entry = EntryLogicalExpressionNot(t[2])
+        t[0] = LogicalExpression([entry])
+
+    else:
+        _type = t.slice[1].type
+        if _type == "FORALL":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
+
+        elif _type == "NFORALL":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
+
+        elif _type == "EXISTS":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
+
+        elif _type == "NEXISTS":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
+
+        t[0] = LogicalExpression([entry])
 
 def p_ConstraintExpression(t):
     '''ConstraintExpression : LinearExpression EQ LinearExpression
@@ -722,20 +766,12 @@ def p_ConditionalLinearExpression(t):
                                    | IF LogicalExpression THEN NumericExpression ELSE LinearExpression
                                    | IF LogicalExpression THEN NumericExpression ELSE SymbolicExpression
                                    | IF LogicalExpression THEN Identifier ELSE LinearExpression
-                                   | IF LogicalExpression THEN Identifier ELSE SymbolicExpression
-                                   | IF Identifier THEN LinearExpression
-                                   | IF Identifier THEN SymbolicExpression
-                                   | IF NumericExpression THEN LinearExpression
-                                   | IF NumericExpression THEN SymbolicExpression
-                                   | IF LogicalExpression THEN LinearExpression
-                                   | IF LogicalExpression THEN SymbolicExpression'''
+                                   | IF LogicalExpression THEN Identifier ELSE SymbolicExpression'''
     if not isinstance(t[2], LogicalExpression):
       t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
 
     t[0] = ConditionalLinearExpression(t[2], t[4])
-
-    if len(t) > 5:
-      t[0].addElseExpression(t[6])
+    t[0].addElseExpression(t[6])
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
@@ -1757,27 +1793,19 @@ def p_ConditionalNumericExpression(t):
                                     | IF LogicalExpression THEN NumericExpression ELSE NumericExpression
                                     | IF LogicalExpression THEN NumericExpression ELSE Identifier
                                     | IF LogicalExpression THEN Identifier ELSE NumericExpression
-                                    | IF LogicalExpression THEN Identifier ELSE Identifier
-                                    | IF Identifier THEN NumericExpression
-                                    | IF Identifier THEN Identifier
-                                    | IF NumericExpression THEN NumericExpression
-                                    | IF NumericExpression THEN Identifier
-                                    | IF LogicalExpression THEN NumericExpression
-                                    | IF LogicalExpression THEN Identifier'''
+                                    | IF LogicalExpression THEN Identifier ELSE Identifier'''
 
     if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
       t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
     
     if isinstance(t[4], Identifier):
-      t[4] = ValuedNumericExpression(t[4])
+      t[5] = ValuedNumericExpression(t[4])
 
-    if len(t) > 5 and isinstance(t[6], Identifier):
+    if isinstance(t[6], Identifier):
       t[6] = ValuedNumericExpression(t[6])
 
     t[0] = ConditionalNumericExpression(t[2], t[4])
-
-    if len(t) > 5:
-      t[0].addElseExpression(t[6])
+    t[0].addElseExpression(t[6])
 
 def p_Range(t):
     '''Range : NumericExpression DOTS NumericExpression BY NumericExpression

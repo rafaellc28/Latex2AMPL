@@ -6,7 +6,7 @@ param firstday{m in 1..12} integer, <= 6, >= 0, := time2str(str2time(year & "-" 
 
 param foo{m in 1..12, k in 0..5, d in 0..6} integer, := 7 * k + d + 1 - firstday[m];
 
-param cal{m in 1..12, k in 0..5, d in 0..6} integer, := if 1 <= foo[m,k,d] and foo[m,k,d] <= daysinmonth[m] then foo[m,k,d] else 0;
+param cal{m in 1..12, k in 0..5, d in 0..6} integer, := if 1 <= foo[m,k,d] and foo[m,k,d] <= daysinmonth[m] then foo[m,k,d];
 
 
 

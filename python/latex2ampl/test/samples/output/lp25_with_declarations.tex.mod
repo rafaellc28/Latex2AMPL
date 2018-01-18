@@ -24,6 +24,6 @@ s.t. C3 {(i,j) in E} :
 	y[i,j] <= (n - 1) * x[i,j];
 
 s.t. C4 {i in V} :
-	sum{(j,i) in E}y[j,i] + (if i = 1 then n else 0) = sum{(i,j) in E}y[i,j] + 1;
+	sum{(j,i) in E}y[j,i] + (if i = 1 then n) = sum{(i,j) in E}y[i,j] + 1;
 
 

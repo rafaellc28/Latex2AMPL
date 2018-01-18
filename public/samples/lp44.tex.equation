@@ -1,5 +1,5 @@
 % GLPK/sudoku.mod: ../glpk-4.47/examples/sudoku.mod
-x_{i,j,k} = (Givens_{i,j} = k)? 1:0: i \in 1 \ldots 9, j \in 1 \ldots 9, k \in 1 \ldots 9\mid Givens_{i,j} \neq 0, x_{i,j,k} \in \mathbb{B}\\
+x_{i,j,k} = \text{ if } Givens_{i,j} = k \text{ then } 1: i \in 1 \ldots 9, j \in 1 \ldots 9, k \in 1 \ldots 9\mid Givens_{i,j} \neq 0, x_{i,j,k} \in \mathbb{B}\\
 \sum_{i \in i1 \ldots i1+2, j \in j1 \ldots j1+2} x_{i,j,k} = 1: i1 \in 1 \ldots 9 \text{ by } 3, j1 \in 1 \ldots 9 \text{ by } 3, k \in 1 \ldots 9\\
 \sum_{k \in 1 \ldots 9} x_{i,j,k} = 1: i \in 1 \ldots 9, j \in 1 \ldots 9\\
 \sum_{j \in 1 \ldots 9} x_{i,j,k} = 1: i \in 1 \ldots 9, k \in 1 \ldots 9\\

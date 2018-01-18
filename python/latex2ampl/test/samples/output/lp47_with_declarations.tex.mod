@@ -4,7 +4,7 @@ param a{i in I};
 
 param s{i in I}, := 1 + sum{j in I : a[i] < a[j] or a[i] = a[j] and i < j}1;
 
-param r{i in I}, := 1 + sum{j in I}if (a[j] < a[i] or a[j] = a[i] and j < i) then 1 else 0;
+param r{i in I}, := 1 + sum{j in I}if (a[j] < a[i] or a[j] = a[i] and j < i) then 1;
 
 param BigM, := 1 + sum{i in I}abs(a[i]);
 

@@ -15,6 +15,6 @@ var x{(i,j) in E} >= 0;
 minimize obj: sum{(i,j) in E}c[i,j] * x[i,j];
 
 s.t. C1 {i in 1..n} :
-	sum{(j,i) in E}x[j,i] + (if i = s then 1 else 0) = sum{(i,j) in E}x[i,j] + (if i = t then 1 else 0);
+	sum{(j,i) in E}x[j,i] + (if i = s then 1) = sum{(i,j) in E}x[i,j] + (if i = t then 1);
 
 

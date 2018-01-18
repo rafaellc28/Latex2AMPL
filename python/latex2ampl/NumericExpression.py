@@ -454,10 +454,12 @@ class ConditionalNumericExpression(NumericExpression):
         """
         to string
         """
-        res = "CondNumExpr: " + "("+str(self.logicalExpression)+")?" + str(self.numericExpression1)
+        res = "CondNumExpr: " + " IF "+str(self.logicalExpression)+" THEN " + str(self.numericExpression1)
 
         if self.numericExpression2 != None:
-            res += ": " + str(self.numericExpression2)
+            res += " ELSE " + str(self.numericExpression2)
+
+        res += " ENDIF "
 
         return res
 

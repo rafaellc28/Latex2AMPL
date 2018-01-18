@@ -56,7 +56,7 @@ tokens = [
    'NFORALL',
    'EXISTS',
    'NEXISTS',
-   'QUESTION_MARK',
+#   'QUESTION_MARK',
    'EMPTYSET',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
@@ -153,7 +153,10 @@ tokens = [
    'SETS',
    'VARIABLES',
    'SLASHES',
-   'INFINITY'
+   'INFINITY',
+   'IF',
+   'THEN',
+   'ELSE'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -170,6 +173,18 @@ def _getOp(op):
       op = "<="
 
    return op
+
+def t_IF(t):
+   r'\\text\{\s*if\s*\}'
+   return t
+
+def t_THEN(t):
+   r'\\text\{\s*then\s*\}'
+   return t
+
+def t_ELSE(t):
+   r'\\text\{\s*else\s*\}'
+   return t
 
 def t_ASSIGN(t):
    r':='
@@ -506,7 +521,7 @@ def t_RBRACKET(t):
    r'\]|\\\]'
    return t
 
-t_QUESTION_MARK = r'\?'
+#t_QUESTION_MARK = r'\?'
 t_EQ = r'='
 t_NEQ = r'\\neq'
 t_LE = r'\\leq'

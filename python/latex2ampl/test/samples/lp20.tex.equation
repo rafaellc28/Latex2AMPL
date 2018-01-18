@@ -1,6 +1,6 @@
 % GLPK/train.mod: ../glpk-4.47/examples/train.mod
 \text{minimize } \sum_{c \in cities} U_{c,Last} + \sum_{(c1,t1,c2,t2) \in schedule\mid t2 < t1} X_{c1,t1,c2,t2}: X_{c1,t1,c2,t2} \in \mathbb{R}^{+}, Last \in \mathbb{P}, Last \in \mathbb{Z}\\
 \text{minimize } \sum_{(c1,t1,c2,t2) \in schedule} Distance_{c1,c2} * X_{c1,t1,c2,t2}\\
-\text{subject to } U_{c,t} = U_{c, (t>1)?t-1:Last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}: c \in cities, t \in times, U_{c,t} \in \mathbb{R}^{+}\\
+\text{subject to } U_{c,t} = U_{c, \text{ if } t>1 \text{ then } t-1 \text{ else } Last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}: c \in cities, t \in times, U_{c,t} \in \mathbb{R}^{+}\\
 Low_{c1,t1,c2,t2} \leq X_{c1,t1,c2,t2} \leq High_{c1,t1,c2,t2}: (c1,t1,c2,t2) \in schedule\\
 Distance_{c1,c2} \geq 0: (c1,c2) \in Links

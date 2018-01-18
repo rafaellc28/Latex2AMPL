@@ -944,7 +944,8 @@ class CodeGenerator:
         return val
 
     # Get the AMPL code for a given entry
-    def _getCodeEntry(self, entry): return entry.generateCode(self)
+    def _getCodeEntry(self, entry):
+        return entry.generateCode(self)
 
     # Get the AMPL code for a given entry
     def _getCodeEntryByKey(self, entry):
@@ -1358,10 +1359,12 @@ class CodeGenerator:
         return res
 
     def generateCode_ConstraintExpression2(self, node):
-        return node.linearExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression2.generateCode(self)
+        res = node.linearExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression2.generateCode(self)
+        return res
 
     def generateCode_ConstraintExpression3(self, node):
-        return node.numericExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
+        res = node.numericExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
+        return res
 
     # Linear Expression
     def generateCode_ValuedLinearExpression(self, node):

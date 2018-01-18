@@ -19,7 +19,7 @@ var x{(i,j) in E} >= 0, <= a[i,j];
 maximize obj: flow;
 
 s.t. C1 {i in V} :
-	sum{(j,i) in E}x[j,i] + (if i = s then flow else 0) = sum{(i,j) in E}x[i,j] + (if i = t then flow else 0);
+	sum{(j,i) in E}x[j,i] + (if i = s then flow) = sum{(i,j) in E}x[i,j] + (if i = t then flow);
 
 s.t. C2 {(i,j) in E} :
 	x[i,j] <= a[i,j];

@@ -83,7 +83,7 @@ s.t. C2 {c in cFinal, r in region : Cf75[r,c] > 0} :
 	sum{po in port}Vf[c,r,po] + sum{pl in cpPos[c]}Xf[c,pl,r] >= Cf75[r,c];
 
 s.t. C3 {c in commod, pl in plant} :
-	sum{pr in pPos[pl]}Io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum{p2 in ccPos[c]}Xi[c,pl,p2] else 0) - (if pl in ccPos[c] then sum{p2 in cpPos[c]}Xi[c,p2,pl] else 0) else 0) + (if c in cRaw and pl in ccPos[c] then ((if PImp[c] > 0 then Vr[c,pl] else 0) + (if PDom[pl,c] > 0 then U[c,pl] else 0)) else 0) >= if c in cFinal and pl in cpPos[c] then sum{r in region}Xf[c,pl,r] else 0;
+	sum{pr in pPos[pl]}Io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum{p2 in ccPos[c]}Xi[c,pl,p2]) - (if pl in ccPos[c] then sum{p2 in cpPos[c]}Xi[c,p2,pl])) + (if c in cRaw and pl in ccPos[c] then ((if PImp[c] > 0 then Vr[c,pl]) + (if PDom[pl,c] > 0 then U[c,pl]))) >= if c in cFinal and pl in cpPos[c] then sum{r in region}Xf[c,pl,r];
 
 s.t. C4 {pl in plant, u in mPos[pl]} :
 	sum{pr in pPos[pl]}Util[u,pr] * Z[pl,pr] <= UtilPct * Icap[u,pl];

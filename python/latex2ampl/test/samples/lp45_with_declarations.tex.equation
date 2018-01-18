@@ -13,16 +13,16 @@ nationality_{h,"Englishman"} = color_{h,"red"}: h \in HOUSE\\
 nationality_{h,"Spaniard"} = pet_{h,"dog"}: h \in HOUSE\\
 drink_{h,"coffee"} = color_{h,"green"}: h \in HOUSE\\
 nationality_{h,"Ukranian"} = drink_{h,"tea"}: h \in HOUSE\\
-color_{h,"green"} = (h = 1)? 0:color_{h-1,"ivory"}: h \in HOUSE\\
+color_{h,"green"} = \text{ if } h = 1 \text{ then } 0 \text{ else } color_{h-1,"ivory"}: h \in HOUSE\\
 smoke_{h,"Old_Gold"} = pet_{h,"snails"}: h \in HOUSE\\
 smoke_{h,"Kools"} = color_{h,"yellow"}: h \in HOUSE\\
 drink_{3,"milk"} = 1\\
 nationality_{1,"Norwegian"} = 1\\
-(1 - smoke_{h,"Chesterfield"}) + ((h = 1)?0:pet_{h-1,"fox"}) + ((h = 5)? 0:pet_{h+1,"fox"}) \geq 1: h \in HOUSE//\\
-(1 - smoke_{h,"Kools"}) + ((h = 1)?0:pet_{h-1,"horse"}) + ((h = 5)?0:pet_{h+1,"horse"}) \geq 1: h \in HOUSE\\
+(1 - smoke_{h,"Chesterfield"}) + (\text{ if } h = 1 \text{ then } 0 \text{ else } pet_{h-1,"fox"}) + (\text{ if } h = 5 \text{ then } 0 \text{ else } pet_{h+1,"fox"}) \geq 1: h \in HOUSE//\\
+(1 - smoke_{h,"Kools"}) + (\text{ if } h = 1 \text{ then } 0 \text{ else } pet_{h-1,"horse"}) + (\text{ if } h = 5 \text{ then } 0 \text{ else } pet_{h+1,"horse"}) \geq 1: h \in HOUSE\\
 smoke_{h,"Lucky_Strike"} = drink_{h,"orange_juice"}: h \in HOUSE\\
 nationality_{h,"Japanese"} = smoke_{h,"Parliament"}: h \in HOUSE//\\
-(1 - nationality_{h,"Norwegian"}) + ((h = 1)?0:color_{h-1,"blue"}) + ((h = 5)?0:color_{h+1,"blue"}) \geq 1: h \in HOUSE\\
+(1 - nationality_{h,"Norwegian"}) + (\text{ if } h = 1 \text{ then } 0 \text{ else } color_{h-1,"blue"}) + (\text{ if } h = 5 \text{ then } 0 \text{ else } color_{h+1,"blue"}) \geq 1: h \in HOUSE\\
 color_{h,p}, nationality_{h,n}, drink_{h,d}, smoke_{h,s}, pet_{h,p} \in \mathbb{B}\\
 HOUSE := \{1 \ldots 5\}; COLOR := \{"blue", "green", "ivory", "red", "yellow"\}\\
 NATIONALITY := \{"Englishman", "Japanese", "Norwegian", "Spaniard", "Ukranian"\}\\

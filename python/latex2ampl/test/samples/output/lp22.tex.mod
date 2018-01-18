@@ -50,7 +50,7 @@ s.t. C5 {a in PLACES, b in PLACES} :
 	y[a,b] <= (card(PLACES) - 1) * x[a,b];
 
 s.t. C6 {a in PLACES} :
-	sum{b in PLACES}y[b,a] + (if a = Start then card(PLACES) else 0) = 1 + sum{b in PLACES}y[a,b];
+	sum{b in PLACES}y[b,a] + (if a = Start then card(PLACES)) = 1 + sum{b in PLACES}y[a,b];
 
 s.t. C7 {a in PLACES} :
 	tlv[a] >= tar[a];
