@@ -1366,6 +1366,14 @@ class CodeGenerator:
         res = node.numericExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
         return res
 
+    def generateCode_ConditionalConstraintExpression(self, node):
+        res = node.logicalExpression.generateCode(self) + " " + node.op + " " + node.constraintExpression1.generateCode(self)
+        
+        if node.constraintExpression2:
+            res += " else " + node.constraintExpression2.generateCode(self)
+            
+        return res
+        
     # Linear Expression
     def generateCode_ValuedLinearExpression(self, node):
         return node.value.generateCode(self)
@@ -1399,10 +1407,13 @@ class CodeGenerator:
         return res
 
     def generateCode_ConditionalLinearExpression(self, node):
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.linearExpression1.generateCode(self)
+        res = "if " + node.logicalExpression.generateCode(self)
 
-        if node.linearExpression2:
-            res += " else " + node.linearExpression2.generateCode(self)
+        if node.linearExpression1:
+            res += " then " + node.linearExpression1.generateCode(self)
+
+            if node.linearExpression2:
+                res += " else " + node.linearExpression2.generateCode(self)
 
         return res
 

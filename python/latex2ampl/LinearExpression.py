@@ -199,7 +199,7 @@ class ConditionalLinearExpression(LinearExpression):
     Class representing a conditional linear expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, linearExpression1, linearExpression2 = None):
+    def __init__(self, logicalExpression, linearExpression1 = None, linearExpression2 = None):
         """
         Set the conditional linear expression
         
@@ -216,10 +216,13 @@ class ConditionalLinearExpression(LinearExpression):
         """
         to string
         """
-        res = "CondLinearExpr: " + " IF "+str(self.logicalExpression)+" THEN " + str(self.linearExpression1)
+        res = "CondLinearExpr: " + " IF "+str(self.logicalExpression)
 
-        if self.linearExpression2 != None:
-            res += " ELSE " + str(self.linearExpression2)
+        if self.linearExpression1:
+            res += " THEN " + str(self.linearExpression1)
+            
+            if self.linearExpression2 != None:
+                res += " ELSE " + str(self.linearExpression2)
 
         res += " ENDIF "
 

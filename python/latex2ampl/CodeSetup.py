@@ -134,8 +134,7 @@ class CodeSetup:
         self.level = 0
 
         if not isinstance(constraint, Declarations) and not isinstance(constraint, Declaration):
-            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), self.level, 
-                                                                       True if isinstance(constraint, Declarations) or isinstance(constraint, Declaration) else False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), self.level)
         else:
             self.currentTable = None
 
@@ -365,6 +364,38 @@ class CodeSetup:
         node.linearExpression.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalConstraintExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this constraint expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        node.constraintExpression1.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+        if node.constraintExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+            node.constraintExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
+
+
     # Linear Expression
     def setupEnvironment_ValuedLinearExpression(self, node):
         """
@@ -433,17 +464,18 @@ class CodeSetup:
         """
         node.logicalExpression.setupEnvironment(self)
 
-        previousLevel = self.level
-        previousTable = self.currentTable
+        if node.linearExpression1 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
 
-        self.level += 1
-        self.currentTable.setIsLeaf(False)
-        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        node.linearExpression1.setupEnvironment(self)
+            node.linearExpression1.setupEnvironment(self)
 
-        self.level = previousLevel
-        self.currentTable = previousTable
+            self.level = previousLevel
+            self.currentTable = previousTable
 
         if node.linearExpression2 != None:
             previousLevel = self.level

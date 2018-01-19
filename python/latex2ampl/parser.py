@@ -31,18 +31,19 @@ import objects as obj
 
 precedence = (
     ('left', 'ID'),
-    ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE'),
+    ('left', 'COMMA', 'DOTS'),
     ('left', 'IF', 'THEN'),
     ('right', 'ELSE'),
     ('left', 'NUMBER', 'INFINITY'),
-    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF', 'ASSIGN'),
-    ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
-    ('left', 'UNDERLINE'),
-    ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
-    ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'COS', 'ACOS', 'ARCTAN', 'TAN', 'SQRT', 'LN', 'LOG', 'EXP'),
-    ('right', 'LPAREN', 'RPAREN'),
+    ('left', 'FOR', 'WHERE', 'COLON'),
     ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'DEFAULT', 'DIMEN', 'ASSIGN'),
+    ('right', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
+    ('left', 'UNDERLINE'),
+    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS', 'SETOF'),
+    ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
+    ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ARCTAN', 'TAN', 'ARCTANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
+    ('right', 'LPAREN', 'RPAREN'),
     ('right', 'LBRACE', 'RBRACE', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('left', 'MAXIMIZE', 'MINIMIZE'),
     ('right', 'PLUS', 'MINUS'),
@@ -51,6 +52,7 @@ precedence = (
     ('right', 'UPLUS', 'UMINUS'),
     ('right', 'AMPERSAND', 'SLASHES', 'SEMICOLON'),
     ('right', 'OR', 'AND', 'NOT'),
+    ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
       'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
@@ -150,49 +152,113 @@ def p_Constraint(t):
         t[0] = Constraint(t[1])
 
 
+def p_ConstraintExpressionLogical(t):
+    '''ConstraintExpression : ConstraintExpression AND ConstraintExpression
+                            | ConstraintExpression OR ConstraintExpression
+                            | FORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NFORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | EXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NEXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NOT ConstraintExpression
+                            | LPAREN ConstraintExpression RPAREN
+                            | EntryConstraintLogicalExpression'''
+
+    if t.slice[1].type == "LPAREN":
+        entry = LogicalExpression([t[2]])
+        t[0] = EntryLogicalExpressionBetweenParenthesis(entry)
+
+    elif len(t) > 2 and (t.slice[2].type == "AND" or t.slice[2].type == "OR"):
+
+        entry = EntryLogicalExpressionNumericOrSymbolic(t[1])
+        entry = LogicalExpression([entry])
+
+        if t.slice[2].type == "AND":
+          entry = entry.addAnd(t[3])
+        else:
+          entry = entry.addOr(t[3])
+
+        t[0] = entry
+
+    elif isinstance(t[1], str) and t.slice[1].type == "NOT":
+        entry = EntryLogicalExpressionNot(t[2])
+        t[0] = LogicalExpression([entry])
+
+    else:
+        _type = t.slice[1].type
+        if _type == "FORALL":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
+
+        elif _type == "NFORALL":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
+
+        elif _type == "EXISTS":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
+
+        elif _type == "NEXISTS":
+            entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
+        else:
+            entry = t[1]
+
+        t[0] = LogicalExpression([entry])
+
+def p_ConstraintExpressionConditional(t):
+    '''ConstraintExpression : Identifier IMPLIES ConstraintExpression ELSE ConstraintExpression
+                            | NumericExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+                            | ConstraintExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+                            | LogicalExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+                            | Identifier IMPLIES ConstraintExpression
+                            | NumericExpression IMPLIES ConstraintExpression
+                            | ConstraintExpression IMPLIES ConstraintExpression
+                            | LogicalExpression IMPLIES ConstraintExpression
+                            | Identifier ISIMPLIEDBY ConstraintExpression
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression
+                            | Identifier IFANDONLYIF ConstraintExpression
+                            | NumericExpression IFANDONLYIF ConstraintExpression
+                            | ConstraintExpression IFANDONLYIF ConstraintExpression
+                            | LogicalExpression IFANDONLYIF ConstraintExpression'''
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], Identifier):
+      t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
+
+    if not isinstance(t[1], LogicalExpression):
+      t[1] = LogicalExpression([t[1]])
+
+    _type = t.slice[2].type
+
+    if _type == "IMPLIES":
+      op = ConditionalConstraintExpression.IMPLIES
+    elif _type == "ISIMPLIEDBY":
+      op = ConditionalConstraintExpression.ISIMPLIEDBY
+    elif _type == "IFANDONLYIF":
+      op = ConditionalConstraintExpression.IFANDONLYIF
+
+    if len(t) > 4:
+      t[0] = ConditionalConstraintExpression(op, t[1], t[3], t[5])
+    else:
+      t[0] = ConditionalConstraintExpression(op, t[1], t[3])
+
 def p_ConstraintExpression(t):
     '''ConstraintExpression : LinearExpression EQ LinearExpression
-                            | SymbolicExpression EQ SymbolicExpression
-                            | NumericExpression EQ LinearExpression
-                            | NumericExpression EQ SymbolicExpression
-                            | Identifier EQ LinearExpression
-                            | Identifier EQ SymbolicExpression
                             | LinearExpression EQ NumericExpression
-                            | SymbolicExpression EQ NumericExpression
                             | LinearExpression EQ Identifier
-                            | SymbolicExpression EQ Identifier
-                            | NumericExpression EQ NumericExpression
-                            | NumericExpression EQ Identifier
-                            | Identifier EQ NumericExpression
-                            | Identifier EQ Identifier
                             | LinearExpression LE LinearExpression
-                            | SymbolicExpression LE SymbolicExpression
-                            | NumericExpression LE LinearExpression
-                            | NumericExpression LE SymbolicExpression
-                            | Identifier LE LinearExpression
-                            | Identifier LE SymbolicExpression
                             | LinearExpression LE NumericExpression
-                            | SymbolicExpression LE NumericExpression
                             | LinearExpression LE Identifier
-                            | SymbolicExpression LE Identifier
-                            | NumericExpression LE NumericExpression
-                            | NumericExpression LE Identifier
-                            | Identifier LE NumericExpression
-                            | Identifier LE Identifier
                             | LinearExpression GE LinearExpression
-                            | SymbolicExpression GE SymbolicExpression
-                            | NumericExpression GE LinearExpression
-                            | NumericExpression GE SymbolicExpression
-                            | Identifier GE LinearExpression
-                            | Identifier GE SymbolicExpression
                             | LinearExpression GE NumericExpression
-                            | SymbolicExpression GE NumericExpression
                             | LinearExpression GE Identifier
-                            | SymbolicExpression GE Identifier
-                            | NumericExpression GE NumericExpression
-                            | NumericExpression GE Identifier
-                            | Identifier GE NumericExpression
-                            | Identifier GE Identifier
+                            | NumericExpression EQ LinearExpression
+                            | NumericExpression LE LinearExpression
+                            | NumericExpression GE LinearExpression
+                            | Identifier EQ LinearExpression
+                            | Identifier LE LinearExpression
+                            | Identifier GE LinearExpression
                             | LinearExpression LE LinearExpression LE LinearExpression
                             | SymbolicExpression LE SymbolicExpression LE SymbolicExpression
                             | LinearExpression LE LinearExpression LE NumericExpression
@@ -302,6 +368,127 @@ def p_ConstraintExpression(t):
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
 
 
+def p_EntryConstraintLogicalExpression1(t):
+    '''EntryConstraintLogicalExpression1 : NumericExpression LT NumericExpression
+                                         | NumericExpression LT Identifier
+                                         | NumericExpression LT SymbolicExpression
+                                         | NumericExpression GT NumericExpression
+                                         | NumericExpression GT Identifier
+                                         | NumericExpression GT SymbolicExpression
+                                         | NumericExpression NEQ NumericExpression
+                                         | NumericExpression NEQ Identifier
+                                         | NumericExpression NEQ SymbolicExpression
+                                         | Identifier LT NumericExpression
+                                         | Identifier LT Identifier
+                                         | Identifier LT SymbolicExpression
+                                         | Identifier GT NumericExpression
+                                         | Identifier GT Identifier
+                                         | Identifier GT SymbolicExpression
+                                         | Identifier NEQ NumericExpression
+                                         | Identifier NEQ Identifier
+                                         | Identifier NEQ SymbolicExpression
+                                         | SymbolicExpression LT NumericExpression
+                                         | SymbolicExpression LT Identifier
+                                         | SymbolicExpression LT SymbolicExpression
+                                         | SymbolicExpression GT NumericExpression
+                                         | SymbolicExpression GT Identifier
+                                         | SymbolicExpression GT SymbolicExpression
+                                         | SymbolicExpression NEQ NumericExpression
+                                         | SymbolicExpression NEQ Identifier
+                                         | SymbolicExpression NEQ SymbolicExpression'''
+
+    _type = t.slice[2].type
+    if _type == "LT":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
+
+    elif _type == "GT":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
+
+    elif _type == "NEQ":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
+
+
+def p_EntryConstraintLogicalExpression2(t):
+    '''EntryConstraintLogicalExpression2 : NumericExpression LE NumericExpression
+                                         | NumericExpression LE Identifier
+                                         | NumericExpression LE SymbolicExpression
+                                         | NumericExpression EQ NumericExpression
+                                         | NumericExpression EQ Identifier
+                                         | NumericExpression EQ SymbolicExpression
+                                         | NumericExpression GE NumericExpression
+                                         | NumericExpression GE Identifier
+                                         | NumericExpression GE SymbolicExpression
+                                         | Identifier LE NumericExpression
+                                         | Identifier LE Identifier
+                                         | Identifier LE SymbolicExpression
+                                         | Identifier EQ NumericExpression
+                                         | Identifier EQ Identifier
+                                         | Identifier EQ SymbolicExpression
+                                         | Identifier GE NumericExpression
+                                         | Identifier GE Identifier
+                                         | Identifier GE SymbolicExpression
+                                         | SymbolicExpression LE NumericExpression
+                                         | SymbolicExpression LE Identifier
+                                         | SymbolicExpression LE SymbolicExpression
+                                         | SymbolicExpression EQ NumericExpression
+                                         | SymbolicExpression EQ Identifier
+                                         | SymbolicExpression EQ SymbolicExpression
+                                         | SymbolicExpression GE NumericExpression
+                                         | SymbolicExpression GE Identifier
+                                         | SymbolicExpression GE SymbolicExpression'''
+
+    _type = t.slice[2].type
+    if _type == "LE":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
+
+    elif _type == "EQ":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
+
+    elif _type == "GE":
+        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
+
+def p_EntryConstraintLogicalExpression(t):
+    '''EntryConstraintLogicalExpression : EntryConstraintLogicalExpression1
+                                        | EntryConstraintLogicalExpression2'''
+    t[0] = t[1]
+
+
+def _getDeclarationExpression(entryConstraintLogicalExpression):
+
+    attr = None
+    op = entryConstraintLogicalExpression.op
+    expr1 = entryConstraintLogicalExpression.numericExpression1
+    expr2 = entryConstraintLogicalExpression.numericExpression2
+
+    if op == EntryLogicalExpressionRelational.LT:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.LT)
+
+    elif op == EntryLogicalExpressionRelational.GT:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.GT)
+
+    elif op == EntryLogicalExpressionRelational.NEQ:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.NEQ)
+
+    if op == EntryLogicalExpressionRelational.LE:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.LE)
+
+    elif op == EntryLogicalExpressionRelational.GE:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.GE)
+
+    elif op == EntryLogicalExpressionRelational.EQ:
+      attr = DeclarationAttribute(expr2, DeclarationAttribute.EQ)
+
+    if isinstance(expr1, NumericExpression) or isinstance(expr1, SymbolicExpression) or isinstance(expr1, Identifier):
+      entryConstraintLogicalExpression = ValueList([expr1])
+    else:
+      entryConstraintLogicalExpression = expr1
+
+    declarationExpression = DeclarationExpression(entryConstraintLogicalExpression)
+    declarationExpression.addAttribute(attr)
+
+    return declarationExpression
+
+
 def p_Declarations(t):
   '''Declarations : DeclarationList'''
 
@@ -322,16 +509,14 @@ def p_Declarations(t):
 
 def p_DeclarationList(t):
     '''DeclarationList : DeclarationList SEMICOLON Declaration
+                       | DeclarationList SEMICOLON EntryConstraintLogicalExpression
                        | Declaration'''
-    if len(t) > 4:
-      t[0] = t[1] + [t[4]]
-    elif len(t) > 3:
-      if isinstance(t[3], Declaration):
-        t[0] = t[1] + [t[3]]
-      else:
-        t[0] = t[1]
-    elif len(t) > 2:
-      t[0] = t[1]
+    if len(t) > 3:
+      if isinstance(t[3], EntryLogicalExpressionRelational):
+        t[3] = Declaration(_getDeclarationExpression(t[3]))
+
+      t[0] = t[1] + [t[3]]
+
     else:
       t[0] = [t[1]]
 
@@ -352,6 +537,12 @@ def p_Declaration(t):
                    | Identifier COLON IndexingExpression
                    | SymbolicExpression COLON IndexingExpression
                    | DeclarationExpression'''
+
+    if isinstance(t[1], EntryLogicalExpressionRelational):
+      t[1] = _getDeclarationExpression(t[1])
+
+      #if len(t) > 2 and t.slice[2].type == "COMMA":
+      #  t[0].addAttribute(t[3])
 
     if len(t) > 3:
         t[3].setStmtIndexing(True)
@@ -443,49 +634,22 @@ def p_DeclarationExpression(t):
                              | SymbolicExpression ASSIGN Range
                              | ValueList LT NumericExpression
                              | ValueList LT Identifier
-                             | NumericExpression LT NumericExpression
-                             | NumericExpression LT Identifier
-                             | Identifier LT NumericExpression
-                             | Identifier LT Identifier
-                             | SymbolicExpression LT NumericExpression
-                             | SymbolicExpression LT Identifier
                              | ValueList LT SymbolicExpression
-                             | NumericExpression LT SymbolicExpression
-                             | Identifier LT SymbolicExpression
-                             | SymbolicExpression LT SymbolicExpression
                              | ValueList GT NumericExpression
                              | ValueList GT Identifier
-                             | NumericExpression GT NumericExpression
-                             | NumericExpression GT Identifier
-                             | Identifier GT NumericExpression
-                             | Identifier GT Identifier
-                             | SymbolicExpression GT NumericExpression
-                             | SymbolicExpression GT Identifier
                              | ValueList GT SymbolicExpression
-                             | NumericExpression GT SymbolicExpression
-                             | Identifier GT SymbolicExpression
-                             | SymbolicExpression GT SymbolicExpression
                              | ValueList NEQ NumericExpression
                              | ValueList NEQ Identifier
-                             | NumericExpression NEQ NumericExpression
-                             | NumericExpression NEQ Identifier
-                             | Identifier NEQ NumericExpression
-                             | Identifier NEQ Identifier
-                             | SymbolicExpression NEQ NumericExpression
-                             | SymbolicExpression NEQ Identifier
                              | ValueList NEQ SymbolicExpression
-                             | NumericExpression NEQ SymbolicExpression
-                             | Identifier NEQ SymbolicExpression
-                             | SymbolicExpression NEQ SymbolicExpression
                              | ValueList COMMA DeclarationAttributeList
                              | NumericExpression COMMA DeclarationAttributeList
                              | Identifier COMMA DeclarationAttributeList
                              | SymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList'''
 
-    _type = t.slice[2].type
+    
     if isinstance(t[1], DeclarationExpression):
-      if _type == "COMMA":
+      if t.slice[2].type == "COMMA":
         t[1].addAttribute(t[3])
       else:
         t[1].addAttribute(t[2])
@@ -493,6 +657,8 @@ def p_DeclarationExpression(t):
       t[0] = t[1]
 
     else:
+      _type = t.slice[2].type
+
       attr = None
       if _type == "COMMA":
         attr = t[3]
@@ -729,6 +895,7 @@ def p_ConditionalLinearExpression(t):
                                    | IF NumericExpression THEN SymbolicExpression
                                    | IF LogicalExpression THEN LinearExpression
                                    | IF LogicalExpression THEN SymbolicExpression'''
+
     if not isinstance(t[2], LogicalExpression):
       t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
 
@@ -739,10 +906,14 @@ def p_ConditionalLinearExpression(t):
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
+                         | EntryConstraintLogicalExpression
+                         | NOT LogicalExpression
                          | LogicalExpression OR EntryLogicalExpression
+                         | LogicalExpression OR EntryConstraintLogicalExpression
                          | LogicalExpression OR NumericExpression
                          | LogicalExpression OR Identifier
                          | LogicalExpression AND EntryLogicalExpression
+                         | LogicalExpression AND EntryConstraintLogicalExpression
                          | LogicalExpression AND NumericExpression
                          | LogicalExpression AND Identifier'''
 
@@ -756,11 +927,13 @@ def p_LogicalExpression(t):
         t[0] = t[1].addOr(t[3])
 
     else:
-        t[0] = LogicalExpression([t[1]])
+        if isinstance(t[1], str) and t.slice[1].type == "NOT":
+          t[0] = LogicalExpression(EntryLogicalExpressionNot(t[2]))
+        else:        
+          t[0] = LogicalExpression([t[1]])
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NOT EntryLogicalExpression
-                              | NOT NumericExpression
+    '''EntryLogicalExpression : NOT NumericExpression
                               | NOT Identifier
                               | LPAREN LogicalExpression RPAREN'''
 
@@ -776,80 +949,45 @@ def p_EntryLogicalExpression(t):
     else:
       t[0] = t[2]
 
-def p_EntryRelationalLogicalExpression(t):
-    '''EntryLogicalExpression : NumericExpression LT NumericExpression
-                              | NumericExpression LT Identifier
-                              | Identifier LT NumericExpression
-                              | Identifier LT Identifier
-                              | NumericExpression LT SymbolicExpression
-                              | Identifier LT SymbolicExpression
-                              | SymbolicExpression LT NumericExpression
-                              | SymbolicExpression LT Identifier
-                              | SymbolicExpression LT SymbolicExpression
-                              | NumericExpression LE NumericExpression
-                              | NumericExpression LE Identifier
-                              | Identifier LE NumericExpression
-                              | Identifier LE Identifier
-                              | NumericExpression LE SymbolicExpression
-                              | Identifier LE SymbolicExpression
-                              | SymbolicExpression LE NumericExpression
-                              | SymbolicExpression LE Identifier
-                              | SymbolicExpression LE SymbolicExpression
-                              | NumericExpression EQ NumericExpression
-                              | NumericExpression EQ Identifier
-                              | Identifier EQ NumericExpression
-                              | Identifier EQ Identifier
-                              | NumericExpression EQ SymbolicExpression
-                              | Identifier EQ SymbolicExpression
-                              | SymbolicExpression EQ NumericExpression
-                              | SymbolicExpression EQ Identifier
-                              | SymbolicExpression EQ SymbolicExpression
-                              | NumericExpression GT NumericExpression
-                              | NumericExpression GT Identifier
-                              | Identifier GT NumericExpression
-                              | Identifier GT Identifier
-                              | NumericExpression GT SymbolicExpression
-                              | Identifier GT SymbolicExpression
-                              | SymbolicExpression GT NumericExpression
-                              | SymbolicExpression GT Identifier
-                              | SymbolicExpression GT SymbolicExpression
-                              | NumericExpression GE NumericExpression
-                              | NumericExpression GE Identifier
-                              | Identifier GE NumericExpression
-                              | Identifier GE Identifier
-                              | NumericExpression GE SymbolicExpression
-                              | Identifier GE SymbolicExpression
-                              | SymbolicExpression GE NumericExpression
-                              | SymbolicExpression GE Identifier
-                              | SymbolicExpression GE SymbolicExpression
-                              | NumericExpression NEQ NumericExpression
-                              | NumericExpression NEQ Identifier
-                              | Identifier NEQ NumericExpression
-                              | Identifier NEQ Identifier
-                              | NumericExpression NEQ SymbolicExpression
-                              | Identifier NEQ SymbolicExpression
-                              | SymbolicExpression NEQ NumericExpression
-                              | SymbolicExpression NEQ Identifier
-                              | SymbolicExpression NEQ SymbolicExpression'''
+#def p_EntryRelationalLogicalExpression(t):
+#    '''EntryLogicalExpression : NumericExpression LT NumericExpression
+#                              | NumericExpression LT Identifier
+#                              | NumericExpression LT SymbolicExpression
+#                              | NumericExpression GT NumericExpression
+#                              | NumericExpression GT Identifier
+#                              | NumericExpression GT SymbolicExpression
+#                              | NumericExpression NEQ NumericExpression
+#                              | NumericExpression NEQ Identifier
+#                              | NumericExpression NEQ SymbolicExpression
+#                              | Identifier LT NumericExpression
+#                              | Identifier LT Identifier
+#                              | Identifier LT SymbolicExpression
+#                              | Identifier GT NumericExpression
+#                              | Identifier GT Identifier
+#                              | Identifier GT SymbolicExpression
+#                              | Identifier NEQ NumericExpression
+#                              | Identifier NEQ Identifier
+#                              | Identifier NEQ SymbolicExpression
+#                              | SymbolicExpression LT NumericExpression
+#                              | SymbolicExpression LT Identifier
+#                              | SymbolicExpression LT SymbolicExpression
+#                              | SymbolicExpression GT NumericExpression
+#                              | SymbolicExpression GT Identifier
+#                              | SymbolicExpression GT SymbolicExpression
+#                              | SymbolicExpression NEQ NumericExpression
+#                              | SymbolicExpression NEQ Identifier
+#                              | SymbolicExpression NEQ SymbolicExpression'''
 
-    _type = t.slice[2].type
-    if _type == "LT":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
+#    _type = t.slice[2].type
+#    if _type == "LT":
+#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
 
-    elif _type == "LE":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
+#    elif _type == "GT":
+#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
 
-    elif _type == "EQ":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
+#    elif _type == "NEQ":
+#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
-    elif _type == "GT":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
-
-    elif _type == "GE":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
-
-    elif _type == "NEQ":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
 def p_EntryLogicalExpressionWithSet(t):
     '''EntryLogicalExpression : ValueList IN SetExpression
@@ -1132,6 +1270,7 @@ def p_IteratedSetExpression(t):
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
+                          | LogicalIndexExpression
                           | IndexingExpression PIPE LogicalExpression
                           | IndexingExpression PIPE NumericExpression
                           | IndexingExpression PIPE Identifier
@@ -1151,6 +1290,16 @@ def p_IndexingExpression(t):
 
     else:
         t[0] = IndexingExpression([t[1]])
+
+def p_LogicalIndexExpression(t):
+    '''LogicalIndexExpression : IF Identifier
+                              | IF NumericExpression
+                              | IF LogicalExpression'''
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+
+    t[0] = ConditionalLinearExpression(t[2])
 
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : ValueList IN SetExpression
@@ -1288,6 +1437,7 @@ def p_FunctionSymbolicExpression(t):
                           | CTIME LPAREN RPAREN'''
 
     _type = t.slice[1].type
+
     if _type == "SUBSTR":
         op = SymbolicExpressionWithFunction.SUBSTR
 
@@ -1318,12 +1468,16 @@ def p_FunctionSymbolicExpression(t):
     elif len(t) > 5:
         t[0] = SymbolicExpressionWithFunction(op, t[3], t[5])
 
+    elif len(t) > 4:
+        t[0] = SymbolicExpressionWithFunction(op, t[3])
+
     else:
 
         if isinstance(t[3], str) and t.slice[3].type == "RPAREN":
           t[0] = SymbolicExpressionWithFunction(op)
         else:
           t[0] = SymbolicExpressionWithFunction(op, t[3])
+
 
 def p_NumericExpression_binop(t):
     '''NumericExpression : NumericExpression PLUS NumericExpression
@@ -1740,7 +1894,7 @@ def p_FunctionNumericExpression(t):
         t[0] = NumericExpressionWithFunction(op, t[3])
 
     else:
-        if t.slice[2].type == "LPAREN":
+        if isinstance(t[2], str) and t.slice[2].type == "LPAREN":
           t[0] = NumericExpressionWithFunction(op)
         else:
           t[0] = NumericExpressionWithFunction(op, t[2])

@@ -30,6 +30,7 @@ class DeclarationExpression(Expression):
         self.attributeList = attributeList
 
     def attrExists(self, attr):
+        
         attrAux = filter(lambda el: el.op == attr.op and str(el.attribute) == str(attr.attribute), self.attributeList)
         if attrAux != None and len(attrAux) > 0:
             return True
@@ -37,13 +38,16 @@ class DeclarationExpression(Expression):
         return False
 
     def addAttribute(self, attribute):
+        
         if self.attributeList == None:
             self.attributeList = []
 
         if isinstance(attribute, list):
             for attr in attribute:
+                
                 if not self.attrExists(attr):
                     self.attributeList.append(attr)
+                    
         elif not self.attrExists(attribute):
             self.attributeList.append(attribute)
 
