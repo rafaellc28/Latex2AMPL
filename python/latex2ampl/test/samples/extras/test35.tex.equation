@@ -1,0 +1,2 @@
+% Test syntax error at EOF
+a := b \bigcup test2()

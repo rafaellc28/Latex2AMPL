@@ -31,28 +31,35 @@ import objects as obj
 
 precedence = (
     ('left', 'ID'),
-    ('left', 'COMMA', 'DOTS'),
+    ('left', 'NUMBER', 'INFINITY'),
+    ('right', 'COMMA'),
+    ('left', 'FOR', 'WHERE', 'COLON'),
+    ('right', 'PIPE'),
+    ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
+    ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
+    ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
+    ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
+    ('left', 'MAXIMIZE', 'MINIMIZE'),
+    ('right', 'SLASHES', 'SEMICOLON'),
+    ('left', 'OR'),
+    ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
+    ('left', 'AND'),
+    ('left', 'NOT'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ'),
+    ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
     ('left', 'IF', 'THEN'),
     ('right', 'ELSE'),
-    ('left', 'NUMBER', 'INFINITY'),
-    ('left', 'FOR', 'WHERE', 'COLON'),
-    ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'DEFAULT', 'DIMEN', 'ASSIGN'),
-    ('right', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
-    ('left', 'UNDERLINE'),
-    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS', 'SETOF'),
+    ('left', 'DIFF', 'SYMDIFF', 'UNION'),
+    ('left', 'INTER'),
+    ('left', 'CROSS'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'DOTS', 'BY'),
+    ('right', 'AMPERSAND'),
+    ('left', 'PLUS', 'MINUS', 'LESS'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
-    ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ARCTAN', 'TAN', 'ARCTANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
-    ('right', 'LPAREN', 'RPAREN'),
-    ('right', 'LBRACE', 'RBRACE', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
-    ('left', 'MAXIMIZE', 'MINIMIZE'),
-    ('right', 'PLUS', 'MINUS'),
-    ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
-    ('right', 'CARET'),
-    ('right', 'UPLUS', 'UMINUS'),
-    ('right', 'AMPERSAND', 'SLASHES', 'SEMICOLON'),
-    ('right', 'OR', 'AND', 'NOT'),
-    ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
+    ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT'),
+    ('left', 'UPLUS', 'UMINUS'),
+    ('left', 'CARET'),
+    ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ARCTAN', 'TAN', 'ARCTANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
       'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
@@ -510,10 +517,16 @@ def p_Declarations(t):
 def p_DeclarationList(t):
     '''DeclarationList : DeclarationList SEMICOLON Declaration
                        | DeclarationList SEMICOLON EntryConstraintLogicalExpression
+                       | EntryConstraintLogicalExpression SEMICOLON Declaration
+                       | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression
                        | Declaration'''
     if len(t) > 3:
+      if isinstance(t[1], EntryLogicalExpressionRelational):
+        t[1] = Declaration(_getDeclarationExpression(t[1])) # turn into Declaration
+        t[1] = [t[1]] # turn into DeclarationList
+
       if isinstance(t[3], EntryLogicalExpressionRelational):
-        t[3] = Declaration(_getDeclarationExpression(t[3]))
+        t[3] = Declaration(_getDeclarationExpression(t[3])) # turn into Declaration
 
       t[0] = t[1] + [t[3]]
 
@@ -1601,6 +1614,50 @@ def p_IteratedNumericExpression(t):
           t[6] = ValuedNumericExpression(t[6])
 
         t[0] = IteratedNumericExpression(op, t[6], t[4])
+
+
+def p_IteratedNumericExpression2(t):
+    '''NumericExpression : COUNT LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATMOST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATMOST NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATLEAST NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | EXACTLY NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE Identifier RPAREN
+                         | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE Identifier RPAREN
+                         | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE NumericExpression RPAREN
+                         | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE NumericExpression RPAREN
+                         | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN
+                         | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN'''
+
+    if t.slice[1].type == "NUMBEROF":
+
+      if isinstance(t[2], Identifier):
+        t[2] = ValuedNumericExpression(t[2])
+
+      t[0] = IteratedNumericExpression2(IteratedNumericExpression2.NUMBEROF, t[8], t[6], t[2])      
+
+    elif len(t) > 6:
+        if isinstance(t[2], Identifier):
+          t[2] = ValuedNumericExpression(t[2])
+
+        op = None
+        _type = t.slice[1].type
+        if _type == "ATMOST":
+          op = IteratedNumericExpression2.ATMOST
+
+        elif _type == "ATLEAST":
+          op = IteratedNumericExpression2.ATLEAST
+
+        elif _type == "EXACTLY":
+          op = IteratedNumericExpression2.EXACTLY
+
+        t[0] = IteratedNumericExpression2(op, t[6], t[4], t[2])
+
+    else:
+        t[0] = IteratedNumericExpression2(IteratedNumericExpression2.COUNT, t[5], t[3])
+
 
 def p_NumericExpression(t):
     '''NumericExpression : MINUS NumericExpression %prec UMINUS

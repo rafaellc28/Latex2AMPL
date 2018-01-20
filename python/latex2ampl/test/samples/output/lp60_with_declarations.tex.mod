@@ -2,7 +2,7 @@ param n integer, >= 0;
 
 set V, := 1..n;
 
-set E dimen 2, within V cross V, default setof {i in V, j in V : i <> j and Uniform(0, 1) <= 0.15} (i,j);
+set E dimen 2, within V cross V, default setof {i in V, j in V : i != j and Uniform(0, 1) <= 0.15} (i,j);
 
 
 var x{i in V} binary;

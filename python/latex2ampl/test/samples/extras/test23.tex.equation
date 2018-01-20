@@ -1,0 +1,3 @@
+% Test logical operators in constraints. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+Assign2_{i1,i2,j} = 0 \lor Assign2_{i1,i2,j} + \sum_{ii1 \in ADJACENT[i1] \mid (ii1,i2) \in TYPE2} Assign2_{ii1,i2,j} \geq 2: (i1,i2) \in ISO, j \in REST\\
+Assign2 \in \mathbb{N}

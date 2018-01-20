@@ -1,0 +1,3 @@
+% Test negation of constraint. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\text{minimize } x: x \in \mathbb{R}\\
+\neg (x \leq 2)

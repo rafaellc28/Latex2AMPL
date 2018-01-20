@@ -485,3 +485,58 @@ class ConditionalNumericExpression(NumericExpression):
         Generate the AMPL code for this conditional numeric expression
         """
         return codeGenerator.generateCode(self)
+
+
+class IteratedNumericExpression2(NumericExpression):
+    """
+    Class representing a iterated Constraint Expression expression node in the AST of a MLP
+    """
+    
+    COUNT    = "count"
+    ATMOST   = "atmost"
+    ATLEAST  = "atleast"
+    EXACTLY  = "exactly"
+    NUMBEROF = "numberof"
+
+    def __init__(self, op, constraintExpression, indexingExpression, numericExpression = None):
+        """
+        Set the components of the iterated constraint expression
+        
+        :param op                   : COUNT | ATMOST | ATLEAST | EXACTLY | NUMBEROF
+        :param constraintExpression : ConstraintExpression
+        :param indexingExpression   : IndexingExpression
+        :param numericExpression    : NumericExpression
+        """
+
+        self.op = op
+        self.constraintExpression = constraintExpression
+        self.indexingExpression   = indexingExpression
+        self.numericExpression    = numericExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        res = self.op
+        if self.numericExpression:
+            res += " " + str(self.numericExpression)
+
+        if self.op == IteratedNumericExpression2.NUMBEROF:
+            res += " in ({"+ str(self.indexingExpression) +"} " + str(self.constraintExpression) + ")"
+
+        else:
+            res += " {"+ str(self.indexingExpression) +"} " + str(self.constraintExpression)
+
+        return "ItConstraintExpression: " + res
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for the declaration of identifiers and sets in this linear expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this iterated linear expression
+        """
+        return codeGenerator.generateCode(self)

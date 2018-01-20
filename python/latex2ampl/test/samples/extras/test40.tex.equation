@@ -1,0 +1,5 @@
+% From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\sum_{k \in MACHINES} Assign[j,k] = 1: j \in JOBS\\
+\sum_{j \in JOBS} Assign[j,k] \leq cap[k]: k \in MACHINES\\
+Assign \in \{0,1\}; cap \in \mathbb{N}, \in \mathbb{P}\\
+n \in \mathbb{Z}^{>0}, \in \mathbb{P}; MACHINES := 1 \dots n; JOBS := 1 \dots n

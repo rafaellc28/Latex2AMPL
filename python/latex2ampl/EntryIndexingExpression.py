@@ -67,7 +67,7 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
     Class representing an entry with comparison operator of indexing expression in the AST of the MLP
     """
 
-    NEQ = "<>"
+    NEQ = "!="
     LE  = "<="
     GE  = ">="
     LT  = "<"

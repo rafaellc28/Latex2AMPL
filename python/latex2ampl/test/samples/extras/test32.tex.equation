@@ -1,0 +1,6 @@
+% From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+Assign2_{i1,i2,j} \leq upperbnd_{i1,i2,j} * Lone_{i1,i2,j}: (i1,i2) \in ISO, j \in REST\\
+Assign2_{i1,i2,j} + \sum_{ii1 \in ADJACENT[i1] \mid (ii1,i2) \in TYPE2} Assign2_{ii1,i2,j} \geq 2 * Lone_{i1,i2,j}: (i1,i2) \in ISO, j \in REST\\
+Assign2_{i1,i2,j} \geq Lone_{i1,i2,j}: (i1,i2) \in ISO, j \in REST\\
+upperbnd_{i1,i2,j} := \min\left(\left\lceil \left(\frac{number2_{i1,i2}}{card(PEOPLE)}\right) * hiDine_{j} \right\rceil + give_{i1,i2}, \\hiTargetTitle_{i1,j} + giveTitle_{i1}, hiTargetLoc_{i2,j} + giveLoc_{i2}, number2_{i1,i2}\right): (i1,i2) \in ISO, j \in REST\\
+Lone \in \mathbb{B}; Assign2 \in \mathbb{N}

@@ -62,10 +62,10 @@ s.t. C1 {p in P, (a,aLoc) in N, (b,bLoc) in START} :
 s.t. C2 {p in P, (a,aLoc) in FINISH, (b,bLoc) in N} :
 	x[p,a,aLoc,b,bLoc] = 0;
 
-s.t. C3 {p in P, (a,aLoc) in START, (b,bLoc) in N : p <> a} :
+s.t. C3 {p in P, (a,aLoc) in START, (b,bLoc) in N : p != a} :
 	x[p,a,aLoc,b,bLoc] = 0;
 
-s.t. C4 {p in P, (a,aLoc) in N, (b,bLoc) in FINISH : p <> b} :
+s.t. C4 {p in P, (a,aLoc) in N, (b,bLoc) in FINISH : p != b} :
 	x[p,a,aLoc,b,bLoc] = 0;
 
 s.t. C5 {(b,bLoc) in (CUSTOMERS union FINISH)} :

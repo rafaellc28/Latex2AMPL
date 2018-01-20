@@ -1,0 +1,2 @@
+% Test constraint of the form Expression < Expression
+Pos[1] < Pos[2]

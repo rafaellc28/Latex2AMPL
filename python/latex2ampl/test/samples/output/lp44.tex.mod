@@ -4,7 +4,7 @@ param Givens{i in 1..9, j in 1..9};
 var x{i in 1..9, j in 1..9, k in 1..9} binary;
 
 
-s.t. C1 {i in 1..9, j in 1..9, k in 1..9 : Givens[i,j] <> 0} :
+s.t. C1 {i in 1..9, j in 1..9, k in 1..9 : Givens[i,j] != 0} :
 	x[i,j,k] = if Givens[i,j] = k then 1;
 
 s.t. C2 {i1 in 1..9 by 3, j1 in 1..9 by 3, k in 1..9} :

@@ -1,0 +1,3 @@
+% From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\sum_{j \in DEST} Use_{i,j} \leq maxserve: i \in ORIG\\
+Use \in \{0,1\}

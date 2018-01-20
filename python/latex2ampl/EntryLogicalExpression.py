@@ -15,7 +15,7 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
     EQ = "="
     GT = ">"
     GE = ">="
-    NEQ = "<>"
+    NEQ = "!="
 
     def __init__(self, op, numericExpression1, numericExpression2):
         """

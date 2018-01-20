@@ -1,0 +1,4 @@
+% Test count operator. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\text{count } \{j \in JOBS\} (MachineForJob_{j} = k) \leq cap_{k}: k \in MACHINES\\
+MachineForJob \in \mathbb{Z}^{\geq 1}, \leq n\\
+cap \in \mathbb{N}, \in \mathbb{P}; n \in \mathbb{Z}^{>0}, \in \mathbb{P}; MACHINES := 1 \dots n; JOBS := 1 \dots n

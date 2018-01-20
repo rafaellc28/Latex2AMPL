@@ -1,0 +1,2 @@
+% Test symbolic expression concatenation
+a := "string" \& test2("string")

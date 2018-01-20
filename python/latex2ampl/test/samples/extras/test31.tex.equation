@@ -1,0 +1,4 @@
+% From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\sum_{p \in PROD} Trans_{i,j,p} \leq limit_{i,j} * Use_{i,j}: i \in ORIG, j \in DEST\\
+\sum_{p \in PROD} Trans_{i,j,p} \geq minload * Use_{i,j}: i \in ORIG, j \in DEST\\
+Trans \in \mathbb{R}^{+}; Use \in \{0,1\}\\

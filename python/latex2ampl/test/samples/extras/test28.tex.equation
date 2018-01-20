@@ -1,0 +1,3 @@
+% Test count operator. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\text{count } \left\{j \in DEST\right\} \left(\sum_{p \in PROD} Trans_{i,j,p} > 0\right) \leq maxserve: i \in ORIG\\
+Trans \in \mathbb{R}^{+}

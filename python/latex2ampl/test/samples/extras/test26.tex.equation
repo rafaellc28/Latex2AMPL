@@ -1,0 +1,3 @@
+% Test logical operators for implications in constraints: operator IMPLIES. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+avail > 0 \implies \sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p} \leq avail\\
+Make_{p} \in \mathbb{R}^{+}, \leq market_{p}: p \in PROD

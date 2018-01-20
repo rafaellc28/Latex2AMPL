@@ -1,0 +1,3 @@
+% Test logical operators in constraints
+(((\sum_{p \in PROD} Trans_{i,j,p} = 0)) \lor (minload \leq \sum_{p \in PROD} Trans_{i,j,p} \leq limit_{i,j})) \land 1 \neq 2: i \in ORIG, j \in DEST \mid (i < j)\\
+Trans \in \mathbb{R}^{+}

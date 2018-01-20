@@ -24,10 +24,10 @@ s.t. C1 {v in VOLS, w in WEEKS} :
 s.t. C2 {w in WEEKS} :
 	sum{v in VOLS}x[v,'Trash',w] = 1;
 
-s.t. C3 {t in TASKS, w in WEEKS : t <> 'Trash'} :
+s.t. C3 {t in TASKS, w in WEEKS : t != 'Trash'} :
 	sum{v in VOLS}x[v,t,w] = 2;
 
-s.t. C4 {t in TASKS, v in VOLS : t <> 'Trash'} :
+s.t. C4 {t in TASKS, v in VOLS : t != 'Trash'} :
 	sum{w in WEEKS}x[v,t,w] >= 2;
 
 s.t. C5 {v in VOLS} :

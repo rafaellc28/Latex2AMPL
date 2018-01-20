@@ -1,0 +1,2 @@
+% Test contatenator
+a := b \& c

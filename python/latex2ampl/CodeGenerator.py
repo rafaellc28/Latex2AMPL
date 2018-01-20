@@ -1373,6 +1373,7 @@ class CodeGenerator:
             res += " else " + node.constraintExpression2.generateCode(self)
             
         return res
+
         
     # Linear Expression
     def generateCode_ValuedLinearExpression(self, node):
@@ -1492,6 +1493,20 @@ class CodeGenerator:
             res = str(node.op) + "{" + node.indexingExpression.generateCode(self) + "}"
 
         res += node.numericExpression.generateCode(self)
+
+        return res
+
+    def generateCode_IteratedNumericExpression2(self, node):
+        res = node.op
+
+        if node.numericExpression:
+            res += " " + node.numericExpression.generateCode(self)
+
+        if node.op == IteratedNumericExpression2.NUMBEROF:
+            res += " in ({"+ node.indexingExpression.generateCode(self) +"} " + node.constraintExpression.generateCode(self) + ")"
+
+        else:
+            res += " {"+ node.indexingExpression.generateCode(self) +"} " + node.constraintExpression.generateCode(self)
 
         return res
 

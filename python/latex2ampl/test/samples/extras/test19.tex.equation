@@ -1,0 +1,3 @@
+% Test if-then expressions
+\text{maximize } \text{ if } a \text{ then } b\\
+\text{ if } c \text{ then } d \leq 1

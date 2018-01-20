@@ -75,6 +75,11 @@ tokens = [
    'FRAC',
    'DEFAULT',
    'SETOF',
+   'COUNT',
+   'ATMOST',
+   'ATLEAST',
+   'EXACTLY',
+   'NUMBEROF',
    'DIMEN',
    'SUBSET',
    'NOTSUBSET',
@@ -313,6 +318,26 @@ def t_DIMEN(t):
 
 def t_SETOF(t):
    r'\\text\{\s*setof\s*\}'
+   return t
+
+def t_COUNT(t):
+   r'\\text\{\s*count\s*\}'
+   return t
+
+def t_ATMOST(t):
+   r'\\text\{\s*atmost\s*\}'
+   return t
+
+def t_ATLEAST(t):
+   r'\\text\{\s*atleast\s*\}'
+   return t
+
+def t_EXACTLY(t):
+   r'\\text\{\s*exactly\s*\}'
+   return t
+
+def t_NUMBEROF(t):
+   r'\\text\{\s*numberof\s*\}'
    return t
 
 def t_PARAMETERS(t):

@@ -4,9 +4,12 @@ class ConstraintExpression(Expression):
     """
     Class representing a constraint expression node in the AST of a MLP
     """
-    EQ = "="
-    LE = "<="
-    GE = ">="
+    EQ  = "="
+    LE  = "<="
+    GE  = ">="
+    NEQ = "!="
+    LT  = "<"
+    GT  = ">"
 
 
 class ConstraintExpression2(ConstraintExpression):
@@ -125,7 +128,7 @@ class ConditionalConstraintExpression(ConstraintExpression):
             res += " ELSE " + str(self.constraintExpression2)
 
         return res
-    
+        
     def addElseExpression(self, elseExpression):
         self.constraintExpression2 = elseExpression
 

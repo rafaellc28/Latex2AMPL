@@ -23,10 +23,10 @@ minimize obj: z;
 s.t. C1 {j in J, t in 2..MS} :
 	x[j,Sigma[j,t]] >= x[j,Sigma[j,t - 1]] + P[j,Sigma[j,t - 1]];
 
-s.t. C2 {i in J, j in J, a in M : i <> j} :
+s.t. C2 {i in J, j in J, a in M : i != j} :
 	x[i,a] >= x[j,a] + P[j,a] - K * Y[i,j,a];
 
-s.t. C3 {i in J, j in J, a in M : i <> j} :
+s.t. C3 {i in J, j in J, a in M : i != j} :
 	x[j,a] >= x[i,a] + P[i,a] - K * (1 - Y[i,j,a]);
 
 s.t. C4 {j in J} :

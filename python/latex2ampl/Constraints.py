@@ -16,7 +16,6 @@ class Constraints:
         """
         to string
         """
-        
         return "\nCnts:\n" + "\n".join(map(lambda i: str(i), self.constraints))
     
     def setupEnvironment(self, codeSetup):

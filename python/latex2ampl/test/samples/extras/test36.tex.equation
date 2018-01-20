@@ -1,0 +1,2 @@
+% Test logical operators in constraints: OR and IMPLIES
+((avail \geq 0 \lor avail \geq 2)) \implies \sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p} \leq avail

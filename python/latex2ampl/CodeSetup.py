@@ -569,6 +569,26 @@ class CodeSetup:
         self.level = previousLevel
         self.currentTable = previousTable
 
+    def setupEnvironment_IteratedNumericExpression2(self, node):
+        """
+        Generate the AMPL code for the declaration of identifiers and sets in this constraint expression
+        """
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        if node.numericExpression:
+            node.numericExpression.setupEnvironment(self)
+
+        node.indexingExpression.setupEnvironment(self)
+        node.constraintExpression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
 
     def setupEnvironment_ConditionalNumericExpression(self, node):
         """

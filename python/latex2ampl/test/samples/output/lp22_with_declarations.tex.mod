@@ -44,12 +44,12 @@ var x{a in PLACES, b in PLACES} binary;
 
 minimize obj: sum{a in PLACES}(1 * tea[a] + 2 * tla[a] + 2 * ted[a] + 1 * tld[a]) + 2 * Tmax;
 
-s.t. C1 {a in PLACES : a <> finish} :
+s.t. C1 {a in PLACES : a != finish} :
 	sum{b in PLACES}x[a,b] = 1;
 
 s.t. C2  : sum{b in PLACES}x[finish,b] = 0;
 
-s.t. C3 {a in PLACES : a <> start} :
+s.t. C3 {a in PLACES : a != start} :
 	sum{b in PLACES}x[b,a] = 1;
 
 s.t. C4  : sum{b in PLACES}x[b,start] = 0;
@@ -66,16 +66,16 @@ s.t. C7 {a in PLACES} :
 s.t. C8 {a in PLACES, b in PLACES} :
 	tar[b] >= tlv[a] + gcdist[a,b] / maxspeed - bigM * (1 - x[a,b]);
 
-s.t. C9 {a in PLACES : a <> start} :
+s.t. C9 {a in PLACES : a != start} :
 	tea[a] >= S1[a] - tar[a];
 
-s.t. C10 {a in PLACES : a <> start} :
+s.t. C10 {a in PLACES : a != start} :
 	tla[a] >= tar[a] - S2[a];
 
-s.t. C11 {a in PLACES : a <> finish} :
+s.t. C11 {a in PLACES : a != finish} :
 	ted[a] >= S1[a] - tlv[a];
 
-s.t. C12 {a in PLACES : a <> finish} :
+s.t. C12 {a in PLACES : a != finish} :
 	tld[a] >= tlv[a] - S2[a];
 
 s.t. C13 {a in PLACES} :

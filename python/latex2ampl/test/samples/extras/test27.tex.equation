@@ -1,0 +1,3 @@
+% Test logical operators for implications in constraints: operator IMPLIES. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\sum_{p \in PROD} Trans_{i,j,p} > 0 \implies minload \leq \sum_{p \in PROD} Trans_{i,j,p} \leq limit_{i,j} \text{ for } i \in ORIG, j \in DEST\\
+Trans \in \mathbb{R}^{+}
