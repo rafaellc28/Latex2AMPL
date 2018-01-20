@@ -678,3 +678,72 @@ def test_extras_test16():
 
 def test_extras_test17():
 	check_test_extras_num(17)
+
+def test_extras_test18():
+	check_test_extras_num(18)
+
+def test_extras_test19():
+	check_test_extras_num(19)
+
+def test_extras_test20():
+	check_test_extras_num(20)
+
+def test_extras_test21():
+	check_test_extras_num(21)
+
+def test_extras_test22():
+	check_test_extras_num(22)
+
+def test_extras_test23():
+	check_test_extras_num(23)
+
+def test_extras_test24():
+	check_test_extras_num(24)
+
+def test_extras_test25():
+	check_test_extras_num(25)
+
+def test_extras_test26():
+	check_test_extras_num(26)
+
+def test_extras_test27():
+	check_test_extras_num(27)
+
+def test_extras_test28():
+	check_test_extras_num(28)
+
+def test_extras_test29():
+	check_test_extras_num(29)
+
+def test_extras_test30():
+	check_test_extras_num(30)
+
+def test_extras_test31():
+	check_test_extras_num(31)
+
+def test_extras_test32():
+	check_test_extras_num(32)
+
+def test_extras_test33():
+	check_test_extras_num(33)
+
+def test_extras_test34():
+	check_test_extras_num(34)
+
+def test_extras_test35():
+	check_test_extras_num(35)
+
+def test_extras_test36():
+	check_test_extras_num(36)
+
+def test_extras_test37():
+	check_test_extras_num(37)
+
+def test_extras_test38():
+	check_test_extras_num(38)
+
+def test_extras_test39():
+	check_test_extras_num(39)
+
+def test_extras_test40():
+	check_test_extras_num(40)
