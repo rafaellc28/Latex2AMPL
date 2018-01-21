@@ -1,0 +1,2 @@
+% Test logical expression with forall between several parenthesis
+1 < 2: i \in I | (((\forall \{j \in 1...10\} D[j] > 0)))

@@ -1,0 +1,2 @@
+% Test logical expression with 'and' and forall
+1 < 2: i \in I | \forall \{j \in 1...10\} D[j] > 0 \land 1 = 1

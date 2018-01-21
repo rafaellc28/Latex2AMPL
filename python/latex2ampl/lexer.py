@@ -56,7 +56,6 @@ tokens = [
    'NFORALL',
    'EXISTS',
    'NEXISTS',
-#   'QUESTION_MARK',
    'EMPTYSET',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
@@ -80,6 +79,7 @@ tokens = [
    'ATLEAST',
    'EXACTLY',
    'NUMBEROF',
+   'ALLDIFF',
    'DIMEN',
    'SUBSET',
    'NOTSUBSET',
@@ -183,15 +183,15 @@ def _getOp(op):
    return op
 
 def t_IF(t):
-   r'\\text\{\s*if\s*\}'
+   r'\\text\{\s*if\s*\}|\s*if\s'
    return t
 
 def t_THEN(t):
-   r'\\text\{\s*then\s*\}'
+   r'\\text\{\s*then\s*\}|\s*then\s'
    return t
 
 def t_ELSE(t):
-   r'\\text\{\s*else\s*\}'
+   r'\\text\{\s*else\s*\}|\s*else\s'
    return t
 
 def t_IMPLIES(t):
@@ -249,11 +249,11 @@ def t_MOD(t):
    return t
 
 def t_BY(t):
-   r'\\text\{\s*by\s*\}'
+   r'\\text\{\s*by\s*\}|\s*by\s'
    return t
 
 def t_QUOTIENT(t):
-   r'\\big/|\\text\{\s*div\s*\}'
+   r'\\big/|\\text\{\s*div\s*\}|\s*div\s'
    return t
 
 def t_TIMES(t):
@@ -265,27 +265,27 @@ def t_DIVIDE(t):
    return t
 
 def t_LESS(t):
-   r'\\text\{\s*less\s*\}'
+   r'\\text\{\s*less\s*\}|\s*less\s'
    return t
 
 def t_FOR(t):
-   r'\\text\{\s*[fF][oO][rR]\s*\}'
+   r'\\text\{\s*for\s*\}|\s*for\s'
    return t
 
 def t_WHERE(t):
-   r'\\text\{\s*[wW][hH][eE][rR][eE]\s*\}'
+   r'\\text\{\s*where\s*\}|\s*where\s'
    return t
 
 def t_OR(t):
-   r'\\lor|\\vee|\\text\{\s*or\s*\}'
+   r'\\lor|\\vee|\\text\{\s*or\s*\}|\s*or\s'
    return t
 
 def t_AND(t):
-   r'\\land|\\wedge|\\text\{\s*and\s*\}'
+   r'\\land|\\wedge|\\text\{\s*and\s*\}|\s*and\s'
    return t
 
 def t_NOT(t):
-   r'\\neg|!|\\text\{\s*not\s*}'
+   r'\\neg|!|\\text\{\s*not\s*}|\s*not\s'
    return t
 
 def t_FORALL(t):
@@ -309,35 +309,39 @@ def t_FRAC(t):
    return t
 
 def t_DEFAULT(t):
-   r'\\text\{\s*default\s*\}'
+   r'\\text\{\s*default\s*\}|\s*default\s'
    return t
 
 def t_DIMEN(t):
-   r'\\text\{\s*dimen\s*\}'
+   r'\\text\{\s*dimen\s*\}|\s*dimen\s'
    return t
 
 def t_SETOF(t):
-   r'\\text\{\s*setof\s*\}'
+   r'\\text\{\s*setof\s*\}|\s*setof\s'
    return t
 
 def t_COUNT(t):
-   r'\\text\{\s*count\s*\}'
+   r'\\text\{\s*count\s*\}|\s*count\s'
    return t
 
 def t_ATMOST(t):
-   r'\\text\{\s*atmost\s*\}'
+   r'\\text\{\s*atmost\s*\}|\s*atmost\s'
    return t
 
 def t_ATLEAST(t):
-   r'\\text\{\s*atleast\s*\}'
+   r'\\text\{\s*atleast\s*\}|\s*atleast\s'
    return t
 
 def t_EXACTLY(t):
-   r'\\text\{\s*exactly\s*\}'
+   r'\\text\{\s*exactly\s*\}|\s*exactly\s'
    return t
 
 def t_NUMBEROF(t):
-   r'\\text\{\s*numberof\s*\}'
+   r'\\text\{\s*numberof\s*\}|\s*numberof\s'
+   return t
+
+def t_ALLDIFF(t):
+   r'\\text\{\s*alldiff\s*\}|\s*alldiff\s'
    return t
 
 def t_PARAMETERS(t):
@@ -526,15 +530,15 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
 def t_MAXIMIZE(t):
-   r'\\text\{\s*maximize:\s*\}|maximize:|\\text\{\s*maximize\s*\}|maximize'
+   r'\\text\{\s*maximize\s*:\s*\}|\s*maximize\s*:|\\text\{\s*maximize\s*\}|\s*maximize\s'
    return t
 
 def t_MINIMIZE(t):
-   r'\\text\{\s*minimize:\s*\}|minimize:|\\text\{\s*minimize\s*\}|minimize'
+   r'\\text\{\s*minimize\s*:\s*\}|\s*minimize\s*:|\\text\{\s*minimize\s*\}|\s*minimize\s'
    return t
 
 def t_ignore_SUBJECTTO(t):
-   r'\\text\{\s*subject\sto:\s*\}|\\text\{\s*subj\.to:\s*\}|\\text\{\s*s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*|s\.t\.:\s*|\\text\{\s*subject\sto\s*\}|\\text\{\s*subj\.to\s*\}|\\text\{\s*s\.t\.\s*\}|subject\sto\s*|subj\.to\s*|s\.t\.\s*'
+   r'\\text\{\s*subject\s+to\s*:\s*\}|\\text\{\s*subj\s*\.\s*to\s*:\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*:\s*\}|\s*subject\s+to\s*:|\s*subj\s*\.\s*to\s*:|\s*s\s*\.\s*t\s*\.\s*:|\\text\{\s*subject\s+to\s*\}|\\text\{\s*subj\s*\.\s*to\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*\}|\s*subject\s+to\s|\s*subj\s*\.\s*to\s|\s*s\s*\.\s*t\s*\.'
    pass
 
 def t_LLBRACE(t):

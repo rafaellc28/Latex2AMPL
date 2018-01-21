@@ -35,30 +35,30 @@ precedence = (
     ('right', 'COMMA'),
     ('left', 'FOR', 'WHERE', 'COLON'),
     ('right', 'PIPE'),
-    ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
     ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
     ('left', 'MAXIMIZE', 'MINIMIZE'),
     ('right', 'SLASHES', 'SEMICOLON'),
+    ('right', 'IF', 'THEN', 'ELSE'),
     ('left', 'OR'),
     ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
     ('left', 'AND'),
-    ('left', 'NOT'),
     ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ'),
     ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
-    ('left', 'IF', 'THEN'),
-    ('right', 'ELSE'),
+    ('left', 'IN', 'NOTIN'),
+    ('left', 'SUBSET', 'NOTSUBSET'),
+    ('left', 'NOT'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION'),
     ('left', 'INTER'),
     ('left', 'CROSS'),
-    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'DOTS', 'BY'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'DOTS', 'BY'),
     ('right', 'AMPERSAND'),
     ('left', 'PLUS', 'MINUS', 'LESS'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT'),
     ('left', 'UPLUS', 'UMINUS'),
-    ('left', 'CARET'),
+    ('right', 'CARET'),
     ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ARCTAN', 'TAN', 'ARCTANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
@@ -150,8 +150,19 @@ def p_Constraint(t):
     '''Constraint : ConstraintExpression FOR IndexingExpression
                   | ConstraintExpression WHERE IndexingExpression
                   | ConstraintExpression COLON IndexingExpression
-                  | ConstraintExpression'''
+                  | ConstraintExpression
+                  | EntryConstraintLogicalExpression FOR IndexingExpression
+                  | EntryConstraintLogicalExpression WHERE IndexingExpression
+                  | EntryConstraintLogicalExpression COLON IndexingExpression
+                  | EntryConstraintLogicalExpression
+                  | AllDiffExpression FOR IndexingExpression
+                  | AllDiffExpression WHERE IndexingExpression
+                  | AllDiffExpression COLON IndexingExpression
+                  | AllDiffExpression'''
     
+    if not isinstance(t[1], ConstraintExpression):
+      t[1] = LogicalExpression([t[1]])
+
     if len(t) > 3:
         t[3].setStmtIndexing(True)
         t[0] = Constraint(t[1], t[3])
@@ -161,23 +172,50 @@ def p_Constraint(t):
 
 def p_ConstraintExpressionLogical(t):
     '''ConstraintExpression : ConstraintExpression AND ConstraintExpression
+                            | ConstraintExpression AND EntryConstraintLogicalExpression
+                            | ConstraintExpression AND AllDiffExpression
+                            | EntryConstraintLogicalExpression AND ConstraintExpression
+                            | EntryConstraintLogicalExpression AND EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression AND AllDiffExpression
+                            | AllDiffExpression AND ConstraintExpression
+                            | AllDiffExpression AND EntryConstraintLogicalExpression
+                            | AllDiffExpression AND AllDiffExpression
                             | ConstraintExpression OR ConstraintExpression
+                            | ConstraintExpression OR EntryConstraintLogicalExpression
+                            | ConstraintExpression OR AllDiffExpression
+                            | EntryConstraintLogicalExpression OR ConstraintExpression
+                            | EntryConstraintLogicalExpression OR EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression OR AllDiffExpression
+                            | AllDiffExpression OR ConstraintExpression
+                            | AllDiffExpression OR EntryConstraintLogicalExpression
+                            | AllDiffExpression OR AllDiffExpression
                             | FORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | FORALL LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                            | FORALL LLBRACE IndexingExpression RRBRACE AllDiffExpression
                             | NFORALL LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NFORALL LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                            | NFORALL LLBRACE IndexingExpression RRBRACE AllDiffExpression
                             | EXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | EXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                            | EXISTS LLBRACE IndexingExpression RRBRACE AllDiffExpression
                             | NEXISTS LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                            | NEXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                            | NEXISTS LLBRACE IndexingExpression RRBRACE AllDiffExpression
                             | NOT ConstraintExpression
-                            | LPAREN ConstraintExpression RPAREN
-                            | EntryConstraintLogicalExpression'''
+                            | LPAREN ConstraintExpression RPAREN'''
 
     if t.slice[1].type == "LPAREN":
         entry = LogicalExpression([t[2]])
         t[0] = EntryLogicalExpressionBetweenParenthesis(entry)
 
+    elif t.slice[1].type == "NOT":
+        entry = EntryLogicalExpressionNot(t[2])
+        t[0] = LogicalExpression([entry])
+
     elif len(t) > 2 and (t.slice[2].type == "AND" or t.slice[2].type == "OR"):
 
-        entry = EntryLogicalExpressionNumericOrSymbolic(t[1])
-        entry = LogicalExpression([entry])
+        #entry = EntryLogicalExpressionNumericOrSymbolic(t[1])
+        entry = LogicalExpression([t[1]])
 
         if t.slice[2].type == "AND":
           entry = entry.addAnd(t[3])
@@ -185,10 +223,6 @@ def p_ConstraintExpressionLogical(t):
           entry = entry.addOr(t[3])
 
         t[0] = entry
-
-    elif isinstance(t[1], str) and t.slice[1].type == "NOT":
-        entry = EntryLogicalExpressionNot(t[2])
-        t[0] = LogicalExpression([entry])
 
     else:
         _type = t.slice[1].type
@@ -210,27 +244,238 @@ def p_ConstraintExpressionLogical(t):
 
 def p_ConstraintExpressionConditional(t):
     '''ConstraintExpression : Identifier IMPLIES ConstraintExpression ELSE ConstraintExpression
-                            | NumericExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
-                            | ConstraintExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
-                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
-                            | NumericExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
-                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
-                            | Identifier IMPLIES ConstraintExpression
-                            | NumericExpression IMPLIES ConstraintExpression
-                            | ConstraintExpression IMPLIES ConstraintExpression
-                            | LogicalExpression IMPLIES ConstraintExpression
-                            | Identifier ISIMPLIEDBY ConstraintExpression
-                            | NumericExpression ISIMPLIEDBY ConstraintExpression
-                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression
-                            | Identifier IFANDONLYIF ConstraintExpression
-                            | NumericExpression IFANDONLYIF ConstraintExpression
-                            | ConstraintExpression IFANDONLYIF ConstraintExpression
-                            | LogicalExpression IFANDONLYIF ConstraintExpression'''
 
-    if isinstance(t[1], NumericExpression) or isinstance(t[1], Identifier):
+                            | Identifier IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | Identifier IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | Identifier IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | Identifier IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | Identifier IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | Identifier IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | NumericExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | NumericExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | NumericExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | NumericExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | NumericExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | NumericExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | NumericExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | SymbolicExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | SymbolicExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | SymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | SymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | SymbolicExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | SymbolicExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | SymbolicExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | ConstraintExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | ConstraintExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | ConstraintExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | ConstraintExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | ConstraintExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | LogicalExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | LogicalExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | LogicalExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | LogicalExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | LogicalExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | AllDiffExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | AllDiffExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | AllDiffExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | AllDiffExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | AllDiffExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | AllDiffExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | AllDiffExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+                            | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
+
+                            | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE AllDiffExpression
+                            | EntryConstraintLogicalExpression IMPLIES AllDiffExpression ELSE ConstraintExpression
+                            | EntryConstraintLogicalExpression IMPLIES AllDiffExpression ELSE AllDiffExpression
+
+
+                            
+                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | Identifier ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | Identifier ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | NumericExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | NumericExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | NumericExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | NumericExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | SymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | SymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | SymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | SymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | SymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | SymbolicExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | SymbolicExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | ConstraintExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | ConstraintExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | LogicalExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | LogicalExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | AllDiffExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | AllDiffExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | AllDiffExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | AllDiffExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | AllDiffExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | AllDiffExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | AllDiffExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
+
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
+
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE AllDiffExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY AllDiffExpression ELSE ConstraintExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY AllDiffExpression ELSE AllDiffExpression
+
+
+
+                            | Identifier IMPLIES ConstraintExpression
+                            | Identifier IMPLIES EntryConstraintLogicalExpression
+                            | Identifier IMPLIES AllDiffExpression
+
+                            | NumericExpression IMPLIES ConstraintExpression
+                            | NumericExpression IMPLIES EntryConstraintLogicalExpression
+                            | NumericExpression IMPLIES AllDiffExpression
+
+                            | SymbolicExpression IMPLIES ConstraintExpression
+                            | SymbolicExpression IMPLIES EntryConstraintLogicalExpression
+                            | SymbolicExpression IMPLIES AllDiffExpression
+
+                            | ConstraintExpression IMPLIES ConstraintExpression
+                            | ConstraintExpression IMPLIES EntryConstraintLogicalExpression
+                            | ConstraintExpression IMPLIES AllDiffExpression
+
+                            | LogicalExpression IMPLIES ConstraintExpression
+                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression
+                            | LogicalExpression IMPLIES AllDiffExpression
+
+                            | AllDiffExpression IMPLIES ConstraintExpression
+                            | AllDiffExpression IMPLIES EntryConstraintLogicalExpression
+                            | AllDiffExpression IMPLIES AllDiffExpression
+
+                            | EntryConstraintLogicalExpression IMPLIES ConstraintExpression
+                            | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression IMPLIES AllDiffExpression
+
+
+
+                            | Identifier ISIMPLIEDBY ConstraintExpression
+                            | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | Identifier ISIMPLIEDBY AllDiffExpression
+
+                            | NumericExpression ISIMPLIEDBY ConstraintExpression
+                            | NumericExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | NumericExpression ISIMPLIEDBY AllDiffExpression
+
+                            | SymbolicExpression ISIMPLIEDBY ConstraintExpression
+                            | SymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | SymbolicExpression ISIMPLIEDBY AllDiffExpression
+
+                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression
+                            | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | ConstraintExpression ISIMPLIEDBY AllDiffExpression
+
+                            | LogicalExpression ISIMPLIEDBY ConstraintExpression
+                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | LogicalExpression ISIMPLIEDBY AllDiffExpression
+
+                            | AllDiffExpression ISIMPLIEDBY ConstraintExpression
+                            | AllDiffExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | AllDiffExpression ISIMPLIEDBY AllDiffExpression
+
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression ISIMPLIEDBY AllDiffExpression
+
+
+
+                            | Identifier IFANDONLYIF ConstraintExpression
+                            | Identifier IFANDONLYIF EntryConstraintLogicalExpression
+                            | Identifier IFANDONLYIF AllDiffExpression
+
+                            | NumericExpression IFANDONLYIF ConstraintExpression
+                            | NumericExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | NumericExpression IFANDONLYIF AllDiffExpression
+
+                            | SymbolicExpression IFANDONLYIF ConstraintExpression
+                            | SymbolicExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | SymbolicExpression IFANDONLYIF AllDiffExpression
+
+                            | ConstraintExpression IFANDONLYIF ConstraintExpression
+                            | ConstraintExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | ConstraintExpression IFANDONLYIF AllDiffExpression
+
+                            | LogicalExpression IFANDONLYIF ConstraintExpression
+                            | LogicalExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | LogicalExpression IFANDONLYIF AllDiffExpression
+
+                            | AllDiffExpression IFANDONLYIF ConstraintExpression
+                            | AllDiffExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | AllDiffExpression IFANDONLYIF AllDiffExpression
+
+                            | EntryConstraintLogicalExpression IFANDONLYIF ConstraintExpression
+                            | EntryConstraintLogicalExpression IFANDONLYIF EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression IFANDONLYIF AllDiffExpression'''
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
       t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
 
     if not isinstance(t[1], LogicalExpression):
@@ -375,89 +620,91 @@ def p_ConstraintExpression(t):
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
 
 
-def p_EntryConstraintLogicalExpression1(t):
-    '''EntryConstraintLogicalExpression1 : NumericExpression LT NumericExpression
-                                         | NumericExpression LT Identifier
-                                         | NumericExpression LT SymbolicExpression
-                                         | NumericExpression GT NumericExpression
-                                         | NumericExpression GT Identifier
-                                         | NumericExpression GT SymbolicExpression
-                                         | NumericExpression NEQ NumericExpression
-                                         | NumericExpression NEQ Identifier
-                                         | NumericExpression NEQ SymbolicExpression
-                                         | Identifier LT NumericExpression
-                                         | Identifier LT Identifier
-                                         | Identifier LT SymbolicExpression
-                                         | Identifier GT NumericExpression
-                                         | Identifier GT Identifier
-                                         | Identifier GT SymbolicExpression
-                                         | Identifier NEQ NumericExpression
-                                         | Identifier NEQ Identifier
-                                         | Identifier NEQ SymbolicExpression
-                                         | SymbolicExpression LT NumericExpression
-                                         | SymbolicExpression LT Identifier
-                                         | SymbolicExpression LT SymbolicExpression
-                                         | SymbolicExpression GT NumericExpression
-                                         | SymbolicExpression GT Identifier
-                                         | SymbolicExpression GT SymbolicExpression
-                                         | SymbolicExpression NEQ NumericExpression
-                                         | SymbolicExpression NEQ Identifier
-                                         | SymbolicExpression NEQ SymbolicExpression'''
-
-    _type = t.slice[2].type
-    if _type == "LT":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
-
-    elif _type == "GT":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
-
-    elif _type == "NEQ":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
-
-
-def p_EntryConstraintLogicalExpression2(t):
-    '''EntryConstraintLogicalExpression2 : NumericExpression LE NumericExpression
-                                         | NumericExpression LE Identifier
-                                         | NumericExpression LE SymbolicExpression
-                                         | NumericExpression EQ NumericExpression
-                                         | NumericExpression EQ Identifier
-                                         | NumericExpression EQ SymbolicExpression
-                                         | NumericExpression GE NumericExpression
-                                         | NumericExpression GE Identifier
-                                         | NumericExpression GE SymbolicExpression
-                                         | Identifier LE NumericExpression
-                                         | Identifier LE Identifier
-                                         | Identifier LE SymbolicExpression
-                                         | Identifier EQ NumericExpression
-                                         | Identifier EQ Identifier
-                                         | Identifier EQ SymbolicExpression
-                                         | Identifier GE NumericExpression
-                                         | Identifier GE Identifier
-                                         | Identifier GE SymbolicExpression
-                                         | SymbolicExpression LE NumericExpression
-                                         | SymbolicExpression LE Identifier
-                                         | SymbolicExpression LE SymbolicExpression
-                                         | SymbolicExpression EQ NumericExpression
-                                         | SymbolicExpression EQ Identifier
-                                         | SymbolicExpression EQ SymbolicExpression
-                                         | SymbolicExpression GE NumericExpression
-                                         | SymbolicExpression GE Identifier
-                                         | SymbolicExpression GE SymbolicExpression'''
-
-    _type = t.slice[2].type
-    if _type == "LE":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
-
-    elif _type == "EQ":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
-
-    elif _type == "GE":
-        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
-
 def p_EntryConstraintLogicalExpression(t):
-    '''EntryConstraintLogicalExpression : EntryConstraintLogicalExpression1
-                                        | EntryConstraintLogicalExpression2'''
-    t[0] = t[1]
+    '''EntryConstraintLogicalExpression : NumericExpression LE NumericExpression
+                                        | NumericExpression LE Identifier
+                                        | NumericExpression LE SymbolicExpression
+                                        | NumericExpression EQ NumericExpression
+                                        | NumericExpression EQ Identifier
+                                        | NumericExpression EQ SymbolicExpression
+                                        | NumericExpression GE NumericExpression
+                                        | NumericExpression GE Identifier
+                                        | NumericExpression GE SymbolicExpression
+                                        | Identifier LE NumericExpression
+                                        | Identifier LE Identifier
+                                        | Identifier LE SymbolicExpression
+                                        | Identifier EQ NumericExpression
+                                        | Identifier EQ Identifier
+                                        | Identifier EQ SymbolicExpression
+                                        | Identifier GE NumericExpression
+                                        | Identifier GE Identifier
+                                        | Identifier GE SymbolicExpression
+                                        | SymbolicExpression LE NumericExpression
+                                        | SymbolicExpression LE Identifier
+                                        | SymbolicExpression LE SymbolicExpression
+                                        | SymbolicExpression EQ NumericExpression
+                                        | SymbolicExpression EQ Identifier
+                                        | SymbolicExpression EQ SymbolicExpression
+                                        | SymbolicExpression GE NumericExpression
+                                        | SymbolicExpression GE Identifier
+                                        | SymbolicExpression GE SymbolicExpression
+                                        | NumericExpression LT NumericExpression
+                                        | NumericExpression LT Identifier
+                                        | NumericExpression LT SymbolicExpression
+                                        | NumericExpression GT NumericExpression
+                                        | NumericExpression GT Identifier
+                                        | NumericExpression GT SymbolicExpression
+                                        | NumericExpression NEQ NumericExpression
+                                        | NumericExpression NEQ Identifier
+                                        | NumericExpression NEQ SymbolicExpression
+                                        | Identifier LT NumericExpression
+                                        | Identifier LT Identifier
+                                        | Identifier LT SymbolicExpression
+                                        | Identifier GT NumericExpression
+                                        | Identifier GT Identifier
+                                        | Identifier GT SymbolicExpression
+                                        | Identifier NEQ NumericExpression
+                                        | Identifier NEQ Identifier
+                                        | Identifier NEQ SymbolicExpression
+                                        | SymbolicExpression LT NumericExpression
+                                        | SymbolicExpression LT Identifier
+                                        | SymbolicExpression LT SymbolicExpression
+                                        | SymbolicExpression GT NumericExpression
+                                        | SymbolicExpression GT Identifier
+                                        | SymbolicExpression GT SymbolicExpression
+                                        | SymbolicExpression NEQ NumericExpression
+                                        | SymbolicExpression NEQ Identifier
+                                        | SymbolicExpression NEQ SymbolicExpression
+                                        | LPAREN EntryConstraintLogicalExpression RPAREN
+                                        | NOT EntryConstraintLogicalExpression'''
+
+    _type = t.slice[1].type
+    if _type == "LPAREN":
+      t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
+
+    elif _type == "NOT":
+      t[0] = EntryLogicalExpressionNot(t[2])
+
+    else:
+
+      _type = t.slice[2].type
+      if _type == "LE":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LE, t[1], t[3])
+
+      elif _type == "EQ":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.EQ, t[1], t[3])
+
+      elif _type == "GE":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GE, t[1], t[3])
+
+      elif _type == "LT":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
+
+      elif _type == "GT":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
+
+      elif _type == "NEQ":
+          t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
 
 def _getDeclarationExpression(entryConstraintLogicalExpression):
@@ -892,6 +1139,16 @@ def p_ConditionalLinearExpression(t):
                                    | IF NumericExpression THEN NumericExpression ELSE SymbolicExpression
                                    | IF NumericExpression THEN Identifier ELSE LinearExpression
                                    | IF NumericExpression THEN Identifier ELSE SymbolicExpression
+                                   | IF SymbolicExpression THEN LinearExpression ELSE LinearExpression
+                                   | IF SymbolicExpression THEN SymbolicExpression ELSE SymbolicExpression
+                                   | IF SymbolicExpression THEN LinearExpression ELSE NumericExpression
+                                   | IF SymbolicExpression THEN SymbolicExpression ELSE NumericExpression
+                                   | IF SymbolicExpression THEN LinearExpression ELSE Identifier
+                                   | IF SymbolicExpression THEN SymbolicExpression ELSE Identifier
+                                   | IF SymbolicExpression THEN NumericExpression ELSE LinearExpression
+                                   | IF SymbolicExpression THEN NumericExpression ELSE SymbolicExpression
+                                   | IF SymbolicExpression THEN Identifier ELSE LinearExpression
+                                   | IF SymbolicExpression THEN Identifier ELSE SymbolicExpression
                                    | IF LogicalExpression THEN LinearExpression ELSE LinearExpression
                                    | IF LogicalExpression THEN SymbolicExpression ELSE SymbolicExpression
                                    | IF LogicalExpression THEN LinearExpression ELSE NumericExpression
@@ -902,15 +1159,44 @@ def p_ConditionalLinearExpression(t):
                                    | IF LogicalExpression THEN NumericExpression ELSE SymbolicExpression
                                    | IF LogicalExpression THEN Identifier ELSE LinearExpression
                                    | IF LogicalExpression THEN Identifier ELSE SymbolicExpression
+                                   | IF AllDiffExpression THEN LinearExpression ELSE LinearExpression
+                                   | IF AllDiffExpression THEN SymbolicExpression ELSE SymbolicExpression
+                                   | IF AllDiffExpression THEN LinearExpression ELSE NumericExpression
+                                   | IF AllDiffExpression THEN SymbolicExpression ELSE NumericExpression
+                                   | IF AllDiffExpression THEN LinearExpression ELSE Identifier
+                                   | IF AllDiffExpression THEN SymbolicExpression ELSE Identifier
+                                   | IF AllDiffExpression THEN NumericExpression ELSE LinearExpression
+                                   | IF AllDiffExpression THEN NumericExpression ELSE SymbolicExpression
+                                   | IF AllDiffExpression THEN Identifier ELSE LinearExpression
+                                   | IF AllDiffExpression THEN Identifier ELSE SymbolicExpression
+                                   | IF EntryConstraintLogicalExpression THEN LinearExpression ELSE LinearExpression
+                                   | IF EntryConstraintLogicalExpression THEN SymbolicExpression ELSE SymbolicExpression
+                                   | IF EntryConstraintLogicalExpression THEN LinearExpression ELSE NumericExpression
+                                   | IF EntryConstraintLogicalExpression THEN SymbolicExpression ELSE NumericExpression
+                                   | IF EntryConstraintLogicalExpression THEN LinearExpression ELSE Identifier
+                                   | IF EntryConstraintLogicalExpression THEN SymbolicExpression ELSE Identifier
+                                   | IF EntryConstraintLogicalExpression THEN NumericExpression ELSE LinearExpression
+                                   | IF EntryConstraintLogicalExpression THEN NumericExpression ELSE SymbolicExpression
+                                   | IF EntryConstraintLogicalExpression THEN Identifier ELSE LinearExpression
+                                   | IF EntryConstraintLogicalExpression THEN Identifier ELSE SymbolicExpression
                                    | IF Identifier THEN LinearExpression
                                    | IF Identifier THEN SymbolicExpression
                                    | IF NumericExpression THEN LinearExpression
                                    | IF NumericExpression THEN SymbolicExpression
+                                   | IF SymbolicExpression THEN LinearExpression
+                                   | IF SymbolicExpression THEN SymbolicExpression
                                    | IF LogicalExpression THEN LinearExpression
-                                   | IF LogicalExpression THEN SymbolicExpression'''
+                                   | IF LogicalExpression THEN SymbolicExpression
+                                   | IF AllDiffExpression THEN LinearExpression
+                                   | IF AllDiffExpression THEN SymbolicExpression
+                                   | IF EntryConstraintLogicalExpression THEN LinearExpression
+                                   | IF EntryConstraintLogicalExpression THEN SymbolicExpression'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
 
     if not isinstance(t[2], LogicalExpression):
-      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+      t[2] = LogicalExpression([t[2]])
 
     t[0] = ConditionalLinearExpression(t[2], t[4])
 
@@ -919,19 +1205,87 @@ def p_ConditionalLinearExpression(t):
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
-                         | EntryConstraintLogicalExpression
-                         | NOT LogicalExpression
                          | LogicalExpression OR EntryLogicalExpression
+                         | LogicalExpression OR AllDiffExpression
                          | LogicalExpression OR EntryConstraintLogicalExpression
                          | LogicalExpression OR NumericExpression
+                         | LogicalExpression OR SymbolicExpression
                          | LogicalExpression OR Identifier
+                         | AllDiffExpression OR LogicalExpression
+                         | AllDiffExpression OR AllDiffExpression
+                         | AllDiffExpression OR EntryConstraintLogicalExpression
+                         | AllDiffExpression OR NumericExpression
+                         | AllDiffExpression OR SymbolicExpression
+                         | AllDiffExpression OR Identifier
+                         | EntryConstraintLogicalExpression OR LogicalExpression
+                         | EntryConstraintLogicalExpression OR AllDiffExpression
+                         | EntryConstraintLogicalExpression OR EntryConstraintLogicalExpression
+                         | EntryConstraintLogicalExpression OR NumericExpression
+                         | EntryConstraintLogicalExpression OR SymbolicExpression
+                         | EntryConstraintLogicalExpression OR Identifier
+                         | NumericExpression OR LogicalExpression
+                         | NumericExpression OR AllDiffExpression
+                         | NumericExpression OR EntryConstraintLogicalExpression
+                         | NumericExpression OR NumericExpression
+                         | NumericExpression OR SymbolicExpression
+                         | NumericExpression OR Identifier
+                         | SymbolicExpression OR LogicalExpression
+                         | SymbolicExpression OR AllDiffExpression
+                         | SymbolicExpression OR EntryConstraintLogicalExpression
+                         | SymbolicExpression OR NumericExpression
+                         | SymbolicExpression OR SymbolicExpression
+                         | SymbolicExpression OR Identifier
+                         | Identifier OR LogicalExpression
+                         | Identifier OR AllDiffExpression
+                         | Identifier OR EntryConstraintLogicalExpression
+                         | Identifier OR NumericExpression
+                         | Identifier OR SymbolicExpression
+                         | Identifier OR Identifier
                          | LogicalExpression AND EntryLogicalExpression
+                         | LogicalExpression AND AllDiffExpression
                          | LogicalExpression AND EntryConstraintLogicalExpression
                          | LogicalExpression AND NumericExpression
-                         | LogicalExpression AND Identifier'''
+                         | LogicalExpression AND SymbolicExpression
+                         | LogicalExpression AND Identifier
+                         | AllDiffExpression AND LogicalExpression
+                         | AllDiffExpression AND AllDiffExpression
+                         | AllDiffExpression AND EntryConstraintLogicalExpression
+                         | AllDiffExpression AND NumericExpression
+                         | AllDiffExpression AND SymbolicExpression
+                         | AllDiffExpression AND Identifier
+                         | EntryConstraintLogicalExpression AND LogicalExpression
+                         | EntryConstraintLogicalExpression AND AllDiffExpression
+                         | EntryConstraintLogicalExpression AND EntryConstraintLogicalExpression
+                         | EntryConstraintLogicalExpression AND NumericExpression
+                         | EntryConstraintLogicalExpression AND SymbolicExpression
+                         | EntryConstraintLogicalExpression AND Identifier
+                         | NumericExpression AND LogicalExpression
+                         | NumericExpression AND AllDiffExpression
+                         | NumericExpression AND EntryConstraintLogicalExpression
+                         | NumericExpression AND NumericExpression
+                         | NumericExpression AND SymbolicExpression
+                         | NumericExpression AND Identifier
+                         | SymbolicExpression AND LogicalExpression
+                         | SymbolicExpression AND AllDiffExpression
+                         | SymbolicExpression AND EntryConstraintLogicalExpression
+                         | SymbolicExpression AND NumericExpression
+                         | SymbolicExpression AND SymbolicExpression
+                         | SymbolicExpression AND Identifier
+                         | Identifier AND LogicalExpression
+                         | Identifier AND AllDiffExpression
+                         | Identifier AND EntryConstraintLogicalExpression
+                         | Identifier AND NumericExpression
+                         | Identifier AND SymbolicExpression
+                         | Identifier AND Identifier'''
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
+      t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
+
+    if not isinstance(t[1], LogicalExpression):
+      t[1] = LogicalExpression([t[1]])
 
     if len(t) > 3:
-      if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
+      if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
         t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
 
       if t.slice[2].type == "AND":
@@ -940,67 +1294,45 @@ def p_LogicalExpression(t):
         t[0] = t[1].addOr(t[3])
 
     else:
-        if isinstance(t[1], str) and t.slice[1].type == "NOT":
-          t[0] = LogicalExpression(EntryLogicalExpressionNot(t[2]))
-        else:        
-          t[0] = LogicalExpression([t[1]])
+        t[0] = t[1]
 
 def p_EntryLogicalExpression(t):
     '''EntryLogicalExpression : NOT NumericExpression
+                              | NOT SymbolicExpression
                               | NOT Identifier
+                              | NOT LogicalExpression
                               | LPAREN LogicalExpression RPAREN'''
 
-    if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
       t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
 
-    if isinstance(t[1], str) and t.slice[1].type == "NOT":
+    _type = t.slice[1].type
+    if _type == "NOT":
       t[0] = EntryLogicalExpressionNot(t[2])
 
-    elif t.slice[1].type == "LPAREN":
+    elif _type == "LPAREN":
       t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
 
     else:
       t[0] = t[2]
 
-#def p_EntryRelationalLogicalExpression(t):
-#    '''EntryLogicalExpression : NumericExpression LT NumericExpression
-#                              | NumericExpression LT Identifier
-#                              | NumericExpression LT SymbolicExpression
-#                              | NumericExpression GT NumericExpression
-#                              | NumericExpression GT Identifier
-#                              | NumericExpression GT SymbolicExpression
-#                              | NumericExpression NEQ NumericExpression
-#                              | NumericExpression NEQ Identifier
-#                              | NumericExpression NEQ SymbolicExpression
-#                              | Identifier LT NumericExpression
-#                              | Identifier LT Identifier
-#                              | Identifier LT SymbolicExpression
-#                              | Identifier GT NumericExpression
-#                              | Identifier GT Identifier
-#                              | Identifier GT SymbolicExpression
-#                              | Identifier NEQ NumericExpression
-#                              | Identifier NEQ Identifier
-#                              | Identifier NEQ SymbolicExpression
-#                              | SymbolicExpression LT NumericExpression
-#                              | SymbolicExpression LT Identifier
-#                              | SymbolicExpression LT SymbolicExpression
-#                              | SymbolicExpression GT NumericExpression
-#                              | SymbolicExpression GT Identifier
-#                              | SymbolicExpression GT SymbolicExpression
-#                              | SymbolicExpression NEQ NumericExpression
-#                              | SymbolicExpression NEQ Identifier
-#                              | SymbolicExpression NEQ SymbolicExpression'''
 
-#    _type = t.slice[2].type
-#    if _type == "LT":
-#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.LT, t[1], t[3])
+def p_AllDiffExpression(t):
+    '''AllDiffExpression : ALLDIFF LLBRACE IndexingExpression RRBRACE Identifier
+                         | ALLDIFF LLBRACE IndexingExpression RRBRACE NumericExpression
+                         | ALLDIFF LLBRACE IndexingExpression RRBRACE SymbolicExpression
+                         | LPAREN AllDiffExpression RPAREN
+                         | NOT AllDiffExpression'''
 
-#    elif _type == "GT":
-#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.GT, t[1], t[3])
+    _type = t.slice[1].type
+    if _type == "LPAREN":
+      t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
 
-#    elif _type == "NEQ":
-#        t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
+    elif _type == "NOT":
+      t[0] = EntryLogicalExpressionNot(t[2])
 
+    else:
+      t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.ALLDIFF, t[3], t[5])
 
 def p_EntryLogicalExpressionWithSet(t):
     '''EntryLogicalExpression : ValueList IN SetExpression
@@ -1066,16 +1398,36 @@ def p_EntryLogicalExpressionWithSet(t):
         t[0] = EntryLogicalExpressionWithSetOperation(EntryLogicalExpressionWithSetOperation.NOTSUBSET, t[1], t[3])
 
 def p_EntryIteratedLogicalExpression(t):
-    '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | FORALL LLBRACE IndexingExpression RRBRACE Identifier
-                              | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+    '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE Identifier
+                              | FORALL LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE SymbolicExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE AllDiffExpression
+                              | FORALL LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
                               | NFORALL LLBRACE IndexingExpression RRBRACE Identifier
-                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE SymbolicExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE AllDiffExpression
+                              | NFORALL LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
                               | EXISTS LLBRACE IndexingExpression RRBRACE Identifier
+                              | EXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE SymbolicExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE AllDiffExpression
+                              | EXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE Identifier
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE SymbolicExpression
                               | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | NEXISTS LLBRACE IndexingExpression RRBRACE Identifier'''
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE AllDiffExpression
+                              | NEXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression'''
+
+    if isinstance(t[5], Identifier) or isinstance(t[5], NumericExpression) or isinstance(t[5], SymbolicExpression):
+      t[5] = EntryLogicalExpressionNumericOrSymbolic(t[5])
+
     if not isinstance(t[5], LogicalExpression):
-      t[5] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[5])])
+      t[5] = LogicalExpression([t[5]])
 
     _type = t.slice[1].type
     if _type == "FORALL":
@@ -1089,6 +1441,7 @@ def p_EntryIteratedLogicalExpression(t):
 
     elif _type == "NEXISTS":
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
+
 
 def p_SetExpressionWithOperation(t):
     '''SetExpression : Identifier DIFF Identifier
@@ -1285,7 +1638,10 @@ def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
                           | LogicalIndexExpression
                           | IndexingExpression PIPE LogicalExpression
+                          | IndexingExpression PIPE AllDiffExpression
+                          | IndexingExpression PIPE EntryConstraintLogicalExpression
                           | IndexingExpression PIPE NumericExpression
+                          | IndexingExpression PIPE SymbolicExpression
                           | IndexingExpression PIPE Identifier
                           | IndexingExpression COMMA EntryIndexingExpression'''
 
@@ -1293,8 +1649,11 @@ def p_IndexingExpression(t):
 
         if t.slice[2].type == "PIPE":
 
-            if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
-              t[3] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[3])])
+            if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
+              t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
+
+            if not isinstance(t[3], LogicalExpression):
+              t[3] = LogicalExpression([t[3]])
 
             t[0] = t[1].setLogicalExpression(t[3])
 
@@ -1307,10 +1666,16 @@ def p_IndexingExpression(t):
 def p_LogicalIndexExpression(t):
     '''LogicalIndexExpression : IF Identifier
                               | IF NumericExpression
-                              | IF LogicalExpression'''
+                              | IF SymbolicExpression
+                              | IF LogicalExpression
+                              | IF AllDiffExpression
+                              | IF EntryConstraintLogicalExpression'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
 
     if not isinstance(t[2], LogicalExpression):
-      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+      t[2] = LogicalExpression([t[2]])
 
     t[0] = ConditionalLinearExpression(t[2])
 
@@ -1618,18 +1983,42 @@ def p_IteratedNumericExpression(t):
 
 def p_IteratedNumericExpression2(t):
     '''NumericExpression : COUNT LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | COUNT LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | COUNT LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | ATMOST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATMOST Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | ATMOST Identifier LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | ATMOST NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATMOST NumericExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | ATMOST NumericExpression LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | ATLEAST NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | ATLEAST NumericExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | ATLEAST NumericExpression LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | EXACTLY NumericExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
+                         | EXACTLY NumericExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
+                         | EXACTLY NumericExpression LLBRACE IndexingExpression RRBRACE AllDiffExpression
+
                          | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE Identifier RPAREN
                          | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE Identifier RPAREN
+                         | NUMBEROF SymbolicExpression IN LPAREN LLBRACE IndexingExpression RRBRACE Identifier RPAREN
                          | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE NumericExpression RPAREN
                          | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE NumericExpression RPAREN
+                         | NUMBEROF SymbolicExpression IN LPAREN LLBRACE IndexingExpression RRBRACE NumericExpression RPAREN
                          | NUMBEROF Identifier IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN
-                         | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN'''
+                         | NUMBEROF NumericExpression IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN
+                         | NUMBEROF SymbolicExpression IN LPAREN LLBRACE IndexingExpression RRBRACE SymbolicExpression RPAREN'''
 
     if t.slice[1].type == "NUMBEROF":
 
@@ -1965,19 +2354,40 @@ def p_ConditionalNumericExpression(t):
                                     | IF NumericExpression THEN NumericExpression ELSE Identifier
                                     | IF NumericExpression THEN Identifier ELSE NumericExpression
                                     | IF NumericExpression THEN Identifier ELSE Identifier
+                                    | IF SymbolicExpression THEN NumericExpression ELSE NumericExpression
+                                    | IF SymbolicExpression THEN NumericExpression ELSE Identifier
+                                    | IF SymbolicExpression THEN Identifier ELSE NumericExpression
+                                    | IF SymbolicExpression THEN Identifier ELSE Identifier
                                     | IF LogicalExpression THEN NumericExpression ELSE NumericExpression
                                     | IF LogicalExpression THEN NumericExpression ELSE Identifier
                                     | IF LogicalExpression THEN Identifier ELSE NumericExpression
                                     | IF LogicalExpression THEN Identifier ELSE Identifier
+                                    | IF AllDiffExpression THEN NumericExpression ELSE NumericExpression
+                                    | IF AllDiffExpression THEN NumericExpression ELSE Identifier
+                                    | IF AllDiffExpression THEN Identifier ELSE NumericExpression
+                                    | IF AllDiffExpression THEN Identifier ELSE Identifier
+                                    | IF EntryConstraintLogicalExpression THEN NumericExpression ELSE NumericExpression
+                                    | IF EntryConstraintLogicalExpression THEN NumericExpression ELSE Identifier
+                                    | IF EntryConstraintLogicalExpression THEN Identifier ELSE NumericExpression
+                                    | IF EntryConstraintLogicalExpression THEN Identifier ELSE Identifier
                                     | IF Identifier THEN NumericExpression
                                     | IF Identifier THEN Identifier
                                     | IF NumericExpression THEN NumericExpression
                                     | IF NumericExpression THEN Identifier
+                                    | IF SymbolicExpression THEN NumericExpression
+                                    | IF SymbolicExpression THEN Identifier
                                     | IF LogicalExpression THEN NumericExpression
-                                    | IF LogicalExpression THEN Identifier'''
+                                    | IF LogicalExpression THEN Identifier
+                                    | IF AllDiffExpression THEN NumericExpression
+                                    | IF AllDiffExpression THEN Identifier
+                                    | IF EntryConstraintLogicalExpression THEN NumericExpression
+                                    | IF EntryConstraintLogicalExpression THEN Identifier'''
 
-    if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
-      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
     
     if isinstance(t[4], Identifier):
       t[4] = ValuedNumericExpression(t[4])

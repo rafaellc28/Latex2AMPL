@@ -159,6 +159,7 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
     NFORALL = "not forall"
     EXISTS  = "exists"
     NEXISTS = "not exists"
+    ALLDIFF = "alldiff"
 
     def __init__(self, op, indexingExpression, logicalExpression):
         """

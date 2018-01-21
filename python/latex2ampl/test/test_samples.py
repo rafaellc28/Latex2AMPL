@@ -747,3 +747,27 @@ def test_extras_test39():
 
 def test_extras_test40():
 	check_test_extras_num(40)
+
+def test_extras_test41():
+	check_test_extras_num(41)
+
+def test_extras_test42():
+	check_test_extras_num(42)
+
+def test_extras_test43():
+	check_test_extras_num(43)
+
+def test_extras_test44():
+	check_test_extras_num(44)
+
+def test_extras_test45():
+	check_test_extras_num(45)
+
+def test_extras_test46():
+	check_test_extras_num(46)
+
+def test_extras_test47():
+	check_test_extras_num(47)
+
+def test_extras_test48():
+	check_test_extras_num(48)

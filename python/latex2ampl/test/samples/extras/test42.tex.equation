@@ -1,0 +1,2 @@
+% Test logical expression with 'and' and alldiff
+1 < 2: i \in I | alldiff \{j \in 1...10\} D[j] \land 1 = 1

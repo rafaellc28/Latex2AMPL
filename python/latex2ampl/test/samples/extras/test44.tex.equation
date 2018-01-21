@@ -1,0 +1,3 @@
+% Test alldiff. From https://ampl.com/resources/logic-and-constraint-programming-extensions/
+\text{alldiff } \{j \in JOBS\} MachineForJob_{j}\\
+MachineForJob \in \mathbb{Z}^{\geq 1}, \leq n\\
