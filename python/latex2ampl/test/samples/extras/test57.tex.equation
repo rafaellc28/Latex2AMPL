@@ -1,0 +1,3 @@
+% Test the reserved word 'for' followed by number: for0 must be an ID
+a_{i} := 1 + for0 for\\
+i \in I

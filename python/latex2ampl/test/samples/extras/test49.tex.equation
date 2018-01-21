@@ -1,0 +1,2 @@
+% Test Conditional Set Expression
+a := \text{if } 1 \text{ then } A \cap B \text{ else } (A \cup B) \setminus C

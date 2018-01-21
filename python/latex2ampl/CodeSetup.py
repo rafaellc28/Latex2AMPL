@@ -2,6 +2,8 @@ from Tuple import *
 from ValueList import *
 from Identifier import *
 from SetExpression import *
+from LinearExpression import *
+from NumericExpression import *
 from Range import *
 from EntryIndexingExpression import *
 from GenSet import *
@@ -1386,6 +1388,7 @@ class CodeSetup:
             
             if isinstance(identifier, Identifier):
                 name = identifier.getSymbolName(self.codeGenerator)
+                
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
 
                 if genDeclaration == None:
@@ -1455,6 +1458,31 @@ class CodeSetup:
 
         if isinstance(var, str):
             name = var
+
+        elif isinstance(var, ConditionalNumericExpression):
+            if var.numericExpression2:
+                var = [var.numericExpression1, var.numericExpression2]
+                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
+            else:
+                var = var.numericExpression1
+                name = var.getSymbolName(self.codeGenerator)
+
+        elif isinstance(var, ConditionalLinearExpression):
+            if var.linearExpression2:
+                var = [var.linearExpression1, var.linearExpression2]
+                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
+            else:
+                var = var.linearExpression1
+                name = var.getSymbolName(self.codeGenerator)
+
+        elif isinstance(var, ConditionalSetExpression):
+            if var.setExpression2:
+                var = [var.setExpression1, var.setExpression2]
+                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
+            else:
+                var = var.setExpression1
+                name = var.getSymbolName(self.codeGenerator)
+
         else:
             name = var.getSymbolName(self.codeGenerator)
 
@@ -1462,7 +1490,21 @@ class CodeSetup:
             self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)
 
         elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and \
-            (isinstance(node.attribute, SetExpression) or isinstance(var, SetExpression) or isinstance(var, Range) or self.codeGenerator.genSets.has(name)) and not identifier.isParam:
+             (
+                isinstance(node.attribute, SetExpression) or \
+                # attribute is a conditional expression
+                (isinstance(var, list) and (isinstance(var[0], SetExpression) or isinstance(var[1], SetExpression))) or \
+                # attribute is not a conditional expression
+                (not isinstance(var, list) and isinstance(var, SetExpression)) or \
+                # attribute is a conditional expression
+                (isinstance(var, list) and (isinstance(var[0], Range) or isinstance(var[1], Range))) or \
+                # attribute is not a conditional expression
+                (not isinstance(var, list) and isinstance(var, Range)) or \
+                # attribute is a conditional expression
+                (isinstance(name, list) and (self.codeGenerator.genSets.has(name[0]) or self.codeGenerator.genSets.has(name[1]))) or \
+                # attribute is not a conditional expression
+                (isinstance(name, str) and self.codeGenerator.genSets.has(name))
+             ) and not identifier.isParam:
 
             if not self.codeGenerator.genParameters.has(name):
                 self._setIsSet(identifier)

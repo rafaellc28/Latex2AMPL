@@ -1,0 +1,2 @@
+% Test test\_for is correctly recognized as an ID
+a := test\_for

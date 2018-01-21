@@ -1,0 +1,2 @@
+% Test fortest is correctly recognized as an ID
+a := fortest

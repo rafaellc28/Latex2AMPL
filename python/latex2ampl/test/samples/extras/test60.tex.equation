@@ -1,0 +1,3 @@
+% Test the reserved word 'for' followed by _: must be correctly recognized as the token FOR resulting in an invalid syntax
+a_{i} := 1 for_{i}\\
+for i \in I

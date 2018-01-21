@@ -1,0 +1,2 @@
+% Test testfor is correctly recognized as an ID
+a := testfor

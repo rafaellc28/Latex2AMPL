@@ -1,0 +1,3 @@
+% Test the reserved word 'for' followed by letter: fore must be an ID
+a_{i} := 1 / fore for\\
+i \in I

@@ -1,0 +1,3 @@
+% Test the reserved word 'for' followed by \_: for_ must be an ID
+a_{i} := 1 - for\_\\
+for i \in I

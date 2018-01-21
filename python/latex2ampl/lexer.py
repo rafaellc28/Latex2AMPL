@@ -19,36 +19,36 @@ import re
 from SyntaxException import *
 
 reserved = {
-   'card' : 'CARD',
-   'length' : 'LENGTH',
-   'round' : 'ROUND',
-   'precision' : 'PRECISION',
-   'trunc' : 'TRUNC',
-   'substr' : 'SUBSTR',
-   'Irand224': 'IRAND224',
-   'Uniform01': 'UNIFORM01',
-   'Normal01': 'NORMAL01',
-   'Uniform': 'UNIFORM',
-   'Normal': 'NORMAL',
-   'Beta': 'BETA',
-   'Cauchy': 'CAUCHY',
-   'Exponential': 'EXPONENTIAL',
-   'Gamma': 'GAMMA',
-   'Poisson': 'POISSON',
-   'alias': 'ALIAS',
-   'ctime': 'CTIME',
-   'time': 'TIME',
-   'num': 'NUM',
-   'num0': 'NUM0',
-   'ichar': 'ICHAR',
-   'char': 'CHAR',
-   'sprintf': 'SPRINTF',
-   'match': 'MATCH',
-   'sub': 'SUB',
-   'gsub': 'GSUB'
 }
 
 tokens = [
+   'CARD',
+   'LENGTH',
+   'ROUND',
+   'PRECISION',
+   'TRUNC',
+   'SUBSTR',
+   'IRAND224',
+   'UNIFORM01',
+   'NORMAL01',
+   'UNIFORM',
+   'NORMAL',
+   'BETA',
+   'CAUCHY',
+   'EXPONENTIAL',
+   'GAMMA',
+   'POISSON',
+   'ALIAS',
+   'CTIME',
+   'TIME',
+   'NUM',
+   'NUM0',
+   'ICHAR',
+   'CHAR',
+   'SPRINTF',
+   'MATCH',
+   'SUB',
+   'GSUB',
    'OR',
    'AND',
    'NOT',
@@ -182,16 +182,124 @@ def _getOp(op):
 
    return op
 
+def t_CARD(t):
+   r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_LENGTH(t):
+   r'\\text\{\s*length\s*\}|\s*length(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ROUND(t):
+   r'\\text\{\s*round\s*\}|\s*round(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_PRECISION(t):
+   r'\\text\{\s*precision\s*\}|\s*precision(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_TRUNC(t):
+   r'\\text\{\s*trunc\s*\}|\s*trunc(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_SUBSTR(t):
+   r'\\text\{\s*substr\s*\}|\s*substr(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_IRAND224(t):
+   r'\\text\{\s*Irand224\s*\}|\s*Irand224(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_UNIFORM01(t):
+   r'\\text\{\s*Uniform01\s*\}|\s*Uniform01(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NORMAL01(t):
+   r'\\text\{\s*Normal01\s*\}|\s*Normal01(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_UNIFORM(t):
+   r'\\text\{\s*Uniform\s*\}|\s*Uniform(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NORMAL(t):
+   r'\\text\{\s*Normal\s*\}|\s*Normal(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_BETA(t):
+   r'\\text\{\s*Beta\s*\}|\s*Beta(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_CAUCHY(t):
+   r'\\text\{\s*Cauchy\s*\}|\s*Cauchy(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_EXPONENTIAL(t):
+   r'\\text\{\s*Exponential\s*\}|\s*Exponential(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_GAMMA(t):
+   r'\\text\{\s*Gamma\s*\}|\s*Gamma(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_POISSON(t):
+   r'\\text\{\s*Poisson\s*\}|\s*Poisson(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ALIAS(t):
+   r'\\text\{\s*alias\s*\}|\s*alias(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_CTIME(t):
+   r'\\text\{\s*ctime\s*\}|\s*ctime(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_TIME(t):
+   r'\\text\{\s*time\s*\}|\s*time(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NUM0(t):
+   r'\\text\{\s*num0\s*\}|\s*num0(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NUM(t):
+   r'\\text\{\s*num\s*\}|\s*num(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ICHAR(t):
+   r'\\text\{\s*ichar\s*\}|\s*ichar(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_CHAR(t):
+   r'\\text\{\s*char\s*\}|\s*char(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_SPRINTF(t):
+   r'\\text\{\s*sprintf\s*\}|\s*sprintf(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_MATCH(t):
+   r'\\text\{\s*match\s*\}|\s*match(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_GSUB(t):
+   r'\\text\{\s*gsub\s*\}|\s*gsub(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_SUB(t):
+   r'\\text\{\s*sub\s*\}|\s*sub(?!\\_|[a-zA-Z0-9])'
+   return t
+
 def t_IF(t):
-   r'\\text\{\s*if\s*\}|\s*if\s'
+   r'\\text\{\s*if\s*\}|\s*if(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_THEN(t):
-   r'\\text\{\s*then\s*\}|\s*then\s'
+   r'\\text\{\s*then\s*\}|\s*then(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ELSE(t):
-   r'\\text\{\s*else\s*\}|\s*else\s'
+   r'\\text\{\s*else\s*\}|\s*else(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_IMPLIES(t):
@@ -249,11 +357,11 @@ def t_MOD(t):
    return t
 
 def t_BY(t):
-   r'\\text\{\s*by\s*\}|\s*by\s'
+   r'\\text\{\s*by\s*\}|\s*by(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_QUOTIENT(t):
-   r'\\big/|\\text\{\s*div\s*\}|\s*div\s'
+   r'\\big/|\\text\{\s*div\s*\}|\s*div(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_TIMES(t):
@@ -265,27 +373,27 @@ def t_DIVIDE(t):
    return t
 
 def t_LESS(t):
-   r'\\text\{\s*less\s*\}|\s*less\s'
+   r'\\text\{\s*less\s*\}|\s*less(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_FOR(t):
-   r'\\text\{\s*for\s*\}|\s*for\s'
+   r'\\text\{\s*for\s*\}|\s*for(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_WHERE(t):
-   r'\\text\{\s*where\s*\}|\s*where\s'
+   r'\\text\{\s*where\s*\}|\s*where(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_OR(t):
-   r'\\lor|\\vee|\\text\{\s*or\s*\}|\s*or\s'
+   r'\\lor|\\vee|\\text\{\s*or\s*\}|\s*or(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_AND(t):
-   r'\\land|\\wedge|\\text\{\s*and\s*\}|\s*and\s'
+   r'\\land|\\wedge|\\text\{\s*and\s*\}|\s*and(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_NOT(t):
-   r'\\neg|!|\\text\{\s*not\s*}|\s*not\s'
+   r'\\neg|!|\\text\{\s*not\s*}|\s*not(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_FORALL(t):
@@ -309,39 +417,39 @@ def t_FRAC(t):
    return t
 
 def t_DEFAULT(t):
-   r'\\text\{\s*default\s*\}|\s*default\s'
+   r'\\text\{\s*default\s*\}|\s*default(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_DIMEN(t):
-   r'\\text\{\s*dimen\s*\}|\s*dimen\s'
+   r'\\text\{\s*dimen\s*\}|\s*dimen(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_SETOF(t):
-   r'\\text\{\s*setof\s*\}|\s*setof\s'
+   r'\\text\{\s*setof\s*\}|\s*setof(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_COUNT(t):
-   r'\\text\{\s*count\s*\}|\s*count\s'
+   r'\\text\{\s*count\s*\}|\s*count(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ATMOST(t):
-   r'\\text\{\s*atmost\s*\}|\s*atmost\s'
+   r'\\text\{\s*atmost\s*\}|\s*atmost(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ATLEAST(t):
-   r'\\text\{\s*atleast\s*\}|\s*atleast\s'
+   r'\\text\{\s*atleast\s*\}|\s*atleast(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_EXACTLY(t):
-   r'\\text\{\s*exactly\s*\}|\s*exactly\s'
+   r'\\text\{\s*exactly\s*\}|\s*exactly(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_NUMBEROF(t):
-   r'\\text\{\s*numberof\s*\}|\s*numberof\s'
+   r'\\text\{\s*numberof\s*\}|\s*numberof(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ALLDIFF(t):
-   r'\\text\{\s*alldiff\s*\}|\s*alldiff\s'
+   r'\\text\{\s*alldiff\s*\}|\s*alldiff(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_PARAMETERS(t):
@@ -530,15 +638,15 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
 def t_MAXIMIZE(t):
-   r'\\text\{\s*maximize\s*:\s*\}|\s*maximize\s*:|\\text\{\s*maximize\s*\}|\s*maximize\s'
+   r'\\text\{\s*maximize\s*:\s*\}|\s*maximize\s*:|\\text\{\s*maximize\s*\}|\s*maximize(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_MINIMIZE(t):
-   r'\\text\{\s*minimize\s*:\s*\}|\s*minimize\s*:|\\text\{\s*minimize\s*\}|\s*minimize\s'
+   r'\\text\{\s*minimize\s*:\s*\}|\s*minimize\s*:|\\text\{\s*minimize\s*\}|\s*minimize(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ignore_SUBJECTTO(t):
-   r'\\text\{\s*subject\s+to\s*:\s*\}|\\text\{\s*subj\s*\.\s*to\s*:\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*:\s*\}|\s*subject\s+to\s*:|\s*subj\s*\.\s*to\s*:|\s*s\s*\.\s*t\s*\.\s*:|\\text\{\s*subject\s+to\s*\}|\\text\{\s*subj\s*\.\s*to\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*\}|\s*subject\s+to\s|\s*subj\s*\.\s*to\s|\s*s\s*\.\s*t\s*\.'
+   r'\\text\{\s*subject\s+to\s*:\s*\}|\\text\{\s*subj\s*\.\s*to\s*:\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*:\s*\}|\s*subject\s+to\s*:|\s*subj\s*\.\s*to\s*:|\s*s\s*\.\s*t\s*\.\s*:|\\text\{\s*subject\s+to\s*\}|\\text\{\s*subj\s*\.\s*to\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*\}|\s*subject\s+to(?!\\_|[a-zA-Z0-9])|\s*subj\s*\.\s*to(?!\\_|[a-zA-Z0-9])|\s*s\s*\.\s*t\s*\.'
    pass
 
 def t_LLBRACE(t):
@@ -707,7 +815,7 @@ def t_CROSS(t):
    return t
 
 def t_ID(t):
-   r'(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
+   r'\\text\{\s*(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*\s*\}|(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
    t.type = reserved.get(t.value, 'ID') # Check for reserved words
    return t
 

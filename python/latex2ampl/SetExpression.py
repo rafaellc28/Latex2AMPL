@@ -51,9 +51,6 @@ class SetExpressionWithValue(SetExpression):
     def getDimension(self):
         return self.dimension
 
-    def getSymbol(self):
-        return self.value
-
     def getSymbolName(self, codeGenerator):
         if isinstance(self.value, Identifier):
             res = self.value.getSymbolNameWithIndices(codeGenerator)
@@ -342,7 +339,7 @@ class ConditionalSetExpression(SetExpression):
         self.setExpression2 = elseExpression
 
     def getDependencies(self, codeGenerator):
-        dep = self.logicalExpression.getDependencies(codeGeneratorcodeGenerator) + self.setExpression1.getDependencies(codeGenerator)
+        dep = self.logicalExpression.getDependencies(codeGenerator) + self.setExpression1.getDependencies(codeGenerator)
 
         if self.setExpression2 != None:
             dep += self.setExpression2.getDependencies(codeGenerator)

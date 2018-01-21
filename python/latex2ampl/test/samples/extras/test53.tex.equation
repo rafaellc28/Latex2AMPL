@@ -1,0 +1,2 @@
+% Test Conditional Set Expression with Identifier that is Set
+A \in \mathbb{Set}; C := \text{if } 1 \text{ then } A

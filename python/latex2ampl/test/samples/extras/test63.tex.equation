@@ -1,0 +1,2 @@
+% Test test_for is parsed with test as an ID and for as the token FOR, resulting in an invalid syntax
+a := test_for

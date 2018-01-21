@@ -2168,7 +2168,8 @@ def p_SetExpressionWithValue(t):
                      | LOGICAL
                      | PARAMETERS
                      | SETS
-                     | VARIABLES'''
+                     | VARIABLES
+                     | ConditionalSetExpression'''
 
     _type = t.slice[1].type
     if len(t) > 2:
@@ -2197,11 +2198,17 @@ def p_SetExpressionWithValue(t):
         t[0] = SetExpressionBetweenBraces(None)
 
     else:
-        value = t[1]
-        if hasattr(t.slice[1], 'value2'):
-          value = t.slice[1].value2
-        
-        t[0] = SetExpressionWithValue(value)
+
+        if t.slice[1].type == "ConditionalSetExpression":
+          t[0] = t[1]
+
+        else:
+          value = t[1]
+          if hasattr(t.slice[1], 'value2'):
+            value = t.slice[1].value2
+          
+          t[0] = SetExpressionWithValue(value)
+
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Identifier LBRACKET ValueList RBRACKET
@@ -2266,6 +2273,60 @@ def p_IteratedSetExpression(t):
 
     else:
       t[0] = IteratedSetExpression(IteratedSetExpression.SETOF, t[3], t[5])
+
+
+def p_ConditionalSetExpression(t):
+    '''ConditionalSetExpression : IF Identifier THEN SetExpression ELSE SetExpression
+                                | IF Identifier THEN SetExpression ELSE Identifier
+                                | IF Identifier THEN Identifier ELSE SetExpression
+                                | IF NumericExpression THEN SetExpression ELSE SetExpression
+                                | IF NumericExpression THEN SetExpression ELSE Identifier
+                                | IF NumericExpression THEN Identifier ELSE SetExpression
+                                | IF SymbolicExpression THEN SetExpression ELSE SetExpression
+                                | IF SymbolicExpression THEN SetExpression ELSE Identifier
+                                | IF SymbolicExpression THEN Identifier ELSE SetExpression
+                                | IF LogicalExpression THEN SetExpression ELSE SetExpression
+                                | IF LogicalExpression THEN SetExpression ELSE Identifier
+                                | IF LogicalExpression THEN Identifier ELSE SetExpression
+                                | IF ConnectedConstraintLogicalExpression THEN SetExpression ELSE SetExpression
+                                | IF ConnectedConstraintLogicalExpression THEN SetExpression ELSE Identifier
+                                | IF ConnectedConstraintLogicalExpression THEN Identifier ELSE SetExpression
+                                | IF IteratedConstraintLogicalExpression THEN SetExpression ELSE SetExpression
+                                | IF IteratedConstraintLogicalExpression THEN SetExpression ELSE Identifier
+                                | IF IteratedConstraintLogicalExpression THEN Identifier ELSE SetExpression
+                                | IF AllDiffExpression THEN SetExpression ELSE SetExpression
+                                | IF AllDiffExpression THEN SetExpression ELSE Identifier
+                                | IF AllDiffExpression THEN Identifier ELSE SetExpression
+                                | IF EntryConstraintLogicalExpression THEN SetExpression ELSE SetExpression
+                                | IF EntryConstraintLogicalExpression THEN SetExpression ELSE Identifier
+                                | IF EntryConstraintLogicalExpression THEN Identifier ELSE SetExpression
+                                | IF Identifier THEN SetExpression
+                                | IF NumericExpression THEN SetExpression
+                                | IF SymbolicExpression THEN SetExpression
+                                | IF LogicalExpression THEN SetExpression
+                                | IF ConnectedConstraintLogicalExpression THEN SetExpression
+                                | IF IteratedConstraintLogicalExpression THEN SetExpression
+                                | IF AllDiffExpression THEN SetExpression
+                                | IF EntryConstraintLogicalExpression THEN SetExpression'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
+    
+    if isinstance(t[4], Identifier):
+      t[4] = SetExpressionWithValue(t[4])
+
+    if len(t) > 5 and isinstance(t[6], Identifier):
+      t[6] = SetExpressionWithValue(t[6])
+
+    t[0] = ConditionalSetExpression(t[2], t[4])
+
+    if len(t) > 5:
+      t[0].addElseExpression(t[6])
+
+
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression

@@ -1,0 +1,2 @@
+% Test expression with numeric and symbolic values
+a := \text{if } c + b \text{ then } b - c / "test" \text{ else } "a" \& b \text{ less} 1

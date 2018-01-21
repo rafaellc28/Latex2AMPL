@@ -1,0 +1,2 @@
+% Test Conditional Set Expression with Identifiers that are Sets
+A, B \in \mathbb{Set}; C := \text{if } 1 \text{ then } A \text{ else } B

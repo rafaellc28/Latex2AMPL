@@ -1,0 +1,3 @@
+% Test reserved word for followed by \: must be correctly recognized as the token FOR
+a_{i} := 1 for\\
+i \in I

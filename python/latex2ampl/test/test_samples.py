@@ -771,3 +771,60 @@ def test_extras_test47():
 
 def test_extras_test48():
 	check_test_extras_num(48)
+
+def test_extras_test49():
+	check_test_extras_num(49)
+
+def test_extras_test50():
+	check_test_extras_num(50)
+
+def test_extras_test51():
+	check_test_extras_num(51)
+
+def test_extras_test52():
+	check_test_extras_num(52)
+
+def test_extras_test53():
+	check_test_extras_num(53)
+
+def test_extras_test54():
+	check_test_extras_num(54)
+
+def test_extras_test55():
+	check_test_extras_num(55)
+
+def test_extras_test56():
+	check_test_extras_num(56)
+
+def test_extras_test57():
+	check_test_extras_num(57)
+
+def test_extras_test58():
+	check_test_extras_num(58)
+
+def test_extras_test59():
+	check_test_extras_num(59)
+
+def test_extras_test60():
+	check_test_extras_num(60)
+
+def test_extras_test61():
+	check_test_extras_num(61)
+
+def test_extras_test62():
+	check_test_extras_num(62)
+
+def test_extras_test63():
+	check_test_extras_num(63)
+
+def test_extras_test64():
+	check_test_extras_num(64)
+
+def test_extras_test65():
+	check_test_extras_num(65)
+
+def test_extras_test66():
+	check_test_extras_num(66)
+
+def test_extras_test67():
+	check_test_extras_num(67)

@@ -1,0 +1,3 @@
+% Test illegal character '.': the parser must ignore this character
+a_{i} := 1 for.\\
+i \in I
