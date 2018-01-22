@@ -1,0 +1,2 @@
+% Test objective with conditional expression
+\text{minimize } if a \neq 1 then \sum_{i \in I}A_{i} else \sum_{i \in I}A_{i} + B_{i}: A, B \in \mathbb{N}

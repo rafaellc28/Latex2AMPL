@@ -72,12 +72,12 @@ class CodeSetup:
         return var.getSymbol()
 
     def _addTypeAux(self, identifier, _type):
-        name = identifier.getSymbolName(self.codeGenerator)
 
         if not self._checkIsModifierSet(_type):
             self._setIsVar(identifier)
 
             # if the parameter was included in the current statement, remove because it is not a parameter but an index
+            name = identifier.getSymbolName(self.codeGenerator)
             _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
             if _genParam != None and len(_genParam) > 0:
                 if not self.isParamForSure(identifier):
@@ -1212,6 +1212,7 @@ class CodeSetup:
         _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
         if _symbolTableEntry == None:
             justInserted = True
+
             _symbolTableEntry = SymbolTableEntry(self.identifierKey, node, GenProperties(self.identifierKey), None, self.level, 
                                                  [map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices)] if node.sub_indices != None else [])
             self.currentTable.insert(self.identifierKey, _symbolTableEntry)

@@ -828,3 +828,21 @@ def test_extras_test66():
 
 def test_extras_test67():
 	check_test_extras_num(67)
+
+def test_extras_test68():
+	check_test_extras_num(68)
+
+def test_extras_test69():
+	check_test_extras_num(69)
+
+def test_extras_test70():
+	check_test_extras_num(70)
+
+def test_extras_test71():
+	check_test_extras_num(71)
+
+def test_extras_test72():
+	check_test_extras_num(72)
+
+def test_extras_test73():
+	check_test_extras_num(73)

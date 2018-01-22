@@ -1,0 +1,3 @@
+% Test for preceded by _ correctly recognized as the token FOR: must throw syntax error
+a:=\sum_for
+

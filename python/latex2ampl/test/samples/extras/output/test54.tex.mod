@@ -1,2 +1,10 @@
-Syntax error at line 2, position 45: '"test"'.
-Context: a := \text{if } c + b \text{ then } b - c / "test" \text{ else } "a" \& b \text{ less} 1.
+param c;
+
+param b;
+
+param a, := if c + b then b - c / "test" else "a" & b less 1;
+
+
+
+
+

@@ -1,0 +1,2 @@
+% Test Indexing Expression with Logical Expression consisted of a single logical Identifier
+a_{i}:=1:i \in I\mid \neg t[i]

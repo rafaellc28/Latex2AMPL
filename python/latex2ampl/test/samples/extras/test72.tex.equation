@@ -1,0 +1,2 @@
+% Test Indexing Expression with Logical Expression consisted of a single logical Identifier not used in the domain logical
+a_{i}:=1:i \in I\mid t
