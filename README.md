@@ -233,6 +233,18 @@ param _id1, := "test";
 
 Note that `_` alone is not allowed in an identifier, because `_` is used in LaTeX to format text. Therefore, if you need an identifier with underscore(s) you must write each underscore as `\_`.
 
+An Identifier inside a `\text` is also an Identifier. For instance
+
+```latex
+\text{a} := \text{\_for}
+```
+
+is converted to
+
+```ampl
+param _for;
+param a, := _for;
+```
 
 ## Numbers
 
@@ -280,6 +292,8 @@ param a, := (b + 1)/(c - 1);
 
 ## Reserved Words and Tokens
 
+All reserved words can also be written inside a `\text`. For instance, the lexer recognizes both `for` and `\text{for}` as the token FOR.
+
 | | | | |
 |---------|--------|--------|-----------|
 | `card`  | `length` | `round` | `trunc` |
@@ -290,6 +304,13 @@ param a, := (b + 1)/(c - 1);
 | `Normal01` | `Normal` | `Beta` | `Cauchy` |
 | `Exponential` | `Gamma` | `Poisson` | |
 | `maximize` | `maximize:` | `minimize` | `minimize:` |
+| `subject to` | `subject to:` | `subj.to` | `subj.to:` |
+| `s.t` | `s.t:` | `if` | `then` |
+| `else` | `by` | `div` | `less` |
+| `for` | `where` | `or` | `and` |
+| `default` | `dimen` | `setof` | `count` |
+| `atmost` | `atleast` | `exactly` | `numberof` |
+| `alldiff` |  |  |  |
 
 
 ## Arithmetic Notation
@@ -316,6 +337,10 @@ param a, := (b + 1)/(c - 1);
 | not exists  | `\nexists` or `\not\exists` | `\nexists \{i \in I\} z[i]` |
 | for all    | `\forall` | `\forall \{u \in unit\} u \in mPos` |
 | not for all  | `\not\forall` | `\not\forall \{u \in unit\} u \in mPos` |
+| implies  | `\implies` or `\Rightarrow` or `\Longrightarrow` | `a \implies b` |
+| is implied by  | `\Leftarrow` or `\Longleftarrow` | `a \Leftarrow b` |
+| if and only if  | `\iff` or `\Leftrightarrow` | `a \iff b` |
+| if-then-else  | `if` or `\text{if}`, `then` or `\text{then}`, and `else` or `\text{else}` | `if a then b else c` |
 
 
 ## Relation Notation
@@ -526,7 +551,7 @@ A Linear Program can have more than one objective.
 
 ## Conditional Expression
 
-`(` \<LogicalExpression\> `)?` \<Expression when LogicalExpression is True\> `:` \<Expression when LogicalExpression is False\>
+`if ` \<LogicalExpression\> ` then ` \<Expression when LogicalExpression is True\> [` else ` \<Expression when LogicalExpression is False\>]
 
 
 ## Constraint Expression
