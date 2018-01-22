@@ -753,10 +753,6 @@ def t_ignore_MATHCLAP(t):
    r'\\mathclap'
    pass
 
-def t_ignore_TEXT(t):
-    r'\\text\{\s*\}|\\text'
-    pass
-
 def t_ignored_LEFT(t):
    r'\\left'
    pass
@@ -817,6 +813,12 @@ def t_CROSS(t):
 def t_ID(t):
    r'\\text\{\s*(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*\s*\}|(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
    t.type = reserved.get(t.value, 'ID') # Check for reserved words
+
+   m = re.search(r"\\text\{\s*(.+)\s*\}", t.value)
+
+   if m:
+      t.value = m.groups(0)[0]
+
    return t
 
 # A regular expression rule with some action code
@@ -832,6 +834,10 @@ def t_newline(t):
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
+
+def t_ignore_TEXT(t):
+    r'\\text\{.*\}|\\text'
+    pass
 
 # Error handling rule
 def t_error(t):
