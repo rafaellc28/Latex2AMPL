@@ -1,0 +1,2 @@
+% Test invalud syntax: underline before FOR
+a:=_for

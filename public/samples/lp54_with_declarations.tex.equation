@@ -30,7 +30,7 @@ dcap_{p,u}, \geq 0: p \in plant, u \in unit\\
 icap_{u,pl} := 0.33 * dcap_{pl,u}: u \in unit, pl \in plant\\
 exch := 0.4; utilPct := 0.85; mPos_{pl} := \{u \in unit\mid icap_{u,pl} > 0\}: pl \in plant\\
 pCap_{pl} := \{pr \in proc\mid \forall\{u \in unit\mid util_{u,pr} > 0\} u \in mPos_{pl} \}: pl \in plant\\
-pExcept_{p} \subset proc: p \in plant\\
+pExcept_{p}, \subset proc: p \in plant\\
 pPos_{pl} := pCap_{pl} \setminus pExcept_{pl}: pl \in plant\\
 cpPos_{c} := \{pl \in plant\mid \sum_{pr \in pPos_{pl}} io_{c,pr} > 0\}: c \in commod\\
 ccPos_{c} := \{pl \in plant\mid \sum_{pr \in pPos_{pl}} io_{c,pr} < 0\}: c \in commod\\

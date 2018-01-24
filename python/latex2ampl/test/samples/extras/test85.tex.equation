@@ -1,0 +1,2 @@
+% Test constraint with if and only if and logical expressions
+a \in I \iff b \notin I

@@ -849,3 +849,36 @@ def test_extras_test73():
 
 def test_extras_test74():
 	check_test_extras_num(74)
+
+def test_extras_test75():
+	check_test_extras_num(75)
+
+def test_extras_test76():
+	check_test_extras_num(76)
+
+def test_extras_test77():
+	check_test_extras_num(77)
+
+def test_extras_test78():
+	check_test_extras_num(78)
+
+def test_extras_test79():
+	check_test_extras_num(79)
+
+def test_extras_test80():
+	check_test_extras_num(80)
+
+def test_extras_test81():
+	check_test_extras_num(81)
+
+def test_extras_test82():
+	check_test_extras_num(82)
+
+def test_extras_test83():
+	check_test_extras_num(83)
+
+def test_extras_test84():
+	check_test_extras_num(84)
+
+def test_extras_test85():
+	check_test_extras_num(85)

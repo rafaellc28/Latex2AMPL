@@ -860,53 +860,35 @@ def p_IteratedConstraintLogicalExpression(t):
                                            | EXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
                                            | NEXISTS LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression'''
 
+    entry = None
     _type = t.slice[1].type
-    if _type == "LPAREN":
-      t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
+    if _type == "FORALL":
+        entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
 
-    elif _type == "NOT":
-      t[0] = EntryLogicalExpressionNot(t[2])
+    elif _type == "NFORALL":
+        entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
 
+    elif _type == "EXISTS":
+        entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
+
+    elif _type == "NEXISTS":
+        entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
     else:
+        entry = t[1]
 
-      entry = None
-      _type = t.slice[1].type
-      if _type == "FORALL":
-          entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.FORALL, t[3], t[5])
-
-      elif _type == "NFORALL":
-          entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NFORALL, t[3], t[5])
-
-      elif _type == "EXISTS":
-          entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.EXISTS, t[3], t[5])
-
-      elif _type == "NEXISTS":
-          entry = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
-      else:
-          entry = t[1]
-
-      t[0] = LogicalExpression([entry])
+    t[0] = LogicalExpression([entry])
 
 def p_ConnectedConstraintLogicalExpression(t):
     '''ConnectedConstraintLogicalExpression : EntryConstraintLogicalExpression AND EntryConstraintLogicalExpression
                                             | EntryConstraintLogicalExpression OR EntryConstraintLogicalExpression'''
 
-    _type = t.slice[1].type
-    if _type == "LPAREN":
-      t[0] = EntryLogicalExpressionBetweenParenthesis(t[2])
+    if not isinstance(t[1], LogicalExpression):
+      t[1] = LogicalExpression([t[1]])
 
-    elif _type == "NOT":
-      t[0] = EntryLogicalExpressionNot(t[2])
-
+    if t.slice[2].type == "AND":
+      t[0] = t[1].addAnd(t[3])
     else:
-
-      if not isinstance(t[1], LogicalExpression):
-        t[1] = LogicalExpression([t[1]])
-
-      if t.slice[2].type == "AND":
-        t[0] = t[1].addAnd(t[3])
-      else:
-        t[0] = t[1].addOr(t[3])
+      t[0] = t[1].addOr(t[3])
 
 
 def _getDeclarationExpression(entryConstraintLogicalExpression):

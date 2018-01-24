@@ -1,0 +1,2 @@
+% Test constraint with if and only if
+not a \iff (not b)
