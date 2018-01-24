@@ -5,7 +5,7 @@ x_{i,a} \geq x_{j,a} + p_{j,a} - K * Y_{i,j,a}: i \in J, j \in J, a \in M\vert i
 x_{j,a} \geq x_{i,a} + p_{i,a} - K * (1 - Y_{i,j,a}): i \in J, j \in J, a \in M \vert i \neq j\\
 z \geq x_{j, sigma_{j,m}} + p_{j, sigma_{j,m}}: j \in J\\
 m, n \in \mathbb{Z}, \in \mathbb{P}, > 0; J := 1 \ldots n; M := 1 \ldots m\\
-sigma_{j,t} \in M: j \in J, t \in 1 \ldots m\\
+sigma_{j,t}, \in M: j \in J, t \in 1 \ldots m\\
 p_{j,a}, \geq 0: j \in J, a \in M\\
 K := \sum_{j \in J, a \in M} p_{j,a}\\
 x_{j,a} \in \mathbb{R}^{+}; Y_{i,j,a} \in \mathbb{B}; z \in \mathbb{R}: i,j \in J, a \in M\\

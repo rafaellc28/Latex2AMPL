@@ -51,6 +51,9 @@ class SetExpressionWithValue(SetExpression):
     def getDimension(self):
         return self.dimension
 
+    def getSymbol(self):
+        return self.value
+
     def getSymbolName(self, codeGenerator):
         if isinstance(self.value, Identifier):
             res = self.value.getSymbolNameWithIndices(codeGenerator)

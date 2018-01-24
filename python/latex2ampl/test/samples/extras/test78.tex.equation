@@ -1,0 +1,2 @@
+% Test constraint with is implied
+a \Leftarrow b

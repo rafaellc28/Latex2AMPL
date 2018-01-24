@@ -7,5 +7,5 @@ Tlf_{j} = Tls_{j} + Dur_{j}: j \in TASKS\\
 Tsl_{j} = Tls_{j} - Tes_{j}: j \in TASKS\\
 Tef_{i} \leq Tes_{j}: (i,j) \in ARCS\\
 Tlf_{j} \leq Tls_{k}: (j,k) \in ARCS\\
-ARCS \subset \{TASKS \times TASKS\}\\
+ARCS, \subset \{TASKS \times TASKS\}\\
 Tef_{j}, Tf, Tlf_{j}, Tes_{j}, Tls_{j}, Tsl_{j} \in \mathbb{R}^{\geq 0}\\

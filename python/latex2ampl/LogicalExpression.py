@@ -17,7 +17,7 @@ class LogicalExpression(Expression):
         """
         to string
         """
-        res = "\nLE:\n"
+        res = "\nLogicalExpression:\n"
         resAux = ""
         first = True
 
@@ -61,6 +61,15 @@ class LogicalExpression(Expression):
         entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
         return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), entries))))
 
+    def enableCheckDummyIndices(self):
+        #print("LogicalExpression.enableCheckDummyIndices", self.entriesLogicalExpression)
+        entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
+        map(lambda el: el.enableCheckDummyIndices(), entries)
+
+    def disableCheckDummyIndices(self):
+        #print("LogicalExpression.disableCheckDummyIndices", self.entriesLogicalExpression)
+        entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
+        map(lambda el: el.disableCheckDummyIndices(), entries)
 
     def setupEnvironment(self, codeSetup):
         """

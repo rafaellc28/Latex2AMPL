@@ -1,4 +1,5 @@
 from Expression import *
+from SetExpression import *
 from ValueList import *
 
 class EntryIndexingExpression(Expression):
@@ -45,16 +46,24 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
             return "EIE_S: ValueList: [" + ", ".join(map(lambda var: str(var) + " " + self.op + " " + str(self.setExpression), self.identifier)) + "]"
         else:
             return "EIE_S: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
-    
+        
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
-
+        
+    def enableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionWithSet.IN:
+            self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionWithSet.IN:
+            self.identifier.disableCheckDummyIndices()
+        
     def setupEnvironment(self, codeSetup):
         """
         Generate the AMPL code for the declaration of identifiers and sets used in this entry for indexing expression
         """
         codeSetup.setupEnvironment(self)
-
+        
     def generateCode(self, codeGenerator):
         """
         Generate the AMPL code for Entry with Set of Indexing Expression
@@ -157,6 +166,14 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
             dep += self.supExpression.getDependencies(codeGenerator)
 
         return list(set(dep))
+
+    def enableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionEq.EQ and (isinstance(self.value, SetExpression) or self.supExpression):
+            self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionEq.EQ and (isinstance(self.value, SetExpression) or self.supExpression):
+            self.identifier.disableCheckDummyIndices()
 
     def setupEnvironment(self, codeSetup):
         """

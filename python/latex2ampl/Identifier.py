@@ -36,6 +36,7 @@ class Identifier(Expression):
         self.isDeclaredAsParam = None
         self.isDeclaredAsSet = None
         self.isDeclaredAsVar = None
+        self.checkIfIsDummyIndex = False
 
     def __str__(self):
         """
@@ -110,10 +111,16 @@ class Identifier(Expression):
 
     def setSubIndices(self, subIndices):
         self.sub_indices = subIndices
- 
+    
     def getDependencies(self, codeGenerator):
         dep = list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.sub_indices))))
         return list(set(self.identifier.getDependencies(codeGenerator) + dep))
+
+    def enableCheckDummyIndices(self):
+        self.checkIfIsDummyIndex = True
+
+    def disableCheckDummyIndices(self):
+        self.checkIfIsDummyIndex = False
 
     def setupEnvironment(self, codeSetup):
         """
@@ -126,7 +133,7 @@ class Identifier(Expression):
         Generate the AMPL code for this Identifier
         """
         return codeGenerator.generateCode(self)
-    
+        
     def generateCodeWithoutIndices(self, codeGenerator):
         """
         Generate the AMPL code for this Identifier without the Indexing, if there are 

@@ -59,6 +59,12 @@ class ValueList(Expression):
     def getDependencies(self, codeGenerator):
         return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.values))))
 
+    def enableCheckDummyIndices(self):
+        map(lambda el: el.enableCheckDummyIndices(), self.values)
+        
+    def disableCheckDummyIndices(self):
+        map(lambda el: el.disableCheckDummyIndices(), self.values)
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the AMPL code for the declaration of identifiers used in this expression

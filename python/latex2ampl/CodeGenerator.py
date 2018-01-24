@@ -788,6 +788,7 @@ class CodeGenerator:
 
                 prop = t.getProperties()
                 domains = prop.getDomains()
+                domains.reverse()
 
                 for domain in domains:
                     
@@ -960,8 +961,14 @@ class CodeGenerator:
     # Get the AMPL code for a given constraint
     def _getCodeConstraint(self, constraint):
         if isinstance(constraint, Constraint):
-            self.constraintNumber += 1
-            return "s.t. C" + str(self.constraintNumber) + " " + constraint.generateCode(self)
+            constraintStmt = constraint.generateCode(self)
+
+            if constraintStmt and constraintStmt.strip():
+                constraintStmt = constraintStmt.strip()
+
+                self.constraintNumber += 1
+                return "s.t. C" + str(self.constraintNumber) + " " + constraint.generateCode(self)
+                
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
 
@@ -1343,18 +1350,21 @@ class CodeGenerator:
 
     def generateCode_Constraint(self, node):
         res = ""
+        constraintExpression = node.constraintExpression.generateCode(self)
 
-        if node.indexingExpression:
-            idxExpression = node.indexingExpression.generateCode(self)
+        if constraintExpression and constraintExpression.strip():
+            constraintExpression = constraintExpression.strip()
+            if node.indexingExpression:
+                idxExpression = node.indexingExpression.generateCode(self)
 
-            if idxExpression.strip() != "":
-                res += "{" + idxExpression + "} :\n\t"
+                if idxExpression.strip() != "":
+                    res += "{" + idxExpression + "} :\n\t"
+                else:
+                    res += " : "    
             else:
-                res += " : "    
-        else:
-            res += " : "
+                res += " : "
 
-        res += node.constraintExpression.generateCode(self) + ";"
+            res += constraintExpression + ";"
 
         return res
 
@@ -1619,7 +1629,7 @@ class CodeGenerator:
             values = filter(self.notInTypesThatAreNotDeclarable, node.identifier.getValues())
 
             if len(values) > 0:
-                return ", ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), values))
+                return " and ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), values))
         else:
             if self.notInTypesThatAreNotDeclarable(node.identifier):
                 return node.identifier.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self)

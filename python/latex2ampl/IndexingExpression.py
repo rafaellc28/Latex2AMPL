@@ -75,6 +75,18 @@ class IndexingExpression(Expression):
         
         return list(set(dep))
 
+    def enableCheckDummyIndices(self):
+        map(lambda el: el.enableCheckDummyIndices(), self.entriesIndexingExpression)
+
+        if self.logicalExpression:
+            self.logicalExpression.enableCheckDummyIndices()
+
+    def disableCheckDummyIndices(self):
+        map(lambda el: el.disableCheckDummyIndices(), self.entriesIndexingExpression)
+
+        if self.logicalExpression:
+            self.logicalExpression.disableCheckDummyIndices()
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the AMPL code for the identifiers and sets used in this numeric expression

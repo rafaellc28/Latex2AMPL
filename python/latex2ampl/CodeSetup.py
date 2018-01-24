@@ -3,6 +3,7 @@ from ValueList import *
 from Identifier import *
 from SetExpression import *
 from LinearExpression import *
+from DeclarationExpression import *
 from NumericExpression import *
 from Range import *
 from EntryIndexingExpression import *
@@ -43,6 +44,7 @@ class CodeSetup:
         self.stmtIndex = 0
         self.level = 0
         self.currentTable = None
+        self.indexingExpression = None
 
     def _setIsParam(self, identifier):
         identifier.setIsParam(True)
@@ -76,12 +78,14 @@ class CodeSetup:
         if not self._checkIsModifierSet(_type):
             self._setIsVar(identifier)
 
-            # if the parameter was included in the current statement, remove because it is not a parameter but an index
-            name = identifier.getSymbolName(self.codeGenerator)
-            _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
-            if _genParam != None and len(_genParam) > 0:
-                if not self.isParamForSure(identifier):
-                    self.codeGenerator.genParameters.remove(name)
+            #print("_addTypeAux", name, identifier.checkIfIsDummyIndex)
+            if identifier.checkIfIsDummyIndex:
+                # if the parameter was included in the current statement, remove because it is not a parameter but an index
+                name = identifier.getSymbolName(self.codeGenerator)
+                _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
+                if _genParam != None and len(_genParam) > 0:
+                    if not self.isParamForSure(identifier):
+                        self.codeGenerator.genParameters.remove(name)
     
     def _addType(self, identifier, _type):
         if isinstance(identifier, ValueList):
@@ -193,7 +197,7 @@ class CodeSetup:
             self._setDimension(setExpression.setExpression2, dimen)
 
     def _addItemBelongsTo(self, var, name):
-        if len(var.sub_indices) == 0:
+        if var.checkIfIsDummyIndex and len(var.sub_indices) == 0:
             var.setIsInSet(True)
             self.codeGenerator.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
 
@@ -346,7 +350,15 @@ class CodeSetup:
         """
         Generate the AMPL code for declaration of identifiers and sets in this constraint
         """
+        #print("constraint")
+        #print(node.constraintExpression, str(node.constraintExpression))
+        #print("")
+
+        self.indexingExpression = node.indexingExpression
+
         node.constraintExpression.setupEnvironment(self)
+
+        self.indexingExpression = None
 
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
@@ -713,10 +725,13 @@ class CodeSetup:
                 node.entriesIndexingExpression[0].setHasSup(True)
                 node.entriesIndexingExpression[0].setSupExpression(node.supExpression)
 
+        node.enableCheckDummyIndices()
         map(self._setupEntry, node.entriesIndexingExpression)
+        node.disableCheckDummyIndices()
 
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
+
 
     def setupEnvironment_EntryExpressionWithSet(self, node, identifier):
 
@@ -726,19 +741,32 @@ class CodeSetup:
             for var1 in identifier.getValues():
                 var2 = self._getIdentifier(var1)
                 var.append(var2)
+
         else:
             var = self._getIdentifier(identifier)
 
         setExpressionObj = self._getSetExpressionObj(node.setExpression)
         setExpression = self._getSetExpression(node.setExpression)
 
+        #if isinstance(var, list):
+        #    print("setupEnvironment_EntryExpressionWithSet", var, map(lambda el: str(el), var), map(lambda el: el.checkIfIsDummyIndex, var), setExpression)
+        #else:
+        #    print("setupEnvironment_EntryExpressionWithSet", var, str(var), var.checkIfIsDummyIndex, setExpression)
+
         if isinstance(setExpressionObj, BinarySet):
 
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isBinary = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isBinary = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -746,8 +774,15 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isInteger = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isInteger = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -756,9 +791,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isReal = True
                     var[i].isDeclaredAsVar = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isReal = True
                 var.isDeclaredAsVar = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -767,9 +809,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isSymbolic = True
                     self._setIsParam(var[i])
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsParam(var)
                 var.isSymbolic = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -778,9 +827,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isLogical = True
                     self._setIsParam(var[i])
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isLogical = True
                 self._setIsParam(var)
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -789,9 +845,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsParam(var[i])
                     var[i].isDeclaredAsParam = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsParam(var)
                 var.isDeclaredAsParam = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -800,9 +863,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsVar(var[i])
                     var[i].isDeclaredAsVar = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsVar(var)
                 var.isDeclaredAsVar = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -811,9 +881,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsSet(var[i])
                     var[i].isDeclaredAsSet = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsSet(var)
                 var.isDeclaredAsSet = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -1208,6 +1285,7 @@ class CodeSetup:
         
         self.identifier = node
         self.identifierKey = node.getSymbolName(self.codeGenerator)
+        #print("setupEnvironment_Identifier", self.identifierKey)
         
         _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
         if _symbolTableEntry == None:
@@ -1324,6 +1402,10 @@ class CodeSetup:
         self.identifier = None
         self.identifierKey = None
 
+        #print("genVariables", map(lambda el: el.getName(), self.codeGenerator.genVariables.getAll()))
+        #print("genParameters", map(lambda el: el.getName(), self.codeGenerator.genParameters.getAll()))
+        #print("genSets", map(lambda el: el.getName(), self.codeGenerator.genSets.getAll()))
+
     def setupEnvironment_Number(self, node):
 
         if node.getIndice() == -1:
@@ -1374,6 +1456,28 @@ class CodeSetup:
     def setupEnvironment_Infinity(self, node):
         pass
 
+    def _addGenDeclaration(self, name, sub_indices, attributeList, indexingExpression):
+        genDeclaration = self.codeGenerator.genDeclarations.get(name)
+
+        if genDeclaration == None:
+            _sub_indices = {}
+            if sub_indices:
+                _sub_indices = {self.stmtIndex: sub_indices}
+
+            genDeclaration = GenDeclaration(name, list(attributeList), None, _sub_indices, self.stmtIndex)
+            self.codeGenerator.genDeclarations.add(genDeclaration)
+
+        else:
+            genDeclaration.addAttributes(attributeList)
+
+            if sub_indices:
+                genDeclaration.addSubIndices({self.stmtIndex: sub_indices})
+            
+        if indexingExpression:
+            genDeclaration.addIndexingExpression({self.stmtIndex: indexingExpression})
+
+        return genDeclaration
+
     # Declarations
     def setupEnvironment_Declarations(self, node):
         map(self._setupDeclaration, node.declarations)
@@ -1389,7 +1493,9 @@ class CodeSetup:
             
             if isinstance(identifier, Identifier):
                 name = identifier.getSymbolName(self.codeGenerator)
+                genDeclaration = self._addGenDeclaration(name, identifier.sub_indices, node.declarationExpression.attributeList, node.indexingExpression)
                 
+                '''
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
 
                 if genDeclaration == None:
@@ -1408,6 +1514,7 @@ class CodeSetup:
                     
                 if node.indexingExpression:
                     genDeclaration.addIndexingExpression({self.stmtIndex: node.indexingExpression})
+                '''
 
                 _symbolTableEntry = self.currentTable.lookup(name)
                 if _symbolTableEntry == None:

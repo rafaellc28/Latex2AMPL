@@ -27,7 +27,6 @@ class Compiler:
     def compile(self, doc):
 
         res = ""
-        #doc = re.sub(',\s*\\\\\\\\', ', ', doc)
         lines = doc.split("\n")
         result = None
         parsing = True
@@ -45,6 +44,7 @@ class Compiler:
             
             try:
                 result = parser.parse(doc, debug=self.log)
+
             except SyntaxException as msg:
                 stack = parser.symstack # stack of the parser when the error was thrown
                 
@@ -63,9 +63,10 @@ class Compiler:
                     elif stack[i].type == "EntryConstraintLogicalExpression":
                         pos = msg[1]
                         data = doc[:pos]
-                        
+
                         # get last match
-                        for match in re.finditer(r"(=|>|<|\\neq|\\geq|\\leq)", data):
+                        match = None
+                        for match in re.finditer(r"(?<!{)\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
                             pass
                         
                         if match:
@@ -78,11 +79,7 @@ class Compiler:
                             doc = data
                             parsing = True
 
-                        #print("1", match, match.groups(0), match.start(0))
-                        #print("2", data)
-
-                        #tokens = map(lambda el: el.strip(), doc.split())
-
+                            break
 
 
                 
@@ -101,9 +98,10 @@ class Compiler:
                     elif lex_token.type == "EntryConstraintLogicalExpression":
                         pos = msg[1]
                         data = doc[:pos]
-                        
+
                         # get last match
-                        for match in re.finditer(r"(=|>|<|\\neq|\\geq|\\leq)", data):
+                        match = None
+                        for match in re.finditer(r"(?<!{)\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
                             pass
                     
                         if match:

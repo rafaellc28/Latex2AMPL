@@ -93,6 +93,12 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
 
+    def enableCheckDummyIndices(self):
+        self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        self.identifier.disableCheckDummyIndices()
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the AMPL code for the declaration of identifiers and sets used in this entry for logical expression

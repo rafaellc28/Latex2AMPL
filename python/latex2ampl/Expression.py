@@ -40,3 +40,9 @@ class Expression:
 
     def setIdentifierList(self, identifierList):
         self.identifierList = identifierList
+
+    def enableCheckDummyIndices(self):
+        pass
+
+    def disableCheckDummyIndices(self):
+        pass
