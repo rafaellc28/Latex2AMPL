@@ -1944,6 +1944,18 @@ def p_EntryIndexingExpressionEq(t):
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
 
 
+def p_NumericSymbolicExpression(t):
+    '''NumericSymbolicExpression : NumericExpression
+                                 | SymbolicExpression
+                                 | LPAREN NumericSymbolicExpression RPAREN'''
+
+    if len(t) > 2:
+        t[0] = NumericExpressionBetweenParenthesis(t[2])
+
+    else:
+        t[0] = t[1]
+
+
 def p_StringSymbolicExpression(t):
     '''SymbolicExpression : STRING'''
     t[0] = StringSymbolicExpression(t[1])
@@ -2049,17 +2061,6 @@ def p_FunctionSymbolicExpression(t):
         else:
           t[0] = SymbolicExpressionWithFunction(op, t[3])
 
-
-def p_NumericSymbolicExpression(t):
-    '''NumericSymbolicExpression : NumericExpression
-                                 | SymbolicExpression
-                                 | LPAREN NumericSymbolicExpression RPAREN'''
-
-    if len(t) > 2:
-        t[0] = NumericExpressionBetweenParenthesis(t[2])
-
-    else:
-        t[0] = t[1]
 
 def p_NumericExpression_binop(t):
     '''NumericExpression : Identifier PLUS Identifier

@@ -2,7 +2,6 @@ from Tuple import *
 from ValueList import *
 from Identifier import *
 from SetExpression import *
-from LinearExpression import *
 from DeclarationExpression import *
 from NumericExpression import *
 from Range import *
@@ -1573,14 +1572,6 @@ class CodeSetup:
                 name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
             else:
                 var = var.numericExpression1
-                name = var.getSymbolName(self.codeGenerator)
-
-        elif isinstance(var, ConditionalLinearExpression):
-            if var.linearExpression2:
-                var = [var.linearExpression1, var.linearExpression2]
-                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
-            else:
-                var = var.linearExpression1
                 name = var.getSymbolName(self.codeGenerator)
 
         elif isinstance(var, ConditionalSetExpression):

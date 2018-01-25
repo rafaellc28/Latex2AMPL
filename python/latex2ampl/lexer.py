@@ -182,6 +182,14 @@ def _getOp(op):
 
    return op
 
+# Define a rule so we can track line numbers
+def t_newline(t):
+   r'\n+'
+   t.lexer.lineno += len(t.value)
+
+# A string containing ignored characters (spaces and tabs)
+t_ignore  = ' \t\r'
+
 def t_CARD(t):
    r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'
    return t
@@ -826,14 +834,6 @@ def t_NUMBER(t):
    r'[0-9]*\.?[0-9]+([dDeE][-+]?[0-9]+)?'
    t.value = Number(t.value)
    return t
-
-# Define a rule so we can track line numbers
-def t_newline(t):
-   r'\n+'
-   t.lexer.lineno += len(t.value)
-
-# A string containing ignored characters (spaces and tabs)
-t_ignore  = ' \t'
 
 def t_ignore_TEXT(t):
     r'\\text\{.*\}|\\text'
