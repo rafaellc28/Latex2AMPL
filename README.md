@@ -1,5 +1,5 @@
 # Latex2AMPL
-It converts a Linear/Nonlinear/Constraint Programming Model written in LaTeX to a AMPL Code.
+It converts a Linear/Nonlinear/Constraint Programming Model written in LaTeX to an AMPL Code.
 
 <a href='http://ampl.com/products/ampl/' target='ampl_system'>AMPL system</a> is a tool for <i>"the entire optimization modeling lifecycle"</i>. It is available as an IDE and a command line tool. AMPL is also the name of the modeling language used in this tool. More information about this tool and its language are available in the book <a href='http://ampl.com/resources/the-ampl-book/chapter-downloads/' target='ampl_book'>AMPL: A Modeling Language for Mathematical Programming</a> that you can download for free.
 
