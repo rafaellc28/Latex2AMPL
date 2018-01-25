@@ -1,5 +1,5 @@
 # Latex2AMPL
-It converts a Linear/Nonlinear Programming Model written in LaTeX to a AMPL Code.
+It converts a Linear/Nonlinear/Constraint Programming Model written in LaTeX to an AMPL Code.
 
 <a href='http://ampl.com/products/ampl/' target='ampl_system'>AMPL system</a> is a tool for <i>"the entire optimization modeling lifecycle"</i>. It is available as an IDE and a command line tool. AMPL is also the name of the modeling language used in this tool. More information about this tool and its language are available in the book <a href='http://ampl.com/resources/the-ampl-book/chapter-downloads/' target='ampl_book'>AMPL: A Modeling Language for Mathematical Programming</a> that you can download for free.
 
@@ -292,7 +292,7 @@ param a, := (b + 1)/(c - 1);
 
 ## Reserved Words and Tokens
 
-All reserved words can also be written inside a `\text`. For instance, the lexer recognizes both `for` and `\text{for}` as the token FOR.
+All reserved words can also be written inside a `\text`. For instance, both `for` and `\text{for}` are recognized as the token FOR.
 
 | | | | |
 |---------|--------|--------|-----------|
@@ -302,15 +302,13 @@ All reserved words can also be written inside a `\text`. For instance, the lexer
 | `ctime` | `time` | `num` | `num0` |
 | `alias` | `Irand224` | `Uniform01` | `Uniform` | 
 | `Normal01` | `Normal` | `Beta` | `Cauchy` |
-| `Exponential` | `Gamma` | `Poisson` | |
-| `maximize` | `maximize:` | `minimize` | `minimize:` |
-| `subject to` | `subject to:` | `subj.to` | `subj.to:` |
-| `s.t` | `s.t:` | `if` | `then` |
-| `else` | `by` | `div` | `less` |
-| `for` | `where` | `or` | `and` |
-| `default` | `dimen` | `setof` | `count` |
-| `atmost` | `atleast` | `exactly` | `numberof` |
-| `alldiff` |  |  |  |
+| `Exponential` | `Gamma` | `Poisson` | `maximize` | 
+| `maximize:` | `minimize` | `minimize:` | `if` | 
+| `then` | `else` | `by` | `div` | 
+| `less` | `for` | `where` | `or` | 
+| `and` | `default` | `dimen` | `setof` | 
+| `count` | `atmost` | `atleast` | `exactly` | 
+| `numberof` | `alldiff` |  | |
 
 
 ## Arithmetic Notation
