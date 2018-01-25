@@ -1706,6 +1706,9 @@ class CodeGenerator:
         if node.setExpression2:
             res += " else " + node.setExpression2.generateCode(self)
 
+        else:
+            res += " else {}"
+
         return res
 
     # Range

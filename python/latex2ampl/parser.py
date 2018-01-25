@@ -60,7 +60,7 @@ precedence = (
     ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT'),
     ('left', 'UPLUS', 'UMINUS'),
     ('right', 'CARET'),
-    ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ARCTAN', 'TAN', 'ARCTANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
+    ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ATAN', 'TAN', 'ATANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
       'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
@@ -734,22 +734,23 @@ def p_ConstraintExpressionConditional(t):
       t[0] = ConditionalConstraintExpression(op, t[1], t[3])
 
 def p_ConstraintExpression(t):
-    '''ConstraintExpression : NumericSymbolicExpression LE NumericSymbolicExpression LE NumericSymbolicExpression
-                            | NumericSymbolicExpression LE NumericSymbolicExpression LE Identifier
-                            | NumericSymbolicExpression LE Identifier LE NumericSymbolicExpression
-                            | NumericSymbolicExpression LE Identifier LE Identifier
-                            | NumericSymbolicExpression GE NumericSymbolicExpression GE NumericSymbolicExpression
-                            | NumericSymbolicExpression GE NumericSymbolicExpression GE Identifier
-                            | NumericSymbolicExpression GE Identifier GE NumericSymbolicExpression
-                            | NumericSymbolicExpression GE Identifier GE Identifier
-                            | Identifier LE NumericSymbolicExpression LE NumericSymbolicExpression
-                            | Identifier LE NumericSymbolicExpression LE Identifier
+    '''ConstraintExpression : Identifier LE Identifier LE Identifier
                             | Identifier LE Identifier LE NumericSymbolicExpression
-                            | Identifier LE Identifier LE Identifier
-                            | Identifier GE NumericSymbolicExpression GE NumericSymbolicExpression
-                            | Identifier GE NumericSymbolicExpression GE Identifier
+                            | Identifier LE NumericSymbolicExpression LE Identifier
+                            | Identifier LE NumericSymbolicExpression LE NumericSymbolicExpression
+                            | Identifier GE Identifier GE Identifier
                             | Identifier GE Identifier GE NumericSymbolicExpression
-                            | Identifier GE Identifier GE Identifier'''
+                            | Identifier GE NumericSymbolicExpression GE Identifier
+                            | Identifier GE NumericSymbolicExpression GE NumericSymbolicExpression
+
+                            | NumericSymbolicExpression LE Identifier LE Identifier
+                            | NumericSymbolicExpression LE Identifier LE NumericSymbolicExpression
+                            | NumericSymbolicExpression LE NumericSymbolicExpression LE Identifier
+                            | NumericSymbolicExpression LE NumericSymbolicExpression LE NumericSymbolicExpression
+                            | NumericSymbolicExpression GE Identifier GE Identifier
+                            | NumericSymbolicExpression GE Identifier GE NumericSymbolicExpression
+                            | NumericSymbolicExpression GE NumericSymbolicExpression GE Identifier
+                            | NumericSymbolicExpression GE NumericSymbolicExpression GE NumericSymbolicExpression'''
 
     if len(t) > 4:
         if t.slice[4].type == "LE":
@@ -1842,7 +1843,6 @@ def p_ConditionalSetExpression(t):
       t[0].addElseExpression(t[6])
 
 
-
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
                           | LogicalIndexExpression
@@ -1891,10 +1891,13 @@ def p_LogicalIndexExpression(t):
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : ValueList IN SetExpression
                                | ValueList IN Identifier
+                               
                                | Tuple IN SetExpression
                                | Tuple IN Identifier
+                               
                                | Identifier IN SetExpression
                                | Identifier IN Identifier
+                               
                                | NumericSymbolicExpression IN SetExpression
                                | NumericSymbolicExpression IN Identifier'''
 
@@ -2355,15 +2358,15 @@ def p_FunctionNumericExpression(t):
                          | TAN LPAREN Identifier RPAREN
                          | TAN LPAREN NumericSymbolicExpression RPAREN
 
-                         | ARCTANH LPAREN Identifier RPAREN
-                         | ARCTANH LPAREN NumericSymbolicExpression RPAREN
+                         | ATANH LPAREN Identifier RPAREN
+                         | ATANH LPAREN NumericSymbolicExpression RPAREN
 
-                         | ARCTAN LPAREN Identifier COMMA Identifier RPAREN
-                         | ARCTAN LPAREN Identifier COMMA NumericSymbolicExpression RPAREN
-                         | ARCTAN LPAREN Identifier RPAREN
-                         | ARCTAN LPAREN NumericSymbolicExpression COMMA Identifier RPAREN
-                         | ARCTAN LPAREN NumericSymbolicExpression COMMA NumericSymbolicExpression RPAREN
-                         | ARCTAN LPAREN NumericSymbolicExpression RPAREN
+                         | ATAN LPAREN Identifier COMMA Identifier RPAREN
+                         | ATAN LPAREN Identifier COMMA NumericSymbolicExpression RPAREN
+                         | ATAN LPAREN Identifier RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression COMMA Identifier RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression COMMA NumericSymbolicExpression RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression RPAREN
 
                          | CARD LPAREN SetExpression RPAREN
                          | CARD LPAREN Identifier RPAREN
@@ -2437,6 +2440,7 @@ def p_FunctionNumericExpression(t):
                          | TIME LPAREN RPAREN
 
                          | ID LPAREN ValueList RPAREN
+                         | ID LPAREN SetExpression RPAREN
                          | ID LPAREN Identifier RPAREN
                          | ID LPAREN NumericSymbolicExpression RPAREN
                          | ID LPAREN RPAREN'''
@@ -2514,13 +2518,13 @@ def p_FunctionNumericExpression(t):
     elif _type == "EXP":
         op = NumericExpressionWithFunction.EXP
 
-    elif _type == "ARCTANH":
+    elif _type == "ATANH":
         op = NumericExpressionWithFunction.ATANH
 
     elif _type == "TANH":
         op = NumericExpressionWithFunction.TANH
 
-    elif _type == "ARCTAN":
+    elif _type == "ATAN":
         if len(t) > 5:
           op = NumericExpressionWithFunction.ATAN2
         else:
@@ -2669,29 +2673,46 @@ def p_Identifier(t):
     '''Identifier : ID UNDERLINE LBRACE ValueList RBRACE
                   | ID UNDERLINE LBRACE Identifier RBRACE
                   | ID UNDERLINE LBRACE NumericSymbolicExpression RBRACE
+                  
                   | ID LBRACKET ValueList RBRACKET
                   | ID LBRACKET Identifier RBRACKET
                   | ID LBRACKET NumericSymbolicExpression RBRACKET
+                  
                   | ID'''
 
     if len(t) > 5:
+
         if isinstance(t[4], ValueList):
           t[0] = Identifier(ID(t[1]), t[4].getValues())
+
         else:
           t[0] = Identifier(ID(t[1]), [t[4]])
+
     elif len(t) > 2:
+
         if isinstance(t[3], ValueList):
           t[0] = Identifier(ID(t[1]), t[3].getValues())
+
         else:
           t[0] = Identifier(ID(t[1]), [t[3]])
+
     else:
         t[0] = Identifier(ID(t[1]))
 
 def p_ValueList(t):
-    '''ValueList : ValueList COMMA Identifier
+    '''ValueList : ValueList COMMA SetExpression
+                 | ValueList COMMA Identifier
                  | ValueList COMMA NumericSymbolicExpression
+                 
+                 | SetExpression COMMA SetExpression
+                 | SetExpression COMMA Identifier
+                 | SetExpression COMMA NumericSymbolicExpression
+                 
+                 | Identifier COMMA SetExpression
                  | Identifier COMMA Identifier
                  | Identifier COMMA NumericSymbolicExpression
+                 
+                 | NumericSymbolicExpression COMMA SetExpression
                  | NumericSymbolicExpression COMMA Identifier
                  | NumericSymbolicExpression COMMA NumericSymbolicExpression'''
 
