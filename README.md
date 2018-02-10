@@ -211,6 +211,30 @@ param P, := if L then 1 else 0;
 
 If `L` was not of the type `param logical`, the second line in the AMPL code above would result in an error thrown by a AMPL solver.
 
+A ordered set is declared using `\mathbb{O}`. For instance,
+
+```latex
+ordSet \in \mathbb{O}
+```
+
+is converted to
+
+```ampl
+set ordSet ordered;
+```
+
+A circular set is declared using `\mathbb{C}`. For instance,
+
+```latex
+circSet \in \mathbb{C}
+```
+
+is converted to
+
+```ampl
+set circSet circular;
+```
+
 
 # Notation
 
