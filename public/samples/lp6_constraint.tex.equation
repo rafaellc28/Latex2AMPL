@@ -1,0 +1,7 @@
+% amplide/models/cpmodels/photo.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\text{maximize } \sum_{(i1,i2) \in PREFS} Sat_{i1,i2}\\
+\text{alldiff } \{i \in 1 \dots nPeople\} Pos_{i}\\
+Sat_{i1,i2} = 1 \iff Pos_{i1}-Pos_{i2} = 1 \lor Pos_{i2}-Pos_{i1} = 1: (i1,i2) \in PREFS\\
+Pos_{1} < Pos_{2}\\
+Pos \geq 1, \leq nPeople, \in \mathbb{Z}; Sat \in \{0, 1\}; nPeople > 0, \in \mathbb{Z}, \in \mathbb{P};\\
+PREFS \subseteq \{i1 \in 1 \dots nPeople, i2 \in 1 \dots nPeople \mid i1 \neq i2\}\\

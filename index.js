@@ -63,14 +63,19 @@ app.get('/samples', function(req, res) {
 		var number = req.query.number;
 		var decl = req.query.decl;
 		var nonlinear = req.query.nonlinear;
+		var constraint = req.query.constraint;
 		result = {}
-
+		
 		var name = number
-
+		
 		if (nonlinear == "true") {
 			name += "_nonlinear";
 		}
-
+		
+		if (constraint == "true") {
+			name += "_constraint";
+		}
+		
 		if (decl == "true") {
 			name += "_with_declarations";
 		}

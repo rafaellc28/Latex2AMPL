@@ -1,0 +1,7 @@
+% amplide/models/cpmodels/sudoku.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+X_{i,j} = given_{i,j}: i \in 1 \dots 9, j \in 1 \dots 9 \mid given_{i,j} > 0\\
+\text{alldiff } \{j \in 1 \dots 9\} X_{i,j}: i \in 1 \dots 9\\
+\text{alldiff } \{i \in 1 \dots 9\} X_{i,j}: j \in 1 \dots 9\\
+\text{alldiff } \{i \in I \dots I+2, j \in J \dots J+2\} X_{i,j}: I \in 1 \dots 9 \text{ by } 3, J \in 1 \dots 9 \text{ by } 3\\
+given \in \mathbb{Z}, \in \mathbb{P}, \in 0 \dots 9; 
+X \in \mathbb{Z}, \in 1 \dots 9\\

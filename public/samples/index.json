@@ -1,5 +1,14 @@
 {
 	"samples": [
+		{"name": "AMPL/cpmodels/ballAssign0.mod", "number": 0, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/ballAssign1.mod", "number": 1, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/mapColoring.mod", "number": 2, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/nQueens.mod", "number": 3, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/nQueens0.mod", "number": 4, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/openShop.mod", "number": 5, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/photo.mod", "number": 6, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/singleHoist.mod", "number": 7, "decl": false, "constraint": true},
+		{"name": "AMPL/cpmodels/sudoku.mod", "number": 8, "decl": false, "constraint": true},
 		{"name": "AMPL/nlmodels/blend.mod", "number": 0, "decl": false, "nonlinear": true},
 		{"name": "AMPL/nlmodels/branin.mod", "number": 1, "decl": false, "nonlinear": true},
 		{"name": "AMPL/nlmodels/camel1.mod", "number": 2, "decl": false, "nonlinear": true},

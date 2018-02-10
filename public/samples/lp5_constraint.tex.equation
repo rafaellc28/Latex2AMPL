@@ -1,0 +1,7 @@
+% amplide/models/cpmodels/openShop.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\text{minimize } Makespan\\
+Start_{m,j1} + duration_{m,j1} \leq Start_{m,j2} \lor Start_{m,j2} + duration_{m,j2} \leq Start_{m,j1}: m \in 1 \dots nMach, j1 \in 1 \dots nJobs, j2 \in j1+1 \dots nJobs\\
+Start_{m1,j} + duration_{m1,j} \leq Start_{m2,j}  \lor Start_{m2,j} + duration_{m2,j} \leq Start_{m1,j}: m1 \in 1 \dots nMach, m2 \in m1+1 \dots nMach, j \in 1 \dots nJobs\\
+Start_{m,j} + duration_{m,j} \leq Makespan: m \in 1 \dots nMach, j \in 1 \dots nJobs\\
+endTime, nMach, nJobs > 0, \in \mathbb{Z}, \in \mathbb{P}\\
+duration_{i,j} \in \mathbb{P}; Makespan, Start_{i,j} \in \mathbb{Z}^{\geq 0}, \leq endTime: i \in 1 \dots nMach, j \in 1 \dots nJobs

@@ -1,0 +1,6 @@
+% amplide/models/cpmodels/nQueens.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\text{alldiff } \{j \in 1 \dots n\} Row_{j}\\
+\text{alldiff } \{j \in 1 \dots n\} Row_{j}+j\\
+\text{alldiff } \{j \in 1 \dots n\} Row_{j}-j\\
+n > 0, \in \mathbb{Z}, \in \mathbb{P}; Row_{i} \geq 1, \leq n, \in \mathbb{Z}: i \in 1 \dots n
+

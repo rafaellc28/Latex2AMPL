@@ -1,0 +1,4 @@
+% amplide/models/cpmodels/mapColoring.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+color_{c1} \neq color_{c2}: (c1, c2) \in Neighbors\\
+Neighbors \subseteq Countries \times Countries;\\
+color_{c} \in \mathbb{Z}, \geq 1, \leq NumColors: c \in Countries\\
