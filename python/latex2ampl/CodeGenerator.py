@@ -20,9 +20,11 @@ from GenBelongsTo import *
 
 from IntegerSet import *
 from RealSet import *
+from BinarySet import *
 from SymbolicSet import *
 from LogicalSet import *
-from BinarySet import *
+from OrderedSet import *
+from CircularSet import *
 from ParameterSet import *
 from VariableSet import *
 from SetSet import *
@@ -245,10 +247,10 @@ class CodeGenerator:
         return isinstance(obj, ParameterSet) or isinstance(obj, SetSet) or isinstance(obj, VariableSet)
 
     def _isNumberSet(self, obj):
-        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet)
+        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or (isinstance(obj, SetExpression) and obj.getSymbolName(self).replace(" ", "") == Constants.BINARY_0_1)
 
     def _isModifierSet(self, obj):
-        return isinstance(obj, SymbolicSet) or isinstance(obj, LogicalSet)
+        return isinstance(obj, SymbolicSet) or isinstance(obj, LogicalSet) or isinstance(obj, OrderedSet) or isinstance(obj, CircularSet)
 
     def notInTypesThatAreNotDeclarable(self, value):
         if isinstance(value, Tuple):
@@ -257,8 +259,8 @@ class CodeGenerator:
         value = value.getSymbol()
         
         return not value.isBinary and not value.isInteger and not value.isNatural and not value.isReal and not value.isSymbolic and not \
-        value.isLogical and not value.isDeclaredAsVar and not value.isDeclaredAsParam and not value.isDeclaredAsSet and not \
-        isinstance(value, str)
+        value.isLogical and not value.isOrdered and not value.isCircular and not value.isDeclaredAsVar and not value.isDeclaredAsParam and not \
+        value.isDeclaredAsSet and not isinstance(value, str)
 
     def _removeTypesThatAreNotDeclarable(self, _types):
         return filter(lambda el: not self._isIdentifierType(el.getObj()), _types)
@@ -967,7 +969,7 @@ class CodeGenerator:
                 constraintStmt = constraintStmt.strip()
 
                 self.constraintNumber += 1
-                return "s.t. C" + str(self.constraintNumber) + " " + constraint.generateCode(self)
+                return "s.t. C" + str(self.constraintNumber) + " " + constraintStmt
                 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
@@ -1065,6 +1067,14 @@ class CodeGenerator:
                             elif varDecl.getDefault() != None:
                                 default = ", default " + varDecl.getDefault().attribute.generateCode(self)
                                 varStr += default
+
+                        ins_vec = varDecl.getIn()
+                        ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
+                        if ins_vec != None and len(ins_vec) > 0:
+                            ins = ", ".join(map(lambda el: "in " + el.generateCode(self), ins_vec))
+
+                            if ins != "":
+                                varStr += ", " + ins
 
                     varStr += ";\n\n"
 
@@ -1181,6 +1191,15 @@ class CodeGenerator:
         
         if dim != None and dim > 1:
             setStr += " dimen " + str(dim)
+
+        _types = self._removeTypesThatAreNotDeclarable(_types)
+        modifiers = self._getModifiers(_types)
+
+        if len(modifiers) > 0:
+            _type = modifiers[0].getName()
+
+            if _type.strip() != "":
+                setStr += " " + _type
 
         if varDecl != None:
             subsets = varDecl.getWithin()
@@ -1354,6 +1373,7 @@ class CodeGenerator:
 
         if constraintExpression and constraintExpression.strip():
             constraintExpression = constraintExpression.strip()
+
             if node.indexingExpression:
                 idxExpression = node.indexingExpression.generateCode(self)
 
@@ -1453,7 +1473,7 @@ class CodeGenerator:
         if isinstance(node.numerator, ValuedNumericExpression):
             numerator = numerator.value
             
-        if not isinstance(numerator, Identifier) and not isinstance(numerator, Number):
+        if not isinstance(numerator, Identifier) and not isinstance(numerator, Number) and not isinstance(numerator, NumericExpressionWithFunction):
             numerator = "("+numerator.generateCode(self)+")"
         else:
             numerator = numerator.generateCode(self)
@@ -1462,7 +1482,7 @@ class CodeGenerator:
         if isinstance(denominator, ValuedNumericExpression):
             denominator = denominator.value
             
-        if not isinstance(denominator, Identifier) and not isinstance(denominator, Number):
+        if not isinstance(denominator, Identifier) and not isinstance(denominator, Number) and not isinstance(denominator, NumericExpressionWithFunction):
             denominator = "("+denominator.generateCode(self)+")"
         else:
             denominator = denominator.generateCode(self)
@@ -1842,6 +1862,14 @@ class CodeGenerator:
     # LogicalSet
     def generateCode_LogicalSet(self, node):
         return "logical"
+
+    # SymbolicSet
+    def generateCode_OrderedSet(self, node):
+        return "ordered"
+
+    # LogicalSet
+    def generateCode_CircularSet(self, node):
+        return "circular"
 
     # ParameterSet
     def generateCode_ParameterSet(self, node):

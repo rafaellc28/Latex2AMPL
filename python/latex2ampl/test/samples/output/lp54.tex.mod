@@ -88,11 +88,11 @@ s.t. C3 {c in commod, pl in plant} :
 s.t. C4 {pl in plant, u in mPos[pl]} :
 	sum{pr in pPos[pl]}Util[u,pr] * Z[pl,pr] <= UtilPct * Icap[u,pl];
 
-s.t. C5  : Psip = sum{c in cRaw, pl in ccPos[c]}PDom[pl,c] * U[c,pl];
+s.t. C5 : Psip = sum{c in cRaw, pl in ccPos[c]}PDom[pl,c] * U[c,pl];
 
-s.t. C6  : Psil = sum{c in cFinal}(sum{pl in cpPos[c], r in region}TranFinal[pl,r] * Xf[c,pl,r] + sum{po in port, r in region}TranImport[r,po] * Vf[c,r,po]) + sum{c in cShip, p1 in cpPos[c], p2 in ccPos[c]}TranInter[p1,p2] * Xi[c,p1,p2] + sum{c in cRaw, pl in ccPos[c] : PImp[c] > 0}TranRaw[pl] * Vr[c,pl];
+s.t. C6 : Psil = sum{c in cFinal}(sum{pl in cpPos[c], r in region}TranFinal[pl,r] * Xf[c,pl,r] + sum{po in port, r in region}TranImport[r,po] * Vf[c,r,po]) + sum{c in cShip, p1 in cpPos[c], p2 in ccPos[c]}TranInter[p1,p2] * Xi[c,p1,p2] + sum{c in cRaw, pl in ccPos[c] : PImp[c] > 0}TranRaw[pl] * Vr[c,pl];
 
-s.t. C7  : Psii / Exch = sum{c in cFinal, r in region, po in port}PImp[c] * Vf[c,r,po] + sum{c in cRaw, pl in ccPos[c]}PImp[c] * Vr[c,pl];
+s.t. C7 : Psii / Exch = sum{c in cFinal, r in region, po in port}PImp[c] * Vf[c,r,po] + sum{c in cRaw, pl in ccPos[c]}PImp[c] * Vr[c,pl];
 
 s.t. C8 {pl in plant} :
 	TranRaw[pl] >= 0;

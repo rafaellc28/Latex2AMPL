@@ -28,6 +28,8 @@ class Identifier(Expression):
         self.isReal = False
         self.isSymbolic = False
         self.isLogical = False
+        self.isOrdered = False
+        self.isCircular = False
         self.isBinary = False
         self.isInteger = False
         self.isNatural = False

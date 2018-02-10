@@ -53,6 +53,16 @@ def check_test_nonlinear_num(num, with_declarations = False):
 
 	check_test(name1, name2)
 
+def check_test_constraint_num(num, with_declarations = False):
+	if with_declarations:
+		name1 = 'latex2ampl/test/samples/constraint/lp'+str(num)+'_constraint_with_declarations.tex.equation'
+		name2 = 'latex2ampl/test/samples/constraint/output/lp'+str(num)+'_constraint_with_declarations.tex.mod'
+	else:
+		name1 = 'latex2ampl/test/samples/constraint/lp'+str(num)+'_constraint.tex.equation'
+		name2 = 'latex2ampl/test/samples/constraint/output/lp'+str(num)+'_constraint.tex.mod'
+
+	check_test(name1, name2)
+
 
 def check_test_extras_num(num):
 	name1 = 'latex2ampl/test/samples/extras/test'+str(num)+'.tex.equation'
@@ -628,6 +638,36 @@ def test_lp36_nonlinear():
 	check_test_nonlinear_num(36)
 
 
+# Constraint Programming
+def test_lp0_constraint():
+	check_test_constraint_num(0)
+
+def test_lp1_constraint():
+	check_test_constraint_num(1)
+
+def test_lp2_constraint():
+	check_test_constraint_num(2)
+
+def test_lp3_constraint():
+	check_test_constraint_num(3)
+
+def test_lp4_constraint():
+	check_test_constraint_num(4)
+
+def test_lp5_constraint():
+	check_test_constraint_num(5)
+
+def test_lp6_constraint():
+	check_test_constraint_num(6)
+
+def test_lp7_constraint():
+	check_test_constraint_num(7)
+
+def test_lp8_constraint():
+	check_test_constraint_num(8)
+
+
+# Extras
 def test_extras_test1():
 	check_test_extras_num(1)
 

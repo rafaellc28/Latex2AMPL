@@ -14,6 +14,6 @@ var x{j in 1..n} binary;
 
 maximize obj: sum{j in 1..n}a[j] * x[j];
 
-s.t. C1  : sum{j in 1..n}a[j] * x[j] <= b;
+s.t. C1 : sum{j in 1..n}a[j] * x[j] <= b;
 
 

@@ -1,0 +1,14 @@
+% amplide/models/cpmodels/ballAssign0.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\text{minimize } (MaxInGrp - MinInGrp) + \sum_{k \in CATEG, t \in TYPES_{k}} typeWt_{k} * (MaxType_{k,t} - MinType_{k,t})\\
+\sum_{j \in 1 \dots numberGrps} Assign_{i,j} = 1: i \in PEOPLE\\
+MinInGrp \leq \sum_{i \in PEOPLE} Assign_{i,j}: j \in 1 \dots numberGrps\\
+MaxInGrp \geq \sum_{i \in PEOPLE} Assign_{i,j}: j \in 1 \dots numberGrps\\
+MinType_{k,t} \leq \sum_{i \in PEOPLE \mid type_{i,k} = t} Assign_{i,j}: j \in 1 \dots numberGrps, k \in CATEG, t \in TYPES_{k}\\
+MaxType_{k,t} \geq \sum_{i \in PEOPLE \mid type_{i,k} = t} Assign_{i,j}: j \in 1 \dots numberGrps, k \in CATEG, t \in TYPES_{k}\\
+sample, numberGrps > 0, \in \mathbb{Z}, \in \mathbb{P}; selection \geq 0, < sample, \in \mathbb{Z}, \in \mathbb{P}\\
+ALL\_PEOPLE \in \mathbb{O}; PEOPLE := \{i \in ALL\_PEOPLE \mid ord(i) \bmod sample = selection\}\\
+type_{i,k} \in \mathbb{S}; typeWt_{k} \geq 0: i \in ALL\_PEOPLE, k \in CATEG\\
+TYPES_{k} := \text{setof }\{i \in PEOPLE\} type_{i,k}: k \in CATEG\\
+Assign_{i,j} \in \mathbb{B}: i \in PEOPLE, j \in 1 \dots numberGrps\\
+MinInGrp \leq \left\lfloor \frac{card(PEOPLE)}{numberGrps} \right\rfloor, \in \mathbb{R}; MaxInGrp \geq \left\lceil \frac{card(PEOPLE)}{numberGrps} \right\rceil, \in \mathbb{R}\\
+MinType_{k,t} \leq \left\lfloor \frac{card(\{i \in PEOPLE \mid type_{i,k} = t\})}{numberGrps} \right\rfloor, \in \mathbb{R};\\MaxType_{k,t} \geq \left\lceil \frac{card(\{i \in PEOPLE \mid type_{i,k} = t\})}{numberGrps} \right\rceil, \in \mathbb{R}: k \in CATEG, t \in TYPES_{k}

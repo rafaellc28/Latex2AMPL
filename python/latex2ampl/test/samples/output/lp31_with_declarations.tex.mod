@@ -37,6 +37,6 @@ s.t. C2 {s in RAWMATERIALS} :
 s.t. C3 {s in SPECIES diff RAWMATERIALS} :
 	sum{r in REACTIONS}n[s] >= 0;
 
-s.t. C4  : sum{s in RAWMATERIALS}-n[s] <= 1;
+s.t. C4 : sum{s in RAWMATERIALS}-n[s] <= 1;
 
 

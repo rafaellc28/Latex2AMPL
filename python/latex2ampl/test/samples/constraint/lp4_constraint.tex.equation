@@ -1,0 +1,8 @@
+% amplide/models/cpmodels/nQueens0.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\sum_{i \in ROWS} X_{i,j} = 1: j \in COLUMNS\\
+\sum_{j \in COLUMNS} X_{i,j} = 1: i \in ROWS\\
+\sum_{i \in ROWS, j \in COLUMNS \mid i+j=k} X_{i,j} \leq 1: k \in 2 \dots 2*n\\
+\sum_{i \in ROWS, j \in COLUMNS \mid i-j=k} X_{i,j} \leq 1: k \in -(n-1) \dots (n-1)\\
+ROWS := \{1 \dots n\}; COLUMNS := \{1 \dots n\}\\
+X_{r,c} \in \mathbb{B}: r \in ROWS, c \in COLUMNS\\
+

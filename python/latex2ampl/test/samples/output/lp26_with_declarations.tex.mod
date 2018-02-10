@@ -26,7 +26,7 @@ var y{k in SCENS} >= 0;
 
 maximize obj: ExProfit;
 
-s.t. C1  : ExProfit = -c * x + sum{k in SCENS}Pr[k] * (r * y[k] + w * (x - y[k]));
+s.t. C1 : ExProfit = -c * x + sum{k in SCENS}Pr[k] * (r * y[k] + w * (x - y[k]));
 
 s.t. C2 {k in SCENS} :
 	y[k] <= x;

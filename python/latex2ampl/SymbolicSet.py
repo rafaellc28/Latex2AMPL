@@ -18,6 +18,6 @@ class SymbolicSet(SetExpression):
 
     def generateCode(self, codeGenerator):
         """
-        Generate the AMPL code for this Number
+        Generate the AMPL code for this Set
         """
         return codeGenerator.generateCode(self)

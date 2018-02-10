@@ -5,10 +5,10 @@ from lexer import tokens
 from Main import *
 from LinearProgram import *
 from LinearEquations import *
+from LinearExpression import *
 from Objectives import *
 from Constraints import *
 from ConstraintExpression import *
-from LinearExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
 from IndexingExpression import *
@@ -63,7 +63,7 @@ precedence = (
     ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'ATAN', 'TAN', 'ATANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
-      'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
+      'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL', 'ORDERED', 'CIRCULAR')
 )
 
 def p_Main(t):
@@ -1693,6 +1693,8 @@ def p_SetExpressionWithValue(t):
                      | BINARYSET
                      | SYMBOLIC
                      | LOGICAL
+                     | ORDERED
+                     | CIRCULAR
 
                      | PARAMETERS
                      | SETS
@@ -1721,7 +1723,7 @@ def p_SetExpressionWithValue(t):
           if not isinstance(t[2], SetExpression):
             t[2] = SetExpressionWithValue(t[2])
 
-          t[0] = SetExpressionWithValue(t[2])
+          t[0] = t[2]
 
     elif _type == "EMPTYSET":
         t[0] = SetExpressionBetweenBraces(None)

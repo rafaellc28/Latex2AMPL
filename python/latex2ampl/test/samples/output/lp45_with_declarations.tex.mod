@@ -73,9 +73,9 @@ s.t. C16 {h in HOUSE} :
 s.t. C17 {h in HOUSE} :
 	smoke[h,"Kools"] = color[h,"yellow"];
 
-s.t. C18  : drink[3,"milk"] = 1;
+s.t. C18 : drink[3,"milk"] = 1;
 
-s.t. C19  : nationality[1,"Norwegian"] = 1;
+s.t. C19 : nationality[1,"Norwegian"] = 1;
 
 s.t. C20 {h in HOUSE} :
 	(1 - smoke[h,"Chesterfield"]) + (if h = 1 then 0 else pet[h - 1,"fox"]) + (if h = 5 then 0 else pet[h + 1,"fox"]) >= 1;

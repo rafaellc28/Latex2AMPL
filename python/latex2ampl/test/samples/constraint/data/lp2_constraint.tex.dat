@@ -1,0 +1,15 @@
+param NumColors := 4;
+
+set Countries := Belgium Denmark France Germany Luxembourg Netherlands;
+
+set Neighbors :=
+  Belgium France 
+  Belgium Germany 
+  Belgium Netherlands
+  Belgium Luxembourg
+  Denmark Germany 
+  France  Germany 
+  France  Luxembourg
+  Germany Luxembourg
+  Germany Netherlands;
+

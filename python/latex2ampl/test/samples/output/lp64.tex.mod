@@ -70,7 +70,7 @@ s.t. C1 {t in time2} :
 s.t. C2 {t in time2} :
 	sum{p in prd}Pt[p] * Oprd[p,t] <= Ol[t];
 
-s.t. C3  : Crews[First - 1] = Iw;
+s.t. C3 : Crews[First - 1] = Iw;
 
 s.t. C4 {t in time2} :
 	Crews[t] = Crews[t - 1] + Hire[t] - Layoff[t];

@@ -55,7 +55,7 @@ s.t. C8 {p in P, (a,aLoc) in N, (b,bLoc) in N : (a = b) and (aLoc = bLoc)} :
 s.t. C9 {p in P, (a,aLoc) in N, (b,bLoc) in N} :
 	y[p,a,aLoc,b,bLoc] <= card(CUSTOMERS) * x[p,a,aLoc,b,bLoc];
 
-s.t. C10  : sum{p in P, (a,aLoc) in START, (b,bLoc) in N}y[p,a,aLoc,b,bLoc] = card(CUSTOMERS);
+s.t. C10 : sum{p in P, (a,aLoc) in START, (b,bLoc) in N}y[p,a,aLoc,b,bLoc] = card(CUSTOMERS);
 
 s.t. C11 {(a,aLoc) in CUSTOMERS} :
 	sum{p in P, (b,bLoc) in (CUSTOMERS union START)}y[p,b,bLoc,a,aLoc] = 1 + sum{p in P, (b,bLoc) in (CUSTOMERS union FINISH)}y[p,a,aLoc,b,bLoc];

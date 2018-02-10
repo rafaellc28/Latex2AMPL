@@ -20,8 +20,8 @@ s.t. C3 {i in 1..C} :
 s.t. C4 {j in 1..C} :
 	sum{i in 1..C, k in N}k * x[i,j,k] = s;
 
-s.t. C5  : sum{i in 1..C, k in N}k * x[i,i,k] = s;
+s.t. C5 : sum{i in 1..C, k in N}k * x[i,i,k] = s;
 
-s.t. C6  : sum{i in 1..C, k in N}k * x[i,C - i + 1,k] = s;
+s.t. C6 : sum{i in 1..C, k in N}k * x[i,C - i + 1,k] = s;
 
 

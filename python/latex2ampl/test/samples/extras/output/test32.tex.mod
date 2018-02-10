@@ -22,7 +22,7 @@ param hiDine{j in REST};
 
 param give{(i1,i2) in ISO};
 
-param upperbnd{(i1,i2) in ISO, j in REST}, := min(ceil((number2[i1,i2]/(card(PEOPLE))) * hiDine[j]) + give[i1,i2],hiTargetTitle[i1,j] + giveTitle[i1],hiTargetLoc[i2,j] + giveLoc[i2],number2[i1,i2]);
+param upperbnd{(i1,i2) in ISO, j in REST}, := min(ceil((number2[i1,i2]/card(PEOPLE)) * hiDine[j]) + give[i1,i2],hiTargetTitle[i1,j] + giveTitle[i1],hiTargetLoc[i2,j] + giveLoc[i2],number2[i1,i2]);
 
 
 var Lone{(i1,i2) in ISO, j in REST} binary;

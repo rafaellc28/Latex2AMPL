@@ -1,0 +1,14 @@
+% amplide/models/cpmodels/singleHoist.mod. In https://ampl.com/resources/logic-constraint-extensions-examples/
+\text{minimize } Period\\
+Removal_{t} + full_{t} = Entry_{(t+1) \bmod (numTanks+1)}: t \in 0 \dots numTanks\\
+Entry_{t} + minTime_{t} \leq Removal_{t} \land Entry_{t} + maxTime_{t} \geq Removal_{t}: t \in 1 \dots numTanks\\
+Entry_{(t1+1) \bmod (numTanks+1)} + empty_{(t1+1) \bmod (numTanks+1),t2} \leq Removal_{t2} - k * Period \lor \\Entry_{(t2+1) \bmod (numTanks+1)} + empty_{(t2+1) \bmod (numTanks+1),t1} \leq Removal_{t1} + k * Period: \\t1 \in 0 \dots numTanks-1, t2 \in t1+1 \dots numTanks, k \in 1 \dots numJobs-1\\
+Removal_{0} = 0\\
+Removal_{numTanks} + full_{numTanks} \leq numJobs * Period\\
+numTanks, numJobs \in \mathbb{Z}, > 0, \in \mathbb{P}\\
+empty_{i,i}, full_{i}: i \in 0 \dots numTanks\\
+minTime_{i}, maxTime_{i}: i \in 1 \dots numTanks;\\
+perMax = \sum_{i \in 1 \dots numTanks} maxTime_{i}\\
+Entry_{i}, Removal_{i} \in \mathbb{Z}, \geq 0, \leq numJobs * perMax: i \in 0 \dots numTanks
+Period \geq 0, \leq perMax, \in \mathbb{Z}\\
+

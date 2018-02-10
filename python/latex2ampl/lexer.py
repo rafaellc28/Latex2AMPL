@@ -9,6 +9,8 @@ from IntegerSet import *
 from RealSet import *
 from SymbolicSet import *
 from LogicalSet import *
+from OrderedSet import *
+from CircularSet import *
 from BinarySet import *
 from ParameterSet import *
 from VariableSet import *
@@ -86,6 +88,8 @@ tokens = [
    'NUMBER',
    'SYMBOLIC',
    'LOGICAL',
+   'ORDERED',
+   'CIRCULAR',
    'PLUS',
    'MINUS',
    'TIMES',
@@ -632,6 +636,16 @@ def t_SYMBOLIC(t):
 def t_LOGICAL(t):
    r'\\mathbb{L}'
    t.value2 = LogicalSet()
+   return t
+
+def t_ORDERED(t):
+   r'\\mathbb{O}'
+   t.value2 = OrderedSet()
+   return t
+
+def t_CIRCULAR(t):
+   r'\\mathbb{C}'
+   t.value2 = CircularSet()
    return t
 
 def t_SUBSET(t):

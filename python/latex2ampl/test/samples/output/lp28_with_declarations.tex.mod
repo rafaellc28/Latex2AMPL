@@ -21,8 +21,8 @@ minimize obj: sum{x in X}V[x];
 s.t. C1 {x in 1..N - 1, u in U[x]} :
 	V[x] >= a * (p * V[x + u] + q * V[x - u]);
 
-s.t. C2  : V[0] = 0;
+s.t. C2 : V[0] = 0;
 
-s.t. C3  : V[N] = N;
+s.t. C3 : V[N] = N;
 
 

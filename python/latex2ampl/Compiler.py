@@ -49,7 +49,7 @@ class Compiler:
                 stack = parser.symstack # stack of the parser when the error was thrown
                 
                 for i in range(len(stack)-1, 0, -1):
-                    if (isinstance(stack[i-1], Identifier) or str(stack[i-1]) == "Identifier") and isinstance(stack[i], lex.LexToken) and stack[i].type in ['EQ', 'GE', 'LE']:
+                    if (isinstance(stack[i-1], Identifier) or str(stack[i-1]) == "Identifier") and isinstance(stack[i], lex.LexToken) and stack[i].type in ['EQ', 'GE', 'LE', 'NEQ', 'GT', 'LT']:
                         pos = stack[i].lexpos
                         data = doc[:pos]
                         data += "," + doc[pos:]
@@ -66,7 +66,7 @@ class Compiler:
 
                         # get last match
                         match = None
-                        for match in re.finditer(r"(?<!{)\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
+                        for match in re.finditer(r"(?<![{:])\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
                             pass
                         
                         if match:
@@ -86,7 +86,7 @@ class Compiler:
                 lex_token = msg[-1] # the token that caused the error
                 
                 if isinstance(lex_token, lex.LexToken):
-                    if lex_token.type in ['EQ', 'GE', 'LE'] and (isinstance(stack[-1], Identifier) or str(stack[-1]) == "Identifier"):
+                    if lex_token.type in ['EQ', 'GE', 'LE', 'NEQ', 'GT', 'LT'] and (isinstance(stack[-1], Identifier) or str(stack[-1]) == "Identifier"):
                         pos = lex_token.lexpos
                         data = doc[:pos]
                         data += "," + doc[pos:]
@@ -101,7 +101,7 @@ class Compiler:
 
                         # get last match
                         match = None
-                        for match in re.finditer(r"(?<!{)\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
+                        for match in re.finditer(r"(?<![{:])\s*(=|>|<|\\neq|\\geq|\\leq|\\in|\\subseteq|\\subset)", data):
                             pass
                     
                         if match:
@@ -113,6 +113,7 @@ class Compiler:
 
                             doc = data
                             parsing = True
+
 
         if not result:
 

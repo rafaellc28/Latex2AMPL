@@ -18,9 +18,9 @@ var w{s in S} >= 0;
 
 minimize obj: (1 / card(T)) * sum{t in T}(y[t] + z[t]);
 
-s.t. C1  : sum{s in S}w[s] * R[s] >= Rportfolio;
+s.t. C1 : sum{s in S}w[s] * R[s] >= Rportfolio;
 
-s.t. C2  : sum{s in S}w[s] = 1;
+s.t. C2 : sum{s in S}w[s] = 1;
 
 s.t. C3 {t in T} :
 	(y[t] - z[t]) = sum{s in S}(Rt[s,t] - R[s]) * w[s];

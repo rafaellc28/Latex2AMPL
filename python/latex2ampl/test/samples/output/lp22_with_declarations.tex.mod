@@ -47,12 +47,12 @@ minimize obj: sum{a in PLACES}(1 * tea[a] + 2 * tla[a] + 2 * ted[a] + 1 * tld[a]
 s.t. C1 {a in PLACES : a != finish} :
 	sum{b in PLACES}x[a,b] = 1;
 
-s.t. C2  : sum{b in PLACES}x[finish,b] = 0;
+s.t. C2 : sum{b in PLACES}x[finish,b] = 0;
 
 s.t. C3 {a in PLACES : a != start} :
 	sum{b in PLACES}x[b,a] = 1;
 
-s.t. C4  : sum{b in PLACES}x[b,start] = 0;
+s.t. C4 : sum{b in PLACES}x[b,start] = 0;
 
 s.t. C5 {a in PLACES, b in PLACES} :
 	y[a,b] <= (card(PLACES) - 1) * x[a,b];

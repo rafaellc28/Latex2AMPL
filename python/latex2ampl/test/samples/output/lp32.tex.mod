@@ -26,7 +26,7 @@ var w{n in N} >= 0;
 
 minimize obj: fSave;
 
-s.t. C1  : w[Nper] = 8 * Salary[Nper];
+s.t. C1 : w[Nper] = 8 * Salary[Nper];
 
 s.t. C2 {n in 18 / DT..21 / DT} :
 	x[n,"TuitionA"] = 40000 * (1 + Rf) ^ n;
@@ -37,7 +37,7 @@ s.t. C3 {n in 20 / DT..23 / DT} :
 s.t. C4 {n in 22 / DT..25 / DT} :
 	x[n,"TuitionC"] = 40000 * (1 + Rf) ^ n;
 
-s.t. C5  : w[0] = Wi;
+s.t. C5 : w[0] = Wi;
 
 s.t. C6 {n in 1..Nper} :
 	w[n] = (1 + Ri) * (w[n - 1] + u[n - 1]) - sum{e in EXPENSES}x[n,e];

@@ -114,10 +114,10 @@ s.t. C3 {c in commod, pl in plant} :
 s.t. C4 {pl in plant, u in mPos[pl]} :
 	sum{pr in pPos[pl]}util[u,pr] * Z[pl,pr] <= utilPct * icap[u,pl];
 
-s.t. C5  : Psip = sum{c in cRaw, pl in ccPos[c]}pDom[pl,c] * U[c,pl];
+s.t. C5 : Psip = sum{c in cRaw, pl in ccPos[c]}pDom[pl,c] * U[c,pl];
 
-s.t. C6  : Psil = sum{c in cFinal}(sum{pl in cpPos[c], r in region}tranFinal[pl,r] * Xf[c,pl,r] + sum{po in port, r in region}tranImport[r,po] * Vf[c,r,po]) + sum{c in cShip, p1 in cpPos[c], p2 in ccPos[c]}tranInter[p1,p2] * Xi[c,p1,p2] + sum{c in cRaw, pl in ccPos[c] : pImp[c] > 0}tranRaw[pl] * Vr[c,pl];
+s.t. C6 : Psil = sum{c in cFinal}(sum{pl in cpPos[c], r in region}tranFinal[pl,r] * Xf[c,pl,r] + sum{po in port, r in region}tranImport[r,po] * Vf[c,r,po]) + sum{c in cShip, p1 in cpPos[c], p2 in ccPos[c]}tranInter[p1,p2] * Xi[c,p1,p2] + sum{c in cRaw, pl in ccPos[c] : pImp[c] > 0}tranRaw[pl] * Vr[c,pl];
 
-s.t. C7  : Psii / exch = sum{c in cFinal, r in region, po in port}pImp[c] * Vf[c,r,po] + sum{c in cRaw, pl in ccPos[c]}pImp[c] * Vr[c,pl];
+s.t. C7 : Psii / exch = sum{c in cFinal, r in region, po in port}pImp[c] * Vf[c,r,po] + sum{c in cRaw, pl in ccPos[c]}pImp[c] * Vr[c,pl];
 
 

@@ -10,6 +10,6 @@ var x{j in 1..N} binary;
 
 maximize obj: sum{j in 1..N}A[j] * x[j];
 
-s.t. C1  : sum{j in 1..N}A[j] * x[j] <= B;
+s.t. C1 : sum{j in 1..N}A[j] * x[j] <= B;
 
 

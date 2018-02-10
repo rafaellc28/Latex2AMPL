@@ -98,7 +98,7 @@ s.t. C7 {p in P, (a,aLoc) in CUSTOMERS} :
 s.t. C8 {p in P, (a,aLoc) in N, (b,bLoc) in N : (a = b) and (aLoc = bLoc)} :
 	x[p,a,aLoc,b,bLoc] = 0;
 
-s.t. C9  : sum{p in P, (a,aLoc) in START, (b,bLoc) in N}y[p,a,aLoc,b,bLoc] = card(CUSTOMERS);
+s.t. C9 : sum{p in P, (a,aLoc) in START, (b,bLoc) in N}y[p,a,aLoc,b,bLoc] = card(CUSTOMERS);
 
 s.t. C10 {(a,aLoc) in CUSTOMERS} :
 	sum{p in P, (b,bLoc) in (CUSTOMERS union START)}y[p,b,bLoc,a,aLoc] = 1 + sum{p in P, (b,bLoc) in (CUSTOMERS union FINISH)}y[p,a,aLoc,b,bLoc];
@@ -139,9 +139,9 @@ s.t. C21 {(a,aLoc) in CUSTOMERS} :
 s.t. C22 {p in P} :
 	routeDistance[p] = sum{(a,aLoc) in N, (b,bLoc) in N}gcdist[aLoc,bLoc] * x[p,a,aLoc,b,bLoc];
 
-s.t. C23  : totalDistance = sum{p in P}routeDistance[p];
+s.t. C23 : totalDistance = sum{p in P}routeDistance[p];
 
-s.t. C24  : timePenalty = sum{(a,aLoc) in N}(tea[a,aLoc] + 2 * tla[a,aLoc] + 2 * ted[a,aLoc] + tld[a,aLoc]);
+s.t. C24 : timePenalty = sum{(a,aLoc) in N}(tea[a,aLoc] + 2 * tla[a,aLoc] + 2 * ted[a,aLoc] + tld[a,aLoc]);
 
 s.t. C25 {p in P, (a,aLoc) in N, (b,bLoc) in N} :
 	y[p,a,aLoc,b,bLoc] <= card(CUSTOMERS) * x[p,a,aLoc,b,bLoc];
