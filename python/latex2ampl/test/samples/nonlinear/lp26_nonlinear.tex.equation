@@ -5,5 +5,5 @@ N, > 0, \in \mathbb{Z}, \in \mathbb{P}, \text{ default } 10\\
 P := \{i \in I, j \in 1 \dots i-1\}\\
 D := 1 \dots d; I := \{1 \dots N\}\\
 x_{i,d}, \in \mathbb{R}, \text{ default } i: i \in I, k \in D;\\
-r = \sqrt{\sum_{k \in D} (x_{i,k} - x_{j,k})^{2}}, \in \mathbb{R}\\
+r_{i,j} = \sqrt{\sum_{k \in D} (x_{i,k} - x_{j,k})^{2}}, \in \mathbb{R}: (i,j) \in P\\
 

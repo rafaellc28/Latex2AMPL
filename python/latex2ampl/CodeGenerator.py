@@ -239,7 +239,7 @@ class CodeGenerator:
 
         for idx in minVal:
             if idx in maxVal:
-                minMaxVals[idx] = str(minVal[idx])+".."+str(maxVal[idx])
+                minMaxVals[idx] = str(minVal[idx])+FROM_TO+str(maxVal[idx])
 
         return minMaxVals
 
@@ -247,7 +247,7 @@ class CodeGenerator:
         return isinstance(obj, ParameterSet) or isinstance(obj, SetSet) or isinstance(obj, VariableSet)
 
     def _isNumberSet(self, obj):
-        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or (isinstance(obj, SetExpression) and obj.getSymbolName(self).replace(" ", "") == Constants.BINARY_0_1)
+        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or (isinstance(obj, SetExpression) and obj.getSymbolName(self).replace(SPACE, EMPTY_STRING) == Constants.BINARY_0_1)
 
     def _isModifierSet(self, obj):
         return isinstance(obj, SymbolicSet) or isinstance(obj, LogicalSet) or isinstance(obj, OrderedSet) or isinstance(obj, CircularSet)
@@ -430,7 +430,7 @@ class CodeGenerator:
 
     def _getDomainSubIndices(self, table, selectedIndices, totalIndices, indicesPosition, minVal, maxVal, isDeclaration = False):
         if not isinstance(selectedIndices, str):
-            selectedIndices = ",".join(selectedIndices)
+            selectedIndices = COMMA.join(selectedIndices)
 
         rangeObjAux = {}
         domainAux = None
@@ -459,7 +459,7 @@ class CodeGenerator:
                             table = table.getParent()
                             continue
 
-                        posBy = domain.find("by") # if a range is inferred as the domain, the by clause is removed
+                        posBy = domain.find(BY) # if a range is inferred as the domain, the by clause is removed
 
                         if posBy > 0:
                             domain = domain[0:posBy].strip()
@@ -469,12 +469,12 @@ class CodeGenerator:
             table = table.getParent()
 
         if domainAux != None:
-            posIn = domainAux.find(" in ")
+            posIn = domainAux.find(SPACE+IN+SPACE)
 
             if posIn > 0:
                 domain = domainAux[0:posIn+4]
             else:
-                domain = ""
+                domain = EMPTY_STRING
 
             domains = []
 
@@ -488,10 +488,10 @@ class CodeGenerator:
                     else:
                         if isinstance(indicesPosition, list):
                             for idx in indicesPosition:
-                                domains.append(rangeObjAux[0].generateCode(self) + ".." + str(maxVal[idx]))
+                                domains.append(rangeObjAux[0].generateCode(self) + FROM_TO + str(maxVal[idx]))
 
                         else:
-                            domains.append(rangeObjAux[0].generateCode(self) + ".." + str(maxVal[indicesPosition]))
+                            domains.append(rangeObjAux[0].generateCode(self) + FROM_TO + str(maxVal[indicesPosition]))
 
                 elif 1 in rangeObjAux:
 
@@ -501,10 +501,10 @@ class CodeGenerator:
                     else:
                         if isinstance(indicesPosition, list):
                             for idx in indicesPosition:
-                                domains.append(str(minVal[idx]) + ".." + rangeObjAux[1].generateCode(self))
+                                domains.append(str(minVal[idx]) + FROM_TO + rangeObjAux[1].generateCode(self))
 
                         else:
-                            domains.append(str(minVal[indicesPosition]) + ".." + rangeObjAux[1].generateCode(self))
+                            domains.append(str(minVal[indicesPosition]) + FROM_TO + rangeObjAux[1].generateCode(self))
 
             else:
 
@@ -515,13 +515,13 @@ class CodeGenerator:
 
                     if isinstance(indicesPosition, list):
                         for idx in indicesPosition:
-                            domains.append(str(minVal[idx]) + ".." + str(maxVal[idx]))
+                            domains.append(str(minVal[idx]) + FROM_TO + str(maxVal[idx]))
 
                     else:
-                        domains.append(str(minVal[indicesPosition]) + ".." + str(maxVal[indicesPosition]))
+                        domains.append(str(minVal[indicesPosition]) + FROM_TO + str(maxVal[indicesPosition]))
 
             if len(domains) > 1:
-                domain += "{"+", ".join(domains)+"}"
+                domain += BEGIN_SET+(COMMA+SPACE).join(domains)+END_SET
 
             elif len(domains) > 0:
                 domain += domains[0]
@@ -533,7 +533,7 @@ class CodeGenerator:
 
     def _getSubIndicesDomainsByTables(self, name, tables, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None, skip_outermost_scope = False):
 
-        domain = ""
+        domain = EMPTY_STRING
         domains_ret = []
         dependencies_ret = []
         sub_indices_ret = []
@@ -571,7 +571,7 @@ class CodeGenerator:
                 sub_indices_list = list(t.getSubIndices())
                 sub_indices_list.reverse()
 
-                domain = ""
+                domain = EMPTY_STRING
                 domains = {}
                 dependencies = {}
                 count = {}
@@ -606,7 +606,7 @@ class CodeGenerator:
                             op, _tuple, _tupleObj, deps, minVal, maxVal = self._getDomainSubIndices(table, _combIndices, totalIndices, _indicesPos, minVal, maxVal, isDeclaration)
                             
                         if _tuple != None:
-                            domains[idx] = "(" + ",".join(_combIndices) + ") " + op + " " + _tuple
+                            domains[idx] = BEGIN_ARGUMENT_LIST + COMMA.join(_combIndices) + END_ARGUMENT_LIST+SPACE + op + SPACE + _tuple
                             dependencies[idx] = deps
                             count[idx] = len(_combIndices)
                             
@@ -634,7 +634,7 @@ class CodeGenerator:
                             maxVal = subIdxDomains[i][5]
 
                             if subIdxDomains[i][1] != None:
-                                domains[ind] = (_subIndicesRemaining[i] + " " + subIdxDomains[i][0] + " " if not _subIndicesRemaining[i] in varNameSubIndices else "") + subIdxDomains[i][1]
+                                domains[ind] = (_subIndicesRemaining[i] + SPACE + subIdxDomains[i][0] + SPACE if not _subIndicesRemaining[i] in varNameSubIndices else EMPTY_STRING) + subIdxDomains[i][1]
                                 dependencies[ind] = subIdxDomains[i][3]
                                 count[ind] = 1
                                 varNameSubIndices.append(_subIndicesRemaining[i])
@@ -643,7 +643,7 @@ class CodeGenerator:
                                 subIdxDomainsRemaining.append(ind)
 
                     for idx in domains:
-                        if not idx in domainsAlreadyComputed or ".." in domainsAlreadyComputed[idx]:
+                        if not idx in domainsAlreadyComputed or FROM_TO in domainsAlreadyComputed[idx]:
                             domainsAlreadyComputed[idx]      = domains[idx]
                             dependenciesAlreadyComputed[idx] = dependencies[idx]
                             subIndicesAlreadyComputed[idx]   = _subIndices[idx]
@@ -682,7 +682,7 @@ class CodeGenerator:
                         else:
                             sub_indices_ret.append(subIndicesAlreadyComputed[key])
 
-            domain += ", ".join(domains_str)
+            domain += (COMMA+SPACE).join(domains_str)
 
         return domain, domains_ret, list(set(dependencies_ret)), sub_indices_ret, minVal, maxVal
 
@@ -700,14 +700,14 @@ class CodeGenerator:
             scopes = self.symbolTables.getFirstScopeByKey(name, stmt)
             domain, domains, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
 
-            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
+            if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
             
             leafs = self.symbolTables.getLeafs(stmt)
             domain, domains, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, isDeclaration, domainsAlreadyComputed, True)
 
-            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
+            if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
 
@@ -723,16 +723,16 @@ class CodeGenerator:
         declarations = self.symbolTables.getDeclarationsWhereKeyIsDefined(name)
         domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True)
 
-        if domain == "":
+        if domain == EMPTY_STRING:
             statements = self.symbolTables.getStatementsByKey(name)
             domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False)
 
-        if domain == "":
+        if domain == EMPTY_STRING:
             if minVal and maxVal and self._hasEqualIndices(minVal, maxVal):
                 minMaxVals = self._zipMinMaxVals(minVal, maxVal)
                 domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True, minMaxVals)
 
-                if domain == "" or domains == minMaxVals.values():
+                if domain == EMPTY_STRING or domains == minMaxVals.values():
                     statements = self.symbolTables.getStatementsByKey(name)
                     domain, domains, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False, minMaxVals)
 
@@ -969,12 +969,12 @@ class CodeGenerator:
                 constraintStmt = constraintStmt.strip()
 
                 self.constraintNumber += 1
-                return "s.t. C" + str(self.constraintNumber) + " " + constraintStmt
+                return SUBJECT_TO+SPACE+"C" + str(self.constraintNumber) + SPACE + constraintStmt
                 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
 
-        return ""
+        return EMPTY_STRING
 
     def _getIndexingExpressionFromDeclarations(self, decl):
         idxsExpression = decl.getIndexingExpression()
@@ -993,7 +993,7 @@ class CodeGenerator:
         Generate the AMPL code for the declaration of identifiers
         """
 
-        varStr = ""
+        varStr = EMPTY_STRING
         if len(self.genVariables) > 0:
             
             graphVar = {}
@@ -1006,7 +1006,7 @@ class CodeGenerator:
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     var = self.genVariables.get(var)
 
-                    varStr += "var " + var.getName()
+                    varStr += VARIABLE+SPACE + var.getName()
                     domain = None
                     _type = None
 
@@ -1016,24 +1016,24 @@ class CodeGenerator:
 
                     _types, dim, minVal, maxVal = self._getProperties(var.getName())
                     
-                    if domain and domain.strip() != "":
+                    if domain and domain.strip() != EMPTY_STRING:
                         logical = self._getLogicalExpressionOfDeclaration(varDecl, var.getName(), dependencies_vec, sub_indices_vec, stmtIndex)
-                        varStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+                        varStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
 
                     elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
                         if self._hasAllIndices(minVal, maxVal):
                             domainMinMax = []
                             for i in range(len(minVal)):
-                                domainMinMax.append(str(minVal[i])+".."+str(maxVal[i]))
+                                domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
 
-                            domain = ", ".join(domainMinMax)
-                            varStr += "{"+domain+"}"
+                            domain = (COMMA+SPACE).join(domainMinMax)
+                            varStr += BEGIN_SET+domain+END_SET
                     
                     if not domain and varDecl != None:
                         idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
                         if idxExpression:
                             domain = idxExpression.generateCode(self)
-                            varStr += "{" + domain + "}"
+                            varStr += BEGIN_SET + domain + END_SET
 
                     _types = self._removeTypesThatAreNotDeclarable(_types)
                     _types = self._getTypes(_types)
@@ -1043,47 +1043,47 @@ class CodeGenerator:
                         _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
                         _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
 
-                        if _type.strip() != "":
-                            varStr += " " + _type
+                        if _type.strip() != EMPTY_STRING:
+                            varStr += SPACE + _type
 
                     if varDecl != None:
                         attr = varDecl.getRelationEqualTo()
                         if attr != None:
-                            varStr += ", = " + attr.attribute.generateCode(self)
+                            varStr += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
 
                         else:
                             attr = varDecl.getRelationLessThanOrEqualTo()
                             if attr != None:
-                                varStr += ", <= " + attr.attribute.generateCode(self)
+                                varStr += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
 
                             attr = varDecl.getRelationGreaterThanOrEqualTo()
                             if attr != None:
-                                varStr += ", >= " + attr.attribute.generateCode(self)
+                                varStr += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
 
                             if varDecl.getValue() != None:
-                                value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
                                 varStr += value
 
                             elif varDecl.getDefault() != None:
-                                default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
                                 varStr += default
 
                         ins_vec = varDecl.getIn()
                         ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
                         if ins_vec != None and len(ins_vec) > 0:
-                            ins = ", ".join(map(lambda el: "in " + el.generateCode(self), ins_vec))
+                            ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
 
-                            if ins != "":
-                                varStr += ", " + ins
+                            if ins != EMPTY_STRING:
+                                varStr += COMMA+SPACE + ins
 
-                    varStr += ";\n\n"
+                    varStr += END_STATEMENT+BREAKLINE+BREAKLINE
 
         return varStr
 
     def _declareParam(self, _genParameter):
-        paramStr = ""
+        paramStr = EMPTY_STRING
         param = _genParameter.getName()
-        paramStr += "param " + param
+        paramStr += PARAMETER+SPACE + param
         domain = None
         _type = None
 
@@ -1092,24 +1092,24 @@ class CodeGenerator:
         domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(_genParameter.getName())
         _types, dim, minVal, maxVal = self._getProperties(_genParameter.getName())
 
-        if domain != None and domain.strip() != "":
+        if domain != None and domain.strip() != EMPTY_STRING:
             logical = self._getLogicalExpressionOfDeclaration(varDecl, param, dependencies_vec, sub_indices_vec, stmtIndex)
-            paramStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+            paramStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
 
         elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
             if self._hasAllIndices(minVal, maxVal):
                 domainMinMax = []
                 for i in range(len(minVal)):
-                    domainMinMax.append(str(minVal[i])+".."+str(maxVal[i]))
+                    domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
 
-                domain = ", ".join(domainMinMax)
-                paramStr += "{"+domain+"}"
+                domain = (COMMA+SPACE).join(domainMinMax)
+                paramStr += BEGIN_SET+domain+END_SET
 
         if not domain and varDecl != None:
             idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
             if idxExpression:
                 domain = idxExpression.generateCode(self)
-                paramStr += "{" + domain + "}"
+                paramStr += BEGIN_SET + domain + END_SET
 
         _types = self._removeTypesThatAreNotDeclarable(_types)
         modifiers = self._getModifiers(_types)
@@ -1117,8 +1117,8 @@ class CodeGenerator:
         if len(modifiers) > 0:
             _type = modifiers[0].getName()
 
-            if _type.strip() != "":
-                paramStr += " " + _type
+            if _type.strip() != EMPTY_STRING:
+                paramStr += SPACE + _type
         else:
             
             _types = self._getTypes(_types)
@@ -1129,39 +1129,39 @@ class CodeGenerator:
                 _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
                 _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
 
-                if _type.strip() != "":
-                    paramStr += " " + _type
+                if _type.strip() != EMPTY_STRING:
+                    paramStr += SPACE + _type
 
         if varDecl != None:
             ins_vec = varDecl.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
             if ins_vec != None and len(ins_vec) > 0:
-                ins = ", ".join(map(lambda el: "in " + el.generateCode(self), ins_vec))
+                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
 
-                if ins != "":
-                    paramStr += ", " + ins
+                if ins != EMPTY_STRING:
+                    paramStr += COMMA+SPACE + ins
 
             relations = varDecl.getRelations()
             if relations != None and len(relations) > 0:
-                paramStr += ", " + ", ".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), relations))
+                paramStr += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
 
             if varDecl.getDefault() != None:
-                default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
                 paramStr += default
 
             if varDecl.getValue() != None:
-                value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
                 paramStr += value
                 self.genValueAssigned.add(GenObj(param))
 
-        paramStr += ";\n\n"
+        paramStr += END_STATEMENT+BREAKLINE+BREAKLINE
 
         return paramStr
 
     def _declareSet(self, _genSet):
-        setStr = ""
+        setStr = EMPTY_STRING
 
-        setStr += "set " + _genSet.getName()
+        setStr += SET+SPACE + _genSet.getName()
         domain = None
         dimen = None
 
@@ -1170,27 +1170,27 @@ class CodeGenerator:
         domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(_genSet.getName())
         _types, dim, minVal, maxVal = self._getProperties(_genSet.getName())
 
-        if domain and domain.strip() != "":
+        if domain and domain.strip() != EMPTY_STRING:
             logical = self._getLogicalExpressionOfDeclaration(varDecl, _genSet.getName(), dependencies_vec, sub_indices_vec, stmtIndex)
-            setStr += "{" + domain + ("" if logical == None else " : " + logical) + "}"
+            setStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
 
         elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
             if self._hasAllIndices(minVal, maxVal):
                 domainMinMax = []
                 for i in range(len(minVal)):
-                    domainMinMax.append(str(minVal[i])+".."+str(maxVal[i]))
+                    domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
 
-                domain = ", ".join(domainMinMax)
-                setStr += "{"+domain+"}"
+                domain = (COMMA+SPACE).join(domainMinMax)
+                setStr += BEGIN_SET+domain+END_SET
 
         if not domain and varDecl != None:
             idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
             if idxExpression:
                 domain = idxExpression.generateCode(self)
-                setStr += "{" + domain + "}"
+                setStr += BEGIN_SET + domain + END_SET
         
         if dim != None and dim > 1:
-            setStr += " dimen " + str(dim)
+            setStr += SPACE+DIMENSION+SPACE + str(dim)
 
         _types = self._removeTypesThatAreNotDeclarable(_types)
         modifiers = self._getModifiers(_types)
@@ -1198,38 +1198,38 @@ class CodeGenerator:
         if len(modifiers) > 0:
             _type = modifiers[0].getName()
 
-            if _type.strip() != "":
-                setStr += " " + _type
+            if _type.strip() != EMPTY_STRING:
+                setStr += SPACE + _type
 
         if varDecl != None:
             subsets = varDecl.getWithin()
             if subsets != None and len(subsets) > 0:
-                setStr += ", " + ", ".join(map(lambda el: el.op + " " + el.attribute.generateCode(self), subsets))
+                setStr += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
 
             ins_vec = varDecl.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
             if ins_vec != None and len(ins_vec) > 0:
-                ins = ", ".join(map(lambda el: "in " + el.generateCode(self), ins_vec))
+                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
 
-                if ins != "":
-                    setStr += ", " + ins
+                if ins != EMPTY_STRING:
+                    setStr += COMMA+SPACE + ins
 
             if varDecl.getDefault() != None:
-                default = ", default " + varDecl.getDefault().attribute.generateCode(self)
+                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
                 setStr += default
 
             if varDecl.getValue() != None:
-                value = ", := " + varDecl.getValue().attribute.generateCode(self)
+                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
                 setStr += value
                 self.genValueAssigned.add(GenObj(_genSet.getName()))
 
-        setStr += ";\n\n"
+        setStr += END_STATEMENT+BREAKLINE+BREAKLINE
 
         return setStr
 
     def _declareSetsAndParams(self):
 
-        paramSetStr = ""
+        paramSetStr = EMPTY_STRING
         if len(self.topological_order) > 0:
             for paramSetIn in self.topological_order:
                 _genObj = self.genParameters.get(paramSetIn)
@@ -1245,37 +1245,37 @@ class CodeGenerator:
         return paramSetStr
 
     def _declareDataParam(self, _genParameter):
-        res = ""
+        res = EMPTY_STRING
 
         if not self.genValueAssigned.has(_genParameter.getName()):
-            value = ""
+            value = EMPTY_STRING
             
             if len(self.identifiers[_genParameter.getName()]["sub_indices"]) == 0:
                 if _genParameter.getIsSymbolic():
-                    value += " ''"
+                    value += SPACE+"''"
                 else:
-                    value += " 0"
+                    value += SPACE+"0"
 
-            res += "param " + _genParameter.getName() + " :=" + value + ";\n\n"
+            res += PARAMETER+SPACE + _genParameter.getName() + SPACE+ASSIGN + value + END_STATEMENT+BREAKLINE+BREAKLINE
 
         return res
 
     def _declareDataSet(self, _genSet):
-        res = ""
+        res = EMPTY_STRING
 
         if not self.genValueAssigned.has(_genSet.getName()):
             sub_indices = self.identifiers[_genSet.getName()]["sub_indices"]
             if len(sub_indices) > 0:
-                dimenIdx = "[" + ",".join(["0"] * len(sub_indices)) + "]"
+                dimenIdx = BEGIN_ARRAY + COMMA.join(["0"] * len(sub_indices)) + END_ARRAY
             else:
-                dimenIdx = ""
+                dimenIdx = EMPTY_STRING
 
-            res += "set " + _genSet.getName() + dimenIdx + " :=;\n\n"
+            res += SET+SPACE + _genSet.getName() + dimenIdx + SPACE+ASSIGN+END_STATEMENT+BREAKLINE+BREAKLINE
 
         return res
 
     def _declareDataSetsAndParams(self):
-        res = ""
+        res = EMPTY_STRING
 
         if len(self.topological_order) > 0:
             for paramSetIn in self.topological_order:
@@ -1289,8 +1289,8 @@ class CodeGenerator:
                     if _genObj != None:
                         res += self._declareDataSet(_genObj)
 
-        if res != "":
-            res = "data;\n\n" + res + "\n"
+        if res != EMPTY_STRING:
+            res = DATA+END_STATEMENT+BREAKLINE+BREAKLINE + res + BREAKLINE
 
         return res
 
@@ -1300,23 +1300,23 @@ class CodeGenerator:
         graph = self._generateGraph()
         self.topological_order = sort_topologically_stackless(graph)
 
-        res = ""
+        res = EMPTY_STRING
 
         setsAndParams = self._declareSetsAndParams()
-        if setsAndParams != "":
+        if setsAndParams != EMPTY_STRING:
             res += setsAndParams
 
         identifiers = self._declareVars()
-        if identifiers != "":
-            if res != "":
-                res += "\n"
+        if identifiers != EMPTY_STRING:
+            if res != EMPTY_STRING:
+                res += BREAKLINE
 
             res += identifiers
 
         return res
     
     def _posModel(self):
-        res = ""
+        res = EMPTY_STRING
 
         return res
 
@@ -1325,20 +1325,20 @@ class CodeGenerator:
 
     def generateCode_LinearEquations(self, node):
         preModel = self._preModel()
-        if preModel != "":
-            preModel += "\n"
+        if preModel != EMPTY_STRING:
+            preModel += BREAKLINE
 
-        return preModel + node.constraints.generateCode(self) + "\n\n" + self._posModel()
+        return preModel + node.constraints.generateCode(self) + BREAKLINE+BREAKLINE + self._posModel()
 
     def generateCode_LinearProgram(self, node):
         preModel = self._preModel()
-        if preModel != "":
-            preModel += "\n"
+        if preModel != EMPTY_STRING:
+            preModel += BREAKLINE
 
-        res = preModel + node.objectives.generateCode(self) + "\n\n"
+        res = preModel + node.objectives.generateCode(self) + BREAKLINE+BREAKLINE
 
         if node.constraints:
-            res += node.constraints.generateCode(self) + "\n\n"
+            res += node.constraints.generateCode(self) + BREAKLINE+BREAKLINE
         
         res += self._posModel()
 
@@ -1347,7 +1347,7 @@ class CodeGenerator:
     # Objectives
     def generateCode_Objectives(self, node):
         self.totalObjectives = len(node.objectives)
-        return "\n\n".join(map(self._getCodeObjective, node.objectives))
+        return (BREAKLINE+BREAKLINE).join(map(self._getCodeObjective, node.objectives))
 
     # Objective Function
     def generateCode_Objective(self, node):
@@ -1355,20 +1355,20 @@ class CodeGenerator:
         Generate the code in AMPL for this Objective
         """
         
-        domain_str = ""
+        domain_str = EMPTY_STRING
         if node.domain:
             idxExpression = node.domain.generateCode(self)
             if idxExpression:
-                domain_str = " {" + idxExpression + "}"
+                domain_str = SPACE+BEGIN_SET + idxExpression + END_SET
 
-        return node.type + " obj" + (str(self.objectiveNumber) if self.objectiveNumber > 1 else "")  + domain_str + ": " + node.linearExpression.generateCode(self) + ";"
+        return node.type + SPACE+OBJECTIVE + (str(self.objectiveNumber) if self.objectiveNumber > 1 else EMPTY_STRING)  + domain_str + SUCH_THAT+SPACE + node.linearExpression.generateCode(self) + END_STATEMENT
 
     # Constraints
     def generateCode_Constraints(self, node):
-        return "\n\n".join(filter(lambda el: el != "" and el != None, map(self._getCodeConstraint, node.constraints)))
+        return (BREAKLINE+BREAKLINE).join(filter(lambda el: el != EMPTY_STRING and el != None, map(self._getCodeConstraint, node.constraints)))
 
     def generateCode_Constraint(self, node):
-        res = ""
+        res = EMPTY_STRING
         constraintExpression = node.constraintExpression.generateCode(self)
 
         if constraintExpression and constraintExpression.strip():
@@ -1377,30 +1377,30 @@ class CodeGenerator:
             if node.indexingExpression:
                 idxExpression = node.indexingExpression.generateCode(self)
 
-                if idxExpression.strip() != "":
-                    res += "{" + idxExpression + "} :\n\t"
+                if idxExpression.strip() != EMPTY_STRING:
+                    res += BEGIN_SET + idxExpression + END_SET+SPACE+SUCH_THAT+BREAKLINE+TAB
                 else:
-                    res += " : "    
+                    res += SPACE+SUCH_THAT+SPACE
             else:
-                res += " : "
+                res += SPACE+SUCH_THAT+SPACE
 
-            res += constraintExpression + ";"
+            res += constraintExpression + END_STATEMENT
 
         return res
 
     def generateCode_ConstraintExpression2(self, node):
-        res = node.linearExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression2.generateCode(self)
+        res = node.linearExpression1.generateCode(self) + SPACE + node.op + SPACE + node.linearExpression2.generateCode(self)
         return res
 
     def generateCode_ConstraintExpression3(self, node):
-        res = node.numericExpression1.generateCode(self) + " " + node.op + " " + node.linearExpression.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
+        res = node.numericExpression1.generateCode(self) + SPACE + node.op + SPACE + node.linearExpression.generateCode(self) + SPACE + node.op + SPACE + node.numericExpression2.generateCode(self)
         return res
 
     def generateCode_ConditionalConstraintExpression(self, node):
-        res = node.logicalExpression.generateCode(self) + " " + node.op + " " + node.constraintExpression1.generateCode(self)
+        res = node.logicalExpression.generateCode(self) + SPACE + node.op + SPACE + node.constraintExpression1.generateCode(self)
         
         if node.constraintExpression2:
-            res += " else " + node.constraintExpression2.generateCode(self)
+            res += SPACE+ELSE+SPACE + node.constraintExpression2.generateCode(self)
             
         return res
 
@@ -1410,16 +1410,15 @@ class CodeGenerator:
         return node.value.generateCode(self)
 
     def generateCode_LinearExpressionBetweenParenthesis(self, node):
-        return "(" + node.linearExpression.generateCode(self) + ")"
+        return BEGIN_ARGUMENT_LIST + node.linearExpression.generateCode(self) + END_ARGUMENT_LIST
 
     def generateCode_LinearExpressionWithArithmeticOperation(self, node):
-        return node.expression1.generateCode(self) + " " + node.op + " " + node.expression2.generateCode(self)
+        return node.expression1.generateCode(self) + SPACE + node.op + SPACE + node.expression2.generateCode(self)
 
     def generateCode_MinusLinearExpression(self, node):
-        return "-" + node.linearExpression.generateCode(self)
+        return MINUS + node.linearExpression.generateCode(self)
 
     def generateCode_IteratedLinearExpression(self, node):
-        SUM = "sum"
 
         if node.numericExpression:
             supExpression = self._getValueFromNumericExpression(node.numericExpression)
@@ -1427,24 +1426,24 @@ class CodeGenerator:
             if isinstance(supExpression, Identifier) or isinstance(supExpression, Number):
                 supExpression = supExpression.generateCode(self)
             else:
-                supExpression = "(" + supExpression.generateCode(self) + ")"
+                supExpression = BEGIN_ARGUMENT_LIST + supExpression.generateCode(self) + END_ARGUMENT_LIST
 
-            res = SUM + "{" + node.indexingExpression.generateCode(self) + ".."+supExpression+"}"
+            res = SUM + BEGIN_SET + node.indexingExpression.generateCode(self) + FROM_TO+supExpression+END_SET
         else:
-            res = SUM + "{" + node.indexingExpression.generateCode(self) + "}"
+            res = SUM + BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET
 
         res += node.linearExpression.generateCode(self)
 
         return res
 
     def generateCode_ConditionalLinearExpression(self, node):
-        res = "if " + node.logicalExpression.generateCode(self)
+        res = IF+SPACE + node.logicalExpression.generateCode(self)
 
         if node.linearExpression1:
-            res += " then " + node.linearExpression1.generateCode(self)
+            res += SPACE+THEN+SPACE + node.linearExpression1.generateCode(self)
 
             if node.linearExpression2:
-                res += " else " + node.linearExpression2.generateCode(self)
+                res += SPACE+ELSE+SPACE + node.linearExpression2.generateCode(self)
 
         return res
 
@@ -1455,15 +1454,15 @@ class CodeGenerator:
         else:
             function = node.function
 
-        res = function + "("
+        res = function + BEGIN_ARGUMENT_LIST
 
         if node.numericExpression1 != None:
             res += node.numericExpression1.generateCode(self)
 
         if node.numericExpression2 != None:
-            res += ", " + node.numericExpression2.generateCode(self)
+            res += COMMA+SPACE + node.numericExpression2.generateCode(self)
 
-        res += ")"
+        res += END_ARGUMENT_LIST
 
         return res
 
@@ -1474,7 +1473,7 @@ class CodeGenerator:
             numerator = numerator.value
             
         if not isinstance(numerator, Identifier) and not isinstance(numerator, Number) and not isinstance(numerator, NumericExpressionWithFunction):
-            numerator = "("+numerator.generateCode(self)+")"
+            numerator = BEGIN_ARGUMENT_LIST+numerator.generateCode(self)+END_ARGUMENT_LIST
         else:
             numerator = numerator.generateCode(self)
             
@@ -1483,30 +1482,30 @@ class CodeGenerator:
             denominator = denominator.value
             
         if not isinstance(denominator, Identifier) and not isinstance(denominator, Number) and not isinstance(denominator, NumericExpressionWithFunction):
-            denominator = "("+denominator.generateCode(self)+")"
+            denominator = BEGIN_ARGUMENT_LIST+denominator.generateCode(self)+END_ARGUMENT_LIST
         else:
             denominator = denominator.generateCode(self)
             
-        return numerator+"/"+denominator
+        return numerator+DIV+denominator
         
     def generateCode_ValuedNumericExpression(self, node):
         return node.value.generateCode(self)
 
     def generateCode_NumericExpressionBetweenParenthesis(self, node):
-        return "(" + node.numericExpression.generateCode(self) + ")"
+        return BEGIN_ARGUMENT_LIST + node.numericExpression.generateCode(self) + END_ARGUMENT_LIST
 
     def generateCode_NumericExpressionWithArithmeticOperation(self, node):
-        res = node.numericExpression1.generateCode(self) + " " + node.op + " "
+        res = node.numericExpression1.generateCode(self) + SPACE + node.op + SPACE
 
         if node.op == NumericExpressionWithArithmeticOperation.POW and not (isinstance(node.numericExpression2, ValuedNumericExpression) or isinstance(node.numericExpression2, NumericExpressionBetweenParenthesis)):
-            res += "(" + node.numericExpression2.generateCode(self) + ")"
+            res += BEGIN_ARGUMENT_LIST + node.numericExpression2.generateCode(self) + END_ARGUMENT_LIST
         else:
             res += node.numericExpression2.generateCode(self)
 
         return res
 
     def generateCode_MinusNumericExpression(self, node):
-        return "-" + node.numericExpression.generateCode(self)
+        return MINUS + node.numericExpression.generateCode(self)
 
     def generateCode_IteratedNumericExpression(self, node):
         if node.supNumericExpression:
@@ -1516,11 +1515,11 @@ class CodeGenerator:
             if isinstance(supExpression, Identifier) or isinstance(supExpression, Number):
                 supExpression = supExpression.generateCode(self)
             else:
-                supExpression = "(" + supExpression.generateCode(self) + ")"
+                supExpression = BEGIN_ARGUMENT_LIST + supExpression.generateCode(self) + END_ARGUMENT_LIST
 
-            res = str(node.op) + "{" + node.indexingExpression.generateCode(self) + ".."+supExpression+"}"
+            res = str(node.op) + BEGIN_SET + node.indexingExpression.generateCode(self) + FROM_TO+supExpression+END_SET
         else:
-            res = str(node.op) + "{" + node.indexingExpression.generateCode(self) + "}"
+            res = str(node.op) + BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET
 
         res += node.numericExpression.generateCode(self)
 
@@ -1530,30 +1529,30 @@ class CodeGenerator:
         res = node.op
 
         if node.numericExpression:
-            res += " " + node.numericExpression.generateCode(self)
+            res += SPACE + node.numericExpression.generateCode(self)
 
         if node.op == IteratedNumericExpression2.NUMBEROF:
-            res += " in ({"+ node.indexingExpression.generateCode(self) +"} " + node.constraintExpression.generateCode(self) + ")"
+            res += SPACE+IN+SPACE+BEGIN_ARGUMENT_LIST+BEGIN_SET+ node.indexingExpression.generateCode(self) +END_SET+SPACE + node.constraintExpression.generateCode(self) + END_ARGUMENT_LIST
 
         else:
-            res += " {"+ node.indexingExpression.generateCode(self) +"} " + node.constraintExpression.generateCode(self)
+            res += SPACE+BEGIN_SET+ node.indexingExpression.generateCode(self) +END_SET+SPACE + node.constraintExpression.generateCode(self)
 
         return res
 
     def generateCode_ConditionalNumericExpression(self, node):
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.numericExpression1.generateCode(self)
+        res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.numericExpression1.generateCode(self)
 
         if node.numericExpression2:
-            res += " else " + node.numericExpression2.generateCode(self)
+            res += SPACE+ELSE+SPACE + node.numericExpression2.generateCode(self)
 
         return res
         
     # Symbolic Expression
     def generateCode_SymbolicExpressionWithFunction(self, node):
-        res = str(node.function) + "("
+        res = str(node.function) + BEGIN_ARGUMENT_LIST
 
         if node.function == SymbolicExpressionWithFunction.SPRINTF:
-            res += node.firstExpression.generateCode(self) + "," + node.numericExpression1.generateCode(self)
+            res += node.firstExpression.generateCode(self) + COMMA + node.numericExpression1.generateCode(self)
 
         elif node.function == SymbolicExpressionWithFunction.CTIME:
             if node.firstExpression != None:
@@ -1563,14 +1562,14 @@ class CodeGenerator:
             res += node.firstExpression.generateCode(self)
 
         elif node.function == SymbolicExpressionWithFunction.SUBSTR or node.function == SymbolicExpressionWithFunction.SUB or node.function == SymbolicExpressionWithFunction.GSUB:
-            res += node.firstExpression.generateCode(self) + "," + node.numericExpression1.generateCode(self)
+            res += node.firstExpression.generateCode(self) + COMMA + node.numericExpression1.generateCode(self)
             if node.numericExpression2 != None:
-                res += "," + node.numericExpression2.generateCode(self)
+                res += COMMA + node.numericExpression2.generateCode(self)
                 
         elif node.function == SymbolicExpressionWithFunction.TIME2STR:
-            res += node.firstExpression.generateCode(self) + "," + node.numericExpression1.generateCode(self)
+            res += node.firstExpression.generateCode(self) + COMMA + node.numericExpression1.generateCode(self)
 
-        res += ")"
+        res += END_ARGUMENT_LIST
 
         return res
 
@@ -1578,26 +1577,26 @@ class CodeGenerator:
         return node.value.generateCode(self)
 
     def generateCode_SymbolicExpressionBetweenParenthesis(self, node):
-        return "(" + node.symbolicExpression.generateCode(self) + ")"
+        return BEGIN_ARGUMENT_LIST + node.symbolicExpression.generateCode(self) + END_ARGUMENT_LIST
 
     def generateCode_SymbolicExpressionWithOperation(self, node):
-        return node.symbolicExpression1.generateCode(self) + " " + node.op + " " + node.symbolicExpression2.generateCode(self)
+        return node.symbolicExpression1.generateCode(self) + SPACE + node.op + SPACE + node.symbolicExpression2.generateCode(self)
 
     def generateCode_ConditionalSymbolicExpression(self, node):
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.symbolicExpression1.generateCode(self)
+        res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.symbolicExpression1.generateCode(self)
 
         if node.symbolicExpression2 != None:
-            res += " else " + node.symbolicExpression2.generateCode(self)
+            res += SPACE+ELSE+SPACE + node.symbolicExpression2.generateCode(self)
 
         return res
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
         indexing = filter(Utils._deleteEmpty, map(self._getCodeEntry, node.entriesIndexingExpression))
-        res = ", ".join(indexing)
+        res = (COMMA+SPACE).join(indexing)
 
         if node.logicalExpression:
-            res += " : " + node.logicalExpression.generateCode(self)
+            res += SPACE+SUCH_THAT+SPACE + node.logicalExpression.generateCode(self)
 
         return res
     
@@ -1607,25 +1606,25 @@ class CodeGenerator:
             values = filter(self.notInTypesThatAreNotDeclarable, node.identifier.getValues())
 
             if len(values) > 0:
-                return ", ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), values))
+                return (COMMA+SPACE).join(map(lambda var: var.generateCode(self) + SPACE + node.op + SPACE + node.setExpression.generateCode(self), values))
         else:
             if self.notInTypesThatAreNotDeclarable(node.identifier):
-                return node.identifier.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self)
+                return node.identifier.generateCode(self) + SPACE + node.op + SPACE + node.setExpression.generateCode(self)
 
-        return ""
+        return EMPTY_STRING
 
     def generateCode_EntryIndexingExpressionCmp(self, node):
-        return node.identifier.generateCode(self) + " " + node.op + " " + node.numericExpression.generateCode(self)
+        return node.identifier.generateCode(self) + SPACE + node.op + SPACE + node.numericExpression.generateCode(self)
 
     def generateCode_EntryIndexingExpressionEq(self, node):
         if node.hasSup:
-            return node.identifier.generateCode(self) + " in " + Utils._getInt(node.value.generateCode(self)) # completed in generateCode_IteratedNumericExpression
+            return node.identifier.generateCode(self) + SPACE+IN+SPACE + Utils._getInt(node.value.generateCode(self)) # completed in generateCode_IteratedNumericExpression
         else:
-            return node.identifier.generateCode(self) + " in " + node.value.generateCode(self)
+            return node.identifier.generateCode(self) + SPACE+IN+SPACE + node.value.generateCode(self)
 
     # Logical Expression
     def generateCode_LogicalExpression(self, node):
-        res = ""
+        res = EMPTY_STRING
         first = True
 
         for i in range(len(node.entriesLogicalExpression)):
@@ -1636,37 +1635,37 @@ class CodeGenerator:
                     first = False
                     res += code
                 else:
-                    res += " " + conj + " " + code
+                    res += SPACE + conj + SPACE + code
 
         return res
 
     # Entry Logical Expression
     def generateCode_EntryLogicalExpressionRelational(self, node):
-        return node.numericExpression1.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
+        return node.numericExpression1.generateCode(self) + SPACE + node.op + SPACE + node.numericExpression2.generateCode(self)
 
     def generateCode_EntryLogicalExpressionWithSet(self, node):
         if isinstance(node.identifier, ValueList):
             values = filter(self.notInTypesThatAreNotDeclarable, node.identifier.getValues())
 
             if len(values) > 0:
-                return " and ".join(map(lambda var: var.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self), values))
+                return (SPACE+AND+SPACE).join(map(lambda var: var.generateCode(self) + SPACE + node.op + SPACE + node.setExpression.generateCode(self), values))
         else:
             if self.notInTypesThatAreNotDeclarable(node.identifier):
-                return node.identifier.generateCode(self) + " " + node.op + " " + node.setExpression.generateCode(self)
+                return node.identifier.generateCode(self) + SPACE + node.op + SPACE + node.setExpression.generateCode(self)
 
-        return ""
+        return EMPTY_STRING
 
     def generateCode_EntryLogicalExpressionWithSetOperation(self, node):
-        return node.setExpression1.generateCode(self) + " " + node.op + " " + node.setExpression2.generateCode(self)
+        return node.setExpression1.generateCode(self) + SPACE + node.op + SPACE + node.setExpression2.generateCode(self)
 
     def generateCode_EntryLogicalExpressionIterated(self, node):
-        return node.op + "{" + node.indexingExpression.generateCode(self) + "} " +  node.logicalExpression.generateCode(self)
+        return node.op + BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET+SPACE +  node.logicalExpression.generateCode(self)
 
     def generateCode_EntryLogicalExpressionBetweenParenthesis(self, node):
-        return "(" + node.logicalExpression.generateCode(self) + ")"
+        return BEGIN_ARGUMENT_LIST + node.logicalExpression.generateCode(self) + END_ARGUMENT_LIST
 
     def generateCode_EntryLogicalExpressionNot(self, node):
-        return "not " + node.logicalExpression.generateCode(self)
+        return NOT+SPACE + node.logicalExpression.generateCode(self)
 
     def generateCode_EntryLogicalExpressionNumericOrSymbolic(self, node):
         return node.numericOrSymbolicExpression.generateCode(self)
@@ -1679,7 +1678,7 @@ class CodeGenerator:
             return node.value
 
     def generateCode_SetExpressionWithIndices(self, node):
-        var_gen = ""
+        var_gen = EMPTY_STRING
         if not isinstance(node.identifier, str):
             var_gen = node.identifier.generateCode(self)
         else:
@@ -1688,18 +1687,18 @@ class CodeGenerator:
         return  var_gen
 
     def generateCode_SetExpressionWithOperation(self, node):
-        return node.setExpression1.generateCode(self) + " " + node.op + " " + node.setExpression2.generateCode(self)
+        return node.setExpression1.generateCode(self) + SPACE + node.op + SPACE+ node.setExpression2.generateCode(self)
 
     def generateCode_SetExpressionBetweenBraces(self, node):
         if node.setExpression != None:
             setExpression = node.setExpression.generateCode(self)
         else:
-            setExpression = ""
+            setExpression = EMPTY_STRING
 
-        return "{" + setExpression + "}"
+        return BEGIN_SET + setExpression + END_SET
 
     def generateCode_SetExpressionBetweenParenthesis(self, node):
-        return "(" + node.setExpression.generateCode(self) + ")"
+        return BEGIN_ARGUMENT_LIST + node.setExpression.generateCode(self) + END_ARGUMENT_LIST
 
     def generateCode_IteratedSetExpression(self, node):
         res = node.op
@@ -1710,24 +1709,24 @@ class CodeGenerator:
             if isinstance(supExpression, Identifier) or isinstance(supExpression, Number):
                 supExpression = supExpression.generateCode(self)
             else:
-                supExpression = "(" + supExpression.generateCode(self) + ")"
+                supExpression = BEGIN_ARGUMENT_LIST + supExpression.generateCode(self) + END_ARGUMENT_LIST
 
-            res += " {" + node.indexingExpression.generateCode(self) + ".."+supExpression+"} "
+            res += SPACE+BEGIN_SET + node.indexingExpression.generateCode(self) + FROM_TO+supExpression+END_SET+SPACE
         else:
-            res += " {" + node.indexingExpression.generateCode(self) + "} "
+            res += SPACE+BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET+SPACE
 
         res += node.integrand.generateCode(self)
 
         return res
 
     def generateCode_ConditionalSetExpression(self, node):
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.setExpression1.generateCode(self)
+        res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.setExpression1.generateCode(self)
 
         if node.setExpression2:
-            res += " else " + node.setExpression2.generateCode(self)
+            res += SPACE+ELSE+SPACE + node.setExpression2.generateCode(self)
 
         else:
-            res += " else {}"
+            res += SPACE+ELSE+SPACE+EMPTY_SET
 
         return res
 
@@ -1739,27 +1738,27 @@ class CodeGenerator:
         endValue = node.rangeEnd.generateCode(self)
         endValue = Utils._getInt(endValue)
 
-        res = initValue + ".." + endValue
+        res = initValue + FROM_TO + endValue
         if node.by != None:
-            res += " by " + node.by.generateCode(self)
+            res += SPACE+BY+SPACE + node.by.generateCode(self)
 
         return res
 
     # Value List
     def generateCode_ValueList(self, node):
-        return ",".join(map(self._getCodeValue, node.values))
+        return COMMA.join(map(self._getCodeValue, node.values))
 
     # Identifier List
     def generateCode_IdentifierList(self, node):
-        return ",".join(map(self._getCodeValue, node.identifiers))
+        return COMMA.join(map(self._getCodeValue, node.identifiers))
 
     # Tuple
     def generateCode_Tuple(self, node):
-        return "(" + ",".join(map(self._getCodeValue, node.values)) + ")"
+        return BEGIN_ARGUMENT_LIST + COMMA.join(map(self._getCodeValue, node.values)) + END_ARGUMENT_LIST
 
     # Tuple List
     def generateCode_TupleList(self, node):
-        return ",".join(map(self._getCodeValue, node.values))
+        return COMMA.join(map(self._getCodeValue, node.values))
 
     # Value
     def generateCode_Value(self, node):
@@ -1768,13 +1767,13 @@ class CodeGenerator:
     # Identifier
     def generateCode_Identifier(self, node):
         if isinstance(node.sub_indices, str):
-            return ""
+            return EMPTY_STRING
 
         if len(node.sub_indices) > 0:
             if isinstance(node.sub_indices, list):
-                res = node.identifier.generateCode(self) + "[" + ",".join(map(self._getCodeID, node.sub_indices)) + "]"
+                res = node.identifier.generateCode(self) + BEGIN_ARRAY + COMMA.join(map(self._getCodeID, node.sub_indices)) + END_ARRAY
             else:
-                res = node.identifier.generateCode(self) + "[" + self._getCodeID(node.sub_indices) + "]"
+                res = node.identifier.generateCode(self) + BEGIN_ARRAY + self._getCodeID(node.sub_indices) + END_ARRAY
         
         else:
             res = node.identifier.generateCode(self)
@@ -1795,30 +1794,30 @@ class CodeGenerator:
 
     # IntegerSet
     def generateCode_IntegerSet(self, node):
-        res = "integer"
+        res = INTEGER
         
         firstBound  = None if node.firstBound  == None else node.firstBound.getSymbolName(self)
         secondBound = None if node.secondBound == None else node.secondBound.getSymbolName(self)
         
         if firstBound != None and not Utils._isInfinity(firstBound):
-            op = ""
+            op = EMPTY_STRING
             if secondBound != None and not Utils._isInfinity(secondBound):
-                op += ", "
+                op += COMMA+SPACE
             else:
-                op += " "
+                op += SPACE
                 
-            op += node.firstOp+" "
+            op += node.firstOp+SPACE
             
             res += op + firstBound
             
         if secondBound != None and not Utils._isInfinity(secondBound):
-            op = ""
+            op = EMPTY_STRING
             if firstBound != None and not Utils._isInfinity(firstBound):
-                op += ", "
+                op += COMMA+SPACE
             else:
-                op += " "
+                op += SPACE
                 
-            op += node.secondOp+" "
+            op += node.secondOp+SPACE
             
             res += op + secondBound
             
@@ -1826,26 +1825,26 @@ class CodeGenerator:
 
     # RealSet
     def generateCode_RealSet(self, node):
-        res = ""
+        res = EMPTY_STRING
         
         firstBound  = None if node.firstBound  == None else node.firstBound.getSymbolName(self)
         secondBound = None if node.secondBound == None else node.secondBound.getSymbolName(self)
         
         if firstBound != None and not Utils._isInfinity(firstBound):
-            op = ""
+            op = EMPTY_STRING
             if secondBound != None and not Utils._isInfinity(secondBound):
-                op += ", "
+                op += COMMA+SPACE
                 
-            op += node.firstOp+" "
+            op += node.firstOp+SPACE
             
             res += op + firstBound
             
         if secondBound != None and not Utils._isInfinity(secondBound):
-            op = ""
+            op = EMPTY_STRING
             if firstBound != None and not Utils._isInfinity(firstBound):
-                op += ", "
+                op += COMMA+SPACE
                 
-            op += node.secondOp+" "
+            op += node.secondOp+SPACE
             
             res += op + secondBound
             
@@ -1853,32 +1852,32 @@ class CodeGenerator:
 
     # BinarySet
     def generateCode_BinarySet(self, node):
-        return "binary"
+        return BINARY
 
     # SymbolicSet
     def generateCode_SymbolicSet(self, node):
-        return "symbolic"
+        return SYMBOLIC
 
     # LogicalSet
     def generateCode_LogicalSet(self, node):
-        return "logical"
+        return LOGICAL
 
     # SymbolicSet
     def generateCode_OrderedSet(self, node):
-        return "ordered"
+        return ORDERED
 
     # LogicalSet
     def generateCode_CircularSet(self, node):
-        return "circular"
+        return CIRCULAR
 
     # ParameterSet
     def generateCode_ParameterSet(self, node):
-        return ""
+        return EMPTY_STRING
 
     # SymbolicSet
     def generateCode_VariableSet(self, node):
-        return ""
+        return EMPTY_STRING
 
     # SetSet
     def generateCode_SetSet(self, node):
-        return ""
+        return EMPTY_STRING
