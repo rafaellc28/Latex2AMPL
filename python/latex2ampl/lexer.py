@@ -319,7 +319,7 @@ def t_IMPLIES(t):
    return t
 
 def t_ISIMPLIEDBY(t):
-   r'\\Leftarrow|\\Longleftarrow'
+   r'\\Leftarrow|\\Longleftarrow|\\impliedby'
    return t
 
 def t_IFANDONLYIF(t):
