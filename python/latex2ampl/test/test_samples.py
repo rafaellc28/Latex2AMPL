@@ -42,6 +42,16 @@ def check_test_num(num, with_declarations = False):
 
 	check_test(name1, name2)
 
+def check_test_linear_num(num, with_declarations = False):
+	if with_declarations:
+		name1 = 'latex2ampl/test/samples/linear/lp'+str(num)+'_linear_with_declarations.tex.equation'
+		name2 = 'latex2ampl/test/samples/linear/output/lp'+str(num)+'_linear_with_declarations.tex.mod'
+	else:
+		name1 = 'latex2ampl/test/samples/linear/lp'+str(num)+'_linear.tex.equation'
+		name2 = 'latex2ampl/test/samples/linear/output/lp'+str(num)+'_linear.tex.mod'
+
+	check_test(name1, name2)
+
 
 def check_test_nonlinear_num(num, with_declarations = False):
 	if with_declarations:
@@ -922,3 +932,8 @@ def test_extras_test84():
 
 def test_extras_test85():
 	check_test_extras_num(85)
+
+
+# Linear Programming
+def test_lp0_linear():
+	check_test_linear_num(0)

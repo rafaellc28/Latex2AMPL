@@ -1,0 +1,7 @@
+% amplide/models/blend.mod
+\text{minimize } \sum_{j \in INPUT} cost_{j} * X_{j}\\
+out\_min_{i} \leq \sum_{j \in INPUT} io_{i,j} * X_{j} \leq out\_max_{i}: i \in OUTPUT\\
+cost_{i} > 0; in\_min_{i} \geq 0; in\_max_{i} \geq in\_min_{i}: i \in INPUT\\
+out\_min_{o} \geq 0; out\_max_{o} \geq out\_min_{o}: o \in OUTPUT;\\
+io_{o,i} \geq 0: i \in INPUT, o \in OUTPUT\\
+X_{j} \in \mathbb{R}, \geq in\_min_{j}, \leq in\_max_{j}: j \in INPUT\\

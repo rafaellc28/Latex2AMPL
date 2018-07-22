@@ -70,6 +70,9 @@ app.get('/samples', function(req, res) {
 		
 		if (nonlinear == "true") {
 			name += "_nonlinear";
+			
+		} else if (nonlinear == "false") {
+			name += "_linear";
 		}
 		
 		if (constraint == "true") {
@@ -79,24 +82,24 @@ app.get('/samples', function(req, res) {
 		if (decl == "true") {
 			name += "_with_declarations";
 		}
-
+		
 		var sample = baseSamples+"/lp"+name+".tex.equation";
 		var dataSample = baseSamples+"/data/lp"+name+".tex.dat";
-
+		
 		var d = Deferred();
-
+		
 		fs.readFile(sample, "utf8", function(err, data){
 		    if (err) data = "";
 		    result["sample"] = data;
-
+		    
 			fs.readFile(dataSample, "utf8", function(err, data){
 			    if (err) data = "";
 			    result["data"] = data;
-
+			    
 			    d.resolve(result);
 			});
 		});
-
+		
 		q.when(d).done(function(result) {
 			res.send(result);
 		});
