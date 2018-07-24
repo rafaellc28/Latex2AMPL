@@ -937,3 +937,9 @@ def test_extras_test85():
 # Linear Programming
 def test_lp0_linear():
 	check_test_linear_num(0)
+
+def test_lp1_linear():
+	check_test_linear_num(1)
+
+def test_lp2_linear():
+	check_test_linear_num(2)
