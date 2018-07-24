@@ -1,0 +1,7 @@
+% amplide/models/diet.mod
+\text{minimize } \sum_{j \in FOOD}cost_{j}*Buy_{j}\\
+n\_min_{i} \leq \sum_{j \in FOOD}amt_{i,j} * Buy_{j} \leq n\_max_{i}: i \in NUTR\\
+cost_{f} > 0; f\_min_{f} \geq 0; f\_max_{f} \geq f\_min_{f}: f \in FOOD\\
+n\_min_{n} \geq 0; n\_max_{n} \geq n\_min_{n}: n \in NUTR;\\
+amt_{n,f} \geq 0: n \in NUTR, f \in FOOD\\
+Buy_{f} \in \mathbb{Z}, \geq f\_min_{f}, \leq f\_max_{f}: f \in FOOD\\
