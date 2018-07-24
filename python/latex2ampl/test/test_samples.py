@@ -943,3 +943,6 @@ def test_lp1_linear():
 
 def test_lp2_linear():
 	check_test_linear_num(2)
+
+def test_lp3_linear():
+	check_test_linear_num(3)

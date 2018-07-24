@@ -1,0 +1,9 @@
+% amplide/models/dietu.mod
+\text{minimize } \sum_{j \in FOOD}cost_{j}*Buy_{j}\\
+\sum_{j \in FOOD}amt_{i,j} * Buy_{j} \geq n\_min_{i}: i \in MINREQ\\
+\sum_{j \in FOOD}amt_{i,j} * Buy_{j} \leq n\_max_{i}: i \in MAXREQ\\
+cost_{f} > 0; f\_min_{f} \geq 0; f\_max_{f} \geq f\_min_{f}: f \in FOOD\\
+n\_min_{i} \geq 0: i \in MINREQ; n\_max_{i} \geq n\_min_{i}: i \in MAXREQ;\\
+amt_{n,f} \geq 0: n \in NUTR, f \in FOOD\\
+NUTR := MINREQ \bigcup MAXREQ\\
+Buy_{f} \in \mathbb{R}, \geq f\_min_{f}, \leq f\_max_{f}: f \in FOOD\\
