@@ -988,12 +988,38 @@ class CodeGenerator:
 
         return None
 
+    def _processDomain(self, name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex):
+
+        result = EMPTY_STRING
+
+        if domain != None and domain.strip() != EMPTY_STRING:
+            logical = self._getLogicalExpressionOfDeclaration(declaration, name, dependencies_vec, sub_indices_vec, stmtIndex)
+            result += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
+
+        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
+            if self._hasAllIndices(minVal, maxVal):
+                domainMinMax = []
+                for i in range(len(minVal)):
+                    domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
+
+                domain = (COMMA+SPACE).join(domainMinMax)
+                result += BEGIN_SET+domain+END_SET
+
+        if not domain and declaration != None:
+            idxExpression = self._getIndexingExpressionFromDeclarations(declaration)
+            if idxExpression:
+                domain = idxExpression.generateCode(self)
+                result += BEGIN_SET + domain + END_SET
+
+        return result, domain
+
+
     def _declareVars(self):
         """
         Generate the AMPL code for the declaration of identifiers
         """
 
-        varStr = EMPTY_STRING
+        result = EMPTY_STRING
         if len(self.genVariables) > 0:
             
             graphVar = {}
@@ -1005,112 +1031,89 @@ class CodeGenerator:
 
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     var = self.genVariables.get(var)
+                    result += self._declareVar(var)
+                    result += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                    varStr += VARIABLE+SPACE + var.getName()
-                    domain = None
-                    _type = None
+        return result
 
-                    varDecl = self.genDeclarations.get(var.getName())
+    def _declareVar(self, var):
+        
+        name = var.getName()
 
-                    domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(var.getName())
+        result = VARIABLE+SPACE + name
 
-                    _types, dim, minVal, maxVal = self._getProperties(var.getName())
-                    
-                    if domain and domain.strip() != EMPTY_STRING:
-                        logical = self._getLogicalExpressionOfDeclaration(varDecl, var.getName(), dependencies_vec, sub_indices_vec, stmtIndex)
-                        varStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
-
-                    elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
-                        if self._hasAllIndices(minVal, maxVal):
-                            domainMinMax = []
-                            for i in range(len(minVal)):
-                                domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
-
-                            domain = (COMMA+SPACE).join(domainMinMax)
-                            varStr += BEGIN_SET+domain+END_SET
-                    
-                    if not domain and varDecl != None:
-                        idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
-                        if idxExpression:
-                            domain = idxExpression.generateCode(self)
-                            varStr += BEGIN_SET + domain + END_SET
-
-                    _types = self._removeTypesThatAreNotDeclarable(_types)
-                    _types = self._getTypes(_types)
-
-                    if len(_types) > 0:
-                        _type = _types[0].getName()
-                        _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
-                        _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
-
-                        if _type.strip() != EMPTY_STRING:
-                            varStr += SPACE + _type
-
-                    if varDecl != None:
-                        attr = varDecl.getRelationEqualTo()
-                        if attr != None:
-                            varStr += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
-
-                        else:
-                            attr = varDecl.getRelationLessThanOrEqualTo()
-                            if attr != None:
-                                varStr += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
-
-                            attr = varDecl.getRelationGreaterThanOrEqualTo()
-                            if attr != None:
-                                varStr += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
-
-                            if varDecl.getValue() != None:
-                                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
-                                varStr += value
-
-                            elif varDecl.getDefault() != None:
-                                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
-                                varStr += default
-
-                        ins_vec = varDecl.getIn()
-                        ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
-                        if ins_vec != None and len(ins_vec) > 0:
-                            ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
-
-                            if ins != EMPTY_STRING:
-                                varStr += COMMA+SPACE + ins
-
-                    varStr += END_STATEMENT+BREAKLINE+BREAKLINE
-
-        return varStr
-
-    def _declareParam(self, _genParameter):
-        paramStr = EMPTY_STRING
-        param = _genParameter.getName()
-        paramStr += PARAMETER+SPACE + param
         domain = None
         _type = None
 
-        varDecl = self.genDeclarations.get(_genParameter.getName())
+        declaration = self.genDeclarations.get(name)
 
-        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(_genParameter.getName())
-        _types, dim, minVal, maxVal = self._getProperties(_genParameter.getName())
+        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
+        _types, dim, minVal, maxVal = self._getProperties(name)
+        
+        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
+        result += domainStr
 
-        if domain != None and domain.strip() != EMPTY_STRING:
-            logical = self._getLogicalExpressionOfDeclaration(varDecl, param, dependencies_vec, sub_indices_vec, stmtIndex)
-            paramStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
+        _types = self._removeTypesThatAreNotDeclarable(_types)
+        _types = self._getTypes(_types)
 
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
-            if self._hasAllIndices(minVal, maxVal):
-                domainMinMax = []
-                for i in range(len(minVal)):
-                    domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
+        if len(_types) > 0:
+            _type = _types[0].getName()
+            _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
+            _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
 
-                domain = (COMMA+SPACE).join(domainMinMax)
-                paramStr += BEGIN_SET+domain+END_SET
+            if _type.strip() != EMPTY_STRING:
+                result += SPACE + _type
 
-        if not domain and varDecl != None:
-            idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
-            if idxExpression:
-                domain = idxExpression.generateCode(self)
-                paramStr += BEGIN_SET + domain + END_SET
+        if declaration != None:
+            attr = declaration.getRelationEqualTo()
+            if attr != None:
+                result += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
 
+            else:
+                attr = declaration.getRelationLessThanOrEqualTo()
+                if attr != None:
+                    result += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
+
+                attr = declaration.getRelationGreaterThanOrEqualTo()
+                if attr != None:
+                    result += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
+
+                if declaration.getValue() != None:
+                    value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                    result += value
+
+                elif declaration.getDefault() != None:
+                    default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                    result += default
+
+            ins_vec = declaration.getIn()
+            ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
+            if ins_vec != None and len(ins_vec) > 0:
+                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
+
+                if ins != EMPTY_STRING:
+                    result += COMMA+SPACE + ins
+
+        return result
+
+    def _declareParam(self, _genParameter):
+        
+        name = _genParameter.getName()
+
+        result = EMPTY_STRING
+        result += PARAMETER+SPACE + name
+
+        domain = None
+        _type = None
+
+        declaration = self.genDeclarations.get(name)
+
+        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
+        _types, dim, minVal, maxVal = self._getProperties(name)
+
+        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
+        result += domainStr
+        
         _types = self._removeTypesThatAreNotDeclarable(_types)
         modifiers = self._getModifiers(_types)
 
@@ -1118,11 +1121,10 @@ class CodeGenerator:
             _type = modifiers[0].getName()
 
             if _type.strip() != EMPTY_STRING:
-                paramStr += SPACE + _type
+                result += SPACE + _type
+
         else:
-            
             _types = self._getTypes(_types)
-            
 
             if len(_types) > 0:
                 _type = _types[0].getName()
@@ -1130,67 +1132,54 @@ class CodeGenerator:
                 _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
 
                 if _type.strip() != EMPTY_STRING:
-                    paramStr += SPACE + _type
+                    result += SPACE + _type
 
-        if varDecl != None:
-            ins_vec = varDecl.getIn()
+        if declaration != None:
+            ins_vec = declaration.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
             if ins_vec != None and len(ins_vec) > 0:
                 ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
 
                 if ins != EMPTY_STRING:
-                    paramStr += COMMA+SPACE + ins
+                    result += COMMA+SPACE + ins
 
-            relations = varDecl.getRelations()
+            relations = declaration.getRelations()
             if relations != None and len(relations) > 0:
-                paramStr += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
+                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
 
-            if varDecl.getDefault() != None:
-                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
-                paramStr += default
+            if declaration.getDefault() != None:
+                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                result += default
 
-            if varDecl.getValue() != None:
-                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
-                paramStr += value
-                self.genValueAssigned.add(GenObj(param))
+            if declaration.getValue() != None:
+                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                result += value
+                self.genValueAssigned.add(GenObj(name))
 
-        paramStr += END_STATEMENT+BREAKLINE+BREAKLINE
+        result += END_STATEMENT+BREAKLINE+BREAKLINE
 
-        return paramStr
+        return result
 
     def _declareSet(self, _genSet):
-        setStr = EMPTY_STRING
-
-        setStr += SET+SPACE + _genSet.getName()
+        
+        name = _genSet.getName()
+        
+        result = EMPTY_STRING
+        result += SET+SPACE + name
+        
         domain = None
         dimen = None
-
-        varDecl = self.genDeclarations.get(_genSet.getName())
-
-        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(_genSet.getName())
-        _types, dim, minVal, maxVal = self._getProperties(_genSet.getName())
-
-        if domain and domain.strip() != EMPTY_STRING:
-            logical = self._getLogicalExpressionOfDeclaration(varDecl, _genSet.getName(), dependencies_vec, sub_indices_vec, stmtIndex)
-            setStr += BEGIN_SET + domain + (EMPTY_STRING if logical == None else SPACE+SUCH_THAT+SPACE + logical) + END_SET
-
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
-            if self._hasAllIndices(minVal, maxVal):
-                domainMinMax = []
-                for i in range(len(minVal)):
-                    domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
-
-                domain = (COMMA+SPACE).join(domainMinMax)
-                setStr += BEGIN_SET+domain+END_SET
-
-        if not domain and varDecl != None:
-            idxExpression = self._getIndexingExpressionFromDeclarations(varDecl)
-            if idxExpression:
-                domain = idxExpression.generateCode(self)
-                setStr += BEGIN_SET + domain + END_SET
+        
+        declaration = self.genDeclarations.get(name)
+        
+        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
+        _types, dim, minVal, maxVal = self._getProperties(name)
+        
+        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
+        result += domainStr
         
         if dim != None and dim > 1:
-            setStr += SPACE+DIMENSION+SPACE + str(dim)
+            result += SPACE+DIMENSION+SPACE + str(dim)
 
         _types = self._removeTypesThatAreNotDeclarable(_types)
         modifiers = self._getModifiers(_types)
@@ -1199,33 +1188,33 @@ class CodeGenerator:
             _type = modifiers[0].getName()
 
             if _type.strip() != EMPTY_STRING:
-                setStr += SPACE + _type
+                result += SPACE + _type
 
-        if varDecl != None:
-            subsets = varDecl.getWithin()
+        if declaration != None:
+            subsets = declaration.getWithin()
             if subsets != None and len(subsets) > 0:
-                setStr += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
+                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
 
-            ins_vec = varDecl.getIn()
+            ins_vec = declaration.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
             if ins_vec != None and len(ins_vec) > 0:
                 ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
 
                 if ins != EMPTY_STRING:
-                    setStr += COMMA+SPACE + ins
+                    result += COMMA+SPACE + ins
 
-            if varDecl.getDefault() != None:
-                default = COMMA+SPACE+DEFAULT+SPACE + varDecl.getDefault().attribute.generateCode(self)
-                setStr += default
+            if declaration.getDefault() != None:
+                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                result += default
 
-            if varDecl.getValue() != None:
-                value = COMMA+SPACE+ASSIGN+SPACE + varDecl.getValue().attribute.generateCode(self)
-                setStr += value
-                self.genValueAssigned.add(GenObj(_genSet.getName()))
+            if declaration.getValue() != None:
+                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                result += value
+                self.genValueAssigned.add(GenObj(name))
 
-        setStr += END_STATEMENT+BREAKLINE+BREAKLINE
+        result += END_STATEMENT+BREAKLINE+BREAKLINE
 
-        return setStr
+        return result
 
     def _declareSetsAndParams(self):
 
