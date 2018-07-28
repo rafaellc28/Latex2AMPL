@@ -13,7 +13,7 @@ param lb{i in I};
 param ub{i in I}, > lb[i];
 
 
-var x{i in I}, <= ub[i], >= lb[i], := x0[i];
+var x{i in I}, := x0[i], <= ub[i], >= lb[i];
 
 var G5, = 1.12 * x[1] + .13167 * x[1] * x[8] - .00667 * x[1] * x[8] ^ 2 - a * x[4];
 

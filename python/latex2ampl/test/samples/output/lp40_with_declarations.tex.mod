@@ -1,4 +1,4 @@
-param n integer, > 0, := 4;
+param n integer, := 4, > 0;
 
 set N, := 1..n ^ 2;
 

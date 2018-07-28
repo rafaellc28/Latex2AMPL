@@ -1,14 +1,14 @@
-param p, <= 1, >= 0, := 0.55;
+param p, := 0.55, <= 1, >= 0;
 
-param T, >= 1, := 5;
+param T, := 5, >= 1;
 
-param N, >= 1, := 50;
+param N, := 50, >= 1;
 
-param q, <= 1 - p, >= 0, := 1 - p;
+param q, := 1 - p, <= 1 - p, >= 0;
 
 set X, := 1..N;
 
-param B, <= N, >= 1, := N;
+param B, := N, <= N, >= 1;
 
 set U{x in X}, := 0..min(B,min(N - x,x - 1));
 

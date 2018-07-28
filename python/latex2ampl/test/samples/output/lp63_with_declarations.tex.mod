@@ -2,7 +2,7 @@ set E dimen 2;
 
 set V, := (setof {(i,j) in E} i) union (setof {(i,j) in E} j);
 
-param w{i in V}, >= 0, := 1;
+param w{i in V}, := 1, >= 0;
 
 
 var x{i in V} binary;

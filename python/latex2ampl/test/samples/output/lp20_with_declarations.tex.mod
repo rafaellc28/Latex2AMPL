@@ -8,11 +8,11 @@ set links dimen 2, within {c1 in cities, c2 in cities : c1 != c2};
 
 set times, := 1..last;
 
-param disttable{(l1,l2) in links}, >= 0, default 0.0;
+param disttable{(l1,l2) in links}, default 0.0, >= 0;
 
 set schedule dimen 4, within {c1 in cities, t1 in times, c2 in cities, t2 in times : (c1,c2) in links};
 
-param distance{(c1,c2) in links}, > 0, := if disttable[c1,c2] > 0 then disttable[c1,c2] else disttable[c2,c1];
+param distance{(c1,c2) in links}, := if disttable[c1,c2] > 0 then disttable[c1,c2] else disttable[c2,c1], > 0;
 
 param demand{(c1,t1,c2,t2) in schedule}, > 0;
 

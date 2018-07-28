@@ -1,0 +1,5 @@
+% amplide/models/econmin.mod
+\text{minimize } \sum_{j \in ACT} cost_{j} * Level_{j}\\
+\sum_{j \in ACT} io_{i,j} * Level_{j} \geq demand_{i}: i \in PROD\\
+cost_{a} > 0; demand_{p} \geq 0; io_{p,a} \geq 0: p \in PROD, a \in ACT\\
+Level_{j} \in \mathbb{R}, \geq 0: j \in ACT\\

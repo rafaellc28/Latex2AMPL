@@ -1,4 +1,4 @@
-param givens{i in 1..9, j in 1..9} integer, <= 9, >= 0, default 0;
+param givens{i in 1..9, j in 1..9} integer, default 0, <= 9, >= 0;
 
 
 var x{i in 1..9, j in 1..9, k in 1..9} binary;

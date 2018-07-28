@@ -8,7 +8,7 @@ set cols, := 1..ndim;
 
 set cols1, := 1..(ndim + 1);
 
-param givens{r in rows, c in cols} integer, >= 0, default 0;
+param givens{r in rows, c in cols} integer, default 0, >= 0;
 
 set V dimen 2, := {(i,j) in {rows,cols} : givens[i,j] != 0};
 

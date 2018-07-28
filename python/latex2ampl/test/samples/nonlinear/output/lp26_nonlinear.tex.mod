@@ -1,6 +1,6 @@
-param d integer, > 0, default 2;
+param d integer, default 2, > 0;
 
-param N integer, > 0, default 10;
+param N integer, default 10, > 0;
 
 set I, := {1..N};
 

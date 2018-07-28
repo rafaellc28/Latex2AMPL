@@ -1,4 +1,4 @@
-param n integer, > 0, := 8;
+param n integer, := 8, > 0;
 
 
 var x{i in 1..n, j in 1..n} binary;

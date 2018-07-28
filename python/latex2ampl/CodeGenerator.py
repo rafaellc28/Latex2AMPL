@@ -1065,27 +1065,6 @@ class CodeGenerator:
                 result += SPACE + _type
 
         if declaration != None:
-            attr = declaration.getRelationEqualTo()
-            if attr != None:
-                result += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
-
-            else:
-                attr = declaration.getRelationLessThanOrEqualTo()
-                if attr != None:
-                    result += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
-
-                attr = declaration.getRelationGreaterThanOrEqualTo()
-                if attr != None:
-                    result += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
-
-                if declaration.getValue() != None:
-                    value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
-                    result += value
-
-                elif declaration.getDefault() != None:
-                    default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
-                    result += default
-
             ins_vec = declaration.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
             if ins_vec != None and len(ins_vec) > 0:
@@ -1093,6 +1072,27 @@ class CodeGenerator:
 
                 if ins != EMPTY_STRING:
                     result += COMMA+SPACE + ins
+
+            attr = declaration.getRelationEqualTo()
+            if attr != None:
+                result += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
+
+            else:
+                if declaration.getValue() != None:
+                    value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                    result += value
+
+                if declaration.getDefault() != None:
+                    default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                    result += default
+
+                attr = declaration.getRelationLessThanOrEqualTo()
+                if attr != None:
+                    result += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
+
+                attr = declaration.getRelationGreaterThanOrEqualTo()
+                if attr != None:
+                    result += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
 
         return result
 
@@ -1143,18 +1143,18 @@ class CodeGenerator:
                 if ins != EMPTY_STRING:
                     result += COMMA+SPACE + ins
 
-            relations = declaration.getRelations()
-            if relations != None and len(relations) > 0:
-                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
+            if declaration.getValue() != None:
+                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                result += value
+                self.genValueAssigned.add(GenObj(name))
 
             if declaration.getDefault() != None:
                 default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
                 result += default
 
-            if declaration.getValue() != None:
-                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
-                result += value
-                self.genValueAssigned.add(GenObj(name))
+            relations = declaration.getRelations()
+            if relations != None and len(relations) > 0:
+                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
 
         result += END_STATEMENT+BREAKLINE+BREAKLINE
 
@@ -1203,14 +1203,14 @@ class CodeGenerator:
                 if ins != EMPTY_STRING:
                     result += COMMA+SPACE + ins
 
-            if declaration.getDefault() != None:
-                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
-                result += default
-
             if declaration.getValue() != None:
                 value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
                 result += value
                 self.genValueAssigned.add(GenObj(name))
+
+            if declaration.getDefault() != None:
+                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                result += default
 
         result += END_STATEMENT+BREAKLINE+BREAKLINE
 

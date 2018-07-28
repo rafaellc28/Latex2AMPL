@@ -2,7 +2,7 @@ set I;
 
 param utc, := prod{i in 1..2}(gmtime() - 1000000000);
 
-param N, >= 1, default 50;
+param N, default 50, >= 1;
 
 param Mu{i in I};
 

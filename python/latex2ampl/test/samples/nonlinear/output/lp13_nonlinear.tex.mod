@@ -10,7 +10,7 @@ param d, > 0;
 
 param f, > 0;
 
-param N integer, > 0, := 13;
+param N integer, := 13, > 0;
 
 set I, := 1..N;
 

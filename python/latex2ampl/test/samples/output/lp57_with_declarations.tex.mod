@@ -1,6 +1,6 @@
 set E dimen 2;
 
-param w{(i,j) in E}, >= 0, := 1;
+param w{(i,j) in E}, := 1, >= 0;
 
 set V, := (setof {(i,j) in E} i) union (setof {(i,j) in E} j);
 

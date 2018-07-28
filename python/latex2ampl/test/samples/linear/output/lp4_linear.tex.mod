@@ -19,7 +19,7 @@ param n_max{i in MAXREQ}, >= n_min[i];
 param amt{n in NUTR, f in FOOD}, >= 0;
 
 
-var Buy{f in FOOD}, <= f_max[f], >= f_min[f], := f_min[f];
+var Buy{f in FOOD}, := f_min[f], <= f_max[f], >= f_min[f];
 
 
 minimize obj: sum{j in FOOD}cost[j] * Buy[j];
