@@ -1,0 +1,6 @@
+% amplide/models/iorow.mod
+\text{maximize } \sum_{j \in ACT} revenue_{j} * Run_{j}\\
+\sum_{j \in ACT} io_{i,j} * Run_{j} = 0: i \in MAT\\
+revenue_{j}, act\_min_{j}, act\_max_{j}: j \in ACT\\
+act\_min_{j} \geq 0; act\_max_{j} \geq act\_min_{j}\\
+Run_{j} \in \mathbb{R}, \geq act\_min_{j}, \leq act\_max_{j}: j \in ACT\\

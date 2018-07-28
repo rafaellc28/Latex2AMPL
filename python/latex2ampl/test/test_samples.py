@@ -955,3 +955,6 @@ def test_lp5_linear():
 
 def test_lp6_linear():
 	check_test_linear_num(6)
+
+def test_lp7_linear():
+	check_test_linear_num(7)
