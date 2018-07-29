@@ -958,3 +958,9 @@ def test_lp6_linear():
 
 def test_lp7_linear():
 	check_test_linear_num(7)
+
+def test_lp8_linear():
+	check_test_linear_num(8)
+
+def test_lp9_linear():
+	check_test_linear_num(9)

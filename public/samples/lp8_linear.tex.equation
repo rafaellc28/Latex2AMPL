@@ -1,0 +1,8 @@
+% amplide/models/minmax.mod
+\text{minimize } M\\
+M \geq \sum_{j \in PROJECTS} cost_{i,j} * Assign_{i,j}: i \in PEOPLE\\
+\sum_{j \in PROJECTS} Assign_{i,j} = supply_{i}: i \in PEOPLE\\
+\sum_{i \in PEOPLE} Assign_{i,j} = demand_{j}: j \in PROJECTS\\
+supply_{p} \geq 0: p \in PEOPLE; demand_{p} \geq 0: p \in PROJECTS\\
+cost_{i,j}, limit_{i,j} \geq 0: i \in PEOPLE, j \in PROJECTS\\
+Assign_{i,j}, M \in \mathbb{R}; Assign_{i,j} \geq 0, \leq limit_{i,j}: i \in PEOPLE, j \in PROJECTS\\
