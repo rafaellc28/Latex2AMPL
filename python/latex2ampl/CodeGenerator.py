@@ -1013,6 +1013,46 @@ class CodeGenerator:
 
         return result, domain
 
+    def _processDeclaration(self, name, declaration, isSet = False, isVariable = False):
+
+        result = EMPTY_STRING
+        checkValue = True
+
+        if isSet:
+            subsets = declaration.getWithin()
+            if subsets != None and len(subsets) > 0:
+                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
+
+        ins_vec = declaration.getIn()
+        ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
+        if ins_vec != None and len(ins_vec) > 0:
+            ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
+
+            if ins != EMPTY_STRING:
+                result += COMMA+SPACE + ins
+
+        if isVariable:
+            attr = declaration.getRelationEqualTo()
+            if attr != None:
+                result += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
+                checkValue = False
+
+        if checkValue:
+            if declaration.getValue() != None:
+                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
+                result += value
+                self.genValueAssigned.add(GenObj(name))
+
+            if declaration.getDefault() != None:
+                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
+                result += default
+
+            if not isSet:
+                relations = declaration.getRelations()
+                if relations != None and len(relations) > 0:
+                    result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
+
+        return result
 
     def _declareVars(self):
         """
@@ -1065,34 +1105,7 @@ class CodeGenerator:
                 result += SPACE + _type
 
         if declaration != None:
-            ins_vec = declaration.getIn()
-            ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
-            if ins_vec != None and len(ins_vec) > 0:
-                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
-
-                if ins != EMPTY_STRING:
-                    result += COMMA+SPACE + ins
-
-            attr = declaration.getRelationEqualTo()
-            if attr != None:
-                result += COMMA+SPACE+EQUAL+SPACE + attr.attribute.generateCode(self)
-
-            else:
-                if declaration.getValue() != None:
-                    value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
-                    result += value
-
-                if declaration.getDefault() != None:
-                    default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
-                    result += default
-
-                attr = declaration.getRelationLessThanOrEqualTo()
-                if attr != None:
-                    result += COMMA+SPACE+LE+SPACE + attr.attribute.generateCode(self)
-
-                attr = declaration.getRelationGreaterThanOrEqualTo()
-                if attr != None:
-                    result += COMMA+SPACE+GE+SPACE + attr.attribute.generateCode(self)
+            result += self._processDeclaration(name, declaration, False, True)
 
         return result
 
@@ -1135,26 +1148,7 @@ class CodeGenerator:
                     result += SPACE + _type
 
         if declaration != None:
-            ins_vec = declaration.getIn()
-            ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
-            if ins_vec != None and len(ins_vec) > 0:
-                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
-
-                if ins != EMPTY_STRING:
-                    result += COMMA+SPACE + ins
-
-            if declaration.getValue() != None:
-                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
-                result += value
-                self.genValueAssigned.add(GenObj(name))
-
-            if declaration.getDefault() != None:
-                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
-                result += default
-
-            relations = declaration.getRelations()
-            if relations != None and len(relations) > 0:
-                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
+            result += self._processDeclaration(name, declaration)
 
         result += END_STATEMENT+BREAKLINE+BREAKLINE
 
@@ -1191,26 +1185,7 @@ class CodeGenerator:
                 result += SPACE + _type
 
         if declaration != None:
-            subsets = declaration.getWithin()
-            if subsets != None and len(subsets) > 0:
-                result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
-
-            ins_vec = declaration.getIn()
-            ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
-            if ins_vec != None and len(ins_vec) > 0:
-                ins = (COMMA+SPACE).join(map(lambda el: IN+SPACE + el.generateCode(self), ins_vec))
-
-                if ins != EMPTY_STRING:
-                    result += COMMA+SPACE + ins
-
-            if declaration.getValue() != None:
-                value = COMMA+SPACE+ASSIGN+SPACE + declaration.getValue().attribute.generateCode(self)
-                result += value
-                self.genValueAssigned.add(GenObj(name))
-
-            if declaration.getDefault() != None:
-                default = COMMA+SPACE+DEFAULT+SPACE + declaration.getDefault().attribute.generateCode(self)
-                result += default
+            result += self._processDeclaration(name, declaration, True)
 
         result += END_STATEMENT+BREAKLINE+BREAKLINE
 
