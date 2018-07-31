@@ -57,6 +57,7 @@
 		{"name": "AMPL/lmodels/minmax.mod", "number": 8, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/nltrans.mod", "number": 9, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/nltransb.mod", "number": 10, "decl": false, "nonlinear": false},
+		{"name": "AMPL/lmodels/nltransc.mod", "number": 11, "decl": false, "nonlinear": false},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},

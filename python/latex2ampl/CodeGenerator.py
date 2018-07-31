@@ -1054,6 +1054,35 @@ class CodeGenerator:
 
         return result
 
+    def _processType(self, _types, isSet = False, isVariable = False):
+        result = EMPTY_STRING
+        checkTypes = not isSet
+
+        _types = self._removeTypesThatAreNotDeclarable(_types)
+
+        if not isVariable:
+            modifiers = self._getModifiers(_types)
+
+            if len(modifiers) > 0:
+                _type = modifiers[0].getName()
+
+                if _type.strip() != EMPTY_STRING:
+                    result += SPACE + _type
+                    checkTypes = False
+
+        if checkTypes:
+            _types = self._getTypes(_types)
+
+            if len(_types) > 0:
+                _type = _types[0].getName()
+                _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
+                _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
+
+                if _type.strip() != EMPTY_STRING:
+                    result += SPACE + _type
+
+        return result
+
     def _declareVars(self):
         """
         Generate the AMPL code for the declaration of identifiers
@@ -1079,36 +1108,27 @@ class CodeGenerator:
     def _declareVar(self, var):
         
         name = var.getName()
-
+        
         result = VARIABLE+SPACE + name
-
+        
         domain = None
         _type = None
-
+        
         declaration = self.genDeclarations.get(name)
-
+        
         domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
         _types, dim, minVal, maxVal = self._getProperties(name)
         
         domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
         result += domainStr
-
-        _types = self._removeTypesThatAreNotDeclarable(_types)
-        _types = self._getTypes(_types)
-
-        if len(_types) > 0:
-            _type = _types[0].getName()
-            _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
-            _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
-
-            if _type.strip() != EMPTY_STRING:
-                result += SPACE + _type
-
+        
+        result += self._processType(_types, False, True)
+        
         if declaration != None:
             result += self._processDeclaration(name, declaration, False, True)
-
+            
         return result
-
+        
     def _declareParam(self, _genParameter):
         
         name = _genParameter.getName()
@@ -1127,25 +1147,7 @@ class CodeGenerator:
         domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
         result += domainStr
         
-        _types = self._removeTypesThatAreNotDeclarable(_types)
-        modifiers = self._getModifiers(_types)
-
-        if len(modifiers) > 0:
-            _type = modifiers[0].getName()
-
-            if _type.strip() != EMPTY_STRING:
-                result += SPACE + _type
-
-        else:
-            _types = self._getTypes(_types)
-
-            if len(_types) > 0:
-                _type = _types[0].getName()
-                _type = _type if _type != Constants.BINARY_0_1 else Constants.BINARY
-                _type = _type if not _type.startswith(Constants.REALSET) else _type[8:]
-
-                if _type.strip() != EMPTY_STRING:
-                    result += SPACE + _type
+        result += self._processType(_types)
 
         if declaration != None:
             result += self._processDeclaration(name, declaration)
@@ -1175,14 +1177,7 @@ class CodeGenerator:
         if dim != None and dim > 1:
             result += SPACE+DIMENSION+SPACE + str(dim)
 
-        _types = self._removeTypesThatAreNotDeclarable(_types)
-        modifiers = self._getModifiers(_types)
-
-        if len(modifiers) > 0:
-            _type = modifiers[0].getName()
-
-            if _type.strip() != EMPTY_STRING:
-                result += SPACE + _type
+        result += self._processType(_types, True)
 
         if declaration != None:
             result += self._processDeclaration(name, declaration, True)

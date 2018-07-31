@@ -1,0 +1,7 @@
+% amplide/models/nltransc.mod
+\text{minimize } \sum_{i \in ORIG, j \in DEST} rate_{i,j} * Trans_{i,j}^{0.8} / (1 - Trans_{i,j}/limit_{i,j})\\
+\sum_{j \in DEST} Trans_{i,j} = supply_{i}: i \in ORIG\\
+\sum_{i \in ORIG} Trans_{i,j} = demand_{j}: j \in DEST\\
+supply_{o} \geq 0: o \in ORIG; demand_{d} \geq 0: d \in DEST\\
+rate_{o,d} \geq 0; limit_{o,d} > 0: o \in ORIG, d \in DEST\\
+Trans_{i,j} \in \mathbb{R}, \geq 0, := 0: i \in ORIG, j \in DEST\\
