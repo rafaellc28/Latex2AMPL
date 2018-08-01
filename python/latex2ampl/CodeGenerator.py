@@ -1083,6 +1083,33 @@ class CodeGenerator:
 
         return result
 
+    def _processObject(self, genObj, objType, isSet, isVariable):
+
+        domain = None
+        name = genObj.getName()
+        declaration = self.genDeclarations.get(name)
+
+        result = EMPTY_STRING
+        result += objType+SPACE+name
+        
+        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
+        _types, dim, minVal, maxVal = self._getProperties(name)
+        
+        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
+        result += domainStr
+
+        if isSet and dim != None and dim > 1:
+            result += SPACE+DIMENSION+SPACE+str(dim)
+
+        result += self._processType(_types, isSet, isVariable)
+
+        if declaration != None:
+            result += self._processDeclaration(name, declaration, isSet, isVariable)
+
+        result += END_STATEMENT+BREAKLINE+BREAKLINE
+
+        return result
+
     def _declareVars(self):
         """
         Generate the AMPL code for the declaration of identifiers
@@ -1101,91 +1128,21 @@ class CodeGenerator:
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     var = self.genVariables.get(var)
                     result += self._declareVar(var)
-                    result += END_STATEMENT+BREAKLINE+BREAKLINE
 
         return result
-
+        
     def _declareVar(self, var):
-        
-        name = var.getName()
-        
-        result = VARIABLE+SPACE + name
-        
-        domain = None
-        _type = None
-        
-        declaration = self.genDeclarations.get(name)
-        
-        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
-        _types, dim, minVal, maxVal = self._getProperties(name)
-        
-        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
-        result += domainStr
-        
-        result += self._processType(_types, False, True)
-        
-        if declaration != None:
-            result += self._processDeclaration(name, declaration, False, True)
-            
+        result = self._processObject(var, VARIABLE, False, True)
         return result
         
     def _declareParam(self, _genParameter):
-        
-        name = _genParameter.getName()
-
-        result = EMPTY_STRING
-        result += PARAMETER+SPACE + name
-
-        domain = None
-        _type = None
-
-        declaration = self.genDeclarations.get(name)
-
-        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
-        _types, dim, minVal, maxVal = self._getProperties(name)
-
-        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
-        result += domainStr
-        
-        result += self._processType(_types)
-
-        if declaration != None:
-            result += self._processDeclaration(name, declaration)
-
-        result += END_STATEMENT+BREAKLINE+BREAKLINE
-
+        result = self._processObject(_genParameter, PARAMETER, False, False)
         return result
-
+        
     def _declareSet(self, _genSet):
-        
-        name = _genSet.getName()
-        
-        result = EMPTY_STRING
-        result += SET+SPACE + name
-        
-        domain = None
-        dimen = None
-        
-        declaration = self.genDeclarations.get(name)
-        
-        domain, domains_vec, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
-        _types, dim, minVal, maxVal = self._getProperties(name)
-        
-        domainStr, domain = self._processDomain(name, domain, minVal, maxVal, declaration, dependencies_vec, sub_indices_vec, stmtIndex)
-        result += domainStr
-        
-        if dim != None and dim > 1:
-            result += SPACE+DIMENSION+SPACE + str(dim)
-
-        result += self._processType(_types, True)
-
-        if declaration != None:
-            result += self._processDeclaration(name, declaration, True)
-
-        result += END_STATEMENT+BREAKLINE+BREAKLINE
-
+        result = self._processObject(_genSet, SET, True, False)
         return result
-
+        
     def _declareSetsAndParams(self):
 
         paramSetStr = EMPTY_STRING
