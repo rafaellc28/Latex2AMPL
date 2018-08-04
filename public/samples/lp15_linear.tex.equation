@@ -1,0 +1,6 @@
+% amplide/models/prod.mod
+\text{maximize } \sum_{j \in P} c_{j} * X_{j}\\
+\sum_{j \in P} (1/a_{j}) * X_{j} \leq b\\
+0 \leq X_{j} \leq u_{j}: j \in P\\
+a_{j}, b, c_{j}, u_{j}, X_{j}: j \in P\\
+X \in \mathbb{R}\\
