@@ -1,0 +1,7 @@
+% amplide/models/p2gon.mod
+(x_{i} + x_{j})^{2} + (y_{i} - y_{j})^{2} = 1: i \in \lceil Lsup/2 \rceil \dots Lsup, j \in \max(1, Lsup-i) \dots \min(Lsup+1-i, i)\\
+x_{Lsup}^{2} + y_{Lsup}^{2} = 1\\
+y_{i} \geq y_{i-1}: i \in 2 \dots Lsup\\
+\text{maximize } \sum_{i \in 2 \dots Lsup-1} y_{i}*(x_{i-1}-x_{i+1}) + x_{Lsup} + y_{Lsup}*x_{Lsup-1} - x_{2}*y_{1}\\
+N \in \mathbb{Z}, \in \mathbb{P}, > 1; Lsup := N/2 - 1; I := 1 \dots Lsup\\
+x_{i} \in \mathbb{R}, \geq 0, \leq 1, := .5; y_{i} \in \mathbb{R}, \geq 0, \leq 1, := i/Lsup: i \in I\\

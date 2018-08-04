@@ -138,11 +138,6 @@ def p_Constraint(t):
                   | ConstraintExpression COLON IndexingExpression
                   | ConstraintExpression
 
-                  | LogicalExpression FOR IndexingExpression
-                  | LogicalExpression WHERE IndexingExpression
-                  | LogicalExpression COLON IndexingExpression
-                  | LogicalExpression
-
                   | ValueListInExpression FOR IndexingExpression
                   | ValueListInExpression WHERE IndexingExpression
                   | ValueListInExpression COLON IndexingExpression
@@ -165,20 +160,16 @@ def p_Constraint(t):
 
 def p_ConstraintExpressionLogical(t):
     '''ConstraintExpression : ConstraintExpression AND ConstraintExpression
-                            | ConstraintExpression AND LogicalExpression
                             | ConstraintExpression AND ValueListInExpression
                             | ConstraintExpression AND EntryConstraintLogicalExpression
 
-                            | LogicalExpression AND ConstraintExpression
                             | ValueListInExpression AND ConstraintExpression
                             | EntryConstraintLogicalExpression AND ConstraintExpression
 
                             | ConstraintExpression OR ConstraintExpression
-                            | ConstraintExpression OR LogicalExpression
                             | ConstraintExpression OR ValueListInExpression
                             | ConstraintExpression OR EntryConstraintLogicalExpression
 
-                            | LogicalExpression OR ConstraintExpression
                             | ValueListInExpression OR ConstraintExpression
                             | EntryConstraintLogicalExpression OR ConstraintExpression
 
@@ -202,6 +193,8 @@ def p_ConstraintExpressionLogical(t):
 
         if not isinstance(t[1], LogicalExpression):
           entry = LogicalExpression([t[1]])
+        else:
+          entry = t[1]
 
         if t.slice[2].type == "AND":
           entry = entry.addAnd(t[3])
@@ -234,28 +227,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | Identifier IMPLIES ConstraintExpression ELSE Identifier
                             | Identifier IMPLIES Identifier ELSE Identifier
-                            | Identifier IMPLIES Identifier ELSE LogicalExpression
                             | Identifier IMPLIES Identifier ELSE ValueListInExpression
                             | Identifier IMPLIES Identifier ELSE ConstraintExpression
                             | Identifier IMPLIES Identifier ELSE EntryConstraintLogicalExpression
 
-                            | Identifier IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | Identifier IMPLIES LogicalExpression ELSE Identifier
-                            | Identifier IMPLIES LogicalExpression ELSE LogicalExpression
-                            | Identifier IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | Identifier IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | Identifier IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | Identifier IMPLIES ConstraintExpression ELSE ValueListInExpression
                             | Identifier IMPLIES ValueListInExpression ELSE Identifier
-                            | Identifier IMPLIES ValueListInExpression ELSE LogicalExpression
                             | Identifier IMPLIES ValueListInExpression ELSE ValueListInExpression
                             | Identifier IMPLIES ValueListInExpression ELSE ConstraintExpression
                             | Identifier IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | Identifier IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | Identifier IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | Identifier IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
                             | Identifier IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | Identifier IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | Identifier IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -264,28 +247,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | NumericSymbolicExpression IMPLIES ConstraintExpression ELSE Identifier
                             | NumericSymbolicExpression IMPLIES Identifier ELSE Identifier
-                            | NumericSymbolicExpression IMPLIES Identifier ELSE LogicalExpression
                             | NumericSymbolicExpression IMPLIES Identifier ELSE ValueListInExpression
                             | NumericSymbolicExpression IMPLIES Identifier ELSE ConstraintExpression
                             | NumericSymbolicExpression IMPLIES Identifier ELSE EntryConstraintLogicalExpression
 
-                            | NumericSymbolicExpression IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | NumericSymbolicExpression IMPLIES LogicalExpression ELSE Identifier
-                            | NumericSymbolicExpression IMPLIES LogicalExpression ELSE LogicalExpression
-                            | NumericSymbolicExpression IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | NumericSymbolicExpression IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | NumericSymbolicExpression IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | NumericSymbolicExpression IMPLIES ConstraintExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression IMPLIES ValueListInExpression ELSE Identifier
-                            | NumericSymbolicExpression IMPLIES ValueListInExpression ELSE LogicalExpression
                             | NumericSymbolicExpression IMPLIES ValueListInExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression IMPLIES ValueListInExpression ELSE ConstraintExpression
                             | NumericSymbolicExpression IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | NumericSymbolicExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
                             | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -294,88 +267,38 @@ def p_ConstraintExpressionConditional(t):
 
                             | ConstraintExpression IMPLIES ConstraintExpression ELSE Identifier
                             | ConstraintExpression IMPLIES Identifier ELSE Identifier
-                            | ConstraintExpression IMPLIES Identifier ELSE LogicalExpression
                             | ConstraintExpression IMPLIES Identifier ELSE ValueListInExpression
                             | ConstraintExpression IMPLIES Identifier ELSE ConstraintExpression
                             | ConstraintExpression IMPLIES Identifier ELSE EntryConstraintLogicalExpression
 
-                            | ConstraintExpression IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | ConstraintExpression IMPLIES LogicalExpression ELSE Identifier
-                            | ConstraintExpression IMPLIES LogicalExpression ELSE LogicalExpression
-                            | ConstraintExpression IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | ConstraintExpression IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | ConstraintExpression IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | ConstraintExpression IMPLIES ConstraintExpression ELSE ValueListInExpression
                             | ConstraintExpression IMPLIES ValueListInExpression ELSE Identifier
-                            | ConstraintExpression IMPLIES ValueListInExpression ELSE LogicalExpression
                             | ConstraintExpression IMPLIES ValueListInExpression ELSE ValueListInExpression
                             | ConstraintExpression IMPLIES ValueListInExpression ELSE ConstraintExpression
                             | ConstraintExpression IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | ConstraintExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
                             | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | ConstraintExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
-
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE Identifier
-                            | LogicalExpression IMPLIES Identifier ELSE Identifier
-                            | LogicalExpression IMPLIES Identifier ELSE LogicalExpression
-                            | LogicalExpression IMPLIES Identifier ELSE ValueListInExpression
-                            | LogicalExpression IMPLIES Identifier ELSE ConstraintExpression
-                            | LogicalExpression IMPLIES Identifier ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | LogicalExpression IMPLIES LogicalExpression ELSE Identifier
-                            | LogicalExpression IMPLIES LogicalExpression ELSE LogicalExpression
-                            | LogicalExpression IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | LogicalExpression IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | LogicalExpression IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE ValueListInExpression
-                            | LogicalExpression IMPLIES ValueListInExpression ELSE Identifier
-                            | LogicalExpression IMPLIES ValueListInExpression ELSE LogicalExpression
-                            | LogicalExpression IMPLIES ValueListInExpression ELSE ValueListInExpression
-                            | LogicalExpression IMPLIES ValueListInExpression ELSE ConstraintExpression
-                            | LogicalExpression IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
 
                             | ValueListInExpression IMPLIES ConstraintExpression ELSE ConstraintExpression
 
                             | ValueListInExpression IMPLIES ConstraintExpression ELSE Identifier
                             | ValueListInExpression IMPLIES Identifier ELSE Identifier
-                            | ValueListInExpression IMPLIES Identifier ELSE LogicalExpression
                             | ValueListInExpression IMPLIES Identifier ELSE ValueListInExpression
                             | ValueListInExpression IMPLIES Identifier ELSE ConstraintExpression
                             | ValueListInExpression IMPLIES Identifier ELSE EntryConstraintLogicalExpression
 
-                            | ValueListInExpression IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | ValueListInExpression IMPLIES LogicalExpression ELSE Identifier
-                            | ValueListInExpression IMPLIES LogicalExpression ELSE LogicalExpression
-                            | ValueListInExpression IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | ValueListInExpression IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | ValueListInExpression IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | ValueListInExpression IMPLIES ConstraintExpression ELSE ValueListInExpression
                             | ValueListInExpression IMPLIES ValueListInExpression ELSE Identifier
-                            | ValueListInExpression IMPLIES ValueListInExpression ELSE LogicalExpression
                             | ValueListInExpression IMPLIES ValueListInExpression ELSE ValueListInExpression
                             | ValueListInExpression IMPLIES ValueListInExpression ELSE ConstraintExpression
                             | ValueListInExpression IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | ValueListInExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | ValueListInExpression IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | ValueListInExpression IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
                             | ValueListInExpression IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | ValueListInExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | ValueListInExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -384,28 +307,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE Identifier
                             | EntryConstraintLogicalExpression IMPLIES Identifier ELSE Identifier
-                            | EntryConstraintLogicalExpression IMPLIES Identifier ELSE LogicalExpression
                             | EntryConstraintLogicalExpression IMPLIES Identifier ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression IMPLIES Identifier ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression IMPLIES Identifier ELSE EntryConstraintLogicalExpression
 
-                            | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE LogicalExpression
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression ELSE LogicalExpression
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression ELSE ValueListInExpression
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression ELSE ConstraintExpression
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression IMPLIES ValueListInExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression IMPLIES ValueListInExpression ELSE LogicalExpression
                             | EntryConstraintLogicalExpression IMPLIES ValueListInExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression IMPLIES ValueListInExpression ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression IMPLIES ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | EntryConstraintLogicalExpression IMPLIES ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE LogicalExpression
                             | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -416,28 +329,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | Identifier ISIMPLIEDBY ConstraintExpression ELSE Identifier
                             | Identifier ISIMPLIEDBY Identifier ELSE Identifier
-                            | Identifier ISIMPLIEDBY Identifier ELSE LogicalExpression
                             | Identifier ISIMPLIEDBY Identifier ELSE ValueListInExpression
                             | Identifier ISIMPLIEDBY Identifier ELSE ConstraintExpression
                             | Identifier ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
 
-                            | Identifier ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | Identifier ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | Identifier ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | Identifier ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | Identifier ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | Identifier ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | Identifier ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
                             | Identifier ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | Identifier ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
                             | Identifier ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
                             | Identifier ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
                             | Identifier ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | Identifier ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
                             | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -446,28 +349,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | NumericSymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE Identifier
                             | NumericSymbolicExpression ISIMPLIEDBY Identifier ELSE Identifier
-                            | NumericSymbolicExpression ISIMPLIEDBY Identifier ELSE LogicalExpression
                             | NumericSymbolicExpression ISIMPLIEDBY Identifier ELSE ValueListInExpression
                             | NumericSymbolicExpression ISIMPLIEDBY Identifier ELSE ConstraintExpression
                             | NumericSymbolicExpression ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
 
-                            | NumericSymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | NumericSymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
                             | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
                             | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | NumericSymbolicExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
                             | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -476,88 +369,38 @@ def p_ConstraintExpressionConditional(t):
 
                             | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE Identifier
                             | ConstraintExpression ISIMPLIEDBY Identifier ELSE Identifier
-                            | ConstraintExpression ISIMPLIEDBY Identifier ELSE LogicalExpression
                             | ConstraintExpression ISIMPLIEDBY Identifier ELSE ValueListInExpression
                             | ConstraintExpression ISIMPLIEDBY Identifier ELSE ConstraintExpression
                             | ConstraintExpression ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
 
-                            | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
                             | ConstraintExpression ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | ConstraintExpression ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
                             | ConstraintExpression ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
                             | ConstraintExpression ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
                             | ConstraintExpression ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | ConstraintExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
                             | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
-
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE Identifier
-                            | LogicalExpression ISIMPLIEDBY Identifier ELSE Identifier
-                            | LogicalExpression ISIMPLIEDBY Identifier ELSE LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY Identifier ELSE ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY Identifier ELSE ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
-
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
 
                             | ValueListInExpression ISIMPLIEDBY ConstraintExpression ELSE ConstraintExpression
 
                             | ValueListInExpression ISIMPLIEDBY ConstraintExpression ELSE Identifier
                             | ValueListInExpression ISIMPLIEDBY Identifier ELSE Identifier
-                            | ValueListInExpression ISIMPLIEDBY Identifier ELSE LogicalExpression
                             | ValueListInExpression ISIMPLIEDBY Identifier ELSE ValueListInExpression
                             | ValueListInExpression ISIMPLIEDBY Identifier ELSE ConstraintExpression
                             | ValueListInExpression ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
 
-                            | ValueListInExpression ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | ValueListInExpression ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
                             | ValueListInExpression ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | ValueListInExpression ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
                             | ValueListInExpression ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
                             | ValueListInExpression ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
                             | ValueListInExpression ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | ValueListInExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
                             | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -566,28 +409,18 @@ def p_ConstraintExpressionConditional(t):
 
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE Identifier
                             | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier ELSE Identifier
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier ELSE LogicalExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier ELSE EntryConstraintLogicalExpression
 
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE LogicalExpression
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression ELSE LogicalExpression
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression ELSE ValueListInExpression
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression ELSE ConstraintExpression
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression ELSE EntryConstraintLogicalExpression
-
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression ELSE LogicalExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression ELSE EntryConstraintLogicalExpression
 
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression ELSE EntryConstraintLogicalExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE Identifier
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE LogicalExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ValueListInExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE ConstraintExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression ELSE EntryConstraintLogicalExpression
@@ -597,37 +430,26 @@ def p_ConstraintExpressionConditional(t):
 
                             | Identifier IMPLIES ConstraintExpression
                             | Identifier IMPLIES Identifier
-                            | Identifier IMPLIES LogicalExpression
                             | Identifier IMPLIES ValueListInExpression
                             | Identifier IMPLIES EntryConstraintLogicalExpression
 
                             | NumericSymbolicExpression IMPLIES ConstraintExpression
                             | NumericSymbolicExpression IMPLIES Identifier
-                            | NumericSymbolicExpression IMPLIES LogicalExpression
                             | NumericSymbolicExpression IMPLIES ValueListInExpression
                             | NumericSymbolicExpression IMPLIES EntryConstraintLogicalExpression
 
                             | ConstraintExpression IMPLIES ConstraintExpression
                             | ConstraintExpression IMPLIES Identifier
-                            | ConstraintExpression IMPLIES LogicalExpression
                             | ConstraintExpression IMPLIES ValueListInExpression
                             | ConstraintExpression IMPLIES EntryConstraintLogicalExpression
 
-                            | LogicalExpression IMPLIES ConstraintExpression
-                            | LogicalExpression IMPLIES Identifier
-                            | LogicalExpression IMPLIES LogicalExpression
-                            | LogicalExpression IMPLIES ValueListInExpression
-                            | LogicalExpression IMPLIES EntryConstraintLogicalExpression
-
                             | ValueListInExpression IMPLIES ConstraintExpression
                             | ValueListInExpression IMPLIES Identifier
-                            | ValueListInExpression IMPLIES LogicalExpression
                             | ValueListInExpression IMPLIES ValueListInExpression
                             | ValueListInExpression IMPLIES EntryConstraintLogicalExpression
 
                             | EntryConstraintLogicalExpression IMPLIES ConstraintExpression
                             | EntryConstraintLogicalExpression IMPLIES Identifier
-                            | EntryConstraintLogicalExpression IMPLIES LogicalExpression
                             | EntryConstraintLogicalExpression IMPLIES ValueListInExpression
                             | EntryConstraintLogicalExpression IMPLIES EntryConstraintLogicalExpression
 
@@ -635,37 +457,26 @@ def p_ConstraintExpressionConditional(t):
 
                             | Identifier ISIMPLIEDBY ConstraintExpression
                             | Identifier ISIMPLIEDBY Identifier
-                            | Identifier ISIMPLIEDBY LogicalExpression
                             | Identifier ISIMPLIEDBY ValueListInExpression
                             | Identifier ISIMPLIEDBY EntryConstraintLogicalExpression
 
                             | NumericSymbolicExpression ISIMPLIEDBY ConstraintExpression
                             | NumericSymbolicExpression ISIMPLIEDBY Identifier
-                            | NumericSymbolicExpression ISIMPLIEDBY LogicalExpression
                             | NumericSymbolicExpression ISIMPLIEDBY ValueListInExpression
                             | NumericSymbolicExpression ISIMPLIEDBY EntryConstraintLogicalExpression
 
                             | ConstraintExpression ISIMPLIEDBY ConstraintExpression
                             | ConstraintExpression ISIMPLIEDBY Identifier
-                            | ConstraintExpression ISIMPLIEDBY LogicalExpression
                             | ConstraintExpression ISIMPLIEDBY ValueListInExpression
                             | ConstraintExpression ISIMPLIEDBY EntryConstraintLogicalExpression
 
-                            | LogicalExpression ISIMPLIEDBY ConstraintExpression
-                            | LogicalExpression ISIMPLIEDBY Identifier
-                            | LogicalExpression ISIMPLIEDBY LogicalExpression
-                            | LogicalExpression ISIMPLIEDBY ValueListInExpression
-                            | LogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression
-
                             | ValueListInExpression ISIMPLIEDBY ConstraintExpression
                             | ValueListInExpression ISIMPLIEDBY Identifier
-                            | ValueListInExpression ISIMPLIEDBY LogicalExpression
                             | ValueListInExpression ISIMPLIEDBY ValueListInExpression
                             | ValueListInExpression ISIMPLIEDBY EntryConstraintLogicalExpression
 
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ConstraintExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY Identifier
-                            | EntryConstraintLogicalExpression ISIMPLIEDBY LogicalExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY ValueListInExpression
                             | EntryConstraintLogicalExpression ISIMPLIEDBY EntryConstraintLogicalExpression
 
@@ -673,37 +484,26 @@ def p_ConstraintExpressionConditional(t):
 
                             | Identifier IFANDONLYIF ConstraintExpression
                             | Identifier IFANDONLYIF Identifier
-                            | Identifier IFANDONLYIF LogicalExpression
                             | Identifier IFANDONLYIF ValueListInExpression
                             | Identifier IFANDONLYIF EntryConstraintLogicalExpression
 
                             | NumericSymbolicExpression IFANDONLYIF ConstraintExpression
                             | NumericSymbolicExpression IFANDONLYIF Identifier
-                            | NumericSymbolicExpression IFANDONLYIF LogicalExpression
                             | NumericSymbolicExpression IFANDONLYIF ValueListInExpression
                             | NumericSymbolicExpression IFANDONLYIF EntryConstraintLogicalExpression
 
                             | ConstraintExpression IFANDONLYIF ConstraintExpression
                             | ConstraintExpression IFANDONLYIF Identifier
-                            | ConstraintExpression IFANDONLYIF LogicalExpression
                             | ConstraintExpression IFANDONLYIF ValueListInExpression
                             | ConstraintExpression IFANDONLYIF EntryConstraintLogicalExpression
 
-                            | LogicalExpression IFANDONLYIF ConstraintExpression
-                            | LogicalExpression IFANDONLYIF Identifier
-                            | LogicalExpression IFANDONLYIF LogicalExpression
-                            | LogicalExpression IFANDONLYIF ValueListInExpression
-                            | LogicalExpression IFANDONLYIF EntryConstraintLogicalExpression
-
                             | ValueListInExpression IFANDONLYIF ConstraintExpression
                             | ValueListInExpression IFANDONLYIF Identifier
-                            | ValueListInExpression IFANDONLYIF LogicalExpression
                             | ValueListInExpression IFANDONLYIF ValueListInExpression
                             | ValueListInExpression IFANDONLYIF EntryConstraintLogicalExpression
 
                             | EntryConstraintLogicalExpression IFANDONLYIF ConstraintExpression
                             | EntryConstraintLogicalExpression IFANDONLYIF Identifier
-                            | EntryConstraintLogicalExpression IFANDONLYIF LogicalExpression
                             | EntryConstraintLogicalExpression IFANDONLYIF ValueListInExpression
                             | EntryConstraintLogicalExpression IFANDONLYIF EntryConstraintLogicalExpression'''
 
@@ -1417,69 +1217,59 @@ def p_ValueListInExpression(t):
 
 
 def p_LogicalExpression(t):
-    '''LogicalExpression : EntryLogicalExpression
+    '''ConstraintExpression : EntryLogicalExpression
 
-                         | AllDiffExpression
-                         | IteratedConstraintLogicalExpression
-                         | ConnectedConstraintLogicalExpression
+                            | AllDiffExpression
+                            | IteratedConstraintLogicalExpression
+                            | ConnectedConstraintLogicalExpression
 
-                         | LogicalExpression OR LogicalExpression
-                         | LogicalExpression OR ValueListInExpression
-                         | LogicalExpression OR EntryConstraintLogicalExpression
-                         | LogicalExpression OR NumericSymbolicExpression
-                         | LogicalExpression OR Identifier
+                            | ConstraintExpression OR NumericSymbolicExpression
+                            | ConstraintExpression OR Identifier
+                            
+                            | ValueListInExpression OR ValueListInExpression
+                            | ValueListInExpression OR EntryConstraintLogicalExpression
+                            | ValueListInExpression OR NumericSymbolicExpression
+                            | ValueListInExpression OR Identifier
 
-                         | ValueListInExpression OR LogicalExpression
-                         | ValueListInExpression OR ValueListInExpression
-                         | ValueListInExpression OR EntryConstraintLogicalExpression
-                         | ValueListInExpression OR NumericSymbolicExpression
-                         | ValueListInExpression OR Identifier
+                            | EntryConstraintLogicalExpression OR ValueListInExpression
+                            | EntryConstraintLogicalExpression OR NumericSymbolicExpression
+                            | EntryConstraintLogicalExpression OR Identifier
 
-                         | EntryConstraintLogicalExpression OR LogicalExpression
-                         | EntryConstraintLogicalExpression OR ValueListInExpression
-                         | EntryConstraintLogicalExpression OR NumericSymbolicExpression
-                         | EntryConstraintLogicalExpression OR Identifier
+                            | NumericSymbolicExpression OR ConstraintExpression
+                            | NumericSymbolicExpression OR ValueListInExpression
+                            | NumericSymbolicExpression OR EntryConstraintLogicalExpression
+                            | NumericSymbolicExpression OR NumericSymbolicExpression
+                            | NumericSymbolicExpression OR Identifier
 
-                         | NumericSymbolicExpression OR LogicalExpression
-                         | NumericSymbolicExpression OR ValueListInExpression
-                         | NumericSymbolicExpression OR EntryConstraintLogicalExpression
-                         | NumericSymbolicExpression OR NumericSymbolicExpression
-                         | NumericSymbolicExpression OR Identifier
+                            | Identifier OR ConstraintExpression
+                            | Identifier OR ValueListInExpression
+                            | Identifier OR EntryConstraintLogicalExpression
+                            | Identifier OR NumericSymbolicExpression
+                            | Identifier OR Identifier
 
-                         | Identifier OR LogicalExpression
-                         | Identifier OR ValueListInExpression
-                         | Identifier OR EntryConstraintLogicalExpression
-                         | Identifier OR NumericSymbolicExpression
-                         | Identifier OR Identifier
+                            | ConstraintExpression AND NumericSymbolicExpression
+                            | ConstraintExpression AND Identifier
+                            
+                            | ValueListInExpression AND ValueListInExpression
+                            | ValueListInExpression AND EntryConstraintLogicalExpression
+                            | ValueListInExpression AND NumericSymbolicExpression
+                            | ValueListInExpression AND Identifier
 
-                         | LogicalExpression AND LogicalExpression
-                         | LogicalExpression AND ValueListInExpression
-                         | LogicalExpression AND EntryConstraintLogicalExpression
-                         | LogicalExpression AND NumericSymbolicExpression
-                         | LogicalExpression AND Identifier
+                            | EntryConstraintLogicalExpression AND ValueListInExpression
+                            | EntryConstraintLogicalExpression AND NumericSymbolicExpression
+                            | EntryConstraintLogicalExpression AND Identifier
+                            
+                            | NumericSymbolicExpression AND ConstraintExpression
+                            | NumericSymbolicExpression AND ValueListInExpression
+                            | NumericSymbolicExpression AND EntryConstraintLogicalExpression
+                            | NumericSymbolicExpression AND NumericSymbolicExpression
+                            | NumericSymbolicExpression AND Identifier
 
-                         | ValueListInExpression AND LogicalExpression
-                         | ValueListInExpression AND ValueListInExpression
-                         | ValueListInExpression AND EntryConstraintLogicalExpression
-                         | ValueListInExpression AND NumericSymbolicExpression
-                         | ValueListInExpression AND Identifier
-
-                         | EntryConstraintLogicalExpression AND LogicalExpression
-                         | EntryConstraintLogicalExpression AND ValueListInExpression
-                         | EntryConstraintLogicalExpression AND NumericSymbolicExpression
-                         | EntryConstraintLogicalExpression AND Identifier
-
-                         | NumericSymbolicExpression AND LogicalExpression
-                         | NumericSymbolicExpression AND ValueListInExpression
-                         | NumericSymbolicExpression AND EntryConstraintLogicalExpression
-                         | NumericSymbolicExpression AND NumericSymbolicExpression
-                         | NumericSymbolicExpression AND Identifier
-
-                         | Identifier AND LogicalExpression
-                         | Identifier AND ValueListInExpression
-                         | Identifier AND EntryConstraintLogicalExpression
-                         | Identifier AND NumericSymbolicExpression
-                         | Identifier AND Identifier'''
+                            | Identifier AND ConstraintExpression
+                            | Identifier AND ValueListInExpression
+                            | Identifier AND EntryConstraintLogicalExpression
+                            | Identifier AND NumericSymbolicExpression
+                            | Identifier AND Identifier'''
 
     if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
       t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
@@ -1500,10 +1290,8 @@ def p_LogicalExpression(t):
         t[0] = t[1]
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NOT LogicalExpression
-                              | NOT NumericSymbolicExpression
-                              | NOT Identifier
-                              | LPAREN LogicalExpression RPAREN'''
+    '''EntryLogicalExpression : NOT NumericSymbolicExpression
+                              | NOT Identifier'''
 
     if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
       t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
@@ -1565,19 +1353,15 @@ def p_EntryLogicalExpressionWithSet(t):
 
 
 def p_EntryIteratedLogicalExpression(t):
-    '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | FORALL LLBRACE IndexingExpression RRBRACE ValueListInExpression
+    '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE ValueListInExpression
                               | FORALL LLBRACE IndexingExpression RRBRACE Identifier
                               | FORALL LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression
-                              | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | NFORALL LLBRACE IndexingExpression RRBRACE ValueListInExpression
                               | NFORALL LLBRACE IndexingExpression RRBRACE Identifier
                               | NFORALL LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression
-                              | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | EXISTS LLBRACE IndexingExpression RRBRACE ValueListInExpression
                               | EXISTS LLBRACE IndexingExpression RRBRACE Identifier
                               | EXISTS LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression
-                              | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | NEXISTS LLBRACE IndexingExpression RRBRACE ValueListInExpression
                               | NEXISTS LLBRACE IndexingExpression RRBRACE Identifier
                               | NEXISTS LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression'''
@@ -1802,10 +1586,10 @@ def p_IteratedSetExpression(t):
 
 
 def p_ConditionalSetExpression(t):
-    '''ConditionalSetExpression : IF LogicalExpression THEN SetExpression ELSE SetExpression
-                                | IF LogicalExpression THEN SetExpression ELSE Identifier
-                                | IF LogicalExpression THEN Identifier ELSE SetExpression
-                                | IF LogicalExpression THEN SetExpression
+    '''ConditionalSetExpression : IF ConstraintExpression THEN SetExpression ELSE SetExpression
+                                | IF ConstraintExpression THEN SetExpression ELSE Identifier
+                                | IF ConstraintExpression THEN Identifier ELSE SetExpression
+                                | IF ConstraintExpression THEN SetExpression
 
                                 | IF ValueListInExpression THEN SetExpression ELSE SetExpression
                                 | IF ValueListInExpression THEN SetExpression ELSE Identifier
@@ -1849,7 +1633,7 @@ def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
                           | LogicalIndexExpression
 
-                          | IndexingExpression PIPE LogicalExpression
+                          | IndexingExpression PIPE ConstraintExpression
                           | IndexingExpression PIPE ValueListInExpression
                           | IndexingExpression PIPE EntryConstraintLogicalExpression
                           | IndexingExpression PIPE Identifier
@@ -1876,7 +1660,7 @@ def p_IndexingExpression(t):
         t[0] = IndexingExpression([t[1]])
 
 def p_LogicalIndexExpression(t):
-    '''LogicalIndexExpression : IF LogicalExpression
+    '''LogicalIndexExpression : IF ConstraintExpression
                               | IF ValueListInExpression
                               | IF EntryConstraintLogicalExpression
                               | IF Identifier
@@ -2197,37 +1981,30 @@ def p_IteratedNumericExpression(t):
 
 def p_IteratedNumericExpression2(t):
     '''NumericExpression : COUNT LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | COUNT LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | COUNT LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | COUNT LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | ATMOST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | ATMOST Identifier LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | ATMOST Identifier LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | ATMOST Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | ATMOST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | ATMOST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | ATMOST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | ATMOST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | ATLEAST Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | ATLEAST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | ATLEAST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | ATLEAST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | ATLEAST NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | EXACTLY Identifier LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
                          | EXACTLY NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ConstraintExpression
-                         | EXACTLY NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE LogicalExpression
                          | EXACTLY NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE ValueListInExpression
                          | EXACTLY NumericSymbolicExpression LLBRACE IndexingExpression RRBRACE EntryConstraintLogicalExpression
 
@@ -2599,12 +2376,12 @@ def p_FunctionNumericExpression(t):
           t[0] = NumericExpressionWithFunction(op, t[2])
 
 def p_ConditionalNumericExpression(t):
-    '''ConditionalNumericExpression : IF LogicalExpression THEN Identifier ELSE Identifier
-                                    | IF LogicalExpression THEN Identifier ELSE NumericSymbolicExpression
-                                    | IF LogicalExpression THEN NumericSymbolicExpression ELSE Identifier
-                                    | IF LogicalExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression
-                                    | IF LogicalExpression THEN Identifier
-                                    | IF LogicalExpression THEN NumericSymbolicExpression
+    '''ConditionalNumericExpression : IF ConstraintExpression THEN Identifier ELSE Identifier
+                                    | IF ConstraintExpression THEN Identifier ELSE NumericSymbolicExpression
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ELSE Identifier
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression
+                                    | IF ConstraintExpression THEN Identifier
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression
 
                                     | IF ValueListInExpression THEN Identifier ELSE Identifier
                                     | IF ValueListInExpression THEN Identifier ELSE NumericSymbolicExpression

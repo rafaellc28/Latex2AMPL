@@ -973,3 +973,9 @@ def test_lp11_linear():
 
 def test_lp12_linear():
 	check_test_linear_num(12)
+
+def test_lp13_linear():
+	check_test_linear_num(13)
+
+def test_lp14_linear():
+	check_test_linear_num(14)
