@@ -1,0 +1,6 @@
+% amplide/models/prod0.mod
+\text{maximize } 25 * XB + 30 * XC//\\
+(1/200) * XB + (1/140) * XC \leq 40\\
+0 \leq XB \leq 6000\\
+0 \leq XC \leq 4000\\
+XB, XC \in \mathbb{R}\\
