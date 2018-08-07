@@ -985,3 +985,6 @@ def test_lp15_linear():
 
 def test_lp16_linear():
 	check_test_linear_num(16)
+
+def test_lp17_linear():
+	check_test_linear_num(17)
