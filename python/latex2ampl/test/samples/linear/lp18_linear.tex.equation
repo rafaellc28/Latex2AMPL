@@ -1,0 +1,6 @@
+% amplide/models/steel3.mod
+\text{maximize } \sum_{p \in PROD} profit_{p} * Make_{p}\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p} \leq avail\\
+rate_{p} > 0; commit_{p}, market_{p}, avail \geq 0: p \in PROD\\
+profit_{p}: p \in PROD\\
+Make_{p} \in \mathbb{R}, \geq commit_{p}, \leq market_{p}: p \in PROD\\

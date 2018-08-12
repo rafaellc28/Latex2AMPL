@@ -988,3 +988,6 @@ def test_lp16_linear():
 
 def test_lp17_linear():
 	check_test_linear_num(17)
+
+def test_lp18_linear():
+	check_test_linear_num(18)
