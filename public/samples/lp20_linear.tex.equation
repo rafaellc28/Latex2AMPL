@@ -1,0 +1,7 @@
+% amplide/models/steel4r.mod
+\text{maximize } \sum_{p \in PROD} profit_{p} * Make_{p}\\
+\sum_{p \in PROD}\left(\frac{1}{rate_{p,s}}\right) * Make_{p} \leq avail_{s}: s \in STAGE\\
+rate_{p,s} > 0; commit_{p}, market_{p} \geq 0: p \in PROD, s \in STAGE\\
+profit_{p}: p \in PROD\\
+Make_{p} \in \mathbb{R}, \geq commit_{p}, \leq market_{p}: p \in PROD\\
+avail\_mean_{s} > 0; avail\_variance_{s} > 0, < \frac{avail\_mean_{s}}{2 * avail_{s}}; avail_{s} := \max(Normal(avail\_mean_{s}, avail\_variance_{s}), 0): s \in STAGE\\

@@ -994,3 +994,6 @@ def test_lp18_linear():
 
 def test_lp19_linear():
 	check_test_linear_num(19)
+
+def test_lp20_linear():
+	check_test_linear_num(20)

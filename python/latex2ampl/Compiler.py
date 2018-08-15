@@ -126,6 +126,7 @@ class Compiler:
 
         else:
             if not self.DEBUG:
+
                 try:
                     codeGenerator = CodeGenerator()
                     result.setupEnvironment(CodeSetup(codeGenerator))
@@ -133,11 +134,17 @@ class Compiler:
                     res += response
 
                 except CodeGenerationException as msg:
-                    lineNum = msg[0]-1
-                    linesaux = filter(lambda el: len(el) == 0 or el[0] != "%", lines)
-                    line = linesaux[lineNum]
                     
-                    res += "Invalid indexing expression at statement %d: '%s'. %s.\nContext: %s." % (msg[0], msg[1], msg[2], line)
+                    if isinstance(msg[0], str):
+                        res += msg[0]
+
+                    else:
+                        print(msg)
+                        lineNum = msg[0]-1
+                        linesaux = filter(lambda el: len(el) == 0 or el[0] != "%", lines)
+                        line = linesaux[lineNum]
+                        
+                        res += "Invalid indexing expression at statement %d: '%s'. %s.\nContext: %s." % (msg[0], msg[1], msg[2], line)
 
                 except:
                     res += "Error while generating AMPL code. Please, check your Latex code!"
