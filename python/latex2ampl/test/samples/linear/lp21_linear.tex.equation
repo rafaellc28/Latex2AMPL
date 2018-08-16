@@ -1,0 +1,7 @@
+% amplide/models/steelP.mod
+\text{minimize } \sum_{i \in ORIG, p \in PROD} make\_cost_{i,p} * Make_{i,p} + \sum_{i \in ORIG, j \in DEST, p \in PROD} trans\_cost_{i,j,p} * Trans_{i,j,p}\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{i,p}}\right) * Make_{i,p} \leq avail_{i}: i \in ORIG\\
+\sum_{j \in DEST} Trans_{i,j,p} = Make_{i,p}: i \in ORIG, p \in PROD\\
+\sum_{i \in ORIG} Trans_{i,j,p} = demand_{j,p}: j \in DEST, p \in PROD\\
+rate_{o,p} > 0; avail_{o}, demand_{d,p}, make\_cost_{o,p}, trans\_cost_{o,d,p}: o \in ORIG, d \in DEST, p \in PROD\\
+Make_{o,p}, Trans_{o,d,p} \in \mathbb{R}, \geq 0: o \in ORIG, d \in DEST, p \in PROD\\
