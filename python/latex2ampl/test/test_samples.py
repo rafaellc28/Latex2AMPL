@@ -1000,3 +1000,6 @@ def test_lp20_linear():
 
 def test_lp21_linear():
 	check_test_linear_num(21)
+
+def test_lp22_linear():
+	check_test_linear_num(22)
