@@ -1009,3 +1009,6 @@ def test_lp23_linear():
 
 def test_lp24_linear():
 	check_test_linear_num(24)
+
+def test_lp25_linear():
+	check_test_linear_num(25)

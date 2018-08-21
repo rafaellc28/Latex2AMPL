@@ -1,0 +1,11 @@
+% amplide/models/steelp4a.mod
+\text{maximize } \sum_{p \in PROD, t \in 1 \dots T} (revenue_{p,t}*Sell_{p,t} - prodcost_{p}*Make_{p,t} - invcost_{p}*Inv_{p,t} - backcost_{p}*Back_{p,t}) - \sum_{t \in 1 \dots T} time\_penalty_{t} * Use2_{t}\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p,t} = Use1_{t} + Use2_{t}: t \in 1 \dots T\\
+Inv_{p,0} - Back_{p,0} = inv0_{p}: p \in PROD\\
+Make_{p,t} + Inv_{p,t-1} - Back_{p,t-1} = Sell_{p,t} + Inv_{p,t} - Back_{p,t}: p \in PROD, t \in 1 \dots T\\
+T, rate_{p}, time\_penalty_{t} > 0;\\
+inv0_{p}, commit_{p,t}, market_{p,t}, avail\_min_{t}, prodcost_{p}, invcost_{p}, backcost_{p}, revenue_{p,t} \geq 0;\\
+avail\_max_{t} \geq avail\_min_{t}: p \in PROD, t \in 1 \dots T\\
+Make_{p,t}, Inv_{p,t0}, Back_{p,t0}, Use1_{t}, Use2_{t} \in \mathbb{R}, \geq 0: p \in PROD, t \in 1 \dots T, t0 \in 0 \dots T\\
+Use1_{t} \leq avail\_min_{t}; Use2_{t} \leq avail\_max_{t}-avail\_min_{t}\\
+Sell_{p,t} \in \mathbb{R}, \geq commit[p,t], \leq market[p,t]: p \in PROD, t \in 1 \dots T\\

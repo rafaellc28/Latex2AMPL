@@ -71,6 +71,7 @@
 		{"name": "AMPL/lmodels/steelp1a.mod", "number": 22, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/steelp2a.mod", "number": 23, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/steelp3a.mod", "number": 24, "decl": false, "nonlinear": false},
+		{"name": "AMPL/lmodels/steelp4a.mod", "number": 25, "decl": false, "nonlinear": false},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},
