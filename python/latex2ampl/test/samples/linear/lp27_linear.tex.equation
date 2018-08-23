@@ -1,0 +1,5 @@
+% amplide/models/steelT0.mod
+\text{maximize } \sum_{p \in PROD, t \in 1 \dots T} profit_{p,t} * Make_{p,t}\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p,t} \leq avail_{t}: t \in 1 \dots T\\
+T, rate_{p} > 0; avail_{t}, market_{p,t} \geq 0; profit_{p,t}: p \in PROD, t \in 1 \dots T\\
+Make_{p,t} \in \mathbb{R}, \geq 0, \leq market_{p,t}: p \in PROD, t \in 1 \dots T\\
