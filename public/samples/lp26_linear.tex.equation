@@ -1,0 +1,7 @@
+% amplide/models/steelT.mod
+\text{maximize } \sum_{p \in PROD, t \in 1 \dots T} (revenue_{p,t}*Sell_{p,t} - prodcost_{p}*Make_{p,t} - invcost_{p}*Inv_{p,t})\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p,t} \leq avail_{t}: t \in 1 \dots T\\
+Inv_{p,0} = inv0_{p}: p \in PROD\\
+Make_{p,t} + Inv_{p,t-1} = Sell_{p,t} + Inv_{p,t}: p \in PROD, t \in 1 \dots T\\
+T, rate_{p} > 0; inv0_{p}, prodcost_{p}, invcost_{p}, avail_{t}, market_{p,t}, revenue_{p,t} \geq 0: p \in PROD, t \in 1 \dots T\\
+Make_{p,t}, Inv_{p,t0}, Sell_{p,t} \in \mathbb{R}, \geq 0; Sell_{p,t} \leq market_{p,t}: p \in PROD, t \in 1 \dots T, t0 \in 0 \dots T\\
