@@ -1018,3 +1018,6 @@ def test_lp26_linear():
 
 def test_lp27_linear():
 	check_test_linear_num(27)
+
+def test_lp28_linear():
+	check_test_linear_num(28)
