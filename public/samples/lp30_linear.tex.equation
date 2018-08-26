@@ -1,0 +1,22 @@
+% amplide/models/bigprod.mod
+\text{minimize } \sum_{t \in time2} rtr * sl * dpp_{t} * cs * Crews_{t} + \sum_{t \in time2} hc_{t} * Hire_{t} + \sum_{t \in time2} lc_{t} * Layoff_{t} + \sum_{t \in time2, p \in prod} otr * cs * pt_{p} * Oprod_{p,t} + \sum_{t \in time2, p \in prod, a \in 1 \dots life} cri_{p} * pc_{p} * Inv_{p,t,a} + \sum_{t \in time2, p \in prod} crs_{p} * pc_{p} * Short_{p,t}\\
+\sum_{p \in prod} pt_{p} * Rprod_{p,t} \neq 0 \impliedby sl * dpp_{t} * Crews_{t} \neq 0: t \in time2\\
+\sum_{p \in prod} pt_{p} * Oprod_{p,t} \leq ol_{t}: t \in time2\\
+Crews_{first-1} = iw\\
+Crews_{t} = Crews_{t-1} + Hire_{t} - Layoff_{t}: t \in time2\\
+cmin_{t} \leq Crews_{t} \leq cmax_{t}: t \in time2\\
+Rprod_{p,first} + Oprod_{p,first} + Short_{p,first} - Inv_{p,first,1} = \text{if } dem_{p,first} < iinv_{p} \text{ then } 0 \text{ else } dem_{p,first} - iinv_{p}: p \in prod\\
+Rprod_{p,t} + Oprod_{p,t} + Short_{p,t} - Short_{p,t-1} + \sum_{a \in 1 \dots life} (Inv_{p,t-1,a} - Inv_{p,t,a}) = \text{if } dem_{p,t} < iil_{p,t-1} \text{ then } 0 \text{ else } dem_{p,t} - iil_{p,t-1}: p \in prod, t \in first+1 \dots last\\
+\sum_{a \in 1 \dots life} Inv_{p,t,a} + iil_{p,t} \geq minv_{p,t}: p \in prod, t \in time2\\
+Inv_{p,first+v-1,a} = 0: p \in prod, v \in 1 \dots life-1, a \in v+1 \dots life\\
+Inv_{p,t,1} \leq Rprod_{p,t} + Oprod_{p,t}: p \in prod, t \in time2\\
+Inv_{p,t,a} \leq Inv_{p,t-1,a-1}: p \in prod, t \in first+1 \dots last, a \in 2 \dots life\\
+pt_{p}, pc_{p}, cri_{p}, crs_{p}, dpp_{t}, first, cs, sl, rtr, life > 0: p \in prod, t \in time2\\
+dem_{p,i}, iinv_{p}, ol_{t}, cmin_{t}, hc_{t}, lc_{t}, iw, rir, pir \geq 0;\\
+pro_{p,i} \in \mathbb{L}, \in \mathbb{P}: p \in prod, t \in time2, i \in first \dots last+1\\
+first, last, cs, iw, life \in \mathbb{Z}, \in \mathbb{P}\\
+last > first; otr > rtr; cmax_{t} \geq cmin_{t}: t \in time2\\
+time2 := first \dots last;\\
+iil_{p,t} := \text{if } iinv_{p} < \sum_{v \in first \dots t} dem_{p,v} \text{ then } 0 \text{ else } iinv_{p} - \sum_{v \in first \dots t} dem_{p,v};\\
+minv_{p,t} := dem_{p,t+1} * (\text{if } pro_{p,t+1} \text{ then } pir \text{ else } rir): p \in prod, t \in time2\\
+Crews_{i}, Hire_{t}, Layoff_{t}, Rprod_{p,t}, Oprod_{p,t}, Short_{p,t}, Inv_{p,t,j} \in \mathbb{R}, \geq 0: p \in prod, t \in time2, i \in first-1 \dots last, j \in 1 \dots life\\
