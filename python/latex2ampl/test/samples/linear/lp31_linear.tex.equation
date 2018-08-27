@@ -1,0 +1,17 @@
+% amplide/models/dist.mod
+\text{minimize } \sum_{p \in prod, f \in fact} rpc_{p,f} * Rprod_{p,f} + \sum_{p \in prod, f \in fact} opc_{p,f} * Oprod_{p,f} + \sum_{p \in prod, (d,w) \in rt} sc_{d,w} * wt_{p} * Ship_{p,d,w} + \sum_{p \in prod, d \in dctr} tc_{p} * Trans_{p,d}\\
+rtmin \leq \sum_{p \in prod, f \in fact} \frac{pt_{p,f} * Rprod_{p,f}}{dp_{f} * hd_{f}} \leq rtmax\\
+otmin \leq \sum_{p \in prod, f \in fact} pt_{p,f} * Oprod_{p,f} \leq otmax\\
+rmin_{f} \leq \sum_{p \in prod} \frac{pt_{p,f} * Rprod_{p,f}}{dp[f] * hd[f]} \leq rmax_{f}: f \in fact\\
+omin_{f} \leq \sum_{p \in prod} pt_{p,f} * Oprod_{p,f} \leq omax_{f}: f \in fact\\
+\sum_{(v,w) \in rt} Ship_{p,v,w} + (\text{if } w \in fact \text{ then } Rprod_{p,w} + Oprod_{p,w}) = dem_{p,w} + (\text{if } w \in dctr \text{ then } \sum_{(w,v) \in rt} Ship_{p,w,v}): p \in prod, w \in whse\\
+Trans_{p,d} \geq \sum_{(d,w) \in rt} Ship_{p,d,w} - (\text{if } d \in fact \text{ then } Rprod_{p,d} + Oprod_{p,d}): p \in prod, d \in dctr\\
+sc_{d,w}, dsr_{d}, rtmin, otmin, \\
+rmin_{f}, omin_{f}, hd_{f},\\
+tc_{p}, dt_{p}, pt_{p,f}, rpc_{p,f}, opc_{p,f},\\
+ds_{p,w} \geq 0; 
+huge, dp_{f}, wt_{p}, cpp_{p} > 0: d \in dctr, w \in whse, f \in fact, p \in prod\\
+msr_{d,w}: d \in dctr, w \in whse\\
+dstot_{p} := \sum_{w \in whse} ds_{p,w}: p \in prod\\
+dem_{p,w} := dt_{p} * \frac{ds_{p,w}}{dstot_{p}}: p \in prod, w \in whse\\
+Rprod_{p,f}, Oprod_{p,f}, Ship_{p,v,w}, Trans_{p,d} \in \mathbb{R}, \geq 0: p \in prod, f \in fact, (v,w) \in rt, d \in dctr\\
