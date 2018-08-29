@@ -1,0 +1,43 @@
+% amplide/models/egypt2.mod
+\text{minimize } Psip + Psil + Psii\\
+\sum_{c \in c\_final} fn_{c,n} * \left(\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cp\_pos_{c}} Xf_{c,pl,r}\right)  \geq  cn75_{r,n}: n \in nutr, r \in region\\
+\sum_{po \in port} Vf_{c,r,po} + \sum_{pl \in cp\_pos_{c}} Xf_{c,pl,r} \geq  cf75_{r,c}: c \in c\_final, r \in region \mid cf75_{r,c} > 0\\
+\sum_{pr \in p\_pos_{pl}} io_{c,pr} * Z_{pl,pr}\\
++ (\text{ if } (c \in c\_ship) \text{ then } \\
+(\text{ if } pl \in cp\_pos_{c} \text{ then } \sum_{p2 \in cc\_pos_{c}} Xi_{c,pl,p2} \text{ endif }) - \\
+(\text{ if } pl \in cc\_pos_{c} \text{ then } \sum_{p2 \in cp\_pos_{c}} Xi_{c,p2,pl} \text{ endif })\\
+\text{ endif })\\
++ (\text{ if } (c \in c\_raw \land pl \in cc\_pos_{c}) \text{ then } \\
+((\text{ if } p\_imp_{c} > 0 \text{ then } Vr_{c,pl} \text{ endif }) + \\
+(\text{ if } p\_dom_{pl,c} > 0 \text{ then } U_{c,pl} \text{ endif }))\\
+\text{ endif }) \geq \\
+\text{ if } (c \in c\_final \land pl \in cp\_pos_{c}) \text{ then } \sum_{r \in region} Xf_{c,pl,r} \text{ endif }: c \in commod, pl \in plant\\
+\sum_{pr \in p\_pos_{pl}} util_{u,pr} * Z_{pl,pr} \leq util\_pct * icap_{u,pl}: pl \in plant, u \in m\_pos_{pl}\\
+Psip = \sum_{c \in c\_raw, pl \in cc\_pos_{c}} p\_dom_{pl,c} * U_{c,pl}\\
+Psil = \sum_{c \in c\_final} (\sum_{pl \in cp\_pos_{c}, r \in region} tran\_final_{pl,r} * Xf_{c,pl,r} + \sum_{po \in port, r \in region} tran\_import_{r,po} * Vf_{c,r,po}) + \sum_{c \in c\_ship, p1 \in cp\_pos_{c}, p2 \in cc\_pos_{c}} tran\_inter_{p1,p2} * Xi_{c,p1,p2} + \sum_{c \in c\_raw, pl \in cc\_pos_{c} \mid p\_imp_{c} > 0} tran\_raw_{pl} * Vr_{c,pl}\\
+\frac{Psii}{exch} = \sum_{c \in c\_final, r \in region, po \in port} p\_imp_{c} * Vf_{c,r,po} + \sum_{c \in c\_raw, pl \in cc\_pos_{c}} p\_imp_{c} * Vr_{c,pl}\\
+port \subseteq center; plant \subseteq center; c\_ship \subseteq c\_inter; p\_except_{p} \subseteq proc; p\_pos_{p} := p\_cap_{p} \setminus p\_except_{p}: p \in plant\\
+commod := c\_final \cup c\_inter \cup c\_raw; c\_pos_{c} := cp\_pos_{c} \cup cc\_pos_{c}: c \in commod\\
+cf75_{r,cf}, fn_{cf,n}, road_{r,c},\\
+impd\_barg_{p}, impd\_road_{p}, rail\_half_{p,p}, util_{u,pc}, p\_imp_{cm}, p\_r_{cr}, p\_pr_{p,cr}, dcap_{p,u} \geq 0: \\
+r \in region, cf \in c\_final, n \in nutr, c \in center, p \in plant, u \in unit, pc \in proc, cm \in commod, cr \in c\_raw\\
+exch := 0.4; util\_pct := 0.85\\
+cn75_{r,n} := \sum_{c \in c\_final} cf75_{r,c} * fn_{c,n}: r \in region, n \in nutr\\
+rail_{p1,p2} := \text{ if } rail\_half_{p1,p2} > 0 \text{ then } rail\_half_{p1,p2} \text{ else } rail\_half_{p2,p1} \text{ endif }: p1 \in plant, p2 \in plant\\
+tran\_final_{pl,r} := \text{ if } road_{r,pl} > 0 \text{ then } (.5 + .0144 * road[r,pl]) \text{ else } 0 \text{ endif }: pl \in plant, r \in region\\
+tran\_import_{r,po} := \text{ if } road_{r,po} > 0 \text{ then } (.5 + .0144 * road_{r,po}) \text{ else } 0 \text{ endif }: r \in region, po \in port\\
+tran\_inter_{p1,p2} := \text{ if } rail_{p1,p2} > 0 \text{ then } (3.5 + .03 * rail_{p1,p2}) \text{ else } 0 \text{ endif }: p1 \in plant, p2 \in plant\\
+io_{c,p}: c \in commod, p \in proc\\
+tran\_raw_{pl} := \\
+	    (\text{ if } impd\_barg_{pl} > 0 \text{ then } (1.0 + .0030 * impd\_barg_{pl}) \text{ else } 0 \text{ endif })
+	  + (\text{ if } impd\_road_{pl} > 0 \text{ then } (0.5 + .0144 * impd\_road_{pl}) \text{ else } 0 \text{ endif }): pl \in plant\\
+p\_dom_{pl,c} := \text{ if } p\_r_{c} > 0 \text{ then } p\_r_{c} \text{ else } p\_pr_{pl,c} \text{ endif }: pl \in plant, c \in c\_raw\\
+icap_{u,pl} := 0.33 * dcap_{pl,u}: u \in unit, pl \in plant\\
+Z_{pl,p} \in \mathbb{R}: pl \in plant, p \in p\_pos_{pl}\\
+Xf_{c,cp,r} \in \mathbb{R}: c \in c\_final, cp \in cp\_pos_{c}, r \in region\\
+Xi_{c,cp,cc} \in \mathbb{R}: c \in c\_ship, cp \in cp\_pos_{c}, cc \in cc\_pos_{c}\\
+Vf_{cf,r,p} \in \mathbb{R}: cf \in c\_final, r \in region, p \in port\\
+Vr_{c,cc} \in \mathbb{R}: c \in c\_raw, cc \in cc\_pos_{c}\\
+U_{c,cc} \in \mathbb{R}: c \in c\_raw, cc \in cc\_pos_{c}\\
+Z, Xf, Xi, Vf, Vr, U \geq 0\\
+Psip, Psil, Psii \in \mathbb{R}\\

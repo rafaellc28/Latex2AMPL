@@ -1,0 +1,8 @@
+% amplide/models/mod8.mod
+\text{maximize } \sum_{t \in 1 \dots T} (\sum_{j \in P} c_{j,t}*x_{j,t} - \sum_{i \in R} d_{i}*s_{i,t}) + \sum_{i \in R} f_{i} * s_{i,T+1}\\
+\sum_{j \in P} x_{j,t} \leq M: t \in 1 \dots T\\
+s_{i,1} \leq b_{i}: i \in R\\
+s_{i,t+1} = s_{i,t} - \sum_{j \in P} a_{i,j} * x_{j,t}: i \in R, t \in 1 \dots T\\
+T, M > 0\\
+a_{r,r}, b_{r} \geq 0: r \in R\\
+x_{p,t}, s_{r,t1} \in \mathbb{R}, \geq 0: p \in P, r \in R, t \in 1 \dots T, t1 \in 1 \dots T+1\\
