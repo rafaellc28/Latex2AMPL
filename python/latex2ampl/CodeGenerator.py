@@ -1023,6 +1023,10 @@ class CodeGenerator:
             if subsets != None and len(subsets) > 0:
                 result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), subsets))
 
+            dimen = declaration.getDimen()
+            if dimen != None:
+                result += COMMA+SPACE+DIMENSION+SPACE+dimen.attribute.generateCode(self)
+
         ins_vec = declaration.getIn()
         ins_vec = self._removePreDefinedTypes(map(lambda el: self._getSetAttribute(el.attribute), ins_vec))
         if ins_vec != None and len(ins_vec) > 0:
