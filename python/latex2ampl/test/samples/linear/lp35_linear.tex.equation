@@ -1,0 +1,7 @@
+% amplide/models/multi.mod
+\text{minimize } \sum_{i \in ORIG, j \in DEST, p \in PROD} cost_{i,j,p} * Trans_{i,j,p}\\
+\sum_{j \in DEST} Trans_{i,j,p} = supply_{i,p}: i \in ORIG, p \in PROD\\
+\sum_{i \in ORIG} Trans_{i,j,p} = demand_{j,p}: j \in DEST, p \in PROD\\
+\sum_{p \in PROD} Trans_{i,j,p} \leq limit_{i,j}: i \in ORIG, j \in DEST\\
+supply_{o,p}, demand_{d,p}, limit_{o,d}, cost_{o,d,p}, Trans_{o,d,p} \geq 0: o \in ORIG, p \in PROD, d \in DEST\\
+Trans \in \mathbb{R}\\

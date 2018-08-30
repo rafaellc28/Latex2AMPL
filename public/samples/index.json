@@ -81,6 +81,7 @@
 		{"name": "AMPL/lmodels/egypt1.mod", "number": 32, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/egypt2.mod", "number": 33, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/mod8.mod", "number": 34, "decl": false, "nonlinear": false},
+		{"name": "AMPL/lmodels/multi.mod", "number": 35, "decl": false, "nonlinear": false},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},
