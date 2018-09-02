@@ -1,0 +1,10 @@
+% amplide/models/multimip3.mod
+\text{minimize } \sum_{i \in ORIG, j \in DEST, p \in PROD} vcost_{i,j,p} * Trans_{i,j,p} + \sum_{i \in ORIG, j \in DEST} fcost_{i,j} * Use_{i,j}\\
+\sum_{j \in DEST} Trans_{i,j,p} = supply_{i,p}: i \in ORIG, p \in PROD\\
+\sum_{i \in ORIG} Trans_{i,j,p} = demand_{j,p}: j \in DEST, p \in PROD\\
+\sum_{p \in PROD} Trans_{i,j,p} \leq limit_{i,j} * Use_{i,j}: i \in ORIG, j \in DEST\\
+\sum_{p \in PROD} Trans_{i,j,p} \geq minload * Use_{i,j}: i \in ORIG, j \in DEST\\
+\sum_{j \in DEST} Use_{i,j} \leq maxserve: i \in ORIG\\
+supply_{o,p}, demand_{d,p}, limit_{o,d}, vcost_{o,d,p}, fcost_{o,d}, Trans_{o,d,p}, minload \geq 0; Use_{o,d}: o \in ORIG, p \in PROD, d \in DEST\\
+maxserve \in \mathbb{Z}, \in \mathbb{P}, > 0\\
+Trans \in \mathbb{R}; Use \in \{0,1\}\\
