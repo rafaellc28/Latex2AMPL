@@ -1,0 +1,6 @@
+% amplide/models/net1.mod
+\text{minimize } \sum_{(i,j) \in LINKS} cost_{i,j} * Ship_{i,j}\\
+supply_{k} + \sum_{(i,k) \in LINKS} Ship_{i,k} = demand_{k} + \sum_{(k,j) \in LINKS} Ship_{k,j}: k \in CITIES\\
+LINKS, \subseteq (CITIES \times CITIES)\\
+supply_{c}, demmand_{c}, cost_{i,j}, capacity_{i,j} \geq 0: c \in CITIES, (i,j) \in LINKS\\
+Ship_{i,j} \geq 0, \leq capacity_{i,j}: (i,j) \in LINKS\\
