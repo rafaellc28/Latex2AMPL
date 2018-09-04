@@ -1,0 +1,10 @@
+% amplide/models/net3.mod
+\text{minimize } \sum_{i \in D\_CITY} pd\_cost_{i} * PD\_Ship_{i} + \sum_{(i,j) \in DW\_LINKS} dw\_cost_{i,j} * DW\_Ship_{i,j}\\
+\sum_{i \in D\_CITY} PD\_Ship_{i} = p\_supply\\
+PD\_Ship_{i} = \sum_{(i,j) \in DW\_LINKS} DW\_Ship_{i,j}: i \in D\_CITY\\
+\sum_{(i,j) \in DW\_LINKS} DW\_Ship_{i,j} = w\_demand_{j}: j \in W\_CITY\\
+DW\_LINKS, \subseteq (D\_CITY \times W\_CITY)\\
+p\_supply, w\_demand_{wc}, pd\_cost_{dc}, dw\_cost_{dl1,dl2}, pd\_cap_{dc}, dw\_cap_{dl1,dl2} \geq 0:\\
+wc \in W\_CITY, dc \in D\_CITY, (dl1,dl2) \in DW\_LINKS\\
+PD\_Ship_{i} \in \mathbb{R}, \geq 0, \leq pd\_cap_{i}: i \in D\_CITY\\
+DW\_Ship_{i,j} \in \mathbb{R}, \geq 0, \leq dw\_cap_{i,j}: (i,j) \in DW\_LINKS\\
