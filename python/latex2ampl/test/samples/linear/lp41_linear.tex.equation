@@ -1,0 +1,8 @@
+% amplide/models/netasgn.mod
+\text{minimize } \sum_{(i,j) \in ABILITIES} cost_{i,j} * Assign_{i,j}\\
+\sum_{(i,j) \in ABILITIES} Assign_{i,j} = supply_{i}: i \in PEOPLE\\
+\sum_{(i,j) \in ABILITIES} Assign_{i,j} = demand_{j}: j \in PROJECTS\\
+ABILITIES, \subseteq (PEOPLE \times PROJECTS)\\
+supply_{p}, demand_{pr}, cost_{i,j}, limit_{i,j} \geq 0:\\
+p \in PEOPLE, pr \in PROJECTS, (i,j) \in ABILITIES\\
+Assign_{i,j} \in \mathbb{R}, \geq 0, \leq limit_{i,j}: (i,j) \in ABILITIES\\
