@@ -1,0 +1,21 @@
+% amplide/models/oil.mod
+\text{maximize }  Revenue - PurchCost - OperCost\\
+\sum_{p \in proc} io_{mr,c,p} * LevPr_{p,c} + InCr_{c} \geq 0: mr \in m\_raw, c \in crude\\
+\sum_{p \in proc} io_{mi,c,p} * LevPr_{p,c} + (\text{if } mi \in m\_purch \text{ then } InInt_{mi,c}) \geq \sum_{(mf,mi) \in blend} LevBl_{mf,mi,c}: mi \in m\_inter, c \in crude\\
+Out_{mf} = \sum_{(mf,mi) \in blend, c \in crude} LevBl_{mf,mi,c}: mf \in m\_final\\
+\sum_{mi \in m\_inter, c \in crude \mid (mf,mi) \in blend} attr_{mi,c,q} * LevBl_{mf,mi,c} \geq attr\_min_{mf,q} * Out_{mf}: mf \in m\_final, q \in qual \mid attr\_min_{mf,q} \neq 0\\
+\sum_{mi \in m\_inter, c \in crude \mid (mf,mi) \in blend} attr_{mi,c,q} * LevBl_{mf,mi,c} \leq attr\_max_{mf,q} * Out_{mf}: mf \in m\_final, q \in qual \mid attr\_max_{mf,q} \neq 0\\
+\sum_{p \in proc} (util_{u,p} * \sum_{c \in crude} LevPr_{p,c}) \leq cap_{u}: u \in unit\\
+InCr_{c} \leq purch\_max_{c}: c \in crude\\
+Revenue = \sum_{mf \in m\_final} price_{mf} * Out_{mf}\\
+PurchCost = \sum_{c \in crude} price_{c} * InCr_{c} + \sum_{mp \in m\_purch, c \in crude} price_{mp} * InInt_{mp,c}\\
+OperCost = \sum_{p \in proc} (cost_{p} * \sum_{c \in crude} LevPr_{p,c})\\
+cap_{u}, attr\_min_{mf,q}, attr\_max_{mf,q}, attr\_both_{mf,q}, attr\_crude_{mi,c,q} \geq 0: \\
+u \in unit, mf \in m\_final, q \in qual, mi \in m\_inter, c \in crude\\
+price_{cm}, cost_{p}, purch\_max_{c} > 0: \\
+cm \in crude \cup m\_purch \cup m\_final, p \in proc, c \in crude\\
+attr_{mi,c,q} := \text{if } attr\_crude_{mi,c,q} > 0 \text{ then } attr\_crude_{mi,c,q} \text{ else } attr\_both_{mi,q}: \\
+mi \in m\_inter, c \in crude, q \in qual\\
+InCr_{c}, InInt_{mp,c}, LevPr_{p,c}, LevBl_{i,j,c}, Out_{mf} \in \mathbb{R}, \geq 0:\\
+c \in crude, mp \in m\_purch, p \in proc, (i,j) \in blend, mf \in m\_final\\
+Revenue, PurchCost, OperCost \in \mathbb{R}\\
