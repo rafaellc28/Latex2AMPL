@@ -1,0 +1,11 @@
+% amplide/models/steelT2.mod
+\text{maximize } \sum_{p \in PROD, t \in WEEKS} (revenue_{p,t}*Sell_{p,t} - prodcost_{p}*Make_{p,t} - invcost_{p}*Inv_{p,t})\\
+\sum_{p \in PROD} \left(\frac{1}{rate_{p}}\right) * Make_{p,t} \leq avail_{t}: t \in WEEKS\\
+Make_{p,first(WEEKS)} + inv0_{p} = Sell_{p,first(WEEKS)} + Inv_{p,first(WEEKS)}: p \in PROD\\
+Make_{p,t} + Inv_{p,prev(t)} = Sell_{p,t} + Inv_{p,t}: p \in PROD, t \in WEEKS \mid ord(t) > 1\\
+rate_{p}, > 0: p \in PROD\\
+inv0_{p}, prodcost_{p}, invcost_{p}, avail_{w},\\
+market_{p,w}, revenue_{p,w} \geq 0: p \in PROD, w \in WEEKS\\
+Make_{p,w}, Inv_{p,w}, Sell_{p,w} \geq 0;\\
+Sell_{p,w} \leq market_{p,w}: p \in PROD, w \in WEEKS\\
+WEEKS \in \mathbb{O}\\

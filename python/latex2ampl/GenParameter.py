@@ -1,7 +1,7 @@
 from GenObj import *
 
 class GenParameter(GenObj):
-	def __init__(self, name, isSymbolic = False, isInteger = False, stmtInclusion = None, certainty = True, isDeclaredAsParam = False):
+	def __init__(self, name, isSymbolic = False, isInteger = False, stmtInclusion = None, certainty = False, isDeclaredAsParam = False):
 		super(GenParameter, self).__init__(name)
 		self.isSymbolic = isSymbolic
 		self.isInteger = isInteger
