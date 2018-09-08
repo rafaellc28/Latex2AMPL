@@ -1,0 +1,7 @@
+% amplide/models/train1.mod
+\text{minimize } \sum_{c \in cities} U_{c,last} + \sum_{(c1,t1,c2,t2) \in schedule \mid t2 < t1} X_{c1,t1,c2,t2}\\
+U_{c,t} = U_{c, \text{if } t > 1 \text{ then } t-1 \text{ else } last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}: c \in cities, t \in times\\
+demand_{c1,t1,c2,t2} \leq X_{c1,t1,c2,t2} \leq section * \left\lceil \frac{demand_{c1,t1,c2,t2}}{section} \right\rceil: (c1,t1,c2,t2) \in schedule\\
+last, section > 0, \in \mathbb{Z}, \in \mathbb{P}\\
+times := 1 \dots last\\
+X_{c1,t1,c2,t2}, U_{c,t} \in \mathbb{R}^{+}; demand_{c1,t1,c2,t2} > 0: (c1,t1,c2,t2) \in schedule, c \in cities, t \in times\\
