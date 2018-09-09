@@ -1069,3 +1069,6 @@ def test_lp43_linear():
 
 def test_lp44_linear():
 	check_test_linear_num(44)
+
+def test_lp45_linear():
+	check_test_linear_num(45)

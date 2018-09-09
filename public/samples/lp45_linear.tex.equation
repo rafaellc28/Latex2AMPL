@@ -1,0 +1,12 @@
+% amplide/models/train2.mod
+\text{minimize } \sum_{c \in cities} U_{c,last} + \sum_{(c1,t1,c2,t2) \in schedule \mid t2 < t1} X_{c1,t1,c2,t2}\\
+U_{c,t} = U_{c, \text{ if } t > 1 \text{ then } t-1 \text{ else } last} + \sum_{(c1,t1,c,t) \in schedule} X_{c1,t1,c,t} - \sum_{(c,t,c2,t2) \in schedule} X_{c,t,c2,t2}: c \in cities, t \in times\\
+low_{c1,t1,c2,t2} \leq X_{c1,t1,c2,t2} \leq high_{c1,t1,c2,t2}: (c1,t1,c2,t2) \in schedule\\
+last, section, demand_{c1,t1,c2,t2}, distance_{c1,c2} > 0: (c1,t1,c2,t2) \in schedule, (c1,c2) \in links\\
+last, section \in \mathbb{Z}, \in \mathbb{P}\\
+times := 1 \dots last\\
+low_{c1,t1,c2,t2} := \lceil demand_{c1,t1,c2,t2} \rceil: (c1,t1,c2,t2) \in schedule\\
+high_{c1,t1,c2,t2} := \max(2, \min(\lceil 2*demand_{c1,t1,c2,t2} \rceil, section*\lceil demand_{c1,t1,c2,t2}/section \rceil)): (c1,t1,c2,t2) \in schedule\\
+dist\_table_{c1,c2} \geq 0, \text{ default } 0.0: (c1,c2) \in links\\
+U_{c,t} \in \mathbb{R}, \geq 0: c \in cities, t \in times\\
+X_{c1,t1,c2,t2} \in \mathbb{R}, \geq 0: (c1,t1,c2,t2) \in schedule\\
