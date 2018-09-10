@@ -1,0 +1,7 @@
+% amplide/models/transp2.mod
+\text{minimize } \sum_{(i,j) \in LINKS} cost_{i,j} * Trans_{i,j}\\
+\sum_{j \in DEST} Trans_{i,j} = supply_{i}: i \in ORIG\\
+\sum_{i \in ORIG} Trans_{i,j} = demand_{j}: j \in DEST\\
+supply_{o}, demand_{d}: o \in ORIG, d \in DEST\\
+cost_{i,j}, Trans_{i,j} \geq 0: (i,j) \in LINKS\\
+Trans \in \mathbb{R}\\
