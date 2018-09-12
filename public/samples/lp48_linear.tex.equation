@@ -1,0 +1,7 @@
+% amplide/models/transp4.mod
+\text{minimize } lambda*\sum_{i \in ORIG, j \in DEST} cost_{i,j} * Trans_{i,j} + (1-lambda)*\sum_{i \in ORIG, j \in DEST} cost_{i,j} * Trans_{i,j}\\
+\sum_{j \in DEST} Trans_{i,j} = supply_{i}: i \in ORIG\\
+\sum_{i \in ORIG} Trans_{i,j} = demand_{j}: j \in DEST\\
+supply_{o}, demand_{d}, cost_{o,d}, Trans_{o,d} \geq 0: o \in ORIG, d \in DEST\\
+Trans \in \mathbb{R}\\
+lambda := 0.85\\
