@@ -1,0 +1,7 @@
+% amplide/models/cut2.mod
+\text{minimize } lambda*(\sum_{j \in PATTERNS} Cut_{j}) + (1-lambda)*(1 - \sum_{i \in WIDTHS}price_{i}*Use_{i})\\
+\sum_{j \in PATTERNS} nbr_{i,j} * Cut_{j} \geq orders_{i}: i \in WIDTHS\\
+\sum_{i \in WIDTHS} i * Use_{i} \leq roll\_width\\
+PATTERNS := 1 \dots nPAT; nPAT \geq 0; orders_{w} > 0; price_{w}: w \in WIDTHS\\
+nbr_{w,p}, Cut_{p}, Use_{w} \in \mathbb{Z}, \geq 0: w \in WIDTHS, p \in PATTERNS\\
+nbr_{w,p} \in \mathbb{P}; lambda := 0.85\\
