@@ -1,0 +1,8 @@
+% amplide/models/dietobj.mod
+\text{minimize } lambda*\left(\sum_{j \in FOOD} Buy_{j}\right) + (1-lambda)*\left(\sum_{s \in STORE}\sum_{j \in FOOD} cost_{s,j} * Buy_{j}\right)\\
+\sum_{j \in FOOD} amt_{i,j} * Buy_{j} \geq n\_min_{i}: i \in MINREQ\\
+\sum_{j \in FOOD} amt_{i,j} * Buy_{j} \leq n\_max_{i}: i \in MAXREQ\\
+lambda := 0.85; NUTR := MINREQ \cup MAXREQ\\
+cost_{s,f}, > 0: s \in STORE, f \in FOOD\\
+f\_min_{f}, n\_min_{mi}, n\_max_{ma}, amt_{n,f} \geq 0: f \in FOOD, n \in NUTR, mi \in MINREQ, ma \in MAXREQ\\
+Buy_{j} \in \mathbb{R}, \geq f\_min_{j}, \leq f\_max_{j}: j \in FOOD\\
