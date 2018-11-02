@@ -860,7 +860,7 @@ def t_CROSS(t):
    return t
 
 def t_ID(t):
-   r'\\text\{\s*(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*\s*\}|(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
+   r'\\text\{\s*(_)*[a-zA-Z]((_)*[a-zA-Z0-9]*)*\s*\}|(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
    t.type = reserved.get(t.value, 'ID') # Check for reserved words
 
    m = re.search(r"\\text\{\s*(.+)\s*\}", t.value)
