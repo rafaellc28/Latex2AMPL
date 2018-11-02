@@ -9,6 +9,8 @@ from LinearExpression import *
 from Objectives import *
 from Constraints import *
 from ConstraintExpression import *
+from NodeExpression import *
+from ArcExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
 from IndexingExpression import *
@@ -52,7 +54,7 @@ precedence = (
     ('left', 'DIFF', 'SYMDIFF', 'UNION'),
     ('left', 'INTER'),
     ('left', 'CROSS'),
-    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'ARC', 'FROM', 'TO', 'OBJ'),
     ('right', 'DOTS', 'BY'),
     ('right', 'AMPERSAND'),
     ('left', 'PLUS', 'MINUS', 'LESS'),
@@ -115,15 +117,23 @@ def p_Objective(t):
 def p_ConstraintList(t):
     '''ConstraintList : ConstraintList Objective SLASHES
                       | ConstraintList Constraint SLASHES
+                      | ConstraintList NodeExpression SLASHES
+                      | ConstraintList ArcExpression SLASHES
                       | ConstraintList Declarations SLASHES
                       | ConstraintList Objective
                       | ConstraintList Constraint
+                      | ConstraintList NodeExpression
+                      | ConstraintList ArcExpression
                       | ConstraintList Declarations
                       | Objective SLASHES
                       | Constraint SLASHES
+                      | NodeExpression SLASHES
+                      | ArcExpression SLASHES
                       | Declarations SLASHES
                       | Objective
                       | Constraint
+                      | NodeExpression
+                      | ArcExpression
                       | Declarations'''
 
     if len(t) > 2 and not isinstance(t[2], str):
@@ -131,6 +141,120 @@ def p_ConstraintList(t):
 
     else:
         t[0] = [t[1]]
+
+def p_NodeExpression(t):
+    '''NodeExpression : NODE Identifier NETIN EQ NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETIN EQ NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETIN EQ NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETIN EQ NumericSymbolicExpression
+
+                      | NODE Identifier NETIN EQ Identifier FOR IndexingExpression
+                      | NODE Identifier NETIN EQ Identifier WHERE IndexingExpression
+                      | NODE Identifier NETIN EQ Identifier COLON IndexingExpression
+                      | NODE Identifier NETIN EQ Identifier
+
+                      | NODE Identifier NETIN LE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETIN LE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETIN LE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETIN LE NumericSymbolicExpression
+
+                      | NODE Identifier NETIN LE Identifier FOR IndexingExpression
+                      | NODE Identifier NETIN LE Identifier WHERE IndexingExpression
+                      | NODE Identifier NETIN LE Identifier COLON IndexingExpression
+                      | NODE Identifier NETIN LE Identifier
+
+                      | NODE Identifier NETIN GE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETIN GE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETIN GE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETIN GE NumericSymbolicExpression
+
+                      | NODE Identifier NETIN GE Identifier FOR IndexingExpression
+                      | NODE Identifier NETIN GE Identifier WHERE IndexingExpression
+                      | NODE Identifier NETIN GE Identifier COLON IndexingExpression
+                      | NODE Identifier NETIN GE Identifier
+
+                      | NODE Identifier NETOUT EQ NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETOUT EQ NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETOUT EQ NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETOUT EQ NumericSymbolicExpression
+
+                      | NODE Identifier NETOUT EQ Identifier FOR IndexingExpression
+                      | NODE Identifier NETOUT EQ Identifier WHERE IndexingExpression
+                      | NODE Identifier NETOUT EQ Identifier COLON IndexingExpression
+                      | NODE Identifier NETOUT EQ Identifier
+
+                      | NODE Identifier NETOUT LE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETOUT LE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETOUT LE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETOUT LE NumericSymbolicExpression
+
+                      | NODE Identifier NETOUT LE Identifier FOR IndexingExpression
+                      | NODE Identifier NETOUT LE Identifier WHERE IndexingExpression
+                      | NODE Identifier NETOUT LE Identifier COLON IndexingExpression
+                      | NODE Identifier NETOUT LE Identifier
+
+                      | NODE Identifier NETOUT GE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NETOUT GE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NETOUT GE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NETOUT GE NumericSymbolicExpression
+
+                      | NODE Identifier NETOUT GE Identifier FOR IndexingExpression
+                      | NODE Identifier NETOUT GE Identifier WHERE IndexingExpression
+                      | NODE Identifier NETOUT GE Identifier COLON IndexingExpression
+                      | NODE Identifier NETOUT GE Identifier'''
+    
+    netExpression = None
+    op = None
+
+    if t.slice[3].type == "NETIN":
+      netExpression = NodeExpression.NETIN
+    else:
+      netExpression = NodeExpression.NETOUT
+
+    if t.slice[4].type == "LE":
+      op = NodeExpression.LE
+
+    elif t.slice[4].type == "GE":
+      op = NodeExpression.GE
+
+    else:
+      op = NodeExpression.EQ
+
+    if len(t) > 7:
+        t[7].setStmtIndexing(True)
+        t[0] = NodeExpression(t[2], netExpression, op, t[5], t[7])
+    else:
+        t[0] = NodeExpression(t[2], netExpression, op, t[5])
+
+
+def p_ArcExpression(t):
+    '''ArcExpression : ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier
+
+                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier
+
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
+                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier
+
+                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
+                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier'''
+ 
+    if len(t) > 16:
+      t[16].setStmtIndexing(True)
+      t[0] = ArcExpression(t[2], t[4], t[7], t[9], t[11], ID(t[13]), t[14], t[16])
+
+    else:
+      t[0] = ArcExpression(t[2], t[4], t[7], t[9], t[11], ID(t[13]), t[14])
+
 
 def p_Constraint(t):
     '''Constraint : ConstraintExpression FOR IndexingExpression
@@ -1094,7 +1218,10 @@ def p_Declaration(t):
     if isinstance(t[1], EntryLogicalExpression):
       t[1] = _getDeclarationExpression(t[1])
 
-    if len(t) > 3:
+    if len(t) > 4:
+      t[0] = Declaration(t[1])
+
+    elif len(t) > 3:
         t[3].setStmtIndexing(True)
 
         if isinstance(t[1], ValueList):

@@ -77,3 +77,9 @@ OR = "or"
 NOT = "not"
 
 EMPTY_SET = BEGIN_SET+END_SET
+
+NODE = "node"
+ARC = "arc"
+FROM = "from"
+TO = "to"
+OBJ = "obj"

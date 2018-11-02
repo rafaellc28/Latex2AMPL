@@ -5,6 +5,8 @@ from Range import *
 from Objectives import *
 from Constraints import *
 from SetExpression import *
+from NodeExpression import *
+from ArcExpression import *
 from EntryIndexingExpression import *
 from SymbolicExpression import *
 from TopologicalSort import *
@@ -39,6 +41,7 @@ class CodeGenerator:
         self.genDeclarations = GenDeclarations()
         self.genBelongsToList = GenBelongsToList()
         self.genValueAssigned = GenList()
+        self.genArcObj = GenList()
         self.topological_order = []
 
         self.totalObjectives = 0
@@ -970,6 +973,20 @@ class CodeGenerator:
 
                 self.constraintNumber += 1
                 return SUBJECT_TO+SPACE+"C" + str(self.constraintNumber) + SPACE + constraintStmt
+
+        elif isinstance(constraint, NodeExpression):
+            nodeStmt = constraint.generateCode(self)
+
+            if nodeStmt and nodeStmt.strip():
+                nodeStmt = nodeStmt.strip()
+                return NODE+SPACE+nodeStmt
+
+        elif isinstance(constraint, ArcExpression):
+            arcStmt = constraint.generateCode(self)
+
+            if arcStmt and arcStmt.strip():
+                arcStmt = arcStmt.strip()
+                return ARC+SPACE+arcStmt
                 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
@@ -1140,6 +1157,10 @@ class CodeGenerator:
         return result
         
     def _declareParam(self, _genParameter):
+
+        if self.genArcObj.has(_genParameter.getName()):
+            return ""
+
         result = self._processObject(_genParameter, PARAMETER, False, False)
         return result
         
@@ -1275,13 +1296,18 @@ class CodeGenerator:
         Generate the code in AMPL for this Objective
         """
         
+        linearExpression = node.linearExpression.generateCode(self)
+
+        if self.genArcObj.has(linearExpression):
+            return node.type + SPACE+ linearExpression + END_STATEMENT
+
         domain_str = EMPTY_STRING
         if node.domain:
             idxExpression = node.domain.generateCode(self)
             if idxExpression:
                 domain_str = SPACE+BEGIN_SET + idxExpression + END_SET
 
-        return node.type + SPACE+OBJECTIVE + (str(self.objectiveNumber) if self.objectiveNumber > 1 else EMPTY_STRING)  + domain_str + SUCH_THAT+SPACE + node.linearExpression.generateCode(self) + END_STATEMENT
+        return node.type + SPACE+OBJECTIVE + (str(self.objectiveNumber) if self.objectiveNumber > 1 else EMPTY_STRING)  + domain_str + SUCH_THAT+SPACE + linearExpression + END_STATEMENT
 
     # Constraints
     def generateCode_Constraints(self, node):
@@ -1305,6 +1331,44 @@ class CodeGenerator:
                 res += SPACE+SUCH_THAT+SPACE
 
             res += constraintExpression + END_STATEMENT
+
+        return res
+
+    def generateCode_NodeExpression(self, node):
+        res = EMPTY_STRING
+        expression = node.netExpression + SPACE + node.op + SPACE + node.value.generateCode(self)
+
+        if node.indexingExpression:
+            idxExpression = node.indexingExpression.generateCode(self)
+
+            if idxExpression.strip() != EMPTY_STRING:
+                res += node.identifier.generateCodeWithoutIndices(self) + SPACE + BEGIN_SET + idxExpression + END_SET+SPACE+SUCH_THAT+BREAKLINE+TAB
+            else:
+                res += node.identifier.generateCodeWithoutIndices(self) + SPACE+SUCH_THAT+SPACE
+        else:
+            res += node.identifier.generateCodeWithoutIndices(self) + SPACE+SUCH_THAT+SPACE
+
+        res += expression + END_STATEMENT
+
+        return res
+
+    def generateCode_ArcExpression(self, node):
+        res = EMPTY_STRING
+        expression = GE + SPACE + node.lowerLimit.generateCode(self) + COMMA + SPACE + LE + SPACE + node.upperLimit.generateCode(self) + COMMA + BREAKLINE+TAB +\
+                        FROM + SPACE + node._from.generateCode(self) + COMMA + SPACE + TO + SPACE + node.to.generateCode(self) + \
+                        COMMA + SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
+
+        if node.indexingExpression:
+            idxExpression = node.indexingExpression.generateCode(self)
+
+            if idxExpression.strip() != EMPTY_STRING:
+                res += node.identifier.generateCodeWithoutIndices(self) + SPACE + BEGIN_SET + idxExpression + END_SET+SPACE
+            else:
+                res += node.identifier.generateCodeWithoutIndices(self) + SPACE
+        else:
+            res += node.identifier.generateCodeWithoutIndices(self) + SPACE
+
+        res += expression + END_STATEMENT
 
         return res
 

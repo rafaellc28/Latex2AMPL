@@ -168,7 +168,14 @@ tokens = [
    'ELSE',
    'IMPLIES',
    'ISIMPLIEDBY',
-   'IFANDONLYIF'
+   'IFANDONLYIF',
+   'NODE',
+   'NETIN',
+   'NETOUT',
+   'ARC',
+   'FROM',
+   'TO',
+   'OBJ'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -261,6 +268,35 @@ def t_POISSON(t):
 def t_ALIAS(t):
    r'\\text\{\s*alias\s*\}|\s*alias(?!\\_|[a-zA-Z0-9])'
    return t
+
+def t_NODE(t):
+   r'\\text\{\s*node\s*\}|\s*node(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NETIN(t):
+   r'\\text\{\s*net_in\s*\}|\s*net\\_in(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_NETOUT(t):
+   r'\\text\{\s*net_out\s*\}|\s*net\\_out(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ARC(t):
+   r'\\text\{\s*arc\s*\}|\s*arc(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_FROM(t):
+   r'\\text\{\s*from\s*\}|\s*from(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_TO(t):
+   r'\\text\{\s*to\s*\}|\s*to(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_OBJ(t):
+   r'\\text\{\s*obj\s*\}|\s*obj(?!\\_|[a-zA-Z0-9])'
+   return t
+
 
 def t_CTIME(t):
    r'\\text\{\s*ctime\s*\}|\s*ctime(?!\\_|[a-zA-Z0-9])'

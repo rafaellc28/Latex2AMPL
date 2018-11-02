@@ -35,11 +35,6 @@ class Constraint:
     Class representing a constraint node in the AST of a MLP
     """
     
-    # Get the AMPL code for a given IndexingExpression
-    @staticmethod
-    def _getCodeIndexingExpression(indexingExpression): return indexingExpression.generateCode()
-    #def _getCodeIndexingExpression(indexingExpression): return SupportGenCode.emitIndexingExpression(indexingExpression.generateCode())
-
     def __init__(self, constraintExpression, indexingExpression = None):
         """
         Set the constraint expression and the indexing expression of an constraint

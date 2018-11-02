@@ -360,6 +360,23 @@ class CodeSetup:
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
 
+
+    def setupEnvironment_NodeExpression(self, node):
+        node.value.setupEnvironment(self)
+
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
+    def setupEnvironment_ArcExpression(self, node):
+        node.lowerLimit.setupEnvironment(self)
+        node.upperLimit.setupEnvironment(self)
+        node.objValue.setupEnvironment(self)
+
+        self.codeGenerator.genArcObj.add(GenObj(node.objName.getSymbolName(self.codeGenerator)))
+
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
     def setupEnvironment_ConstraintExpression2(self, node):
         """
         Generate the AMPL code for the identifiers and sets in this constraint
