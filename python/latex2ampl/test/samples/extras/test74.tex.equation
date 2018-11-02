@@ -1,2 +1,2 @@
 % Test Identifiers inside \text
-\text{a} := \text{\_for}
+\text{a} := \text{_for}

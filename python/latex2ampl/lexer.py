@@ -868,6 +868,8 @@ def t_ID(t):
    if m:
       t.value = m.groups(0)[0]
 
+   t.value = t.value.replace("\\", "").strip()
+
    return t
 
 # A regular expression rule with some action code
