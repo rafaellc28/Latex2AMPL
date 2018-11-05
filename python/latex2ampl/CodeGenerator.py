@@ -1336,7 +1336,7 @@ class CodeGenerator:
 
     def generateCode_NodeExpression(self, node):
         res = EMPTY_STRING
-        expression = node.netExpression + SPACE + node.op + SPACE + node.value.generateCode(self)
+        expression = node.netExpression.generateCode(self) + SPACE + node.op + SPACE + node.value.generateCode(self)
 
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)
@@ -1351,6 +1351,12 @@ class CodeGenerator:
         res += expression + END_STATEMENT
 
         return res
+
+    def generateCode_NetInExpression(self, node):
+        return NetInExpression.NETIN
+
+    def generateCode_NetOutExpression(self, node):
+        return NetOutExpression.NETOUT
 
     def generateCode_ArcExpression(self, node):
         res = EMPTY_STRING

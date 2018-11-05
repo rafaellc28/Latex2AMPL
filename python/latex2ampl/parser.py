@@ -142,75 +142,109 @@ def p_ConstraintList(t):
     else:
         t[0] = [t[1]]
 
-def p_NodeExpression(t):
-    '''NodeExpression : NODE Identifier NETIN EQ NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETIN EQ NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETIN EQ NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETIN EQ NumericSymbolicExpression
+def p_NetExpression(t):
+    '''NetExpression : NETIN
+                     | NETOUT
+                     | MINUS NetExpression %prec UMINUS
+                     | PLUS NetExpression %prec UPLUS
+                     | NETIN PLUS NumericSymbolicExpression
+                     | NETIN MINUS NumericSymbolicExpression
+                     | NETIN PLUS Identifier
+                     | NETIN MINUS Identifier
+                     | NETOUT PLUS NumericSymbolicExpression
+                     | NETOUT MINUS NumericSymbolicExpression
+                     | NETOUT PLUS Identifier
+                     | NETOUT MINUS Identifier
+                     | NumericSymbolicExpression PLUS NETIN
+                     | NumericSymbolicExpression MINUS NETIN
+                     | Identifier PLUS NETIN
+                     | Identifier MINUS NETIN
+                     | NumericSymbolicExpression PLUS NETOUT
+                     | NumericSymbolicExpression MINUS NETOUT
+                     | Identifier PLUS NETOUT
+                     | Identifier MINUS NETOUT'''
 
-                      | NODE Identifier NETIN EQ Identifier FOR IndexingExpression
-                      | NODE Identifier NETIN EQ Identifier WHERE IndexingExpression
-                      | NODE Identifier NETIN EQ Identifier COLON IndexingExpression
-                      | NODE Identifier NETIN EQ Identifier
+    if len(t) == 2:
+      if t.slice[1].type == "NETIN":
+        t[0] = ValuedNumericExpression(NetInExpression())
 
-                      | NODE Identifier NETIN LE NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETIN LE NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETIN LE NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETIN LE NumericSymbolicExpression
+      else:
+        t[0] = ValuedNumericExpression(NetOutExpression())
 
-                      | NODE Identifier NETIN LE Identifier FOR IndexingExpression
-                      | NODE Identifier NETIN LE Identifier WHERE IndexingExpression
-                      | NODE Identifier NETIN LE Identifier COLON IndexingExpression
-                      | NODE Identifier NETIN LE Identifier
-
-                      | NODE Identifier NETIN GE NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETIN GE NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETIN GE NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETIN GE NumericSymbolicExpression
-
-                      | NODE Identifier NETIN GE Identifier FOR IndexingExpression
-                      | NODE Identifier NETIN GE Identifier WHERE IndexingExpression
-                      | NODE Identifier NETIN GE Identifier COLON IndexingExpression
-                      | NODE Identifier NETIN GE Identifier
-
-                      | NODE Identifier NETOUT EQ NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETOUT EQ NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETOUT EQ NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETOUT EQ NumericSymbolicExpression
-
-                      | NODE Identifier NETOUT EQ Identifier FOR IndexingExpression
-                      | NODE Identifier NETOUT EQ Identifier WHERE IndexingExpression
-                      | NODE Identifier NETOUT EQ Identifier COLON IndexingExpression
-                      | NODE Identifier NETOUT EQ Identifier
-
-                      | NODE Identifier NETOUT LE NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETOUT LE NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETOUT LE NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETOUT LE NumericSymbolicExpression
-
-                      | NODE Identifier NETOUT LE Identifier FOR IndexingExpression
-                      | NODE Identifier NETOUT LE Identifier WHERE IndexingExpression
-                      | NODE Identifier NETOUT LE Identifier COLON IndexingExpression
-                      | NODE Identifier NETOUT LE Identifier
-
-                      | NODE Identifier NETOUT GE NumericSymbolicExpression FOR IndexingExpression
-                      | NODE Identifier NETOUT GE NumericSymbolicExpression WHERE IndexingExpression
-                      | NODE Identifier NETOUT GE NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NETOUT GE NumericSymbolicExpression
-
-                      | NODE Identifier NETOUT GE Identifier FOR IndexingExpression
-                      | NODE Identifier NETOUT GE Identifier WHERE IndexingExpression
-                      | NODE Identifier NETOUT GE Identifier COLON IndexingExpression
-                      | NODE Identifier NETOUT GE Identifier'''
-    
-    netExpression = None
-    op = None
-
-    if t.slice[3].type == "NETIN":
-      netExpression = NodeExpression.NETIN
     else:
-      netExpression = NodeExpression.NETOUT
 
+      if t.slice[1].type == "MINUS":
+        t[0] = MinusNumericExpression(t[2])
+
+      elif t.slice[1].type == "PLUS":
+        t[0] = ValuedNumericExpression(t[2])
+
+      else:
+
+        if t.slice[1].type == "NETIN":
+          t[1] = ValuedNumericExpression(NetInExpression())
+
+        elif t.slice[1].type == "NETOUT":
+          t[1] = ValuedNumericExpression(NetOutExpression())
+
+        elif isinstance(t[1], Identifier):
+          t[1] = ValuedNumericExpression(t[1])
+
+        if t.slice[3].type == "NETIN":
+          t[3] = ValuedNumericExpression(NetInExpression())
+
+        elif t.slice[3].type == "NETOUT":
+          t[3] = ValuedNumericExpression(NetOutExpression())
+
+        elif isinstance(t[3], Identifier):
+          t[3] = ValuedNumericExpression(t[3])
+
+        op = None
+        if t.slice[2].type == "PLUS":
+          op = NumericExpressionWithArithmeticOperation.PLUS
+        else:
+          op = NumericExpressionWithArithmeticOperation.MINUS
+
+        t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
+
+def p_NodeExpression(t):
+    '''NodeExpression : NODE Identifier NetExpression EQ NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NetExpression EQ NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NetExpression EQ NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NetExpression EQ NumericSymbolicExpression
+
+                      | NODE Identifier NetExpression EQ Identifier FOR IndexingExpression
+                      | NODE Identifier NetExpression EQ Identifier WHERE IndexingExpression
+                      | NODE Identifier NetExpression EQ Identifier COLON IndexingExpression
+                      | NODE Identifier NetExpression EQ Identifier
+
+                      | NODE Identifier NetExpression LE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NetExpression LE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NetExpression LE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NetExpression LE NumericSymbolicExpression
+
+                      | NODE Identifier NetExpression LE Identifier FOR IndexingExpression
+                      | NODE Identifier NetExpression LE Identifier WHERE IndexingExpression
+                      | NODE Identifier NetExpression LE Identifier COLON IndexingExpression
+                      | NODE Identifier NetExpression LE Identifier
+
+                      | NODE Identifier NetExpression GE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NetExpression GE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NetExpression GE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NetExpression GE NumericSymbolicExpression
+
+                      | NODE Identifier NetExpression GE Identifier FOR IndexingExpression
+                      | NODE Identifier NetExpression GE Identifier WHERE IndexingExpression
+                      | NODE Identifier NetExpression GE Identifier COLON IndexingExpression
+                      | NODE Identifier NetExpression GE Identifier'''
+
+    #netExpression = None
+    #if t.slice[3].type == "NETIN":
+    #  netExpression = NodeExpression.NETIN
+    #else:
+    #  netExpression = NodeExpression.NETOUT
+
+    op = None
     if t.slice[4].type == "LE":
       op = NodeExpression.LE
 
@@ -222,9 +256,10 @@ def p_NodeExpression(t):
 
     if len(t) > 7:
         t[7].setStmtIndexing(True)
-        t[0] = NodeExpression(t[2], netExpression, op, t[5], t[7])
+        t[0] = NodeExpression(t[2], t[3], op, t[5], t[7])
+
     else:
-        t[0] = NodeExpression(t[2], netExpression, op, t[5])
+        t[0] = NodeExpression(t[2], t[3], op, t[5])
 
 
 def p_ArcExpression(t):

@@ -5,7 +5,7 @@ class NodeExpression(Expression):
     Class representing a node expression node in the AST of a MLP
     """
 
-    NETIN = "net_in"
+    
     NETOUT = "net_out"
 
     LE = "<="
@@ -17,7 +17,7 @@ class NodeExpression(Expression):
         Set the constraint expression and the indexing expression of a node expression
         
         :param identifier: Identifier
-        :param netExpression: NETIN | NETOUT
+        :param netExpression: NumericExpression
         :param op: LE | GE | EQ
         :param value: Identifier | NumericSymbolicExpression
         :param indexingExpressions: IndexingExpression
@@ -58,5 +58,71 @@ class NodeExpression(Expression):
     def generateCode(self, codeGenerator):
         """
         Generate the AMPL code for this node expression
+        """
+        return codeGenerator.generateCode(self)
+
+class NetInExpression(Expression):
+    """
+    Class representing a net_in expression node in the AST of a MLP
+    """
+    NETIN = "net_in"
+
+    def __init__(self):
+        """
+        Set the constraint expression and the indexing expression of a node expression
+        """
+    
+    def __str__(self):
+        """
+        to string
+        """
+        
+        return NetInExpression.NETIN
+
+    def getDependencies(self, codeGenerator):
+        return []
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for declaration of identifiers and sets in this net_in expression
+        """
+        codeSetup.setupEnvironment(self)
+    
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this net_in expression
+        """
+        return codeGenerator.generateCode(self)
+
+class NetOutExpression(Expression):
+    """
+    Class representing a net_in expression node in the AST of a MLP
+    """
+    NETOUT = "net_out"
+
+    def __init__(self):
+        """
+        Set the constraint expression and the indexing expression of a node expression
+        """
+    
+    def __str__(self):
+        """
+        to string
+        """
+        
+        return NetOutExpression.NETOUT
+
+    def getDependencies(self, codeGenerator):
+        return []
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for declaration of identifiers and sets in this net_in expression
+        """
+        codeSetup.setupEnvironment(self)
+    
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this net_in expression
         """
         return codeGenerator.generateCode(self)

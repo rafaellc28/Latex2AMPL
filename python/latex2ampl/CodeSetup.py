@@ -367,6 +367,12 @@ class CodeSetup:
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
 
+    def setupEnvironment_NetInExpression(self, node):
+        pass
+
+    def setupEnvironment_NetOutExpression(self, node):
+        pass
+
     def setupEnvironment_ArcExpression(self, node):
         node.lowerLimit.setupEnvironment(self)
         node.upperLimit.setupEnvironment(self)
