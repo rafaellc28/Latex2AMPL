@@ -1336,7 +1336,10 @@ class CodeGenerator:
 
     def generateCode_NodeExpression(self, node):
         res = EMPTY_STRING
-        expression = node.netExpression.generateCode(self) + SPACE + node.op + SPACE + node.value.generateCode(self)
+        expression = node.expression1.generateCode(self) + SPACE + node.op + SPACE + node.expression2.generateCode(self)
+
+        if node.expression3:
+            expression += SPACE + node.op + SPACE + node.expression3.generateCode(self)
 
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)

@@ -1,0 +1,4 @@
+% Test Node and Arc expressions
+\text{minimize } Total\_Cost\\
+\text{node } Balance_{k} demand_{k} - supply_{k} \geq \text{ net_in } + 10 \geq 0: k \in CITIES\\
+\text{arc } Ship_{i,j} \geq 0, \leq capacity_{i,j} \text{ from } Balance_{i} \text{ to } Balance_{j} \text{ obj } \text{Total_Cost } cost_{i,j}: (i,j) \in LINKS\\

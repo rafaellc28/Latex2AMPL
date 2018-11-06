@@ -54,7 +54,7 @@ precedence = (
     ('left', 'DIFF', 'SYMDIFF', 'UNION'),
     ('left', 'INTER'),
     ('left', 'CROSS'),
-    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'ARC', 'FROM', 'TO', 'OBJ'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'NETOUT', 'ARC', 'FROM', 'TO', 'OBJ'),
     ('right', 'DOTS', 'BY'),
     ('right', 'AMPERSAND'),
     ('left', 'PLUS', 'MINUS', 'LESS'),
@@ -236,13 +236,78 @@ def p_NodeExpression(t):
                       | NODE Identifier NetExpression GE Identifier FOR IndexingExpression
                       | NODE Identifier NetExpression GE Identifier WHERE IndexingExpression
                       | NODE Identifier NetExpression GE Identifier COLON IndexingExpression
-                      | NODE Identifier NetExpression GE Identifier'''
+                      | NODE Identifier NetExpression GE Identifier
+                      
+                      
+                      | NODE Identifier NumericSymbolicExpression EQ NetExpression FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression EQ NetExpression WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression EQ NetExpression COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression EQ NetExpression
 
-    #netExpression = None
-    #if t.slice[3].type == "NETIN":
-    #  netExpression = NodeExpression.NETIN
-    #else:
-    #  netExpression = NodeExpression.NETOUT
+                      | NODE Identifier Identifier EQ NetExpression FOR IndexingExpression
+                      | NODE Identifier Identifier EQ NetExpression WHERE IndexingExpression
+                      | NODE Identifier Identifier EQ NetExpression COLON IndexingExpression
+                      | NODE Identifier Identifier EQ NetExpression
+
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression
+
+                      | NODE Identifier Identifier LE NetExpression FOR IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression WHERE IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression COLON IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression
+
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression
+
+                      | NODE Identifier Identifier GE NetExpression FOR IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression WHERE IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression COLON IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression
+
+                      | NODE Identifier Identifier GE NetExpression GE Identifier FOR IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE Identifier WHERE IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE Identifier COLON IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE Identifier
+
+                      | NODE Identifier Identifier GE NetExpression GE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier Identifier GE NetExpression GE NumericSymbolicExpression
+
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE Identifier FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE Identifier WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE Identifier COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE Identifier
+
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression GE NetExpression GE NumericSymbolicExpression
+
+                      | NODE Identifier Identifier LE NetExpression LE Identifier FOR IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE Identifier WHERE IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE Identifier COLON IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE Identifier
+
+                      | NODE Identifier Identifier LE NetExpression LE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier Identifier LE NetExpression LE NumericSymbolicExpression
+
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE Identifier FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE Identifier WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE Identifier COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE Identifier
+
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression FOR IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression WHERE IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression COLON IndexingExpression
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression'''
 
     op = None
     if t.slice[4].type == "LE":
@@ -254,12 +319,22 @@ def p_NodeExpression(t):
     else:
       op = NodeExpression.EQ
 
-    if len(t) > 7:
-        t[7].setStmtIndexing(True)
-        t[0] = NodeExpression(t[2], t[3], op, t[5], t[7])
+    if len(t) > 6 and (t.slice[6].type == "LE" or t.slice[6].type == "GE"):
+      if len(t) > 9:
+          t[9].setStmtIndexing(True)
+          t[0] = NodeExpression(t[2], op, t[3], t[5], t[7], t[9])
+
+      else:
+          t[0] = NodeExpression(t[2], op, t[3], t[5], t[7])
 
     else:
-        t[0] = NodeExpression(t[2], t[3], op, t[5])
+
+      if len(t) > 7:
+          t[7].setStmtIndexing(True)
+          t[0] = NodeExpression(t[2], op, t[3], t[5], None, t[7])
+
+      else:
+          t[0] = NodeExpression(t[2], op, t[3], t[5])
 
 
 def p_ArcExpression(t):

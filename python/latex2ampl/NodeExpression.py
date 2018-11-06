@@ -6,27 +6,27 @@ class NodeExpression(Expression):
     """
 
     
-    NETOUT = "net_out"
-
     LE = "<="
     GE = ">="
     EQ = "="
 
-    def __init__(self, identifier, netExpression, op, value, indexingExpression = None):
+    def __init__(self, identifier, op, expression1, expression2, expression3 = None, indexingExpression = None):
         """
         Set the constraint expression and the indexing expression of a node expression
         
         :param identifier: Identifier
-        :param netExpression: NumericExpression
         :param op: LE | GE | EQ
-        :param value: Identifier | NumericSymbolicExpression
+        :param expression1: Identifier | NumericSymbolicExpression
+        :param expression2: Identifier | NumericSymbolicExpression
+        :param expression3: Identifier | NumericSymbolicExpression
         :param indexingExpressions: IndexingExpression
         """
         
         self.identifier = identifier
-        self.netExpression = netExpression
         self.op = op
-        self.value = value
+        self.expression1 = expression1
+        self.expression2 = expression2
+        self.expression3 = expression3
         self.indexingExpression   = indexingExpression
     
     def __str__(self):
@@ -34,7 +34,10 @@ class NodeExpression(Expression):
         to string
         """
         
-        res = str(self.identifier) + " " + str(self.netExpression) + " " + str(self.op) + " " + str(self.value)
+        res = str(self.identifier) + " " + str(self.expression1) + " " + str(self.op) + " " + str(self.expression2)
+
+        if self.expression3:
+            res += " " + str(self.op) + " " + str(self.expression3)
 
         if self.indexingExpression:
             res += ",\nfor " + str(self.indexingExpression)
@@ -42,7 +45,10 @@ class NodeExpression(Expression):
         return "Node Expression: " + res
 
     def getDependencies(self, codeGenerator):
-        deps = self.identifier.getDependencies(codeGenerator) + self.value.getDependencies(codeGenerator)
+        deps = self.identifier.getDependencies(codeGenerator) + self.expression1.getDependencies(codeGenerator) + self.expression2.getDependencies(codeGenerator)
+
+        if self.expression3:
+            deps += self.expression3.getDependencies(codeGenerator)
 
         if self.indexingExpression:
             deps += self.indexingExpression.getDependencies(codeGenerator)
