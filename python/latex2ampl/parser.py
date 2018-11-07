@@ -337,33 +337,120 @@ def p_NodeExpression(t):
           t[0] = NodeExpression(t[2], op, t[3], t[5])
 
 
+def p_FromList(t):
+    '''FromList : FROM Identifier'''
+    t[0] = t[2]
+
+def p_ToList(t):
+    '''ToList : TO Identifier'''
+    t[0] = t[2]
+
+def p_ArcObj(t):
+    '''ArcObj : OBJ ID Identifier'''
+    t[0] = [ID(t[2]), t[3]]
+
+
 def p_ArcExpression(t):
-    '''ArcExpression : ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier
+    '''ArcExpression : ARC Identifier DeclarationAttributeList FromList ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList FromList ToList
+                     | ARC Identifier DeclarationAttributeList FromList ArcObj
+                     | ARC Identifier DeclarationAttributeList FromList
+                     | ARC Identifier DeclarationAttributeList ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList ToList
+                     | ARC Identifier DeclarationAttributeList ArcObj
+                     | ARC Identifier DeclarationAttributeList
+                     | ARC Identifier FromList ToList ArcObj
+                     | ARC Identifier FromList ToList
+                     | ARC Identifier FromList ArcObj
+                     | ARC Identifier FromList
+                     | ARC Identifier ToList ArcObj
+                     | ARC Identifier ToList
+                     | ARC Identifier ArcObj
+                     | ARC Identifier
 
-                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE NumericSymbolicExpression FROM Identifier TO Identifier OBJ ID Identifier
+                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ToList FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ArcObj FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList ArcObj FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ArcObj FOR IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression
+                     | ARC Identifier FromList ToList ArcObj FOR IndexingExpression
+                     | ARC Identifier FromList ToList FOR IndexingExpression
+                     | ARC Identifier FromList ArcObj FOR IndexingExpression
+                     | ARC Identifier FromList FOR IndexingExpression
+                     | ARC Identifier ToList ArcObj FOR IndexingExpression
+                     | ARC Identifier ToList FOR IndexingExpression
+                     | ARC Identifier ArcObj FOR IndexingExpression
+                     | ARC Identifier FOR IndexingExpression
+                    
+                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ToList WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ArcObj WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList ArcObj WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ArcObj WHERE IndexingExpression
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression
+                     | ARC Identifier FromList ToList ArcObj WHERE IndexingExpression
+                     | ARC Identifier FromList ToList WHERE IndexingExpression
+                     | ARC Identifier FromList ArcObj WHERE IndexingExpression
+                     | ARC Identifier FromList WHERE IndexingExpression
+                     | ARC Identifier ToList ArcObj WHERE IndexingExpression
+                     | ARC Identifier ToList WHERE IndexingExpression
+                     | ARC Identifier ArcObj WHERE IndexingExpression
+                     | ARC Identifier WHERE IndexingExpression
 
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
-                     | ARC Identifier GE NumericSymbolicExpression COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier
+                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ToList COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList ArcObj COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList FromList COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList ArcObj COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ToList COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList ArcObj COLON IndexingExpression
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression
+                     | ARC Identifier FromList ToList ArcObj COLON IndexingExpression
+                     | ARC Identifier FromList ToList COLON IndexingExpression
+                     | ARC Identifier FromList ArcObj COLON IndexingExpression
+                     | ARC Identifier FromList COLON IndexingExpression
+                     | ARC Identifier ToList ArcObj COLON IndexingExpression
+                     | ARC Identifier ToList COLON IndexingExpression
+                     | ARC Identifier ArcObj COLON IndexingExpression
+                     | ARC Identifier COLON IndexingExpression'''
 
-                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier FOR IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier WHERE IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier COLON IndexingExpression
-                     | ARC Identifier GE Identifier COMMA LE Identifier FROM Identifier TO Identifier OBJ ID Identifier'''
- 
-    if len(t) > 16:
-      t[16].setStmtIndexing(True)
-      t[0] = ArcExpression(t[2], t[4], t[7], t[9], t[11], ID(t[13]), t[14], t[16])
-
+    _types = map(lambda el: el.type, t.slice)
+    
+    if "DeclarationAttributeList" in _types:
+      attributes = t[_types.index("DeclarationAttributeList")]
     else:
-      t[0] = ArcExpression(t[2], t[4], t[7], t[9], t[11], ID(t[13]), t[14])
+      attributes = None
+
+    if "FromList" in _types:
+      _from = t[_types.index("FromList")]
+    else:
+      _from = None
+
+    if "ToList" in _types:
+      _to = t[_types.index("ToList")]
+    else:
+      _to = None
+
+    if "ArcObj" in _types:
+      _obj = t[_types.index("ArcObj")]
+      objName = _obj[0]
+      objValue = _obj[1]
+    else:
+      objName = None
+      objValue = None
+
+    if "IndexingExpression" in _types:
+      indexing = t[_types.index("IndexingExpression")]
+      indexing.setStmtIndexing(True)
+    else:
+      indexing = None
+
+    t[0] = ArcExpression(t[2], attributes, _from, _to, objName, objValue, indexing)
 
 
 def p_Constraint(t):

@@ -378,9 +378,12 @@ class CodeSetup:
         pass
 
     def setupEnvironment_ArcExpression(self, node):
-        node.lowerLimit.setupEnvironment(self)
-        node.upperLimit.setupEnvironment(self)
-        node.objValue.setupEnvironment(self)
+
+        if node.attributes and len(node.attributes) > 0:
+            map(lambda el: el.setupEnvironment(self), node.attributes)
+
+        if node.objValue:
+            node.objValue.setupEnvironment(self)
 
         self.codeGenerator.genArcObj.add(GenObj(node.objName.getSymbolName(self.codeGenerator)))
 

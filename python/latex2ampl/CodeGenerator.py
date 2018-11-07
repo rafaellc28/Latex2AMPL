@@ -1363,9 +1363,21 @@ class CodeGenerator:
 
     def generateCode_ArcExpression(self, node):
         res = EMPTY_STRING
-        expression = GE + SPACE + node.lowerLimit.generateCode(self) + COMMA + SPACE + LE + SPACE + node.upperLimit.generateCode(self) + COMMA + BREAKLINE+TAB +\
-                        FROM + SPACE + node._from.generateCode(self) + COMMA + SPACE + TO + SPACE + node.to.generateCode(self) + \
-                        COMMA + SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
+        expression = EMPTY_STRING
+
+        if node.attributes and len(node.attributes) > 0:
+            expression += (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.attributes))
+
+        expression += COMMA + BREAKLINE+TAB
+
+        if node._from:
+            expression += SPACE + FROM + SPACE + node._from.generateCode(self) + COMMA
+
+        if node.to:
+            expression += SPACE + TO + SPACE + node.to.generateCode(self) + COMMA
+
+        if node.objName:
+            expression += SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
 
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)
@@ -1772,6 +1784,12 @@ class CodeGenerator:
             res = node.identifier.generateCode(self)
         
         return res
+
+    def generateCode_DeclarationAttribute(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets in this declaration
+        """
+        return node.op + " " + node.attribute.generateCode(self)
 
     # Number
     def generateCode_Number(self, node):

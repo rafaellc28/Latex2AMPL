@@ -5,13 +5,12 @@ class ArcExpression(Expression):
     Class representing an arc expression node in the AST of a MLP
     """
 
-    def __init__(self, identifier, lowerLimit, upperLimit, _from, to, objName, objValue, indexingExpression = None):
+    def __init__(self, identifier, attributes, _from, to, objName, objValue, indexingExpression = None):
         """
         Set the constraint expression and the indexing expression of an arc expression
         
         >param identifier: Identifier
-        :param lowerLimit: NumericSymbolicExpression
-        :param upperLimit: NumericSymbolicExpression
+        :param attributes: [DeclarationAttribute]
         :param _from: Identifier
         :param to: Identifier
         :param objName: Identifier
@@ -20,8 +19,7 @@ class ArcExpression(Expression):
         """
         
         self.identifier = identifier
-        self.lowerLimit = lowerLimit
-        self.upperLimit = upperLimit
+        self.attributes = attributes
         self._from   = _from
         self.to   = to
         self.objName   = objName
@@ -32,8 +30,19 @@ class ArcExpression(Expression):
         """
         to string
         """
-        res = "Arc Expression: " + str(self.identifier) + " >= " + str(self.lowerLimit) + ", <= " + str(self.upperLimit) + " from " + \
-                str(self._from) + " to " + str(self.to) + " obj " + str(self.objName) + " " + str(self.objValue)
+        res = "Arc Expression: " + str(self.identifier) + " "
+
+        if self.attributes and len(self.attributes) > 0:
+            res += ", ".join(map(lambda el: str(el), self.attributes))
+
+        if self._from:
+            res += " from " + str(self._from)
+
+        if self.to:
+            res += " to " + str(self.to)
+
+        if self.objName:
+            res += " obj " + str(self.objName) + " " + str(self.objValue)
 
         if self.indexingExpression:
             res += ",\nfor " + str(self.indexingExpression)
@@ -41,9 +50,19 @@ class ArcExpression(Expression):
         return res
 
     def getDependencies(self, codeGenerator):
-        deps = self.identifier.getDependencies(codeGenerator) + self.lowerLimit.getDependencies(codeGenerator) + self.upperLimit.getDependencies(codeGenerator) +\
-            self._from.getDependencies(codeGenerator) + self.to.getDependencies(codeGenerator) + self.objName.getDependencies(codeGenerator) + \
-            self.objValue.getDependencies(codeGenerator)
+        deps = self.identifier.getDependencies(codeGenerator)
+
+        if self.attributes and len(self.attributes) > 0:
+            deps += map(lambda el: el.getDependencies(codeGenerator), self.attributes)
+
+        if self._from:
+            deps += self._from.getDependencies(codeGenerator)
+
+        if self.to:
+            deps += self.to.getDependencies(codeGenerator)
+
+        if self.objName:
+            deps += self.objName.getDependencies(codeGenerator) + self.objValue.getDependencies(codeGenerator)
 
         if self.indexingExpression:
             deps += self.indexingExpression.getDependencies(codeGenerator)
