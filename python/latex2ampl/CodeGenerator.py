@@ -1370,11 +1370,11 @@ class CodeGenerator:
 
         expression += COMMA + BREAKLINE+TAB
 
-        if node._from:
-            expression += SPACE + FROM + SPACE + node._from.generateCode(self) + COMMA
+        if node._from and len(node._from) > 0:
+            expression += SPACE + FROM + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node._from)) + COMMA
 
-        if node.to:
-            expression += SPACE + TO + SPACE + node.to.generateCode(self) + COMMA
+        if node.to and len(node.to) > 0:
+            expression += SPACE + TO + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.to)) + COMMA
 
         if node.objName:
             expression += SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
@@ -1390,6 +1390,14 @@ class CodeGenerator:
             res += node.identifier.generateCodeWithoutIndices(self) + SPACE
 
         res += expression + END_STATEMENT
+
+        return res
+
+    def generateCode_ArcItem(self, node):
+        res = node.identifier.generateCode(self)
+
+        if node.factor:
+            res += SPACE + BEGIN_ARGUMENT_LIST + node.factor.generateCode(self) + END_ARGUMENT_LIST
 
         return res
 

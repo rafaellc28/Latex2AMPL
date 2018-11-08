@@ -7,12 +7,12 @@ class ArcExpression(Expression):
 
     def __init__(self, identifier, attributes, _from, to, objName, objValue, indexingExpression = None):
         """
-        Set the constraint expression and the indexing expression of an arc expression
+        Set the attributes of an arc expression
         
-        >param identifier: Identifier
+        :param identifier: Identifier
         :param attributes: [DeclarationAttribute]
-        :param _from: Identifier
-        :param to: Identifier
+        :param _from: [ArcItem]
+        :param to: [ArcItem]
         :param objName: Identifier
         :param objValue: Identifier
         :param indexingExpressions: IndexingExpression
@@ -35,11 +35,11 @@ class ArcExpression(Expression):
         if self.attributes and len(self.attributes) > 0:
             res += ", ".join(map(lambda el: str(el), self.attributes))
 
-        if self._from:
-            res += " from " + str(self._from)
+        if self._from and len(self._from) > 0:
+            res += " from " + ", ".join(map(lambda el: str(el), self._from))
 
-        if self.to:
-            res += " to " + str(self.to)
+        if self.to and len(self.to) > 0:
+            res += " to " + ", ".join(map(lambda el: str(el), self.to))
 
         if self.objName:
             res += " obj " + str(self.objName) + " " + str(self.objValue)
@@ -66,6 +66,54 @@ class ArcExpression(Expression):
 
         if self.indexingExpression:
             deps += self.indexingExpression.getDependencies(codeGenerator)
+
+        return list(set(deps))
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for declaration of identifiers and sets in this arc expression
+        """
+        codeSetup.setupEnvironment(self)
+        
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this arc expression
+        """
+        return codeGenerator.generateCode(self)
+
+
+class ArcItem(Expression):
+    """
+    Class representing an arc item expression node in the AST of a MLP
+    """
+
+    def __init__(self, identifier, factor = None):
+        """
+        Set the attributes of an arc item expression
+        
+        :param identifier: Identifier
+        :param factor: NumericSymboLicExpression
+        """
+        
+        self.identifier = identifier
+        self.factor = factor
+        
+    def __str__(self):
+        """
+        to string
+        """
+        res = "Arc Item: " + str(self.identifier) + " "
+
+        if self.factor:
+            res += str(self.factor)
+
+        return res
+
+    def getDependencies(self, codeGenerator):
+        deps = self.identifier.getDependencies(codeGenerator)
+
+        if self.factor:
+            deps += self.factor.getDependencies(codeGenerator)
 
         return list(set(deps))
 

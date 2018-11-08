@@ -336,19 +336,68 @@ def p_NodeExpression(t):
       else:
           t[0] = NodeExpression(t[2], op, t[3], t[5])
 
+def p_IdentifierList(t):
+    '''IdentifierList : IdentifierList COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
+                      | IdentifierList COMMA Identifier
+                      | Identifier LPAREN NumericSymbolicExpression RPAREN COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
+                      | Identifier LPAREN NumericSymbolicExpression RPAREN COMMA Identifier
+                      | Identifier COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
+                      | Identifier COMMA Identifier'''
+
+    if t.slice[1].type == "IdentifierList":
+      if len(t) > 4:
+        t[0] = t[1] + [ArcItem(t[3], t[5])]
+      else:
+        t[0] = t[1] + [ArcItem(t[3])]
+
+    else:
+
+      if len(t) > 9:
+        t[0] = [ArcItem(t[1], t[3]), ArcItem(t[6], t[8])]
+      
+      elif len(t) > 6:
+        if t.slice[2].type == "LPAREN":
+          t[0] = [ArcItem(t[1], t[3]), ArcItem(t[6])]
+        else:
+          t[0] = [ArcItem(t[1]), ArcItem(t[3], t[5])]
+
+      else:
+        t[0] = [ArcItem(t[1]), ArcItem(t[3])]
 
 def p_FromList(t):
-    '''FromList : FROM Identifier'''
-    t[0] = t[2]
+    '''FromList : FROM Identifier
+                | FROM Identifier LPAREN NumericSymbolicExpression RPAREN
+                | FROM IdentifierList'''
+
+    if len(t) > 3:
+      t[0] = [ArcItem(t[2], t[4])]
+
+    else:
+
+      if t.slice[2].type == "IdentifierList":
+        t[0] = t[2]
+
+      else:
+        t[0] = [ArcItem(t[2])]
 
 def p_ToList(t):
-    '''ToList : TO Identifier'''
-    t[0] = t[2]
+    '''ToList : TO Identifier
+              | TO Identifier LPAREN NumericSymbolicExpression RPAREN
+              | TO IdentifierList'''
+    if len(t) > 3:
+      t[0] = [ArcItem(t[2], t[4])]
+
+    else:
+
+      if t.slice[2].type == "IdentifierList":
+        t[0] = t[2]
+
+      else:
+        t[0] = [ArcItem(t[2])]
 
 def p_ArcObj(t):
     '''ArcObj : OBJ ID Identifier'''
     t[0] = [ID(t[2]), t[3]]
-
 
 def p_ArcExpression(t):
     '''ArcExpression : ARC Identifier DeclarationAttributeList FromList ToList ArcObj
