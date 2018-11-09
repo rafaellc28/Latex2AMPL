@@ -98,6 +98,7 @@
 		{"name": "AMPL/lmodels/cut.mod", "number": 49, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/cut2.mod", "number": 50, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/dietobj.mod", "number": 51, "decl": false, "nonlinear": false},
+		{"name": "AMPL/network/net1node.mod", "number": 0, "decl": false, "network": true},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},

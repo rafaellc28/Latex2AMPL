@@ -81,6 +81,12 @@ def check_test_extras_num(num):
 	check_test(name1, name2)
 
 
+def check_test_network_num(num):
+	name1 = 'latex2ampl/test/samples/network/lp'+str(num)+'_network.tex.equation'
+	name2 = 'latex2ampl/test/samples/network/output/lp'+str(num)+'_network.tex.mod'
+
+	check_test(name1, name2)
+
 # Linear Programming
 def test_lp0():
 	check_test_num(0)
@@ -1101,3 +1107,7 @@ def test_lp50_linear():
 
 def test_lp51_linear():
 	check_test_linear_num(51)
+
+# Network
+def test_lp0_network():
+	check_test_network_num(0)

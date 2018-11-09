@@ -64,6 +64,8 @@ app.get('/samples', function(req, res) {
 		var decl = req.query.decl;
 		var nonlinear = req.query.nonlinear;
 		var constraint = req.query.constraint;
+		var network = req.query.network;
+		
 		result = {}
 		
 		var name = number
@@ -77,6 +79,10 @@ app.get('/samples', function(req, res) {
 		
 		if (constraint == "true") {
 			name += "_constraint";
+		}
+		
+		if (network == "true") {
+			name += "_network";
 		}
 		
 		if (decl == "true") {
@@ -103,7 +109,7 @@ app.get('/samples', function(req, res) {
 		q.when(d).done(function(result) {
 			res.send(result);
 		});
-
+		
 	} else {
 		res.send({});
 	}
