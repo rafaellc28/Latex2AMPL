@@ -1336,18 +1336,30 @@ class CodeGenerator:
 
     def generateCode_NodeExpression(self, node):
         res = EMPTY_STRING
-        expression = node.expression1.generateCode(self) + SPACE + node.op + SPACE + node.expression2.generateCode(self)
+        expression = EMPTY_STRING
 
-        if node.expression3:
+        if node.expression1:
+            expression += node.expression1.generateCode(self)
+
+        if node.expression2 and node.op:
+            expression += SPACE + node.op + SPACE + node.expression2.generateCode(self)
+
+        if node.expression3 and node.op:
             expression += SPACE + node.op + SPACE + node.expression3.generateCode(self)
 
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)
 
             if idxExpression.strip() != EMPTY_STRING:
-                res += node.identifier.generateCodeWithoutIndices(self) + SPACE + BEGIN_SET + idxExpression + END_SET+SPACE+SUCH_THAT+BREAKLINE+TAB
+                res += node.identifier.generateCodeWithoutIndices(self) + SPACE + BEGIN_SET + idxExpression + END_SET
+
+                if expression:
+                    res += SPACE+SUCH_THAT+BREAKLINE+TAB
             else:
-                res += node.identifier.generateCodeWithoutIndices(self) + SPACE+SUCH_THAT+SPACE
+                res += node.identifier.generateCodeWithoutIndices(self) 
+
+                if expression:
+                    res += SPACE+SUCH_THAT+SPACE
         else:
             res += node.identifier.generateCodeWithoutIndices(self) + SPACE+SUCH_THAT+SPACE
 

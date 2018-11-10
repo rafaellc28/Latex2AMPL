@@ -10,7 +10,7 @@ class NodeExpression(Expression):
     GE = ">="
     EQ = "="
 
-    def __init__(self, identifier, op, expression1, expression2, expression3 = None, indexingExpression = None):
+    def __init__(self, identifier, op = None, expression1 = None, expression2 = None, expression3 = None, indexingExpression = None):
         """
         Set the constraint expression and the indexing expression of a node expression
         
@@ -34,10 +34,22 @@ class NodeExpression(Expression):
         to string
         """
         
-        res = str(self.identifier) + " " + str(self.expression1) + " " + str(self.op) + " " + str(self.expression2)
+        res = str(self.identifier)
+
+        if self.expression1:
+            res += " " + str(self.expression1)
+
+        if self.op:
+            res += " " + str(self.op)
+
+        if self.expression2:
+            res += " " + str(self.expression2)
 
         if self.expression3:
-            res += " " + str(self.op) + " " + str(self.expression3)
+            if self.op:
+                res += " " + str(self.op)
+
+            res += " " + str(self.expression3)
 
         if self.indexingExpression:
             res += ",\nfor " + str(self.indexingExpression)
@@ -45,7 +57,13 @@ class NodeExpression(Expression):
         return "Node Expression: " + res
 
     def getDependencies(self, codeGenerator):
-        deps = self.identifier.getDependencies(codeGenerator) + self.expression1.getDependencies(codeGenerator) + self.expression2.getDependencies(codeGenerator)
+        deps = self.identifier.getDependencies(codeGenerator)
+        
+        if self.expression1:
+            deps += self.expression1.getDependencies(codeGenerator)
+
+        if self.expression1:
+            deps += self.expression2.getDependencies(codeGenerator)
 
         if self.expression3:
             deps += self.expression3.getDependencies(codeGenerator)

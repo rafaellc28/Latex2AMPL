@@ -362,8 +362,11 @@ class CodeSetup:
 
 
     def setupEnvironment_NodeExpression(self, node):
-        node.expression1.setupEnvironment(self)
-        node.expression2.setupEnvironment(self)
+        if node.expression1:
+            node.expression1.setupEnvironment(self)
+
+        if node.expression2:
+            node.expression2.setupEnvironment(self)
 
         if node.expression3:
             node.expression3.setupEnvironment(self)

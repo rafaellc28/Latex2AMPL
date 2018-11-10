@@ -307,34 +307,49 @@ def p_NodeExpression(t):
                       | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression FOR IndexingExpression
                       | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression WHERE IndexingExpression
                       | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression COLON IndexingExpression
-                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression'''
+                      | NODE Identifier NumericSymbolicExpression LE NetExpression LE NumericSymbolicExpression
 
-    op = None
-    if t.slice[4].type == "LE":
-      op = NodeExpression.LE
+                      | NODE Identifier FOR IndexingExpression
+                      | NODE Identifier WHERE IndexingExpression
+                      | NODE Identifier COLON IndexingExpression
+                      | NODE Identifier SLASHES'''
 
-    elif t.slice[4].type == "GE":
-      op = NodeExpression.GE
+    if len(t) > 5:
+      op = None
+      if t.slice[4].type == "LE":
+        op = NodeExpression.LE
 
-    else:
-      op = NodeExpression.EQ
-
-    if len(t) > 6 and (t.slice[6].type == "LE" or t.slice[6].type == "GE"):
-      if len(t) > 9:
-          t[9].setStmtIndexing(True)
-          t[0] = NodeExpression(t[2], op, t[3], t[5], t[7], t[9])
+      elif t.slice[4].type == "GE":
+        op = NodeExpression.GE
 
       else:
-          t[0] = NodeExpression(t[2], op, t[3], t[5], t[7])
+        op = NodeExpression.EQ
+
+      if len(t) > 6 and (t.slice[6].type == "LE" or t.slice[6].type == "GE"):
+        if len(t) > 9:
+            t[9].setStmtIndexing(True)
+            t[0] = NodeExpression(t[2], op, t[3], t[5], t[7], t[9])
+
+        else:
+            t[0] = NodeExpression(t[2], op, t[3], t[5], t[7])
+
+      else:
+
+        if len(t) > 7:
+            t[7].setStmtIndexing(True)
+            t[0] = NodeExpression(t[2], op, t[3], t[5], None, t[7])
+
+        else:
+            t[0] = NodeExpression(t[2], op, t[3], t[5])
 
     else:
 
-      if len(t) > 7:
-          t[7].setStmtIndexing(True)
-          t[0] = NodeExpression(t[2], op, t[3], t[5], None, t[7])
+      if len(t) > 4:
+          t[4].setStmtIndexing(True)
+          t[0] = NodeExpression(t[2], None, None, None, None, t[4])
 
       else:
-          t[0] = NodeExpression(t[2], op, t[3], t[5])
+          t[0] = NodeExpression(t[2])
 
 def p_IdentifierList(t):
     '''IdentifierList : IdentifierList COMMA Identifier LPAREN NumericSymbolicExpression RPAREN

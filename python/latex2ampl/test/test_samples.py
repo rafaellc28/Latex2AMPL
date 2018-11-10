@@ -1111,3 +1111,6 @@ def test_lp51_linear():
 # Network
 def test_lp0_network():
 	check_test_network_num(0)
+
+def test_lp1_network():
+	check_test_network_num(1)
