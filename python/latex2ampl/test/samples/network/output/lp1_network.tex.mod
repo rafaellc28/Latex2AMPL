@@ -1,16 +1,16 @@
-param p_supply, >= 0;
-
 set D_CITY;
 
 set W_CITY;
 
+param p_supply, >= 0;
+
 set DW_LINKS dimen 2, within (D_CITY cross W_CITY);
 
-param dw_cap{(i,j) in DW_LINKS}, >= 0;
+param pd_cap{dc in D_CITY}, >= 0;
 
 param pd_cost{dc in D_CITY}, >= 0;
 
-param pd_cap{dc in D_CITY}, >= 0;
+param dw_cap{(i,j) in DW_LINKS}, >= 0;
 
 param dw_cost{(i,j) in DW_LINKS}, >= 0;
 

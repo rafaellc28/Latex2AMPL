@@ -59,7 +59,7 @@ class Identifier(Expression):
         else:
             res = var
         
-        return "Var:" + res
+        return "Identifier:" + res
 
     def __len__(self):
         """

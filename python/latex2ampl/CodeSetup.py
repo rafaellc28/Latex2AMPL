@@ -362,6 +362,9 @@ class CodeSetup:
 
 
     def setupEnvironment_NodeExpression(self, node):
+        self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
+        node.identifier.setupEnvironment(self)
+
         if node.expression1:
             node.expression1.setupEnvironment(self)
 
@@ -382,6 +385,9 @@ class CodeSetup:
 
     def setupEnvironment_ArcExpression(self, node):
 
+        self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
+        node.identifier.setupEnvironment(self)
+
         if node.attributes and len(node.attributes) > 0:
             map(lambda el: el.setupEnvironment(self), node.attributes)
 
@@ -394,13 +400,16 @@ class CodeSetup:
         if node.objValue:
             node.objValue.setupEnvironment(self)
 
-        self.codeGenerator.genArcObj.add(GenObj(node.objName.getSymbolName(self.codeGenerator)))
+        if node.objName:
+            self.codeGenerator.genArcObj.add(GenObj(node.objName.getSymbolName(self.codeGenerator)))
+            node.objName.setupEnvironment(self)
 
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
 
     def setupEnvironment_ArcItem(self, node):
-        self.codeGenerator.genArcObj.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
+        self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
+        node.identifier.setupEnvironment(self)
 
         if node.factor:
             node.factor.setupEnvironment(self)
@@ -1725,11 +1734,13 @@ class CodeSetup:
         elif isinstance(setExpressionObj, SymbolicSet):
             self._setIsParam(identifier)
             identifier.isSymbolic = True
+            identifier.isDeclaredAsParam = True
             self._addType(identifier, setExpressionObj)
             
         elif isinstance(setExpressionObj, LogicalSet):
             self._setIsParam(identifier)
             identifier.isLogical = True
+            identifier.isDeclaredAsParam = True
             self._addType(identifier, setExpressionObj)
 
         elif isinstance(setExpressionObj, ParameterSet):

@@ -2,13 +2,13 @@ set CITIES;
 
 set LINKS dimen 2;
 
-param demand{k in CITIES};
-
-param cost{(i,j) in LINKS};
-
 param capacity{(i,j) in LINKS};
 
 param supply{k in CITIES};
+
+param cost{(i,j) in LINKS};
+
+param demand{k in CITIES};
 
 
 minimize Total_Cost;

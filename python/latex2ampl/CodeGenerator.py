@@ -42,6 +42,7 @@ class CodeGenerator:
         self.genBelongsToList = GenBelongsToList()
         self.genValueAssigned = GenList()
         self.genArcObj = GenList()
+        self.genArcName = GenList()
         self.topological_order = []
 
         self.totalObjectives = 0
@@ -1158,7 +1159,7 @@ class CodeGenerator:
         
     def _declareParam(self, _genParameter):
 
-        if self.genArcObj.has(_genParameter.getName()):
+        if self.genArcObj.has(_genParameter.getName()) or self.genArcName.has(_genParameter.getName()):
             return ""
 
         result = self._processObject(_genParameter, PARAMETER, False, False)
@@ -1374,21 +1375,40 @@ class CodeGenerator:
         return NetOutExpression.NETOUT
 
     def generateCode_ArcExpression(self, node):
+        previousAttributes = False
         res = EMPTY_STRING
         expression = EMPTY_STRING
 
         if node.attributes and len(node.attributes) > 0:
             expression += (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.attributes))
-
-        expression += COMMA + BREAKLINE+TAB
+            previousAttributes = True
 
         if node._from and len(node._from) > 0:
-            expression += SPACE + FROM + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node._from)) + COMMA
+
+            expression += COMMA
+
+            if previousAttributes:
+                expression += BREAKLINE+TAB
+                previousAttributes = False
+
+            expression += SPACE + FROM + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node._from))
 
         if node.to and len(node.to) > 0:
-            expression += SPACE + TO + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.to)) + COMMA
+            expression += COMMA
+
+            if previousAttributes:
+                expression += BREAKLINE+TAB
+                previousAttributes = False
+
+            expression += SPACE + TO + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.to))
 
         if node.objName:
+            expression += COMMA
+
+            if previousAttributes:
+                expression += BREAKLINE+TAB
+                previousAttributes = False
+
             expression += SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
 
         if node.indexingExpression:
