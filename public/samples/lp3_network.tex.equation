@@ -1,0 +1,10 @@
+% AMPL\network\netmulti.mod
+\text{minimize } Total\_Cost\\
+\text{node } Balance_{k,p} net\_in = demand_{k,p} - supply_{k,p}: k \in CITIES, p \in PRODS\\
+\text{arc } Ship_{i,j,p} \geq 0, \leq capacity_{i,j,p}\\
+\text{ from } Balance_{i,p} \text{ to } Balance_{j,p} \text{ obj } \text{ Total_Cost } cost_{i,j,p}: \\
+(i,j) \in LINKS, p \in PRODS\\
+\sum_{p \in PRODS} Ship_{i,j,p} \leq cap\_joint_{i,j}: (i,j) \in LINKS\\
+LINKS \subseteq (CITIES \times CITIES);\\
+supply_{c,p}, demand_{c,p}, cost_{i,j,p}, capacity_{i,j,p}, cap\_joint_{i,j} \geq 0:\\
+c \in CITIES, p \in PRODS, (i,j) \in LINKS\\

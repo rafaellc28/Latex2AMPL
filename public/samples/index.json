@@ -101,6 +101,7 @@
 		{"name": "AMPL/network/net1node.mod", "number": 0, "decl": false, "network": true},
 		{"name": "AMPL/network/net3node.mod", "number": 1, "decl": false, "network": true},
 		{"name": "AMPL/network/netmax3.mod", "number": 2, "decl": false, "network": true},
+		{"name": "AMPL/network/netmulti.mod", "number": 3, "decl": false, "network": true},
 		{"name": "GLPK/plan.mod", "number": 4, "decl": false},
 		{"name": "GLPK/plan.mod (with declaration section)", "number": 4, "decl": true},
 		{"name": "GLPK/stigler.mod", "number": 5, "decl": false},
