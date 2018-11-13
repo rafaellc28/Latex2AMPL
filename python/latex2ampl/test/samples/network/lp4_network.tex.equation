@@ -1,0 +1,11 @@
+% AMPL\network\netfeeds.mod
+\text{minimize } Total\_Cost\\
+\text{node } Balance_{p,k} \text{ net_out } = supply_{p,k} - demand_{p,k} + \sum_{f \in FEEDS} yield_{p,f} \cdot Feed_{f,k}:\\
+p \in PRODS, k \in CITIES\\
+\text{arc } Ship_{p,i,j} \geq 0, \leq capacity_{p,i,j}
+\text{ from } Balance_{p,i} \text{ to } Balance_{p,j}\\
+\text{ obj } \text{ Total_Cost } cost_{p,i,j}: p \in PRODS, (i,j) \in LINKS\\
+LINKS \subseteq (CITIES \times CITIES);\\
+supply_{p,c}, demand_{p,c}, cost_{p,i,j}, capacity_{p,i,j}, yield_{p,f}, limit_{f,p} \geq 0:\\
+p \in PRODS, c \in CITIES, (i,j) \in LINKS, f \in FEEDS\\
+Feed_{f,k} \in \mathbb{R}^{+}, \leq limit_{f,k}: f \in FEEDS, k \in CITIES\\
