@@ -352,40 +352,46 @@ def p_NodeExpression(t):
           t[0] = NodeExpression(t[2])
 
 def p_IdentifierList(t):
-    '''IdentifierList : IdentifierList COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
+    '''IdentifierList : IdentifierList COMMA Identifier NumericSymbolicExpression
+                      | IdentifierList COMMA Identifier Identifier
                       | IdentifierList COMMA Identifier
-                      | Identifier LPAREN NumericSymbolicExpression RPAREN COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
-                      | Identifier LPAREN NumericSymbolicExpression RPAREN COMMA Identifier
-                      | Identifier COMMA Identifier LPAREN NumericSymbolicExpression RPAREN
+                      | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier Identifier
+                      | Identifier Identifier COMMA Identifier NumericSymbolicExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier
+                      | Identifier Identifier COMMA Identifier
+                      | Identifier COMMA Identifier NumericSymbolicExpression
+                      | Identifier COMMA Identifier Identifier
                       | Identifier COMMA Identifier'''
 
     if t.slice[1].type == "IdentifierList":
       if len(t) > 4:
-        t[0] = t[1] + [ArcItem(t[3], t[5])]
+        t[0] = t[1] + [ArcItem(t[3], t[4])]
       else:
         t[0] = t[1] + [ArcItem(t[3])]
 
     else:
 
-      if len(t) > 9:
-        t[0] = [ArcItem(t[1], t[3]), ArcItem(t[6], t[8])]
+      if len(t) > 5:
+        t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4], t[5])]
       
-      elif len(t) > 6:
-        if t.slice[2].type == "LPAREN":
-          t[0] = [ArcItem(t[1], t[3]), ArcItem(t[6])]
+      elif len(t) > 4:
+        if t.slice[2].type == "COMMA":
+          t[0] = [ArcItem(t[1]), ArcItem(t[3], t[4])]
         else:
-          t[0] = [ArcItem(t[1]), ArcItem(t[3], t[5])]
+          t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4])]
 
       else:
         t[0] = [ArcItem(t[1]), ArcItem(t[3])]
 
 def p_FromList(t):
     '''FromList : FROM Identifier
-                | FROM Identifier LPAREN NumericSymbolicExpression RPAREN
+                | FROM Identifier NumericSymbolicExpression
+                | FROM Identifier Identifier
                 | FROM IdentifierList'''
 
     if len(t) > 3:
-      t[0] = [ArcItem(t[2], t[4])]
+      t[0] = [ArcItem(t[2], t[3])]
 
     else:
 
@@ -397,10 +403,11 @@ def p_FromList(t):
 
 def p_ToList(t):
     '''ToList : TO Identifier
-              | TO Identifier LPAREN NumericSymbolicExpression RPAREN
+              | TO Identifier NumericSymbolicExpression
+              | TO Identifier Identifier
               | TO IdentifierList'''
     if len(t) > 3:
-      t[0] = [ArcItem(t[2], t[4])]
+      t[0] = [ArcItem(t[2], t[3])]
 
     else:
 
