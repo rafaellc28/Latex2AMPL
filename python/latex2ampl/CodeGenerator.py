@@ -1391,7 +1391,7 @@ class CodeGenerator:
                 expression += BREAKLINE+TAB
                 previousAttributes = False
 
-            expression += SPACE + FROM + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node._from))
+            expression += SPACE + FROM + SPACE + (COMMA+SPACE + FROM + SPACE).join(map(lambda el: el.generateCode(self), node._from))
 
         if node.to and len(node.to) > 0:
             expression += COMMA
@@ -1400,7 +1400,7 @@ class CodeGenerator:
                 expression += BREAKLINE+TAB
                 previousAttributes = False
 
-            expression += SPACE + TO + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.to))
+            expression += SPACE + TO + SPACE + (COMMA+SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.to))
 
         if node.objName:
             expression += COMMA
@@ -1429,7 +1429,7 @@ class CodeGenerator:
         res = node.identifier.generateCode(self)
 
         if node.factor:
-            res += SPACE + BEGIN_ARGUMENT_LIST + node.factor.generateCode(self) + END_ARGUMENT_LIST
+            res += SPACE + node.factor.generateCode(self)
 
         return res
 

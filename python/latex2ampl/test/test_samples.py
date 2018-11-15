@@ -951,6 +951,15 @@ def test_extras_test88():
 def test_extras_test89():
 	check_test_extras_num(89)
 
+def test_extras_test90():
+	check_test_extras_num(90)
+
+def test_extras_test91():
+	check_test_extras_num(91)
+
+def test_extras_test92():
+	check_test_extras_num(92)
+
 # Linear Programming
 def test_lp0_linear():
 	check_test_linear_num(0)

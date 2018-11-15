@@ -32,6 +32,7 @@ from DeclarationExpression import *
 import objects as obj
 
 precedence = (
+    ('left', 'FROM', 'TO'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
     ('right', 'COMMA'),
@@ -54,7 +55,7 @@ precedence = (
     ('left', 'DIFF', 'SYMDIFF', 'UNION'),
     ('left', 'INTER'),
     ('left', 'CROSS'),
-    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'NETOUT', 'ARC', 'FROM', 'TO', 'OBJ'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'NETOUT', 'ARC', 'OBJ'),
     ('right', 'DOTS', 'BY'),
     ('right', 'AMPERSAND'),
     ('left', 'PLUS', 'MINUS', 'LESS'),
@@ -385,10 +386,10 @@ def p_IdentifierList(t):
         t[0] = [ArcItem(t[1]), ArcItem(t[3])]
 
 def p_FromList(t):
-    '''FromList : FROM Identifier
-                | FROM Identifier NumericSymbolicExpression
+    '''FromList : FROM Identifier NumericSymbolicExpression
                 | FROM Identifier Identifier
-                | FROM IdentifierList'''
+                | FROM IdentifierList
+                | FROM Identifier'''
 
     if len(t) > 3:
       t[0] = [ArcItem(t[2], t[3])]
@@ -402,10 +403,10 @@ def p_FromList(t):
         t[0] = [ArcItem(t[2])]
 
 def p_ToList(t):
-    '''ToList : TO Identifier
-              | TO Identifier NumericSymbolicExpression
+    '''ToList : TO Identifier NumericSymbolicExpression
               | TO Identifier Identifier
-              | TO IdentifierList'''
+              | TO IdentifierList
+              | TO Identifier'''
     if len(t) > 3:
       t[0] = [ArcItem(t[2], t[3])]
 
