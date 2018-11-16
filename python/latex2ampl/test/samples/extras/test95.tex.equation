@@ -1,0 +1,2 @@
+% Test node expression with if-then expressions
+\text{node } Intersection_{k} (\text{if } k = exit \text{ then } -\infty) \leq \text{ net_out } \leq (\text{if } k = entr \text{ then } \infty): k \in INTER\\

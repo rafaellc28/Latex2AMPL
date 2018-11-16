@@ -1,0 +1,3 @@
+% Test node expression with if-then expressions
+\text{arc } Traff\_In \geq 0 \text{ to } Intersection_{entr}\\
+\text{arc } Traff\_Out \geq 0 \text{ from } Intersection_{exit}\\

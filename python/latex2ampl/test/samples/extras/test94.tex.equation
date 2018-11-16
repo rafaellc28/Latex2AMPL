@@ -1,0 +1,2 @@
+% Test arc expression with obj if-then coefficient
+\text{arc } Traff_{i,j} \geq 0, \leq cap_{i,j} \text{ from } Intersection_{i} \text{ to } Intersection_{j} \text{ obj } \text{ Entering_Traff } (\text{if } i = entr \text{ then } 1): (i,j) \in ROADS\\

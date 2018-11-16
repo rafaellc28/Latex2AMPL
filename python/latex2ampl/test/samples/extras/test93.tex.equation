@@ -1,0 +1,4 @@
+% Test node expressions with net_in and net_out
+\text{node } Entr\_Int \text{ net_out } \geq 0\\
+\text{node } Entr\_Int \text{ net_in } \geq 0\\
+\text{node } Intersection_{k}: k \in INTER \setminus \{entr,exit\}\\

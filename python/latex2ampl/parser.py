@@ -32,7 +32,7 @@ from DeclarationExpression import *
 import objects as obj
 
 precedence = (
-    ('left', 'FROM', 'TO'),
+    ('left', 'FROM', 'TO', 'OBJ'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
     ('right', 'COMMA'),
@@ -55,7 +55,7 @@ precedence = (
     ('left', 'DIFF', 'SYMDIFF', 'UNION'),
     ('left', 'INTER'),
     ('left', 'CROSS'),
-    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'NETOUT', 'ARC', 'OBJ'),
+    ('left', 'SETOF', 'COUNT', 'ATMOST', 'ATLEAST', 'EXACTLY', 'NUMBEROF', 'ALLDIFF', 'NODE', 'NETIN', 'NETOUT', 'ARC'),
     ('right', 'DOTS', 'BY'),
     ('right', 'AMPERSAND'),
     ('left', 'PLUS', 'MINUS', 'LESS'),
@@ -419,7 +419,8 @@ def p_ToList(t):
         t[0] = [ArcItem(t[2])]
 
 def p_ArcObj(t):
-    '''ArcObj : OBJ ID Identifier'''
+    '''ArcObj : OBJ ID NumericSymbolicExpression
+              | OBJ ID Identifier'''
     t[0] = [ID(t[2]), t[3]]
 
 def p_ArcExpression(t):
