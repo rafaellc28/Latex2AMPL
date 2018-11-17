@@ -411,6 +411,9 @@ class CodeSetup:
         self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
         node.identifier.setupEnvironment(self)
 
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
         if node.factor:
             node.factor.setupEnvironment(self)
 

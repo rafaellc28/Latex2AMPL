@@ -87,22 +87,27 @@ class ArcItem(Expression):
     Class representing an arc item expression node in the AST of a MLP
     """
 
-    def __init__(self, identifier, factor = None):
+    def __init__(self, identifier, factor = None, indexingExpression = None):
         """
         Set the attributes of an arc item expression
         
         :param identifier: Identifier
         :param factor: NumericSymboLicExpression
+        :param indexingExpression: LogicalIndexExpression | IndexingExpression
         """
         
         self.identifier = identifier
         self.factor = factor
+        self.indexingExpression = indexingExpression
         
     def __str__(self):
         """
         to string
         """
         res = "Arc Item: " + str(self.identifier) + " "
+
+        if self.indexingExpression:
+            res += "{"+str(self.indexingExpression)+"}"
 
         if self.factor:
             res += str(self.factor)
@@ -111,6 +116,9 @@ class ArcItem(Expression):
 
     def getDependencies(self, codeGenerator):
         deps = self.identifier.getDependencies(codeGenerator)
+
+        if self.indexingExpression:
+            deps += self.indexingExpression.getDependencies(codeGenerator)
 
         if self.factor:
             deps += self.factor.getDependencies(codeGenerator)

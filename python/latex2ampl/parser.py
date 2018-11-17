@@ -356,48 +356,134 @@ def p_IdentifierList(t):
     '''IdentifierList : IdentifierList COMMA Identifier NumericSymbolicExpression
                       | IdentifierList COMMA Identifier Identifier
                       | IdentifierList COMMA Identifier
+                      
+                      | IdentifierList COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      | IdentifierList COMMA LogicalIndexExpression Identifier Identifier
+                      | IdentifierList COMMA LogicalIndexExpression Identifier
+                      
                       | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      
                       | Identifier NumericSymbolicExpression COMMA Identifier Identifier
+                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier Identifier
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier Identifier
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier Identifier
+                      
                       | Identifier Identifier COMMA Identifier NumericSymbolicExpression
+                      | Identifier Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier Identifier COMMA Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      
                       | Identifier NumericSymbolicExpression COMMA Identifier
+                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier
+                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier
+
                       | Identifier Identifier COMMA Identifier
+                      | Identifier Identifier COMMA LogicalIndexExpression Identifier
+                      | LogicalIndexExpression Identifier Identifier COMMA Identifier
+                      | LogicalIndexExpression Identifier Identifier COMMA LogicalIndexExpression Identifier
+
                       | Identifier COMMA Identifier NumericSymbolicExpression
+                      | Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier COMMA Identifier NumericSymbolicExpression
+                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+
                       | Identifier COMMA Identifier Identifier
-                      | Identifier COMMA Identifier'''
+                      | Identifier COMMA LogicalIndexExpression Identifier Identifier
+                      | LogicalIndexExpression Identifier COMMA Identifier Identifier
+                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier Identifier
+
+                      | Identifier COMMA Identifier
+                      | Identifier COMMA LogicalIndexExpression Identifier
+                      | LogicalIndexExpression Identifier COMMA Identifier
+                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier'''
 
     if t.slice[1].type == "IdentifierList":
-      if len(t) > 4:
-        t[0] = t[1] + [ArcItem(t[3], t[4])]
+
+      if t.slice[3].type == "LogicalIndexExpression":
+
+        if len(t) > 5:
+          t[0] = t[1] + [ArcItem(t[4], t[5], t[3])]
+        else:
+          t[0] = t[1] + [ArcItem(t[4], None, t[3])]
+
       else:
-        t[0] = t[1] + [ArcItem(t[3])]
+        if len(t) > 4:
+          t[0] = t[1] + [ArcItem(t[3], t[4])]
+        else:
+          t[0] = t[1] + [ArcItem(t[3])]
 
     else:
 
-      if len(t) > 5:
-        t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4], t[5])]
-      
-      elif len(t) > 4:
-        if t.slice[2].type == "COMMA":
-          t[0] = [ArcItem(t[1]), ArcItem(t[3], t[4])]
+      _types = map(lambda el: el.type, t.slice)
+
+      if "LogicalIndexExpression" in _types:
+        posIndexingExpression1 = _types.index("LogicalIndexExpression")
+
+        posIndexingExpression2 = None
+        for i in range(posIndexingExpression1+1, len(_types)):
+          if _types[i] == "LogicalIndexExpression":
+            posIndexingExpression2 = i
+
+        indexingExpression1 = t[posIndexingExpression1]
+        identifier1 = t[posIndexingExpression1+1]
+        factor1 = None if len(t) < posIndexingExpression1+3 or _types[posIndexingExpression1+2] == "COMMA" else t[posIndexingExpression1+2]
+
+        if posIndexingExpression2 == None:
+          posCOMMA = t[_types.index("COMMA")]
+          identifier2 = t[posCOMMA+1]
+          factor2 = None if len(t) < posCOMMA+3 else t[posCOMMA+2]
+
         else:
-          t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4])]
+          indexingExpression2 = t[posIndexingExpression2]
+          identifier2 = t[posIndexingExpression2+1]
+          factor2 = None if len(t) < posIndexingExpression2+3 else t[posIndexingExpression2+2]
+
+
+        t[0] = [ArcItem(identifier1, factor1, indexingExpression1), ArcItem(identifier2, factor2, indexingExpression2)]
 
       else:
-        t[0] = [ArcItem(t[1]), ArcItem(t[3])]
+
+        if len(t) > 5:
+          t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4], t[5])]
+        
+        elif len(t) > 4:
+          if t.slice[2].type == "COMMA":
+            t[0] = [ArcItem(t[1]), ArcItem(t[3], t[4])]
+          else:
+            t[0] = [ArcItem(t[1], t[2]), ArcItem(t[4])]
+
+        else:
+          t[0] = [ArcItem(t[1]), ArcItem(t[3])]
 
 def p_FromList(t):
     '''FromList : FROM Identifier NumericSymbolicExpression
                 | FROM Identifier Identifier
-                | FROM IdentifierList
-                | FROM Identifier'''
+                | FROM Identifier
+                
+                | FROM LogicalIndexExpression Identifier NumericSymbolicExpression
+                | FROM LogicalIndexExpression Identifier Identifier
+                | FROM LogicalIndexExpression Identifier
+                
+                | FROM IdentifierList'''
 
-    if len(t) > 3:
-      t[0] = [ArcItem(t[2], t[3])]
+    if t.slice[2].type == "IdentifierList":
+      t[0] = t[2]
+
+    elif t.slice[2].type == "LogicalIndexExpression":
+      if len(t) > 4:
+        t[0] = [ArcItem(t[3], t[4], t[2])]
+        
+      else:
+        t[0] = [ArcItem(t[3], None, t[2])]
 
     else:
 
-      if t.slice[2].type == "IdentifierList":
-        t[0] = t[2]
+      if len(t) > 3:
+        t[0] = [ArcItem(t[2], t[3])]
 
       else:
         t[0] = [ArcItem(t[2])]
@@ -405,15 +491,28 @@ def p_FromList(t):
 def p_ToList(t):
     '''ToList : TO Identifier NumericSymbolicExpression
               | TO Identifier Identifier
-              | TO IdentifierList
-              | TO Identifier'''
-    if len(t) > 3:
-      t[0] = [ArcItem(t[2], t[3])]
+              | TO Identifier
+              
+              | TO LogicalIndexExpression Identifier NumericSymbolicExpression
+              | TO LogicalIndexExpression Identifier Identifier
+              | TO LogicalIndexExpression Identifier
+              
+              | TO IdentifierList'''
+
+    if t.slice[2].type == "IdentifierList":
+      t[0] = t[2]
+
+    elif t.slice[2].type == "LogicalIndexExpression":
+      if len(t) > 4:
+        t[0] = [ArcItem(t[3], t[4], t[2])]
+        
+      else:
+        t[0] = [ArcItem(t[3], None, t[2])]
 
     else:
-
-      if t.slice[2].type == "IdentifierList":
-        t[0] = t[2]
+      
+      if len(t) > 3:
+        t[0] = [ArcItem(t[2], t[3])]
 
       else:
         t[0] = [ArcItem(t[2])]

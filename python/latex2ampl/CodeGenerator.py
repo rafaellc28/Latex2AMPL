@@ -1426,7 +1426,12 @@ class CodeGenerator:
         return res
 
     def generateCode_ArcItem(self, node):
-        res = node.identifier.generateCode(self)
+        res = EMPTY_STRING
+                
+        if node.indexingExpression:
+            res += BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET + SPACE
+
+        res += node.identifier.generateCode(self)
 
         if node.factor:
             res += SPACE + node.factor.generateCode(self)
