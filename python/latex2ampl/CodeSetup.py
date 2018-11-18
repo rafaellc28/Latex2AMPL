@@ -857,6 +857,7 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isSymbolic = True
+                    var[i].isDeclaredAsParam = True
                     self._setIsParam(var[i])
 
                     self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
@@ -865,6 +866,7 @@ class CodeSetup:
             else:
                 self._setIsParam(var)
                 var.isSymbolic = True
+                var.isDeclaredAsParam = True
 
                 self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
                                         [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
@@ -875,6 +877,7 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isLogical = True
+                    var[i].isDeclaredAsParam = True
                     self._setIsParam(var[i])
 
                     self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
@@ -882,6 +885,7 @@ class CodeSetup:
 
             else:
                 var.isLogical = True
+                var.isDeclaredAsParam = True
                 self._setIsParam(var)
 
                 self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
