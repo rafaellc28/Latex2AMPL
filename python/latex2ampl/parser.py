@@ -357,58 +357,202 @@ def p_IdentifierList(t):
                       | IdentifierList COMMA Identifier Identifier
                       | IdentifierList COMMA Identifier
                       
-                      | IdentifierList COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
-                      | IdentifierList COMMA LogicalIndexExpression Identifier Identifier
-                      | IdentifierList COMMA LogicalIndexExpression Identifier
+                      | IdentifierList COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | IdentifierList COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | IdentifierList COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | IdentifierList COMMA Identifier Identifier WHERE IndexingExpression
+                      | IdentifierList COMMA Identifier Identifier COLON IndexingExpression
+                      | IdentifierList COMMA Identifier Identifier FOR IndexingExpression
+
+                      | IdentifierList COMMA Identifier WHERE IndexingExpression
+                      | IdentifierList COMMA Identifier COLON IndexingExpression
+                      | IdentifierList COMMA Identifier FOR IndexingExpression
                       
                       | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression
-                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+
+                      | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier NumericSymbolicExpression
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
                       
                       | Identifier NumericSymbolicExpression COMMA Identifier Identifier
-                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier Identifier
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier Identifier
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier Identifier
+
+                      | Identifier NumericSymbolicExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier Identifier
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier Identifier
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier Identifier
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
                       
                       | Identifier Identifier COMMA Identifier NumericSymbolicExpression
-                      | Identifier Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier Identifier COMMA Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+
+                      | Identifier Identifier COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier Identifier COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier Identifier COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression
+
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
                       
                       | Identifier NumericSymbolicExpression COMMA Identifier
-                      | Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA Identifier
-                      | LogicalIndexExpression Identifier NumericSymbolicExpression COMMA LogicalIndexExpression Identifier
+
+                      | Identifier NumericSymbolicExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier
+
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression WHERE IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression COLON IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier NumericSymbolicExpression FOR IndexingExpression COMMA Identifier FOR IndexingExpression
 
                       | Identifier Identifier COMMA Identifier
-                      | Identifier Identifier COMMA LogicalIndexExpression Identifier
-                      | LogicalIndexExpression Identifier Identifier COMMA Identifier
-                      | LogicalIndexExpression Identifier Identifier COMMA LogicalIndexExpression Identifier
+
+                      | Identifier Identifier COMMA Identifier WHERE IndexingExpression
+                      | Identifier Identifier COMMA Identifier COLON IndexingExpression
+                      | Identifier Identifier COMMA Identifier FOR IndexingExpression
+
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier
+
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier Identifier WHERE IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier Identifier COLON IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier Identifier FOR IndexingExpression COMMA Identifier FOR IndexingExpression
 
                       | Identifier COMMA Identifier NumericSymbolicExpression
-                      | Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier COMMA Identifier NumericSymbolicExpression
-                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier NumericSymbolicExpression
+
+                      | Identifier COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
+
+                      | Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression WHERE IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression COLON IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier NumericSymbolicExpression FOR IndexingExpression
 
                       | Identifier COMMA Identifier Identifier
-                      | Identifier COMMA LogicalIndexExpression Identifier Identifier
-                      | LogicalIndexExpression Identifier COMMA Identifier Identifier
-                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier Identifier
+
+                      | Identifier COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier Identifier
+                      | Identifier COLON IndexingExpression COMMA Identifier Identifier
+                      | Identifier FOR IndexingExpression COMMA Identifier Identifier
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier COLON IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
+
+                      | Identifier FOR IndexingExpression COMMA Identifier Identifier WHERE IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier Identifier COLON IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier Identifier FOR IndexingExpression
 
                       | Identifier COMMA Identifier
-                      | Identifier COMMA LogicalIndexExpression Identifier
-                      | LogicalIndexExpression Identifier COMMA Identifier
-                      | LogicalIndexExpression Identifier COMMA LogicalIndexExpression Identifier'''
+
+                      | Identifier COMMA Identifier WHERE IndexingExpression
+                      | Identifier COMMA Identifier COLON IndexingExpression
+                      | Identifier COMMA Identifier FOR IndexingExpression
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier
+                      | Identifier COLON IndexingExpression COMMA Identifier
+                      | Identifier FOR IndexingExpression COMMA Identifier
+
+                      | Identifier WHERE IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier WHERE IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier COLON IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier COLON IndexingExpression COMMA Identifier FOR IndexingExpression
+
+                      | Identifier FOR IndexingExpression COMMA Identifier WHERE IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier COLON IndexingExpression
+                      | Identifier FOR IndexingExpression COMMA Identifier FOR IndexingExpression'''
 
     if t.slice[1].type == "IdentifierList":
 
-      if t.slice[3].type == "LogicalIndexExpression":
+      if len(t) > 5:
 
-        if len(t) > 5:
-          t[0] = t[1] + [ArcItem(t[4], t[5], t[3])]
+        if len(t) > 6:
+          t[0] = t[1] + [ArcItem(t[3], t[4], t[6])]
         else:
-          t[0] = t[1] + [ArcItem(t[4], None, t[3])]
+          t[0] = t[1] + [ArcItem(t[3], None, t[5])]
 
       else:
         if len(t) > 4:
@@ -420,28 +564,41 @@ def p_IdentifierList(t):
 
       _types = map(lambda el: el.type, t.slice)
 
-      if "LogicalIndexExpression" in _types:
-        posIndexingExpression1 = _types.index("LogicalIndexExpression")
+      if "IndexingExpression" in _types:
+        posIndexingExpression1 = _types.index("IndexingExpression")
 
         posIndexingExpression2 = None
+        indexingExpression2 = None
+
         for i in range(posIndexingExpression1+1, len(_types)):
-          if _types[i] == "LogicalIndexExpression":
+          if _types[i] == "IndexingExpression":
             posIndexingExpression2 = i
+            indexingExpression2 = t[posIndexingExpression2]
 
         indexingExpression1 = t[posIndexingExpression1]
-        identifier1 = t[posIndexingExpression1+1]
-        factor1 = None if len(t) < posIndexingExpression1+3 or _types[posIndexingExpression1+2] == "COMMA" else t[posIndexingExpression1+2]
+
+        if posIndexingExpression1-3 > 0 and _types[posIndexingExpression1-3] != "COMMA":
+          identifier1 = t[posIndexingExpression1-3]
+          factor1 = t[posIndexingExpression1-2]
+
+        else:
+          identifier1 = t[posIndexingExpression1-2]
+          factor1 = None
 
         if posIndexingExpression2 == None:
-          posCOMMA = t[_types.index("COMMA")]
+          posCOMMA = _types.index("COMMA")
           identifier2 = t[posCOMMA+1]
           factor2 = None if len(t) < posCOMMA+3 else t[posCOMMA+2]
 
         else:
-          indexingExpression2 = t[posIndexingExpression2]
-          identifier2 = t[posIndexingExpression2+1]
-          factor2 = None if len(t) < posIndexingExpression2+3 else t[posIndexingExpression2+2]
 
+          if _types[posIndexingExpression2-3] != "COMMA":
+            identifier2 = t[posIndexingExpression2-3]
+            factor2 = t[posIndexingExpression2-2]
+
+          else:
+            identifier2 = t[posIndexingExpression2-2]
+            factor2 = None
 
         t[0] = [ArcItem(identifier1, factor1, indexingExpression1), ArcItem(identifier2, factor2, indexingExpression2)]
 
@@ -463,25 +620,34 @@ def p_FromList(t):
     '''FromList : FROM Identifier NumericSymbolicExpression
                 | FROM Identifier Identifier
                 | FROM Identifier
-                
-                | FROM LogicalIndexExpression Identifier NumericSymbolicExpression
-                | FROM LogicalIndexExpression Identifier Identifier
-                | FROM LogicalIndexExpression Identifier
-                
+              
+                | FROM Identifier NumericSymbolicExpression WHERE IndexingExpression
+                | FROM Identifier NumericSymbolicExpression COLON IndexingExpression
+                | FROM Identifier NumericSymbolicExpression FOR IndexingExpression
+              
+                | FROM Identifier Identifier WHERE IndexingExpression
+                | FROM Identifier Identifier COLON IndexingExpression
+                | FROM Identifier Identifier FOR IndexingExpression
+              
+                | FROM Identifier WHERE IndexingExpression
+                | FROM Identifier COLON IndexingExpression
+                | FROM Identifier FOR IndexingExpression
+              
                 | FROM IdentifierList'''
 
     if t.slice[2].type == "IdentifierList":
       t[0] = t[2]
 
-    elif t.slice[2].type == "LogicalIndexExpression":
-      if len(t) > 4:
-        t[0] = [ArcItem(t[3], t[4], t[2])]
+    elif len(t) > 4:
+      
+      if len(t) > 5:
+        t[0] = [ArcItem(t[2], t[3], t[5])]
         
       else:
-        t[0] = [ArcItem(t[3], None, t[2])]
-
+        t[0] = [ArcItem(t[2], None, t[4])]
+        
     else:
-
+      
       if len(t) > 3:
         t[0] = [ArcItem(t[2], t[3])]
 
@@ -493,21 +659,30 @@ def p_ToList(t):
               | TO Identifier Identifier
               | TO Identifier
               
-              | TO LogicalIndexExpression Identifier NumericSymbolicExpression
-              | TO LogicalIndexExpression Identifier Identifier
-              | TO LogicalIndexExpression Identifier
+              | TO Identifier NumericSymbolicExpression WHERE IndexingExpression
+              | TO Identifier NumericSymbolicExpression COLON IndexingExpression
+              | TO Identifier NumericSymbolicExpression FOR IndexingExpression
+              
+              | TO Identifier Identifier WHERE IndexingExpression
+              | TO Identifier Identifier COLON IndexingExpression
+              | TO Identifier Identifier FOR IndexingExpression
+              
+              | TO Identifier WHERE IndexingExpression
+              | TO Identifier COLON IndexingExpression
+              | TO Identifier FOR IndexingExpression
               
               | TO IdentifierList'''
 
     if t.slice[2].type == "IdentifierList":
       t[0] = t[2]
 
-    elif t.slice[2].type == "LogicalIndexExpression":
-      if len(t) > 4:
-        t[0] = [ArcItem(t[3], t[4], t[2])]
+    elif len(t) > 4:
+
+      if len(t) > 5:
+        t[0] = [ArcItem(t[2], t[3], t[5])]
         
       else:
-        t[0] = [ArcItem(t[3], None, t[2])]
+        t[0] = [ArcItem(t[2], None, t[4])]
 
     else:
       
@@ -540,55 +715,55 @@ def p_ArcExpression(t):
                      | ARC Identifier ArcObj
                      | ARC Identifier
 
-                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ToList FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ArcObj FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList ArcObj FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ArcObj FOR IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression
-                     | ARC Identifier FromList ToList ArcObj FOR IndexingExpression
-                     | ARC Identifier FromList ToList FOR IndexingExpression
-                     | ARC Identifier FromList ArcObj FOR IndexingExpression
-                     | ARC Identifier FromList FOR IndexingExpression
-                     | ARC Identifier ToList ArcObj FOR IndexingExpression
-                     | ARC Identifier ToList FOR IndexingExpression
-                     | ARC Identifier ArcObj FOR IndexingExpression
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ToList ArcObj
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ToList
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ArcObj
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ToList ArcObj
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ToList
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ArcObj
+                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList
+                     | ARC Identifier FOR IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier FOR IndexingExpression FromList ToList
+                     | ARC Identifier FOR IndexingExpression FromList ArcObj
+                     | ARC Identifier FOR IndexingExpression FromList
+                     | ARC Identifier FOR IndexingExpression ToList ArcObj
+                     | ARC Identifier FOR IndexingExpression ToList
+                     | ARC Identifier FOR IndexingExpression ArcObj
                      | ARC Identifier FOR IndexingExpression
                     
-                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ToList WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ArcObj WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList ArcObj WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ArcObj WHERE IndexingExpression
-                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression
-                     | ARC Identifier FromList ToList ArcObj WHERE IndexingExpression
-                     | ARC Identifier FromList ToList WHERE IndexingExpression
-                     | ARC Identifier FromList ArcObj WHERE IndexingExpression
-                     | ARC Identifier FromList WHERE IndexingExpression
-                     | ARC Identifier ToList ArcObj WHERE IndexingExpression
-                     | ARC Identifier ToList WHERE IndexingExpression
-                     | ARC Identifier ArcObj WHERE IndexingExpression
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ToList ArcObj
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ToList
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ArcObj
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ToList ArcObj
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ToList
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ArcObj
+                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList
+                     | ARC Identifier WHERE IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier WHERE IndexingExpression FromList ToList
+                     | ARC Identifier WHERE IndexingExpression FromList ArcObj
+                     | ARC Identifier WHERE IndexingExpression FromList
+                     | ARC Identifier WHERE IndexingExpression ToList ArcObj
+                     | ARC Identifier WHERE IndexingExpression ToList
+                     | ARC Identifier WHERE IndexingExpression ArcObj
                      | ARC Identifier WHERE IndexingExpression
 
-                     | ARC Identifier DeclarationAttributeList FromList ToList ArcObj COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ToList COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList ArcObj COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList FromList COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList ArcObj COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ToList COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList ArcObj COLON IndexingExpression
-                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression
-                     | ARC Identifier FromList ToList ArcObj COLON IndexingExpression
-                     | ARC Identifier FromList ToList COLON IndexingExpression
-                     | ARC Identifier FromList ArcObj COLON IndexingExpression
-                     | ARC Identifier FromList COLON IndexingExpression
-                     | ARC Identifier ToList ArcObj COLON IndexingExpression
-                     | ARC Identifier ToList COLON IndexingExpression
-                     | ARC Identifier ArcObj COLON IndexingExpression
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ToList ArcObj
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ToList
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ArcObj
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ToList ArcObj
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ToList
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ArcObj
+                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList
+                     | ARC Identifier COLON IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier COLON IndexingExpression FromList ToList
+                     | ARC Identifier COLON IndexingExpression FromList ArcObj
+                     | ARC Identifier COLON IndexingExpression FromList
+                     | ARC Identifier COLON IndexingExpression ToList ArcObj
+                     | ARC Identifier COLON IndexingExpression ToList
+                     | ARC Identifier COLON IndexingExpression ArcObj
                      | ARC Identifier COLON IndexingExpression'''
 
     _types = map(lambda el: el.type, t.slice)

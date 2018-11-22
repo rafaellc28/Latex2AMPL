@@ -1,2 +1,2 @@
 % Test to list expression with factor
-\text{arc } PD\_Ship_{i} \geq 0, \leq pd\_cap_{i} \text{ from } Plant \text{ to } Dist_{i} 1-pd\_loss_{i} \text{ obj } \text{ Total_Cost } pd\_cost_{i}: i \in D\_CITY\\
+\text{arc } PD\_Ship_{i}: i \in D\_CITY \geq 0, \leq pd\_cap_{i} \text{ from } Plant \text{ to } Dist_{i} 1-pd\_loss_{i} \text{ obj } \text{ Total_Cost } pd\_cost_{i}\\

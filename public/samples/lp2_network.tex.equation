@@ -2,8 +2,8 @@
 \text{node } Intersection: k \in INTER\\
 \text{arc } Traff\_In \geq 0 \text{ to } Intersection_{entr}\\
 \text{arc } Traff\_Out \geq 0 \text{ from } Intersection_{exit}\\
-\text{arc } Traff_{i,j} \geq 0, \leq cap_{i,j}
-\text{ from } Intersection_{i} \text{ to } Intersection_{j}: (i,j) \in ROADS\\
+\text{arc } Traff_{i,j}: (i,j) \in ROADS \geq 0, \leq cap_{i,j}
+\text{ from } Intersection_{i} \text{ to } Intersection_{j}\\
 \text{maximize } Traff\_In\\
 entr, exit \in \mathbb{S}, \in INTER; exit \neq entr;\\
 ROADS \subseteq (INTER \setminus \{exit\}) \times (INTER \setminus \{entr\});\\

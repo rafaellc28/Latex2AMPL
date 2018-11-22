@@ -1,5 +1,5 @@
 % Test arc expression with if-logicalExpression
-\text{arc } Traff_{i,j} \geq 0, \leq cap_{i,j}\\
-\text{ from } \text{ if } i = entr \text{ Entr_Int}, \text{ if } i \neq \text{ entr } Intersection_{i}\\
-\text{ to } \text{ if } j = exit \text{ Exit_Int }, \text{ if } j \neq \text{ exit } Intersection_{j}\\
-\text{ obj } \text{ Entering_Traff } (\text{ if } i = entr \text{ then } 1): (i,j) \in ROADS\\
+\text{arc } Traff_{i,j}: (i,j) \in ROADS \geq 0, \leq cap_{i,j}\\
+\text{ from } \text{ Entr_Int}: \text{ if } i = entr, Intersection_{i}: \text{ if } i \neq \text{ entr }\\
+\text{ to } \text{ Exit_Int }: \text{ if } j = exit, Intersection_{j}: \text{ if } j \neq \text{ exit }\\
+\text{ obj } \text{ Entering_Traff } (\text{ if } i = entr \text{ then } 1)\\

@@ -3,10 +3,10 @@
 \text{node } Plant \text{ net_out} = p\_supply\\
 \text{node } Dist_{i}: i \in D\_CITY\\
 \text{node } Whse_{j} \text{ net_in} = w\_demand_{j}: j \in W\_CITY\\
-\text{arc } PD\_Ship_{i} \geq 0, \leq pd\_cap_{i}\\
-\text{from } Plant \text{ to } Dist_{i} \text{ obj } \text{Total_Cost } pd\_cost_{i}: i \in D\_CITY\\
-\text{arc } DW\_Ship_{i,j} \geq 0, \leq dw\_cap_{i,j}\\
-\text{from } Dist_{i} \text{ to } Whse_{j} \text{ obj } \text{Total_Cost } dw\_cost_{i,j}: (i,j) \in DW\_LINKS\\
+\text{arc } PD\_Ship_{i}: i \in D\_CITY \geq 0, \leq pd\_cap_{i}\\
+\text{from } Plant \text{ to } Dist_{i} \text{ obj } \text{Total_Cost } pd\_cost_{i}\\
+\text{arc } DW\_Ship_{i,j}: (i,j) \in DW\_LINKS \geq 0, \leq dw\_cap_{i,j}\\
+\text{from } Dist_{i} \text{ to } Whse_{j} \text{ obj } \text{Total_Cost } dw\_cost_{i,j}\\
 DW\_LINKS \subseteq (D\_CITY \times W\_CITY);\\
 p\_supply, w\_demand_{wc}, pd\_cost_{dc}, dw\_cost_{i,j}, pd\_cap_{dc}, dw\_cap_{i,j} \geq 0:\\
 wc \in W\_CITY, dc \in D\_CITY, (i,j) \in DW\_LINKS\\
