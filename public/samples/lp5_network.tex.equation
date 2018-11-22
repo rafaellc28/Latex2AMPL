@@ -2,10 +2,10 @@
 \text{minimize } Total\_Cost\\
 \text{node } Supply_{k} \text{ net_out } = supply_{k}: k \in CITIES\\
 \text{node } Demand_{k} \text{ net_in } = demand_{k}: k \in CITIES\\
-\text{arc } Ship_{i,j}: (i,j) \in LINKS \geq 0, \leq link\_cap_{i,j}
+\text{arc } Ship_{i,j} \geq 0, \leq link\_cap_{i,j}: (i,j) \in LINKS
 \text{ from } Demand_{i} \text{ to } Supply_{j}\\
 \text{ obj } \text{ Total_Cost } cost_{i,j}\\
-\text{arc } Through_{k}: k \in CITIES \geq 0, \leq city\_cap_{k}
+\text{arc } Through_{k} \geq 0, \leq city\_cap_{k}: k \in CITIES
 \text{ from } Supply_{k} \text{ to } Demand_{k}//\\
 LINKS \subseteq (CITIES \times CITIES);\\
 supply_{c}, demand_{c}, city\_cap_{c}, cost_{i,j}, link\_cap_{i,j} \geq 0: c \in CITIES, (i,j) \in LINKS\\

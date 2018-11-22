@@ -1,2 +1,2 @@
 % Test to list expression with factor
-\text{arc } DW\_Ship_{i,j}: (i,j) \in DW\_LINKS \geq 0, \leq dw\_cap[i,j] \text{ from } Dist_{i} \text{ to } Whse_{j} (1000/ppc) \text{ obj } \text{ Total_Cost } dw\_cost_{i,j}\\
+\text{arc } DW\_Ship_{i,j} \geq 0, \leq dw\_cap[i,j]: (i,j) \in DW\_LINKS \text{ from } Dist_{i} \text{ to } Whse_{j} (1000/ppc) \text{ obj } \text{ Total_Cost } dw\_cost_{i,j}\\

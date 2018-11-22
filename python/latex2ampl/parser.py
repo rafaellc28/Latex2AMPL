@@ -715,14 +715,14 @@ def p_ArcExpression(t):
                      | ARC Identifier ArcObj
                      | ARC Identifier
 
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ToList ArcObj
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ToList
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList ArcObj
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList FromList
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ToList ArcObj
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ToList
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList ArcObj
-                     | ARC Identifier FOR IndexingExpression DeclarationAttributeList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression ToList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression
                      | ARC Identifier FOR IndexingExpression FromList ToList ArcObj
                      | ARC Identifier FOR IndexingExpression FromList ToList
                      | ARC Identifier FOR IndexingExpression FromList ArcObj
@@ -732,14 +732,14 @@ def p_ArcExpression(t):
                      | ARC Identifier FOR IndexingExpression ArcObj
                      | ARC Identifier FOR IndexingExpression
                     
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ToList ArcObj
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ToList
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList ArcObj
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList FromList
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ToList ArcObj
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ToList
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList ArcObj
-                     | ARC Identifier WHERE IndexingExpression DeclarationAttributeList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression ToList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression
                      | ARC Identifier WHERE IndexingExpression FromList ToList ArcObj
                      | ARC Identifier WHERE IndexingExpression FromList ToList
                      | ARC Identifier WHERE IndexingExpression FromList ArcObj
@@ -749,14 +749,14 @@ def p_ArcExpression(t):
                      | ARC Identifier WHERE IndexingExpression ArcObj
                      | ARC Identifier WHERE IndexingExpression
 
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ToList ArcObj
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ToList
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList ArcObj
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList FromList
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ToList ArcObj
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ToList
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList ArcObj
-                     | ARC Identifier COLON IndexingExpression DeclarationAttributeList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression ToList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression ToList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression
                      | ARC Identifier COLON IndexingExpression FromList ToList ArcObj
                      | ARC Identifier COLON IndexingExpression FromList ToList
                      | ARC Identifier COLON IndexingExpression FromList ArcObj
