@@ -388,6 +388,9 @@ class CodeSetup:
         self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
         node.identifier.setupEnvironment(self)
 
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
         if node.attributes and len(node.attributes) > 0:
             map(lambda el: el.setupEnvironment(self), node.attributes)
 
@@ -397,15 +400,8 @@ class CodeSetup:
         if node.to and len(node.to) > 0:
             map(lambda el: el.setupEnvironment(self), node.to)
 
-        if node.objValue:
-            node.objValue.setupEnvironment(self)
-
-        if node.objName:
-            self.codeGenerator.genArcObj.add(GenObj(node.objName.getSymbolName(self.codeGenerator)))
-            node.objName.setupEnvironment(self)
-
-        if node.indexingExpression:
-            node.indexingExpression.setupEnvironment(self)
+        if node._obj:
+            node._obj.setupEnvironment(self)
 
     def setupEnvironment_ArcItem(self, node):
         self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
@@ -416,6 +412,16 @@ class CodeSetup:
 
         if node.factor:
             node.factor.setupEnvironment(self)
+
+    def setupEnvironment_ArcObj(self, node):
+        self.codeGenerator.genArcObj.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
+        node.name.setupEnvironment(self)
+
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
+        if node.value:
+            node.value.setupEnvironment(self)
 
     def setupEnvironment_ConstraintExpression2(self, node):
         """

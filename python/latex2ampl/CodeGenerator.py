@@ -1402,14 +1402,14 @@ class CodeGenerator:
 
             expression += SPACE + TO + SPACE + (COMMA+SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.to))
 
-        if node.objName:
+        if node._obj:
             expression += COMMA
 
             if previousAttributes:
                 expression += BREAKLINE+TAB
                 previousAttributes = False
 
-            expression += SPACE + OBJ + SPACE + node.objName.generateCode(self) + SPACE + node.objValue.generateCode(self)
+            expression += SPACE + node._obj.generateCode(self)
 
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)
@@ -1435,6 +1435,16 @@ class CodeGenerator:
 
         if node.factor:
             res += SPACE + node.factor.generateCode(self)
+
+        return res
+
+    def generateCode_ArcObj(self, node):
+        res = OBJ
+
+        if node.indexingExpression:
+            res += SPACE + BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET
+
+        res += SPACE + node.name.generateCode(self) + SPACE + node.value.generateCode(self)
 
         return res
 

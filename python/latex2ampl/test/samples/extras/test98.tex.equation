@@ -1,0 +1,4 @@
+% Test Node and Arc expressions with obj with indexing
+\text{minimize } Total\_Cost\\
+\text{node } Balance_{k} \text{ net_in } = demand_{k} - supply_{k}: k \in CITIES\\
+\text{arc } Ship_{i,j} \geq 0, \leq capacity_{i,j}: (i,j) \in LINKS \text{ from } Balance_{i} \text{ to } Balance_{j} \text{ obj } Total\_Cost cost_{c}: c \in CITIES\\

@@ -693,9 +693,24 @@ def p_ToList(t):
         t[0] = [ArcItem(t[2])]
 
 def p_ArcObj(t):
-    '''ArcObj : OBJ ID NumericSymbolicExpression
+    '''ArcObj : OBJ ID NumericSymbolicExpression WHERE IndexingExpression
+              | OBJ ID Identifier WHERE IndexingExpression
+
+              | OBJ ID NumericSymbolicExpression COLON IndexingExpression
+              | OBJ ID Identifier COLON IndexingExpression
+
+              | OBJ ID NumericSymbolicExpression FOR IndexingExpression
+              | OBJ ID Identifier FOR IndexingExpression
+
+              | OBJ ID NumericSymbolicExpression
               | OBJ ID Identifier'''
-    t[0] = [ID(t[2]), t[3]]
+
+    indexingExpression = None
+
+    if len(t) > 4:
+      indexingExpression = t[5]
+
+    t[0] = ArcObj(ID(t[2]), t[3], indexingExpression)
 
 def p_ArcExpression(t):
     '''ArcExpression : ARC Identifier DeclarationAttributeList FromList ToList ArcObj
@@ -785,11 +800,8 @@ def p_ArcExpression(t):
 
     if "ArcObj" in _types:
       _obj = t[_types.index("ArcObj")]
-      objName = _obj[0]
-      objValue = _obj[1]
     else:
-      objName = None
-      objValue = None
+      _obj = None
 
     if "IndexingExpression" in _types:
       indexing = t[_types.index("IndexingExpression")]
@@ -797,7 +809,7 @@ def p_ArcExpression(t):
     else:
       indexing = None
 
-    t[0] = ArcExpression(t[2], attributes, _from, _to, objName, objValue, indexing)
+    t[0] = ArcExpression(t[2], attributes, _from, _to, _obj, indexing)
 
 
 def p_Constraint(t):
