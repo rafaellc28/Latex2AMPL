@@ -1153,3 +1153,6 @@ def test_lp4_network():
 
 def test_lp5_network():
 	check_test_network_num(5)
+
+def test_lp6_network():
+	check_test_network_num(6)

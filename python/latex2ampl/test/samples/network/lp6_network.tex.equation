@@ -1,0 +1,19 @@
+% AMPL\network\steenbre.mod
+\text{node } Balance_{k,l,j} \text{ net_in } =
+              \text{ if } l = j \text{ then } tr\_matr_{k,l}
+              \text{ else } \text{ if } k = j \text{ then } -tr\_matr_{k,l}
+              \text{ else } 0: (k,l) \in TRIPS, j \in CITIES\\
+
+\text{arc } flow_{k,l,i,j} \geq 0: (k,l) \in TRIPS, (i,j) \in ROADS\\
+    \text{from } Balance_{k,l,i} \text{ to } Balance_{k,l,j}\\
+
+\text{minimize } \sum_{(i,j) \in ROADS} (
+		  cost_{i,j} * alpha_{i,j} *
+			\sqrt{capacity_{i,j} - cmin_{i,j} + sqrt\_offset}
+		+ total\_flow_{i,j} * cost_{i,j} *
+			(TZERO + CCR * \left(\frac{total\_flow_{i,j}}{capacity_{i,j}}\right)^{2})
+		)
+CITIES := \{1 \dots 9\}; DEST := \{1 \dots 6\}; sqrt\_offset \text{ default } .01\\
+TRIPS \subseteq (DEST \times DEST); ROADS \subseteq (CITIES \times CITIES)\\
+cost_{i,j}, alpha_{i,j}, TZERO, CCR \geq 0; cmin_{i,j} > 0: (i,j) \in ROADS\\
+capacity_{i,j} \in \mathbb{R}, \geq cmin_{i,j}: (i,j) \in ROADS\\
