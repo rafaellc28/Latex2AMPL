@@ -32,7 +32,7 @@ from DeclarationExpression import *
 import objects as obj
 
 precedence = (
-    ('left', 'FROM', 'TO', 'OBJ'),
+    ('left', 'FROM', 'TO', 'OBJ', 'TOCOME'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
     ('right', 'COMMA'),
@@ -82,15 +82,27 @@ def p_Objective(t):
                  | MAXIMIZE NumericSymbolicExpression WHERE IndexingExpression
                  | MAXIMIZE NumericSymbolicExpression COLON IndexingExpression
                  | MAXIMIZE NumericSymbolicExpression
+
                  | MAXIMIZE Identifier FOR IndexingExpression
                  | MAXIMIZE Identifier WHERE IndexingExpression
                  | MAXIMIZE Identifier COLON IndexingExpression
                  | MAXIMIZE Identifier
 
+                 | MAXIMIZE TOCOME FOR IndexingExpression
+                 | MAXIMIZE TOCOME WHERE IndexingExpression
+                 | MAXIMIZE TOCOME COLON IndexingExpression
+                 | MAXIMIZE TOCOME
+
                  | MINIMIZE NumericSymbolicExpression FOR IndexingExpression
                  | MINIMIZE NumericSymbolicExpression WHERE IndexingExpression
                  | MINIMIZE NumericSymbolicExpression COLON IndexingExpression
                  | MINIMIZE NumericSymbolicExpression
+
+                 | MINIMIZE TOCOME FOR IndexingExpression
+                 | MINIMIZE TOCOME WHERE IndexingExpression
+                 | MINIMIZE TOCOME COLON IndexingExpression
+                 | MINIMIZE TOCOME
+
                  | MINIMIZE Identifier FOR IndexingExpression
                  | MINIMIZE Identifier WHERE IndexingExpression
                  | MINIMIZE Identifier COLON IndexingExpression

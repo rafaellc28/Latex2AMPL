@@ -175,7 +175,8 @@ tokens = [
    'ARC',
    'FROM',
    'TO',
-   'OBJ'
+   'OBJ',
+   'TOCOME'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -297,6 +298,9 @@ def t_OBJ(t):
    r'\\text\{\s*obj\s*\}|\s*obj(?!\\_|[a-zA-Z0-9])'
    return t
 
+def t_TOCOME(t):
+   r'\\text\{\s*to_come\s*\}|\s*to\\_come(?!\\_|[a-zA-Z0-9])'
+   return t
 
 def t_CTIME(t):
    r'\\text\{\s*ctime\s*\}|\s*ctime(?!\\_|[a-zA-Z0-9])'
