@@ -350,41 +350,42 @@ class CodeSetup:
         """
         Generate the AMPL code for declaration of identifiers and sets in this constraint
         """
-
         self.indexingExpression = node.indexingExpression
-
+        
         node.constraintExpression.setupEnvironment(self)
-
+        
         self.indexingExpression = None
-
+        
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
-
-
+            
+    def setupEnvironment_ToComeExpression(self, node):
+        pass
+        
     def setupEnvironment_NodeExpression(self, node):
         self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
         node.identifier.setupEnvironment(self)
-
+        
         if node.expression1:
             node.expression1.setupEnvironment(self)
-
+            
         if node.expression2:
             node.expression2.setupEnvironment(self)
-
+            
         if node.expression3:
             node.expression3.setupEnvironment(self)
-
+            
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
-
+            
     def setupEnvironment_NetInExpression(self, node):
         pass
-
+        
     def setupEnvironment_NetOutExpression(self, node):
         pass
-
+        
     def setupEnvironment_ArcExpression(self, node):
-
+        
         self.codeGenerator.genArcName.add(GenObj(node.identifier.getSymbolName(self.codeGenerator)))
         node.identifier.setupEnvironment(self)
 

@@ -91,11 +91,6 @@ class NetInExpression(Expression):
     """
     NETIN = "net_in"
 
-    def __init__(self):
-        """
-        Set the constraint expression and the indexing expression of a node expression
-        """
-    
     def __str__(self):
         """
         to string
@@ -124,11 +119,6 @@ class NetOutExpression(Expression):
     """
     NETOUT = "net_out"
 
-    def __init__(self):
-        """
-        Set the constraint expression and the indexing expression of a node expression
-        """
-    
     def __str__(self):
         """
         to string

@@ -7,6 +7,7 @@ from Constraints import *
 from SetExpression import *
 from NodeExpression import *
 from ArcExpression import *
+from ToComeExpression import *
 from EntryIndexingExpression import *
 from SymbolicExpression import *
 from TopologicalSort import *
@@ -1334,6 +1335,9 @@ class CodeGenerator:
             res += constraintExpression + END_STATEMENT
 
         return res
+
+    def generateCode_ToComeExpression(self, node):
+        return ToComeExpression.TOCOME
 
     def generateCode_NodeExpression(self, node):
         res = EMPTY_STRING

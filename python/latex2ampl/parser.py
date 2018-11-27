@@ -11,6 +11,7 @@ from Constraints import *
 from ConstraintExpression import *
 from NodeExpression import *
 from ArcExpression import *
+from ToComeExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
 from IndexingExpression import *
@@ -88,20 +89,20 @@ def p_Objective(t):
                  | MAXIMIZE Identifier COLON IndexingExpression
                  | MAXIMIZE Identifier
 
-                 | MAXIMIZE TOCOME FOR IndexingExpression
-                 | MAXIMIZE TOCOME WHERE IndexingExpression
-                 | MAXIMIZE TOCOME COLON IndexingExpression
-                 | MAXIMIZE TOCOME
+                 | MAXIMIZE ToComeExpression FOR IndexingExpression
+                 | MAXIMIZE ToComeExpression WHERE IndexingExpression
+                 | MAXIMIZE ToComeExpression COLON IndexingExpression
+                 | MAXIMIZE ToComeExpression
 
                  | MINIMIZE NumericSymbolicExpression FOR IndexingExpression
                  | MINIMIZE NumericSymbolicExpression WHERE IndexingExpression
                  | MINIMIZE NumericSymbolicExpression COLON IndexingExpression
                  | MINIMIZE NumericSymbolicExpression
 
-                 | MINIMIZE TOCOME FOR IndexingExpression
-                 | MINIMIZE TOCOME WHERE IndexingExpression
-                 | MINIMIZE TOCOME COLON IndexingExpression
-                 | MINIMIZE TOCOME
+                 | MINIMIZE ToComeExpression FOR IndexingExpression
+                 | MINIMIZE ToComeExpression WHERE IndexingExpression
+                 | MINIMIZE ToComeExpression COLON IndexingExpression
+                 | MINIMIZE ToComeExpression
 
                  | MINIMIZE Identifier FOR IndexingExpression
                  | MINIMIZE Identifier WHERE IndexingExpression
@@ -154,6 +155,35 @@ def p_ConstraintList(t):
 
     else:
         t[0] = [t[1]]
+
+def p_ToComeExpression(t):
+    '''ToComeExpression : TOCOME
+                        | TOCOME PLUS NumericSymbolicExpression
+                        | TOCOME PLUS Identifier
+                        | NumericSymbolicExpression PLUS TOCOME
+                        | Identifier PLUS TOCOME'''
+
+    if len(t) == 2:
+      if t.slice[1].type == "TOCOME":
+        t[0] = ValuedNumericExpression(ToComeExpression())
+
+    else:
+
+      if t.slice[1].type == "TOCOME":
+        t[1] = ValuedNumericExpression(ToComeExpression())
+
+      elif isinstance(t[1], Identifier):
+        t[1] = ValuedNumericExpression(t[1])
+
+      if t.slice[3].type == "TOCOME":
+        t[3] = ValuedNumericExpression(ToComeExpression())
+
+      elif isinstance(t[3], Identifier):
+        t[3] = ValuedNumericExpression(t[3])
+
+      op = NumericExpressionWithArithmeticOperation.PLUS
+
+      t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
 
 def p_NetExpression(t):
     '''NetExpression : NETIN
