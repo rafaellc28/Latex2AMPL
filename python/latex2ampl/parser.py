@@ -1369,6 +1369,48 @@ def p_ConstraintExpressionConditional(t):
     else:
       t[0] = ConditionalConstraintExpression(op, t[1], t[3])
 
+def p_ConstraintExpressionWithToCome(t):
+    '''ConstraintExpression : Identifier LE ToComeExpression LE Identifier
+                            | Identifier LE ToComeExpression LE NumericSymbolicExpression
+                            | Identifier GE ToComeExpression GE Identifier
+                            | Identifier GE ToComeExpression GE NumericSymbolicExpression
+
+                            | NumericSymbolicExpression LE ToComeExpression LE Identifier
+                            | NumericSymbolicExpression LE ToComeExpression LE NumericSymbolicExpression
+                            | NumericSymbolicExpression GE ToComeExpression GE Identifier
+                            | NumericSymbolicExpression GE ToComeExpression GE NumericSymbolicExpression
+
+                            | ToComeExpression LE Identifier
+                            | ToComeExpression LE NumericSymbolicExpression
+                            | Identifier LE ToComeExpression
+                            | NumericSymbolicExpression LE ToComeExpression
+
+                            | ToComeExpression GE Identifier
+                            | ToComeExpression GE NumericSymbolicExpression
+                            | Identifier GE ToComeExpression
+                            | NumericSymbolicExpression GE ToComeExpression
+
+                            | ToComeExpression EQ Identifier
+                            | ToComeExpression EQ NumericSymbolicExpression
+                            | Identifier EQ ToComeExpression
+                            | NumericSymbolicExpression EQ ToComeExpression'''
+
+    if len(t) > 4:
+        if t.slice[4].type == "LE":
+            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.LE)
+
+        elif t.slice[4].type == "GE":
+            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.GE)
+
+    elif t.slice[2].type == "EQ":
+        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.EQ)
+
+    elif t.slice[2].type == "LE":
+        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.LE)
+
+    elif t.slice[2].type == "GE":
+        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
+
 def p_ConstraintExpression(t):
     '''ConstraintExpression : Identifier LE Identifier LE Identifier
                             | Identifier LE Identifier LE NumericSymbolicExpression
@@ -1387,24 +1429,13 @@ def p_ConstraintExpression(t):
                             | NumericSymbolicExpression GE Identifier GE NumericSymbolicExpression
                             | NumericSymbolicExpression GE NumericSymbolicExpression GE Identifier
                             | NumericSymbolicExpression GE NumericSymbolicExpression GE NumericSymbolicExpression'''
+                            
+    if t.slice[4].type == "LE":
+        t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.LE)
 
-    if len(t) > 4:
-        if t.slice[4].type == "LE":
-            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.LE)
-
-        elif t.slice[4].type == "GE":
-            t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.GE)
-
-    elif t.slice[2].type == "EQ":
-        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.EQ)
-
-    elif t.slice[2].type == "LE":
-        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.LE)
-
-    elif t.slice[2].type == "GE":
-        t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
-
-
+    elif t.slice[4].type == "GE":
+        t[0] = ConstraintExpression3(t[3], t[1], t[5], ConstraintExpression.GE)
+          
 def p_EntryConstraintLogicalExpression(t):
     '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE NumericSymbolicExpression
                                         | NumericSymbolicExpression LE Identifier
