@@ -1,0 +1,17 @@
+% Test linear program with to_come expression
+\text{minimize } \text{ to_come }\\
+\text{node } \text{ RT } rtmin \leq \text{ net_out } \leq rtmax\\
+\text{node } \text{ OT } otmin \leq \text{ net_out } \leq otmax\\
+\text{node } P\_RT_{f}: f \in fact\\
+\text{node } P\_OT_{f}: f \in fact\\
+\text{node } M_{p,f}: p \in prod, f \in fact\\
+\text{node } D_{p,d}: p \in prod, d\in dctr\\
+\text{node } W_{p,w} \text{ net_in } = dem_{p,w}: p \in prod, w \in whse\\
+\text{arc } Work\_RT_{f} \geq rmin_{f}, \leq rmax_{f}: f \in fact \text{ from } RT \text{ to } P\_RT_{f}\\
+\text{arc } Work\_OT_{f} \geq omin_{f}, \leq omax_{f}: f \in fact \text{ from } OT \text{ to } P\_OT_{f}\\
+\text{arc } Manu\_RT_{p,f} \geq 0: p \in prod, f \in fact \mid rpc_{p,f} \neq 0 \text{ from } P\_RT_{f} \text{ to } M_{p,f} \left(\frac{dp_{f} * hd_{f}}{pt_{p,f}}\right) \text{ obj } \text{ cost } \left(\frac{rpc_{p,f} * dp_{f} * hd_{f}}{pt_{p,f}}\right)\\
+\text{arc } Manu\_OT_{p,f} \geq 0: p \in prod, f \in fact \mid opc_{p,f} \neq 0 \text{ from } P\_OT_{f} \text{ to } M_{p,f} \left(\frac{1}{pt_{p,f}}\right) \text{ obj } \text{ cost } \left(\frac{opc_{p,f}}{pt_{p,f}}\right)\\
+\text{arc } Prod\_L_{p,f} \geq 0: p \in prod, f \in fact \text{ from } M_{p,f} \text{ to } W_{p,f}\\
+\text{arc } Prod\_D_{p,f} \geq 0: p \in prod, f \in fact \text{ from } M_{p,f} \text{ to } D_{p,f}\\
+\text{arc } Ship_{p,d,w} \geq 0: p \in prod, (d,w) \in rt \text{ from } D_{p,d} \text{ to } W_{p,w} \text{ obj } \text{ cost } (sc_{d,w} * wt_{p})\\
+\text{arc } Trans_{p,d} \geq 0: p \in prod, d \in dctr \text{ from } W_{p,d} \text{ to } D_{p,d} \text{ obj } \text{ cost } (tc_{p})\\

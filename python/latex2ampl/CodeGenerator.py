@@ -1300,7 +1300,11 @@ class CodeGenerator:
         
         linearExpression = node.linearExpression.generateCode(self)
 
-        if self.genArcObj.has(linearExpression):
+        if linearExpression == TOCOME:
+            _obj = self.genArcObj.getAll()[0]
+            return node.type + SPACE + _obj.getName() + SUCH_THAT + SPACE + linearExpression + END_STATEMENT
+
+        elif self.genArcObj.has(linearExpression):
             return node.type + SPACE+ linearExpression + END_STATEMENT
 
         domain_str = EMPTY_STRING
