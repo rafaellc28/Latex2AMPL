@@ -15,3 +15,9 @@
 \text{arc } Prod\_D_{p,f} \geq 0: p \in prod, f \in fact \text{ from } M_{p,f} \text{ to } D_{p,f}\\
 \text{arc } Ship_{p,d,w} \geq 0: p \in prod, (d,w) \in rt \text{ from } D_{p,d} \text{ to } W_{p,w} \text{ obj } \text{ cost } (sc_{d,w} * wt_{p})\\
 \text{arc } Trans_{p,d} \geq 0: p \in prod, d \in dctr \text{ from } W_{p,d} \text{ to } D_{p,d} \text{ obj } \text{ cost } (tc_{p})\\
+dctr \subseteq whse; fact \subseteq dctr\\
+rt := \left\{d \in dctr, w \in whse \mid d \neq w  \land  sc_{d,w} < huge  \land \left(w \in dctr \lor \sum_{p \in prod} dem_{p,w} > 0\right) \land \\\neg \left(msr_{d,w} \land \sum_{p \in prod} 1000*\frac{dem_{p,w}}{cpp_{p}} < dsr_{d}\right)\right\}\\
+msr_{d,w} \in \mathbb{L}; dstot_{p} := \sum_{w \in whse} ds_{p,w}; dem_{p,w} := dt_{p} * \frac{ds_{p,w}}{dstot_{p}}: d \in dctr, p \in prod, w \in whse\\
+sc_{d,w}, dsr_{d}, rtmin, otmin, rmin_{f}, omin_{f}, hd_{f}, tc_{p}, pt_{p,f}, rpc_{p,f}, opc_{p,f}, dt_{p}, ds_{p,w} \geq 0\\
+huge, dp_{f}, wt_{p}, cpp_{p} > 0; rtmax \geq rtmin; otmax \geq otmin; rmax_{f} \geq rmin_{f}; omax_{f} \geq omin_{f}; ds_{p,w} \leq 1:\\
+d \in dctr, w \in whse, f \in fact, p \in prod\\

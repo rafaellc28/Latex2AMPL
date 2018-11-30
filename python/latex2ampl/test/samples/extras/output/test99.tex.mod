@@ -1,46 +1,60 @@
-set rt dimen 2;
+param huge, > 0;
 
-param otmax;
+param rtmin, >= 0;
 
-set dctr;
-
-param rtmin;
-
-param rtmax;
-
-param otmin;
+param otmin, >= 0;
 
 set prod;
 
 set whse;
 
-set fact;
+param dt{p in prod}, >= 0;
 
-param rpc{p in prod, f in fact};
+param rtmax, >= rtmin;
 
-param rmin{f in fact};
+param otmax, >= otmin;
 
-param pt{p in prod, f in fact};
+set dctr, within whse;
 
-param hd{f in fact};
+param tc{p in prod}, >= 0;
 
-param tc{p in prod};
+param dsr{d in dctr}, >= 0;
 
-param rmax{f in fact};
+param msr{d in dctr, w in whse} logical;
 
-param wt{p in prod};
+param sc{d in dctr, w in whse}, >= 0;
 
-param opc{p in prod, f in fact};
+set fact, within dctr;
 
-param dp{f in fact};
+param pt{p in prod, f in fact}, >= 0;
 
-param omin{f in fact};
+param omin{f in fact}, >= 0;
 
-param dem{p in prod, w in whse};
+param rmin{f in fact}, >= 0;
 
-param sc{(d,w) in rt};
+param rpc{p in prod, f in fact}, >= 0;
 
-param omax{f in fact};
+param wt{p in prod}, > 0;
+
+param dp{f in fact}, > 0;
+
+param opc{p in prod, f in fact}, >= 0;
+
+param cpp{p in prod}, > 0;
+
+param ds{p in prod, w in whse}, <= 1, >= 0;
+
+param hd{f in fact}, >= 0;
+
+param rmax{f in fact}, >= rmin[f];
+
+param dstot{p in prod}, := sum{w in whse}ds[p,w];
+
+param omax{f in fact}, >= omin[f];
+
+param dem{p in prod, w in whse}, := dt[p] * ds[p,w]/dstot[p];
+
+set rt dimen 2, := {d in dctr, w in whse : d != w and sc[d,w] < huge and (w in dctr or sum{p in prod}dem[p,w] > 0) and not (msr[d,w] and sum{p in prod}1000 * dem[p,w]/cpp[p] < dsr[d])};
 
 
 minimize cost: to_come;
