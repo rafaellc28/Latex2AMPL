@@ -35,23 +35,29 @@ class Constraint:
     Class representing a constraint node in the AST of a MLP
     """
     
-    def __init__(self, constraintExpression, indexingExpression = None):
+    def __init__(self, constraintExpression, indexingExpression = None, nameExpression = None):
         """
         Set the constraint expression and the indexing expression of an constraint
         
         :param constraintExpression: ConstraintExpression
-        :param indexingExpressions: IndexingExpression
+        :param indexingExpression  : IndexingExpression
+        :param nameExpression      : ID
         """
         
         self.constraintExpression = constraintExpression
         self.indexingExpression   = indexingExpression
+        self.nameExpression       = nameExpression
     
     def __str__(self):
         """
         to string
         """
-        
-        res = str(self.constraintExpression)
+        res = ""
+
+        if self.nameExpression:
+            res += "["+str(self.nameExpression)+"]"
+
+        res += str(self.constraintExpression)
 
         if self.indexingExpression:
             res += ",\nfor " + str(self.indexingExpression)

@@ -972,9 +972,17 @@ class CodeGenerator:
 
             if constraintStmt and constraintStmt.strip():
                 constraintStmt = constraintStmt.strip()
-
-                self.constraintNumber += 1
-                return SUBJECT_TO+SPACE+"C" + str(self.constraintNumber) + SPACE + constraintStmt
+                
+                name = ""
+                
+                if constraint.nameExpression:
+                    name += constraint.nameExpression
+                    
+                else:
+                    self.constraintNumber += 1
+                    name += "C" + str(self.constraintNumber)
+                    
+                return SUBJECT_TO + SPACE + name + SPACE + constraintStmt
 
         elif isinstance(constraint, NodeExpression):
             nodeStmt = constraint.generateCode(self)

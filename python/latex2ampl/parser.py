@@ -868,16 +868,43 @@ def p_Constraint(t):
                   | EntryConstraintLogicalExpression FOR IndexingExpression
                   | EntryConstraintLogicalExpression WHERE IndexingExpression
                   | EntryConstraintLogicalExpression COLON IndexingExpression
-                  | EntryConstraintLogicalExpression'''
-    
-    if not isinstance(t[1], ConstraintExpression) and not isinstance(t[1], LogicalExpression):
-      t[1] = LogicalExpression([t[1]])
+                  | EntryConstraintLogicalExpression
 
-    if len(t) > 3:
-        t[3].setStmtIndexing(True)
-        t[0] = Constraint(t[1], t[3])
+                  | LBRACKET ID RBRACKET ConstraintExpression FOR IndexingExpression
+                  | LBRACKET ID RBRACKET ConstraintExpression WHERE IndexingExpression
+                  | LBRACKET ID RBRACKET ConstraintExpression COLON IndexingExpression
+                  | LBRACKET ID RBRACKET ConstraintExpression
+
+                  | LBRACKET ID RBRACKET ValueListInExpression FOR IndexingExpression
+                  | LBRACKET ID RBRACKET ValueListInExpression WHERE IndexingExpression
+                  | LBRACKET ID RBRACKET ValueListInExpression COLON IndexingExpression
+                  | LBRACKET ID RBRACKET ValueListInExpression
+
+                  | LBRACKET ID RBRACKET EntryConstraintLogicalExpression FOR IndexingExpression
+                  | LBRACKET ID RBRACKET EntryConstraintLogicalExpression WHERE IndexingExpression
+                  | LBRACKET ID RBRACKET EntryConstraintLogicalExpression COLON IndexingExpression
+                  | LBRACKET ID RBRACKET EntryConstraintLogicalExpression'''
+    
+    if len(t) > 4:
+      if not isinstance(t[4], ConstraintExpression) and not isinstance(t[4], LogicalExpression):
+        t[4] = LogicalExpression([t[4]])
+
+      if len(t) > 6:
+          t[6].setStmtIndexing(True)
+          t[0] = Constraint(t[4], t[6], t[2])
+      else:
+          t[0] = Constraint(t[4], None, t[2])
+
     else:
-        t[0] = Constraint(t[1])
+
+      if not isinstance(t[1], ConstraintExpression) and not isinstance(t[1], LogicalExpression):
+        t[1] = LogicalExpression([t[1]])
+
+      if len(t) > 3:
+          t[3].setStmtIndexing(True)
+          t[0] = Constraint(t[1], t[3])
+      else:
+          t[0] = Constraint(t[1])
 
 
 def p_ConstraintExpressionLogical(t):
