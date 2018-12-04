@@ -401,6 +401,9 @@ class CodeSetup:
         if node.to and len(node.to) > 0:
             map(lambda el: el.setupEnvironment(self), node.to)
 
+        if node.coeff and len(node.coeff) > 0:
+            map(lambda el: el.setupEnvironment(self), node.coeff)
+
         if node._obj:
             node._obj.setupEnvironment(self)
 

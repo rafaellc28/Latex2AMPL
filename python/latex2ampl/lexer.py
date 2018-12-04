@@ -176,6 +176,7 @@ tokens = [
    'FROM',
    'TO',
    'OBJ',
+   'COEFF',
    'TOCOME'
 ] + list(reserved.values())
 
@@ -296,6 +297,10 @@ def t_TO(t):
 
 def t_OBJ(t):
    r'\\text\{\s*obj\s*\}|\s*obj(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_COEFF(t):
+   r'\\text\{\s*coeff\s*\}|\s*coeff(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_TOCOME(t):

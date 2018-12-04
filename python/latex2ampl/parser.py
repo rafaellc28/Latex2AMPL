@@ -33,7 +33,7 @@ from DeclarationExpression import *
 import objects as obj
 
 precedence = (
-    ('left', 'FROM', 'TO', 'OBJ', 'TOCOME'),
+    ('left', 'FROM', 'TO', 'OBJ', 'COEFF', 'TOCOME'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
     ('right', 'COMMA'),
@@ -734,6 +734,44 @@ def p_ToList(t):
       else:
         t[0] = [ArcItem(t[2])]
 
+def p_CoeffList(t):
+    '''CoeffList : COEFF Identifier NumericSymbolicExpression
+                 | COEFF Identifier Identifier
+                 | COEFF Identifier
+              
+                 | COEFF Identifier NumericSymbolicExpression WHERE IndexingExpression
+                 | COEFF Identifier NumericSymbolicExpression COLON IndexingExpression
+                 | COEFF Identifier NumericSymbolicExpression FOR IndexingExpression
+              
+                 | COEFF Identifier Identifier WHERE IndexingExpression
+                 | COEFF Identifier Identifier COLON IndexingExpression
+                 | COEFF Identifier Identifier FOR IndexingExpression
+              
+                 | COEFF Identifier WHERE IndexingExpression
+                 | COEFF Identifier COLON IndexingExpression
+                 | COEFF Identifier FOR IndexingExpression
+              
+                 | COEFF IdentifierList'''
+
+    if t.slice[2].type == "IdentifierList":
+      t[0] = t[2]
+
+    elif len(t) > 4:
+
+      if len(t) > 5:
+        t[0] = [ArcItem(t[2], t[3], t[5])]
+        
+      else:
+        t[0] = [ArcItem(t[2], None, t[4])]
+
+    else:
+      
+      if len(t) > 3:
+        t[0] = [ArcItem(t[2], t[3])]
+
+      else:
+        t[0] = [ArcItem(t[2])]
+
 def p_ArcObj(t):
     '''ArcObj : OBJ ID NumericSymbolicExpression WHERE IndexingExpression
               | OBJ ID Identifier WHERE IndexingExpression
@@ -772,6 +810,23 @@ def p_ArcExpression(t):
                      | ARC Identifier ArcObj
                      | ARC Identifier
 
+                     | ARC Identifier DeclarationAttributeList FromList ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FromList ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList FromList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FromList CoeffList
+                     | ARC Identifier DeclarationAttributeList ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList CoeffList
+                     | ARC Identifier FromList ToList CoeffList ArcObj
+                     | ARC Identifier FromList ToList CoeffList
+                     | ARC Identifier FromList CoeffList ArcObj
+                     | ARC Identifier FromList CoeffList
+                     | ARC Identifier ToList CoeffList ArcObj
+                     | ARC Identifier ToList CoeffList
+                     | ARC Identifier CoeffList ArcObj
+                     | ARC Identifier CoeffList
+
                      | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList ArcObj
                      | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList
                      | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ArcObj
@@ -788,6 +843,23 @@ def p_ArcExpression(t):
                      | ARC Identifier FOR IndexingExpression ToList
                      | ARC Identifier FOR IndexingExpression ArcObj
                      | ARC Identifier FOR IndexingExpression
+
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression FromList CoeffList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList FOR IndexingExpression CoeffList
+                     | ARC Identifier FOR IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier FOR IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier FOR IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier FOR IndexingExpression FromList CoeffList
+                     | ARC Identifier FOR IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier FOR IndexingExpression ToList CoeffList
+                     | ARC Identifier FOR IndexingExpression CoeffList ArcObj
+                     | ARC Identifier FOR IndexingExpression CoeffList
                     
                      | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList ArcObj
                      | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList
@@ -806,6 +878,23 @@ def p_ArcExpression(t):
                      | ARC Identifier WHERE IndexingExpression ArcObj
                      | ARC Identifier WHERE IndexingExpression
 
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression FromList CoeffList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList WHERE IndexingExpression CoeffList
+                     | ARC Identifier WHERE IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier WHERE IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier WHERE IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier WHERE IndexingExpression FromList CoeffList
+                     | ARC Identifier WHERE IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier WHERE IndexingExpression ToList CoeffList
+                     | ARC Identifier WHERE IndexingExpression CoeffList ArcObj
+                     | ARC Identifier WHERE IndexingExpression CoeffList
+
                      | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList ArcObj
                      | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList
                      | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ArcObj
@@ -821,7 +910,24 @@ def p_ArcExpression(t):
                      | ARC Identifier COLON IndexingExpression ToList ArcObj
                      | ARC Identifier COLON IndexingExpression ToList
                      | ARC Identifier COLON IndexingExpression ArcObj
-                     | ARC Identifier COLON IndexingExpression'''
+                     | ARC Identifier COLON IndexingExpression
+
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression FromList CoeffList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression ToList CoeffList
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression CoeffList ArcObj
+                     | ARC Identifier DeclarationAttributeList COLON IndexingExpression CoeffList
+                     | ARC Identifier COLON IndexingExpression FromList ToList CoeffList ArcObj
+                     | ARC Identifier COLON IndexingExpression FromList ToList CoeffList
+                     | ARC Identifier COLON IndexingExpression FromList CoeffList ArcObj
+                     | ARC Identifier COLON IndexingExpression FromList CoeffList
+                     | ARC Identifier COLON IndexingExpression ToList CoeffList ArcObj
+                     | ARC Identifier COLON IndexingExpression ToList CoeffList
+                     | ARC Identifier COLON IndexingExpression CoeffList ArcObj
+                     | ARC Identifier COLON IndexingExpression CoeffList'''
 
     _types = map(lambda el: el.type, t.slice)
     
@@ -840,6 +946,11 @@ def p_ArcExpression(t):
     else:
       _to = None
 
+    if "CoeffList" in _types:
+      _coeff = t[_types.index("CoeffList")]
+    else:
+      _coeff = None
+
     if "ArcObj" in _types:
       _obj = t[_types.index("ArcObj")]
     else:
@@ -851,7 +962,7 @@ def p_ArcExpression(t):
     else:
       indexing = None
 
-    t[0] = ArcExpression(t[2], attributes, _from, _to, _obj, indexing)
+    t[0] = ArcExpression(t[2], attributes, _from, _to, _coeff, _obj, indexing)
 
 
 def p_Constraint(t):

@@ -5,7 +5,7 @@ class ArcExpression(Expression):
     Class representing an arc expression node in the AST of a MLP
     """
 
-    def __init__(self, identifier, attributes, _from, to, _obj, indexingExpression = None):
+    def __init__(self, identifier, attributes, _from, to, coeff, _obj, indexingExpression = None):
         """
         Set the attributes of an arc expression
         
@@ -13,6 +13,7 @@ class ArcExpression(Expression):
         :param attributes: [DeclarationAttribute]
         :param _from: [ArcItem]
         :param to: [ArcItem]
+        :param coeff: [ArcItem]
         :param _obj: ArcObj
         :param indexingExpressions: IndexingExpression
         """
@@ -21,6 +22,7 @@ class ArcExpression(Expression):
         self.attributes = attributes
         self._from = _from
         self.to = to
+        self.coeff = coeff
         self._obj = _obj
         self.indexingExpression   = indexingExpression
         
@@ -38,6 +40,9 @@ class ArcExpression(Expression):
 
         if self.to and len(self.to) > 0:
             res += " to " + ", ".join(map(lambda el: str(el), self.to))
+
+        if self.coeff and len(self.coeff) > 0:
+            res += " coeff " + ", ".join(map(lambda el: str(el), self.coeff))
 
         if self._obj:
             res += " " + str(self._obj)
@@ -58,6 +63,9 @@ class ArcExpression(Expression):
 
         if self.to:
             deps += self.to.getDependencies(codeGenerator)
+
+        if self.coeff:
+            deps += self.coeff.getDependencies(codeGenerator)
 
         if self._obj:
             deps += self._obj.getDependencies(codeGenerator)

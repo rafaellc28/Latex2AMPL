@@ -1418,6 +1418,15 @@ class CodeGenerator:
 
             expression += SPACE + TO + SPACE + (COMMA+SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.to))
 
+        if node.coeff and len(node.coeff) > 0:
+            expression += COMMA
+
+            if previousAttributes:
+                expression += BREAKLINE+TAB
+                previousAttributes = False
+
+            expression += SPACE + TO + SPACE + (COMMA + SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.coeff))
+
         if node._obj:
             expression += COMMA
 
