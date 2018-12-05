@@ -1425,7 +1425,7 @@ class CodeGenerator:
                 expression += BREAKLINE+TAB
                 previousAttributes = False
 
-            expression += SPACE + TO + SPACE + (COMMA + SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.coeff))
+            expression += SPACE + COEFF + SPACE + (COMMA + SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.coeff))
 
         if node._obj:
             expression += COMMA

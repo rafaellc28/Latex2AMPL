@@ -1168,3 +1168,6 @@ def test_lp6_network():
 
 def test_lp7_network():
 	check_test_network_num(7)
+
+def test_lp8_network():
+	check_test_network_num(8)
