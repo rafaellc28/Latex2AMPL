@@ -1083,6 +1083,15 @@ class CodeGenerator:
                 if relations != None and len(relations) > 0:
                     result += COMMA+SPACE + (COMMA+SPACE).join(map(lambda el: el.op + SPACE + el.attribute.generateCode(self), relations))
 
+        if isVariable:
+            attr = declaration.getCoeffList()
+            if attr != None:
+                result += COMMA+SPACE+COEFF+SPACE + (COMMA + SPACE + COEFF + SPACE).join(map(lambda el: el.generateCode(self), attr.attribute))
+
+            attr = declaration.getObj()
+            if attr != None:
+                result += COMMA+SPACE+attr.attribute.generateCode(self)
+
         return result
 
     def _processType(self, _types, isSet = False, isVariable = False):
@@ -1425,7 +1434,7 @@ class CodeGenerator:
                 expression += BREAKLINE+TAB
                 previousAttributes = False
 
-            expression += SPACE + COEFF + SPACE + (COMMA + SPACE + TO + SPACE).join(map(lambda el: el.generateCode(self), node.coeff))
+            expression += SPACE + COEFF + SPACE + (COMMA + SPACE + COEFF + SPACE).join(map(lambda el: el.generateCode(self), node.coeff))
 
         if node._obj:
             expression += COMMA

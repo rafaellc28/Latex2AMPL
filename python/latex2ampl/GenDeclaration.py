@@ -110,6 +110,12 @@ class GenDeclaration(GenObj):
 	def getRelationsDifferentFrom(self):
 		return self.getByOp("!=")
 
+	def getCoeffLists(self):
+		return self.getByOp("coeff")
+
+	def getObjs(self):
+		return self.getByOp("obj")
+
 	def getRelations(self):
 		values  = self.getRelationsEqualTo()
 		values += self.getRelationsLessThan()
@@ -165,6 +171,22 @@ class GenDeclaration(GenObj):
 
 	def getRelationDifferentFrom(self):
 		values = self.getRelationsDifferentFrom()
+
+		if values != None and len(values) > 0:
+			return values[-1]
+
+		return None
+
+	def getCoeffList(self):
+		values = self.getCoeffLists()
+
+		if values != None and len(values) > 0:
+			return values[-1]
+
+		return None
+
+	def getObj(self):
+		values = self.getObjs()
 
 		if values != None and len(values) > 0:
 			return values[-1]

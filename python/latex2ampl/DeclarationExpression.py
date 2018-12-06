@@ -83,6 +83,9 @@ class DeclarationAttribute(Expression):
     GT  = ">"
     GE  = ">="
     NEQ = "!="
+    
+    COEFF = "coeff"
+    OBJ   = "obj"
 
     def __init__(self, attribute, op):
         """

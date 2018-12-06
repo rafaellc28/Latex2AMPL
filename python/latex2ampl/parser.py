@@ -2045,13 +2045,29 @@ def p_DeclarationExpression(t):
                              | Identifier ASSIGN SetExpression
                              | Identifier ASSIGN Identifier
                              | Identifier ASSIGN NumericSymbolicExpression
-                             | Identifier COMMA DeclarationAttributeList
 
+                             | Identifier COMMA DeclarationAttributeList
                              | EntryConstraintLogicalExpression COMMA DeclarationAttributeList
                              | ValueListInExpression COMMA DeclarationAttributeList
-                             | DeclarationExpression COMMA DeclarationAttributeList'''
+                             | DeclarationExpression COMMA DeclarationAttributeList
+
+                             | Identifier COMMA CoeffList
+                             | EntryConstraintLogicalExpression COMMA CoeffList
+                             | ValueListInExpression COMMA CoeffList
+                             | DeclarationExpression COMMA CoeffList
+
+                             | Identifier COMMA ArcObj
+                             | EntryConstraintLogicalExpression COMMA ArcObj
+                             | ValueListInExpression COMMA ArcObj
+                             | DeclarationExpression COMMA ArcObj'''
 
     
+    if t.slice[3].type == "CoeffList":
+      t[3] = DeclarationAttribute(t[3], DeclarationAttribute.COEFF)
+
+    elif t.slice[3].type == "ArcObj":
+      t[3] = DeclarationAttribute(t[3], DeclarationAttribute.OBJ)
+
     if isinstance(t[1], DeclarationExpression):
       if t.slice[2].type == "COMMA":
         t[1].addAttribute(t[3])
@@ -2122,6 +2138,8 @@ def p_DeclarationExpression(t):
 
 def p_DeclarationAttributeList(t):
   '''DeclarationAttributeList : DeclarationAttributeList COMMA DeclarationAttribute
+                              | DeclarationAttributeList COMMA CoeffList
+                              | DeclarationAttributeList COMMA ArcObj
                               | DeclarationAttribute'''
   if len(t) > 3:
     t[0] = t[1] + [t[3]]
