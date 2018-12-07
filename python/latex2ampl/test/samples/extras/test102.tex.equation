@@ -1,0 +1,4 @@
+% Test variable with coefficient lists and obj
+\text{minimize } Total\_Cost//\\
+[Shift\_Needs] \text{ to_come } \geq required_{i}: i \in SHIFTS\\
+Work_{j} \in \mathbb{R}^{+}, \text{ obj } \text{ Total_Cost } rate_{j}, \text{ coeff } Shift\_Needs_{i} 1: i \in SHIFT\_LIST_{j}: j \in SCHEDS\\

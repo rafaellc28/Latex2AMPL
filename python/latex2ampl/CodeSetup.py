@@ -1639,9 +1639,16 @@ class CodeSetup:
         """
         Generate the AMPL code for the identifiers and sets in this declaration
         """
-        node.attribute.setupEnvironment(self)
+        if isinstance(node.attribute, list):
+            map(lambda el: el.setupEnvironment(self), node.attribute)
+
+        else:
+            node.attribute.setupEnvironment(self)
 
     def setupEnvironment_AttributeListPre(self, node, identifier):
+        if isinstance(node.attribute, list):
+            return
+
         var = self._getIdentifier(node.attribute)
 
         if isinstance(var, str):
@@ -1706,6 +1713,9 @@ class CodeSetup:
                         self._setIsSet(var)
 
     def setupEnvironment_AttributeList(self, node, identifier):
+        if isinstance(node.attribute, list):
+            return
+
         identifier1 = self._getIdentifier(node.attribute)
         if (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF) and identifier.isParam and isinstance(identifier1, Identifier):
 
