@@ -350,6 +350,9 @@ class CodeSetup:
         """
         Generate the AMPL code for declaration of identifiers and sets in this constraint
         """
+        if node.nameExpression:
+            self.codeGenerator.genConstraintNames.add(GenObj(node.nameExpression))
+
         self.indexingExpression = node.indexingExpression
         
         node.constraintExpression.setupEnvironment(self)

@@ -21,6 +21,10 @@ from GenDeclarations import *
 from GenBelongsToList import *
 from GenBelongsTo import *
 
+from GenSet import *
+from GenVariable import *
+from GenParameter import *
+
 from IntegerSet import *
 from RealSet import *
 from BinarySet import *
@@ -44,6 +48,8 @@ class CodeGenerator:
         self.genValueAssigned = GenList()
         self.genArcObj = GenList()
         self.genArcName = GenList()
+        self.genConstraintNames = GenList()
+        self.posConstraints = GenList()
         self.topological_order = []
 
         self.totalObjectives = 0
@@ -876,6 +882,15 @@ class CodeGenerator:
                 for pSet in withins:
                     self._addDependencies(pSet.attribute, decl.getStmtIndex(), dependencies)
 
+            coeffs = decl.getCoeffList()
+            if coeffs != None and len(coeffs.attribute) > 0:
+                for coeff in coeffs.attribute:
+                    self._addDependencies(coeff, decl.getStmtIndex(), dependencies)
+
+            obj = decl.getObj()
+            if obj != None:
+                self._addDependencies(obj.attribute, decl.getStmtIndex(), dependencies)
+
             relations = decl.getRelations()
             if relations != None and len(relations) > 0:
                 for pRel in relations:
@@ -1167,16 +1182,32 @@ class CodeGenerator:
 
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     var = self.genVariables.get(var)
+
+                    if self._isPosConstraintsDeclarations(var):
+                        break
+
                     result += self._declareVar(var)
 
         return result
+
+    def _isPosConstraintsDeclarations(self, _obj):
+        dependencies = self._getDependencies(_obj)
+        constraints = map(lambda el: el.getName(), self.genConstraintNames.getAll())
+
+        if len(dependencies) > 0 and len(constraints) > 0:
+            intersection = set(constraints).intersection(dependencies)
+
+            if len(intersection) > 0:
+                self.posConstraints.add(_obj)
+                return True
+
+        return False
         
     def _declareVar(self, var):
         result = self._processObject(var, VARIABLE, False, True)
         return result
         
     def _declareParam(self, _genParameter):
-
         if self.genArcObj.has(_genParameter.getName()) or self.genArcName.has(_genParameter.getName()):
             return ""
 
@@ -1184,6 +1215,9 @@ class CodeGenerator:
         return result
         
     def _declareSet(self, _genSet):
+        if self._isPosConstraintsDeclarations(_genSet):
+            return ""
+
         result = self._processObject(_genSet, SET, True, False)
         return result
         
@@ -1195,11 +1229,18 @@ class CodeGenerator:
                 _genObj = self.genParameters.get(paramSetIn)
 
                 if _genObj != None:
+                    if self._isPosConstraintsDeclarations(_genObj):
+                        break
+
                     paramSetStr += self._declareParam(_genObj)
+
                 else:
                     _genObj = self.genSets.get(paramSetIn)
 
                     if _genObj != None:
+                        if self._isPosConstraintsDeclarations(_genObj):
+                            break
+
                         paramSetStr += self._declareSet(_genObj)
 
         return paramSetStr
@@ -1277,6 +1318,19 @@ class CodeGenerator:
     
     def _posModel(self):
         res = EMPTY_STRING
+        posConstraints = self.posConstraints.getAll()
+
+        if len(posConstraints) > 0:
+            for _obj in posConstraints:
+
+                if isinstance(_obj, GenVariable):
+                    res += self._declareVar(_obj)
+
+                elif isinstance(_obj, GenParameter):
+                    res += self._declareParam(_obj)
+
+                elif isinstance(_obj, GenSet):
+                    res += self._declareSet(_obj)
 
         return res
 
