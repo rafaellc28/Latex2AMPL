@@ -65,6 +65,7 @@ app.get('/samples', function(req, res) {
 		var nonlinear = req.query.nonlinear;
 		var constraint = req.query.constraint;
 		var network = req.query.network;
+		var columnwise = req.query.columnwise;
 		
 		result = {}
 		
@@ -83,6 +84,10 @@ app.get('/samples', function(req, res) {
 		
 		if (network == "true") {
 			name += "_network";
+		}
+
+		if (columnwise == "true") {
+			name += "_columnwise";
 		}
 		
 		if (decl == "true") {

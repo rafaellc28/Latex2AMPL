@@ -1,0 +1,5 @@
+% AMPL\columnwise\sched.mod
+\text{minimize } Total\_Cost//\\
+[Shift\_Needs] \text{ to_come } \geq required_{i}: i \in SHIFTS\\
+Work_{j} \in \mathbb{R}^{+}, \text{ obj } \text{ Total_Cost } rate_{j}, \text{ coeff } Shift\_Needs_{i} 1: i \in SHIFT\_LIST_{j}: j \in SCHEDS\\
+SCHEDS := 1 \dots Nsched; SHIFT\_LIST_{s} \subseteq SHIFTS; rate_{s}, required_{s} \geq 0: s \in SCHEDS\\

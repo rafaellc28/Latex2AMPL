@@ -87,6 +87,14 @@ def check_test_network_num(num):
 
 	check_test(name1, name2)
 
+
+def check_test_columnwise_num(num):
+	name1 = 'latex2ampl/test/samples/columnwise/lp'+str(num)+'_columnwise.tex.equation'
+	name2 = 'latex2ampl/test/samples/columnwise/output/lp'+str(num)+'_columnwise.tex.mod'
+
+	check_test(name1, name2)
+
+
 # Linear Programming
 def test_lp0():
 	check_test_num(0)
@@ -1174,3 +1182,8 @@ def test_lp7_network():
 
 def test_lp8_network():
 	check_test_network_num(8)
+
+
+# Columnwise
+def test_lp0_columnwise():
+	check_test_columnwise_num(0)
