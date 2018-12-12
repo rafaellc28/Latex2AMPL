@@ -2061,7 +2061,6 @@ def p_DeclarationExpression(t):
                              | ValueListInExpression COMMA ArcObj
                              | DeclarationExpression COMMA ArcObj'''
 
-    
     if t.slice[3].type == "CoeffList":
       t[3] = DeclarationAttribute(t[3], DeclarationAttribute.COEFF)
 
@@ -2142,7 +2141,14 @@ def p_DeclarationAttributeList(t):
                               | DeclarationAttributeList COMMA ArcObj
                               | DeclarationAttribute'''
   if len(t) > 3:
+    if t.slice[3].type == "CoeffList":
+      t[3] = DeclarationAttribute(t[3], DeclarationAttribute.COEFF)
+
+    elif t.slice[3].type == "ArcObj":
+      t[3] = DeclarationAttribute(t[3], DeclarationAttribute.OBJ)
+
     t[0] = t[1] + [t[3]]
+    
   else:
     t[0] = [t[1]]
 

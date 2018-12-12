@@ -1187,3 +1187,7 @@ def test_lp8_network():
 # Columnwise
 def test_lp0_columnwise():
 	check_test_columnwise_num(0)
+
+def test_lp1_columnwise():
+	check_test_columnwise_num(1)
+

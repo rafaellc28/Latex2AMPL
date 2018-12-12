@@ -1,0 +1,5 @@
+% AMPL\columnwise\iocol1.mod
+\text{maximize } Net\_Profit//\\
+[Balance] \text{ to_come } = 0: i \in MAT\\
+Run_{j} \in \mathbb{R}, \geq act\_min_{j}, \leq act\_max_{j}, \text{ obj } \text{ Net_Profit } revenue_{j}, \text{ coeff } Balance_{i} io_{i,j}: i \in MAT: j \in ACT\\
+act\_min_{j} \geq 0; act\_max_{j} \geq act\_min_{j}: j \in ACT\\
