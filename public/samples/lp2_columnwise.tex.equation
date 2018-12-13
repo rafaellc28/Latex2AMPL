@@ -1,0 +1,8 @@
+% AMPL\columnwise\iocol2.mod
+\text{maximize } Net\_Profit//\\
+[Balance] \text{ to_come } = 0: i \in MAT\\
+Run_{j}, \in \mathbb{R}, \geq act\_min_{j}, \leq act\_max_{j}, \text{ obj } \text{ Net_Profit } -cost_{j}, \text{ coeff } Balance_{i} io_{i,j}: i \in MAT: j \in ACT\\
+Sell_{i} \in \mathbb{R}, \text{ coeff } Balance_{i} -1, \text{ obj } \text{ Net_Profit } revenue_{i}, \geq sell\_min_{i}, \leq sell\_max_{i}: i \in MATF\\
+MATF \subseteq MAT;\\
+revenue_{i}, sell\_min_{i} \geq 0; sell\_max_{i} \geq sell\_min_{i}: i \in MATF\\
+cost_{j}, act\_min_{j} \geq 0; act\_max_{j} \geq act\_min_{j}: j \in ACT\\

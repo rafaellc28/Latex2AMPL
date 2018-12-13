@@ -1191,3 +1191,6 @@ def test_lp0_columnwise():
 def test_lp1_columnwise():
 	check_test_columnwise_num(1)
 
+def test_lp2_columnwise():
+	check_test_columnwise_num(2)
+

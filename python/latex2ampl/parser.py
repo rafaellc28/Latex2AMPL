@@ -33,10 +33,10 @@ from DeclarationExpression import *
 import objects as obj
 
 precedence = (
+    ('right', 'COMMA'),
     ('left', 'FROM', 'TO', 'OBJ', 'COEFF', 'TOCOME'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
-    ('right', 'COMMA'),
     ('right', 'SLASHES', 'SEMICOLON'),
     ('right', 'FOR', 'WHERE', 'COLON'),
     ('right', 'PIPE'),

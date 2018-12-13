@@ -1177,23 +1177,21 @@ class CodeGenerator:
             
             self._generateGraphAux(graphVar, self.genVariables)
             topological_order_var = sort_topologically_stackless(graphVar)
-            
+
             for var in topological_order_var:
 
                 if not self.genParameters.has(var) and not self.genSets.has(var):
                     var = self.genVariables.get(var)
-
-                    if self._isPosConstraintsDeclarations(var):
-                        break
-
-                    result += self._declareVar(var)
+                    
+                    if not self._isPosConstraintsDeclarations(var):
+                        result += self._declareVar(var)
 
         return result
 
     def _isPosConstraintsDeclarations(self, _obj):
         dependencies = self._getDependencies(_obj)
         constraints = map(lambda el: el.getName(), self.genConstraintNames.getAll())
-
+        
         if len(dependencies) > 0 and len(constraints) > 0:
             intersection = set(constraints).intersection(dependencies)
 
@@ -1204,6 +1202,9 @@ class CodeGenerator:
         return False
         
     def _declareVar(self, var):
+        if self.genArcObj.has(var.getName()) or self.genArcName.has(var.getName()):
+            return ""
+
         result = self._processObject(var, VARIABLE, False, True)
         return result
         
@@ -1215,7 +1216,7 @@ class CodeGenerator:
         return result
         
     def _declareSet(self, _genSet):
-        if self._isPosConstraintsDeclarations(_genSet):
+        if self.genArcObj.has(_genSet.getName()) or self.genArcName.has(_genSet.getName()):
             return ""
 
         result = self._processObject(_genSet, SET, True, False)
@@ -1229,19 +1230,15 @@ class CodeGenerator:
                 _genObj = self.genParameters.get(paramSetIn)
 
                 if _genObj != None:
-                    if self._isPosConstraintsDeclarations(_genObj):
-                        break
-
-                    paramSetStr += self._declareParam(_genObj)
+                    if not self._isPosConstraintsDeclarations(_genObj):
+                        paramSetStr += self._declareParam(_genObj)
 
                 else:
                     _genObj = self.genSets.get(paramSetIn)
 
                     if _genObj != None:
-                        if self._isPosConstraintsDeclarations(_genObj):
-                            break
-
-                        paramSetStr += self._declareSet(_genObj)
+                        if not self._isPosConstraintsDeclarations(_genObj):
+                            paramSetStr += self._declareSet(_genObj)
 
         return paramSetStr
 
