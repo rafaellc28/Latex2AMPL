@@ -44,7 +44,7 @@ precedence = (
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
     ('left', 'MAXIMIZE', 'MINIMIZE'),
-    ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
+    ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF', 'COMPLEMENTS'),
     ('right', 'IF', 'THEN', 'ELSE'),
     ('left', 'OR'),
     ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
@@ -155,6 +155,7 @@ def p_ConstraintList(t):
 
     else:
         t[0] = [t[1]]
+
 
 def p_ToComeExpression(t):
     '''ToComeExpression : TOCOME
@@ -1506,6 +1507,45 @@ def p_ConstraintExpressionConditional(t):
       t[0] = ConditionalConstraintExpression(op, t[1], t[3], t[5])
     else:
       t[0] = ConditionalConstraintExpression(op, t[1], t[3])
+
+def p_ComplementsExpression(t):
+    '''ConstraintExpression : Identifier COMPLEMENTS ConstraintExpression
+                            | Identifier COMPLEMENTS Identifier
+                            | Identifier COMPLEMENTS ValueListInExpression
+                            | Identifier COMPLEMENTS EntryConstraintLogicalExpression
+                            | Identifier COMPLEMENTS NumericSymbolicExpression
+
+                            | NumericSymbolicExpression COMPLEMENTS ConstraintExpression
+                            | NumericSymbolicExpression COMPLEMENTS Identifier
+                            | NumericSymbolicExpression COMPLEMENTS ValueListInExpression
+                            | NumericSymbolicExpression COMPLEMENTS EntryConstraintLogicalExpression
+                            | NumericSymbolicExpression COMPLEMENTS NumericSymbolicExpression
+
+                            | ConstraintExpression COMPLEMENTS ConstraintExpression
+                            | ConstraintExpression COMPLEMENTS Identifier
+                            | ConstraintExpression COMPLEMENTS ValueListInExpression
+                            | ConstraintExpression COMPLEMENTS EntryConstraintLogicalExpression
+                            | ConstraintExpression COMPLEMENTS NumericSymbolicExpression
+
+                            | ValueListInExpression COMPLEMENTS ConstraintExpression
+                            | ValueListInExpression COMPLEMENTS Identifier
+                            | ValueListInExpression COMPLEMENTS ValueListInExpression
+                            | ValueListInExpression COMPLEMENTS EntryConstraintLogicalExpression
+                            | ValueListInExpression COMPLEMENTS NumericSymbolicExpression
+
+                            | EntryConstraintLogicalExpression COMPLEMENTS ConstraintExpression
+                            | EntryConstraintLogicalExpression COMPLEMENTS Identifier
+                            | EntryConstraintLogicalExpression COMPLEMENTS ValueListInExpression
+                            | EntryConstraintLogicalExpression COMPLEMENTS EntryConstraintLogicalExpression
+                            | EntryConstraintLogicalExpression COMPLEMENTS NumericSymbolicExpression'''
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
+      t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
+
+    if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
+      t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
+
+    t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.COMPLEMENTS)
 
 def p_ConstraintExpressionWithToCome(t):
     '''ConstraintExpression : Identifier LE ToComeExpression LE Identifier

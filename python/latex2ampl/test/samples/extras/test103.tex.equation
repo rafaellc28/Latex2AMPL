@@ -1,0 +1,2 @@
+% Test complement expression
+level\_min[j] \leq Level[j] \leq level\_max[j] \text{ complements } cost[j] - \sum_{i \in PROD} Price[i] * io[i,j]: j \in ACT\\

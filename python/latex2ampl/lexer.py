@@ -177,7 +177,8 @@ tokens = [
    'TO',
    'OBJ',
    'COEFF',
-   'TOCOME'
+   'TOCOME',
+   'COMPLEMENTS'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -305,6 +306,10 @@ def t_COEFF(t):
 
 def t_TOCOME(t):
    r'\\text\{\s*to_come\s*\}|\s*to\\_come(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_COMPLEMENTS(t):
+   r'\\text\{\s*complements\s*\}|\s*complements(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_CTIME(t):

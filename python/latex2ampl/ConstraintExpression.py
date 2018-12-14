@@ -10,6 +10,7 @@ class ConstraintExpression(Expression):
     NEQ = "!="
     LT  = "<"
     GT  = ">"
+    COMPLEMENTS = "complements"
 
 
 class ConstraintExpression2(ConstraintExpression):
