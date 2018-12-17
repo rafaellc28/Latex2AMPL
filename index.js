@@ -66,6 +66,7 @@ app.get('/samples', function(req, res) {
 		var constraint = req.query.constraint;
 		var network = req.query.network;
 		var columnwise = req.query.columnwise;
+		var complement = req.query.complement;
 		
 		result = {}
 		
@@ -90,6 +91,10 @@ app.get('/samples', function(req, res) {
 			name += "_columnwise";
 		}
 		
+		if (complement == "true") {
+			name += "_complement";
+		}
+
 		if (decl == "true") {
 			name += "_with_declarations";
 		}

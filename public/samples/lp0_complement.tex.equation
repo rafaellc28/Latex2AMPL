@@ -1,0 +1,5 @@
+% AMPL\complement\econ.mod
+Price_{i} \geq 0 \text{ complements } \sum_{j \in ACT} io_{i,j} * Level_{j} \geq demand_{i}: i \in PROD\\
+Level_{j} \geq 0 \text{ complements } \sum_{i \in PROD} Price_{i} * io_{i,j} \leq cost_{j}: j \in ACT\\
+demand_{i}, io_{i,j} \geq 0; cost_{j} > 0;\\
+Price_{i}, Level_{j} \in \mathbb{R}: i \in PROD, j \in ACT\\

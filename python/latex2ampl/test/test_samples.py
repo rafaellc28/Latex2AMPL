@@ -94,6 +94,11 @@ def check_test_columnwise_num(num):
 
 	check_test(name1, name2)
 
+def check_test_complement_num(num):
+	name1 = 'latex2ampl/test/samples/complement/lp'+str(num)+'_complement.tex.equation'
+	name2 = 'latex2ampl/test/samples/complement/output/lp'+str(num)+'_complement.tex.mod'
+
+	check_test(name1, name2)
 
 # Linear Programming
 def test_lp0():
@@ -1197,3 +1202,7 @@ def test_lp1_columnwise():
 def test_lp2_columnwise():
 	check_test_columnwise_num(2)
 
+
+# Complement
+def test_lp0_complement():
+	check_test_complement_num(0)
