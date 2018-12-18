@@ -1206,3 +1206,6 @@ def test_lp2_columnwise():
 # Complement
 def test_lp0_complement():
 	check_test_complement_num(0)
+
+def test_lp1_complement():
+	check_test_complement_num(1)
