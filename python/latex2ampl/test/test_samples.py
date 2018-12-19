@@ -1209,3 +1209,6 @@ def test_lp0_complement():
 
 def test_lp1_complement():
 	check_test_complement_num(1)
+
+def test_lp2_complement():
+	check_test_complement_num(2)
