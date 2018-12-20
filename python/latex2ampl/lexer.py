@@ -178,7 +178,9 @@ tokens = [
    'OBJ',
    'COEFF',
    'TOCOME',
-   'COMPLEMENTS'
+   'COMPLEMENTS',
+   'PIECEWISE_BEGIN',
+   'PIECEWISE_END'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -203,6 +205,14 @@ def t_newline(t):
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t\r'
+
+def t_PIECEWISE_BEGIN(t):
+   r'<<'
+   return t
+
+def t_PIECEWISE_END(t):
+   r'>>'
+   return t
 
 def t_CARD(t):
    r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'
