@@ -34,7 +34,7 @@ import objects as obj
 
 precedence = (
     ('right', 'COMMA'),
-    ('left', 'FROM', 'TO', 'OBJ', 'COEFF', 'TOCOME'),
+    ('left', 'FROM', 'TO', 'OBJ', 'COEFF', 'TOCOME', 'PIECEWISE_BEGIN', 'PIECEWISE_END'),
     ('left', 'ID'),
     ('left', 'NUMBER', 'INFINITY'),
     ('right', 'SLASHES', 'SEMICOLON'),
@@ -156,6 +156,20 @@ def p_ConstraintList(t):
     else:
         t[0] = [t[1]]
 
+
+def p_PiecewiseItem(t):
+    '''PiecewiseItem : Identifier
+                     | NumericSymbolicExpression'''
+    t[0] = t[1]
+
+def p_PiecewiseItemList(t):
+    '''PiecewiseItemList : PiecewiseItem
+                         | PiecewiseItemList COMMA PiecewiseItem'''
+    t[0] = t[1]
+
+def p_PiecewiseExpression(t): 
+    '''PiecewiseExpression : PIECEWISE_BEGIN PiecewiseItemList SEMICOLON PiecewiseItemList PIECEWISE_END'''
+    t[0] = t[2]
 
 def p_ToComeExpression(t):
     '''ToComeExpression : TOCOME
@@ -3004,6 +3018,9 @@ def p_IteratedNumericExpression(t):
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE Identifier
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression Identifier
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression LPAREN PiecewiseItem RPAREN
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression LPAREN PiecewiseItem COMMA PiecewiseItem RPAREN
 
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
