@@ -159,7 +159,13 @@ def p_ConstraintList(t):
 
 def p_PiecewiseItem(t):
     '''PiecewiseItem : Identifier
-                     | NumericSymbolicExpression'''
+                     | NumericSymbolicExpression
+                     | Identifier COLON IndexingExpression
+                     | NumericSymbolicExpression COLON IndexingExpression
+                     | Identifier WHERE IndexingExpression
+                     | NumericSymbolicExpression WHERE IndexingExpression
+                     | Identifier FOR IndexingExpression
+                     | NumericSymbolicExpression FOR IndexingExpression'''
     t[0] = t[1]
 
 def p_PiecewiseItemList(t):
@@ -2937,6 +2943,13 @@ def p_FunctionSymbolicExpression(t):
           t[0] = SymbolicExpressionWithFunction(op, t[3])
 
 
+def p_PiecewiseNumericExpression(t):
+    '''NumericExpression : PiecewiseExpression Identifier
+                         | PiecewiseExpression LPAREN PiecewiseItem RPAREN
+                         | PiecewiseExpression LPAREN PiecewiseItem COMMA PiecewiseItem RPAREN'''
+
+    t[0] = t[1]
+
 def p_NumericExpression_binop(t):
     '''NumericExpression : Identifier PLUS Identifier
                          | Identifier PLUS NumericSymbolicExpression
@@ -3018,9 +3031,6 @@ def p_IteratedNumericExpression(t):
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE Identifier
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression Identifier
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression LPAREN PiecewiseItem RPAREN
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE PiecewiseExpression LPAREN PiecewiseItem COMMA PiecewiseItem RPAREN
 
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
