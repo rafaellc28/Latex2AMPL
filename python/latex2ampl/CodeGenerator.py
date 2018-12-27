@@ -1593,6 +1593,29 @@ class CodeGenerator:
         return res
 
     # Numeric Expression
+    def generateCode_PiecewiseItemExpression(self, node):
+        res = EMPTY_STRING
+
+        if node.indexingExpression != None:
+            res += BEGIN_SET + node.indexingExpression.generateCode(self) + END_SET + SPACE
+
+        res += node.itemExpression.generateCode(self)
+
+        return res
+
+    def generateCode_PiecewiseExpression(self, node):
+        res = PIECEWISE_BEGIN + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.breakpointList)) + END_STATEMENT + SPACE + \
+            (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.slopeList)) + PIECEWISE_END
+            
+        if node.argumentExpression != None and node.zeroExpression != None:
+            res += BEGIN_ARGUMENT_LIST + node.argumentExpression.generateCode(self) + COMMA + SPACE + \
+                    node.zeroExpression.generateCode(self) + END_ARGUMENT_LIST
+
+        else:
+            res += node.argumentExpression.generateCode(self)
+            
+        return res
+
     def generateCode_NumericExpressionWithFunction(self, node):
         if not isinstance(node.function, str):
             function = node.function.generateCode(self)

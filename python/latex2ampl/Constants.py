@@ -85,3 +85,7 @@ TO = "to"
 OBJ = "obj"
 COEFF = "coeff"
 TOCOME = "to_come"
+
+
+PIECEWISE_BEGIN = "<<"
+PIECEWISE_END   = ">>"

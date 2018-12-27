@@ -157,26 +157,6 @@ def p_ConstraintList(t):
         t[0] = [t[1]]
 
 
-def p_PiecewiseItem(t):
-    '''PiecewiseItem : Identifier
-                     | NumericSymbolicExpression
-                     | Identifier COLON IndexingExpression
-                     | NumericSymbolicExpression COLON IndexingExpression
-                     | Identifier WHERE IndexingExpression
-                     | NumericSymbolicExpression WHERE IndexingExpression
-                     | Identifier FOR IndexingExpression
-                     | NumericSymbolicExpression FOR IndexingExpression'''
-    t[0] = t[1]
-
-def p_PiecewiseItemList(t):
-    '''PiecewiseItemList : PiecewiseItem
-                         | PiecewiseItemList COMMA PiecewiseItem'''
-    t[0] = t[1]
-
-def p_PiecewiseExpression(t): 
-    '''PiecewiseExpression : PIECEWISE_BEGIN PiecewiseItemList SEMICOLON PiecewiseItemList PIECEWISE_END'''
-    t[0] = t[2]
-
 def p_ToComeExpression(t):
     '''ToComeExpression : TOCOME
                         | TOCOME PLUS NumericSymbolicExpression
@@ -2943,10 +2923,52 @@ def p_FunctionSymbolicExpression(t):
           t[0] = SymbolicExpressionWithFunction(op, t[3])
 
 
+def p_PiecewiseItem(t):
+    '''PiecewiseItem : Identifier
+                     | NumericSymbolicExpression
+                     | Identifier COLON IndexingExpression
+                     | NumericSymbolicExpression COLON IndexingExpression
+                     | Identifier WHERE IndexingExpression
+                     | NumericSymbolicExpression WHERE IndexingExpression
+                     | Identifier FOR IndexingExpression
+                     | NumericSymbolicExpression FOR IndexingExpression'''
+
+    indexingExpression = None
+
+    if len(t) > 2:
+      indexingExpression = t[3]
+
+    t[0] = PiecewiseItemExpression(t[1], indexingExpression)
+
+def p_PiecewiseItemList(t):
+    '''PiecewiseItemList : PiecewiseItem
+                         | PiecewiseItemList COMMA PiecewiseItem'''
+
+    if len(t) == 2:
+      t[0] = [t[1]]
+
+    else:
+      t[0] = t[1] + [t[3]]
+
+def p_PiecewiseExpression(t): 
+    '''PiecewiseExpression : PIECEWISE_BEGIN PiecewiseItemList SEMICOLON PiecewiseItemList PIECEWISE_END'''
+    t[0] = PiecewiseExpression(t[2], t[4])
+
 def p_PiecewiseNumericExpression(t):
     '''NumericExpression : PiecewiseExpression Identifier
                          | PiecewiseExpression LPAREN PiecewiseItem RPAREN
                          | PiecewiseExpression LPAREN PiecewiseItem COMMA PiecewiseItem RPAREN'''
+
+    if len(t) > 5:
+      t[1].setArgumentExpression(t[3])
+      t[1].setZeroExpression(t[5])
+
+    elif len(t) > 3:
+      t[1].setArgumentExpression(NumericExpressionBetweenParenthesis(t[3]))
+
+    else:
+      t[1].setArgumentExpression(t[2])
+
 
     t[0] = t[1]
 

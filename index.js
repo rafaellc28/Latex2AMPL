@@ -95,6 +95,10 @@ app.get('/samples', function(req, res) {
 			name += "_complement";
 		}
 
+		if (piecewise == "true") {
+			name += "_piecewise";
+		}
+
 		if (decl == "true") {
 			name += "_with_declarations";
 		}

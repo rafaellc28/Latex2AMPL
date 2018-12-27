@@ -489,7 +489,7 @@ class ConditionalNumericExpression(NumericExpression):
 
 class IteratedNumericExpression2(NumericExpression):
     """
-    Class representing a iterated Constraint Expression expression node in the AST of a MLP
+    Class representing a Iterated Numeric Expression expression node in the AST of a MLP
     """
     
     COUNT    = "count"
@@ -500,7 +500,7 @@ class IteratedNumericExpression2(NumericExpression):
 
     def __init__(self, op, constraintExpression, indexingExpression, numericExpression = None):
         """
-        Set the components of the iterated constraint expression
+        Set the components of the iterated numeric expression
         
         :param op                   : COUNT | ATMOST | ATLEAST | EXACTLY | NUMBEROF
         :param constraintExpression : ConstraintExpression
@@ -528,6 +528,14 @@ class IteratedNumericExpression2(NumericExpression):
             res += " {"+ str(self.indexingExpression) +"} " + str(self.constraintExpression)
 
         return "ItConstraintExpression: " + res
+
+    def getDependencies(self, codeGenerator):
+        dep = self.constraintExpression.getDependencies(codeGenerator) + self.indexingExpression.getDependencies(codeGenerator)
+
+        if self.numericExpression != None:
+            dep += self.numericExpression.getDependencies(codeGenerator)
+
+        return list(set(dep))
         
     def setupEnvironment(self, codeSetup):
         """
@@ -538,5 +546,118 @@ class IteratedNumericExpression2(NumericExpression):
     def generateCode(self, codeGenerator):
         """
         Generate the AMPL code for this iterated linear expression
+        """
+        return codeGenerator.generateCode(self)
+
+
+class PiecewiseItemExpression(NumericExpression):
+    """
+    Class representing a Piecewise Item Expression expression node in the AST of a MLP
+    """
+    
+    def __init__(self, itemExpression, indexingExpression = None):
+        """
+        Set the components of the piecewise item expression
+        
+        :param itemExpression       : Identifier | NumericSymbolicExpression
+        :param indexingExpression   : IndexingExpression
+        """
+
+        self.itemExpression       = itemExpression
+        self.indexingExpression   = indexingExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        
+        res = str(self.itemExpression)
+
+        if self.indexingExpression:
+            res += " for " + str(self.indexingExpression)
+
+        return "PiecewiseItemExpression: " + res
+
+    def getDependencies(self, codeGenerator):
+        dep = self.itemExpression.getDependencies(codeGenerator)
+
+        if self.indexingExpression != None:
+            dep += self.indexingExpression.getDependencies(codeGenerator)
+
+        return list(set(dep))
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for the declaration of identifiers and sets in this piecewise item expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this piecewise item expression
+        """
+        return codeGenerator.generateCode(self)
+
+class PiecewiseExpression(NumericExpression):
+    """
+    Class representing a Piecewise Expression expression node in the AST of a MLP
+    """
+    
+    def __init__(self, breakpointList, slopeList, argumentExpression = None, zeroExpression = None):
+        """
+        Set the components of the piecewise expression
+        
+        :param breakpointList     : [PiecewiseItemExpression]
+        :param slopeList          : [PiecewiseItemExpression]
+        :param argumentExpression : Identifier | NumericSymbolicExpression
+        :param zeroExpression     : Identifier | NumericSymbolicExpression
+        """
+
+        self.breakpointList     = breakpointList
+        self.slopeList          = slopeList
+        self.argumentExpression = argumentExpression
+        self.zeroExpression     = zeroExpression
+
+    def __str__(self):
+        """
+        to string
+        """
+        
+        res = "<<" + ", ".join(map(lambda el: str(el), self.breakpointList)) + "; " + ", ".join(map(lambda el: str(el), self.slopeList)) + ">>"
+
+        if self.argumentExpression:
+            res += " " + str(self.argumentExpression)
+
+        if self.zeroExpression:
+            res += " " + str(self.zeroExpression)
+
+        return "PiecewiseExpression: " + res
+
+    def setArgumentExpression(self, argumentExpression):
+        self.argumentExpression = argumentExpression
+
+    def setZeroExpression(self, zeroExpression):
+        self.zeroExpression = zeroExpression
+
+    def getDependencies(self, codeGenerator):
+        dep = map(lambda el: el.getDependencies(codeGenerator), self.breakpointList) + map(lambda el: el.getDependencies(codeGenerator), self.slopeList)
+
+        if self.argumentExpression != None:
+            dep += self.argumentExpression.getDependencies(codeGenerator)
+
+        if self.zeroExpression != None:
+            dep += self.zeroExpression.getDependencies(codeGenerator)
+
+        return list(set(dep))
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the AMPL code for the declaration of identifiers and sets in this piecewise expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the AMPL code for this piecewise xpression
         """
         return codeGenerator.generateCode(self)

@@ -572,6 +572,28 @@ class CodeSetup:
             self.currentTable = previousTable
 
     # Numeric Expression
+    def setupEnvironment_PiecewiseItemExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this Piecewise Item Expression
+        """
+        node.itemExpression.setupEnvironment(self)
+
+        if node.indexingExpression != None:
+            node.indexingExpression.setupEnvironment(self)
+
+    def setupEnvironment_PiecewiseExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this Piecewise Expression
+        """
+        map(lambda el: el.setupEnvironment(self), node.breakpointList)
+        map(lambda el: el.setupEnvironment(self), node.slopeList)
+        
+        if node.argumentExpression != None:
+            node.argumentExpression.setupEnvironment(self)
+            
+        if node.zeroExpression != None:
+            node.zeroExpression.setupEnvironment(self)
+            
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """
         Generate the AMPL code for the identifiers and sets used in this numeric expression
