@@ -100,6 +100,12 @@ def check_test_complement_num(num):
 
 	check_test(name1, name2)
 
+def check_test_piecewise_num(num):
+	name1 = 'latex2ampl/test/samples/piecewise/lp'+str(num)+'_piecewise.tex.equation'
+	name2 = 'latex2ampl/test/samples/piecewise/output/lp'+str(num)+'_piecewise.tex.mod'
+
+	check_test(name1, name2)
+
 # Linear Programming
 def test_lp0():
 	check_test_num(0)
@@ -1212,3 +1218,8 @@ def test_lp1_complement():
 
 def test_lp2_complement():
 	check_test_complement_num(2)
+
+
+# Piecewise
+def test_lp0_piecewise():
+	check_test_piecewise_num(0)

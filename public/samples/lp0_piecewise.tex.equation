@@ -1,0 +1,8 @@
+% AMPL\piecewise\transpl1.mod
+\text{minimize } \sum_{i \in ORIG, j \in DEST} << limit1_{i,j}, limit2_{i,j}; rate1_{i,j}, rate2_{i,j}, rate3_{i,j} >> Trans_{i,j}\\
+\sum_{j \in DEST} Trans_{i,j} = supply_{i}: i \in ORIG\\
+\sum_{i \in ORIG} Trans_{i,j} = demand_{j}: j \in DEST\\
+supply_{i}, demand_{j}, rate1_{i,j} \geq 0;
+rate2_{i,j} \geq rate1_{i,j}; rate3_{i,j} \geq rate2_{i,j};\\
+limit1_{i,j} > 0; limit2_{i,j} > limit1_{i,j}: i \in ORIG, j \in DEST\\
+Trans \in \mathbb{R}^{+}

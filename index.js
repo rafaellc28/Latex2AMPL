@@ -67,6 +67,7 @@ app.get('/samples', function(req, res) {
 		var network = req.query.network;
 		var columnwise = req.query.columnwise;
 		var complement = req.query.complement;
+		var piecewise = req.query.piecewise;
 		
 		result = {}
 		

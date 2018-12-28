@@ -1604,8 +1604,8 @@ class CodeGenerator:
         return res
 
     def generateCode_PiecewiseExpression(self, node):
-        res = PIECEWISE_BEGIN + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.breakpointList)) + END_STATEMENT + SPACE + \
-            (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.slopeList)) + PIECEWISE_END
+        res = SPACE + PIECEWISE_BEGIN + SPACE + (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.breakpointList)) + END_STATEMENT + SPACE + \
+            (COMMA+SPACE).join(map(lambda el: el.generateCode(self), node.slopeList)) + SPACE + PIECEWISE_END + SPACE
             
         if node.argumentExpression != None and node.zeroExpression != None:
             res += BEGIN_ARGUMENT_LIST + node.argumentExpression.generateCode(self) + COMMA + SPACE + \
