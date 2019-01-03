@@ -1223,3 +1223,6 @@ def test_lp2_complement():
 # Piecewise
 def test_lp0_piecewise():
 	check_test_piecewise_num(0)
+
+def test_lp1_piecewise():
+	check_test_piecewise_num(1)

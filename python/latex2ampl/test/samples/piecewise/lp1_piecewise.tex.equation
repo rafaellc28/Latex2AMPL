@@ -1,0 +1,9 @@
+% AMPL\piecewise\transpl2.mod
+\text{minimize } \sum_{i \in ORIG, j \in DEST} << limit_{i,j,p}: p \in 1 \dots npiece_{i,j}-1; rate_{i,j,p}: p \in 1 \dots npiece_{i,j}>> Trans_{i,j}\\
+\sum_{j \in DEST} Trans_{i,j} = supply_{i}: i \in ORIG\\
+\sum_{i \in ORIG} Trans_{i,j} = demand_{j}: j \in DEST\\
+supply_{i}, demand_{j}, Trans_{i,j} \geq 0; npiece_{i,j} \in \mathbb{P}, \in \mathbb{Z}, \geq 1;\\
+rate_{i,j,p} \geq \text{ if } p = 1 \text{ then } 0 \text{ else } rate_{i,j,p-1};\\
+limit_{i,j,q} > \text{ if } q = 1 \text{ then } 0 \text{ else } limit_{i,j,q-1}:\\
+i \in ORIG, j \in DEST, p \in 1 \dots npiece_{i,j}, q \in 1 \dots npiece_{i,j}-1\\
+Trans \in \mathbb{R}\\
