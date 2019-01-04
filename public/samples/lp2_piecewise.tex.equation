@@ -1,0 +1,10 @@
+% AMPL\piecewise\steelpl1.mod
+\text{ maximize } \sum_{p \in PROD, t \in 1 \dots T} (revenue_{p,t}*Sell_{p,t} - prodcost_{p}*Make_{p,t} - invcost_{p}*Inv_{p,t}) - \sum_{t \in 1 \dots T} << avail\_min_{t}; 0, time\_penalty_{t} >> Use_{t}\\
+\sum_{p \in PROD} \frac{1}{rate_{p}} * Make_{p,t} = Use_{t}: t \in 1 \dots T\\
+Inv_{p,0} = inv0_{p}: p \in PROD\\
+Make_{p,t} + Inv_{p,t-1} = Sell_{p,t} + Inv_{p,t}: p \in PROD, t \in 1 \dots T\\
+T, rate_{p}, time\_penalty_{t} > 0;\\
+commit_{p,t}, market_{p,t}, revenue_{p,t}, Make_{p,t}, Inv_{p,t0}, prodcost_{p}, invcost_{p}, avail\_min_{t} \geq 0;\\
+avail\_max_{t} \geq avail\_min[t]; Sell_{p,t} \geq commit_{p,t}, \leq market_{p,t}; Use_{t} \geq 0, \leq avail\_max_{t}:\\
+p \in PROD, t \in 1 \dots T, t0 \in 0 \dots T\\
+Make, Inv, Sell, User \in \mathbb{R}\\

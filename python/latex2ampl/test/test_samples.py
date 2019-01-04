@@ -1226,3 +1226,6 @@ def test_lp0_piecewise():
 
 def test_lp1_piecewise():
 	check_test_piecewise_num(1)
+
+def test_lp2_piecewise():
+	check_test_piecewise_num(2)
