@@ -1169,6 +1169,9 @@ def test_lp50_linear():
 def test_lp51_linear():
 	check_test_linear_num(51)
 
+def test_lp52_linear():
+	check_test_linear_num(52)
+
 # Network
 def test_lp0_network():
 	check_test_network_num(0)

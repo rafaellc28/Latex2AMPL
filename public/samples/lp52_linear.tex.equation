@@ -1,0 +1,6 @@
+% amplide/models/maxflow.mod
+\text{ maximize } \sum_{(orig,j) \in arcs} Flow_{orig,j}\\
+\sum_{(i,k) \in arcs} Flow_{i,k} = \sum_{(k,j) \in arcs} Flow_{k,j}: k \in nodes \setminus \{orig,dest\}\\
+orig, dest \in \mathbb{S}, \in nodes; dest \neq orig;\\
+arcs \subseteq (nodes \setminus \{dest\}) \times (nodes \setminus \{orig\})\\
+cap_{i,j}, Flow_{i,j} \geq 0; Flow_{i,j} \in \mathbb{R}, \leq cap_{i,j}: (i,j) \in arcs\\

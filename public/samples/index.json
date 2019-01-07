@@ -98,6 +98,7 @@
 		{"name": "AMPL/lmodels/cut.mod", "number": 49, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/cut2.mod", "number": 50, "decl": false, "nonlinear": false},
 		{"name": "AMPL/lmodels/dietobj.mod", "number": 51, "decl": false, "nonlinear": false},
+		{"name": "AMPL/lmodels/maxflow.mod", "number": 52, "decl": false, "nonlinear": false},
 		{"name": "AMPL/network/net1node.mod", "number": 0, "decl": false, "network": true},
 		{"name": "AMPL/network/net3node.mod", "number": 1, "decl": false, "network": true},
 		{"name": "AMPL/network/netmax3.mod", "number": 2, "decl": false, "network": true},
