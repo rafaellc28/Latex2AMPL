@@ -29,6 +29,8 @@
 	"TIP7": "Um <b>Conjunto</b> pode ser definido atribuindo-o a um dos seguintes conjuntos: $\\mathbb{Set}$ e $\\mathbb{Sets}$.",
 	"TIP8": "Um <b>Parâmetro Simbólico</b> deve pertencer a $\\mathbb{S}$.",
 	"TIP9": "Um <b>Parâmetro Lógico</b> deve pertencer a $\\mathbb{L}$.",
+	"TIP10": "Um <b>Conjunto Ordenado</b> deve pertencer a $\\mathbb{O}$.",
+	"TIP11": "Um <b>Conjunto Ordenado Circular</b> deve pertencer a $\\mathbb{C}$.",
 	"GITHUB_SOURCE": "GitHub: <a href='https://github.com/rafaellc28/Latex2AMPL' target='_github'>https://github.com/rafaellc28/Latex2AMPL</a>",
 	"EXAMPLES": "Exemplos",
 	"COPY_DATA_SECTION": "Copie para a Seção Data no Código AMPL",

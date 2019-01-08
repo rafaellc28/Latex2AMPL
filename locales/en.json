@@ -30,6 +30,8 @@
 	"TIP7": "A <b>Set</b> can be defined by making it member of one of the following sets: $\\mathbb{Set}$ and $\\mathbb{Sets}$.",
 	"TIP8": "A <b>Symbolic Parameter</b> must be member of $\\mathbb{S}$.",
 	"TIP9": "A <b>Logical Parameter</b> must be member of $\\mathbb{L}$.",
+	"TIP10": "An <b>Ordered Set</b> must be member of $\\mathbb{O}$.",
+	"TIP11": "A <b>Circular Set</b> must be member of $\\mathbb{C}$.",
 	"EXAMPLES": "Examples",
 	"COPY_DATA_SECTION": "Copy to Data Section in AMPL Code",
 	"FORMAT": "Format",
